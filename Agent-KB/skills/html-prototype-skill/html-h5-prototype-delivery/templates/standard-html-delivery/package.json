@@ -1,0 +1,12 @@
+{
+  "name": "html-product-prototype",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Native HTML/CSS/JS product prototype delivery template.",
+  "scripts": {
+    "dev": "vite --host 0.0.0.0"
+  },
+  "devDependencies": {
+    "vite": "^5.0.0"
+  }
+}

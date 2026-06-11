@@ -1,0 +1,38 @@
+# Agent Workspace — Codex Entry
+
+## Directory Roles
+
+| Directory | Role | Active Rule |
+|-----------|------|-------------|
+| `./Agent-KB/` | Shared knowledge base — **read-only for project tasks** | Active |
+| `./Projects/` | Formal projects — **lock to one project per task** | Active |
+| `./Sandbox/` | Temporary experiments — no rules apply | Active |
+| `./Archive/` | Historical archive — **never treated as active** | Inactive |
+
+## Rules
+
+### Agent-KB
+- Codex may **read** `./Agent-KB/` for context.
+- Codex must **not modify** `./Agent-KB/` during business project tasks.
+- Only update `./Agent-KB/` when the user explicitly says "update knowledge base" or "update skill".
+
+### Projects
+- Every project task must lock to a specific project path (e.g. `./Projects/dating/`).
+- Before touching a project, read its `AGENTS.md` and `CLAUDE.md`.
+- Cross-project modification is forbidden. One task = one project.
+
+### Sandbox
+- No structural rules. Free experimentation.
+
+### Archive
+- Default: do not read, do not reference.
+- Only access when the user explicitly says "check archive" or "restore from archive".
+
+## Before Every Modification
+
+State:
+1. **Task type**
+2. **Project path** (must be under `./Projects/`)
+3. **Files to modify** (exact paths)
+4. **Files explicitly excluded**
+5. **Validation plan**

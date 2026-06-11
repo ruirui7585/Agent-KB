@@ -1,0 +1,154 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Female Operator Prototype</title>
+    <link rel="stylesheet" href="./style.css" />
+  </head>
+  <body>
+    <main class="workspace">
+      <section class="phone-shell" aria-label="Female operator app">
+        <div class="page active" data-page-id="login">
+          <div class="login-card">
+            <div class="brand-mark">FO</div>
+            <h1>Female Operator</h1>
+            <p>Staff workspace for model-based conversations.</p>
+            <label>Staff Account<input type="text" value="staff.mena01" /></label>
+            <label>Password<input type="password" value="demo1234" /></label>
+            <button class="primary-btn" data-action="demo-login">Demo Login</button>
+          </div>
+        </div>
+
+        <div class="app-frame" data-app-frame hidden>
+          <section class="page" data-page-id="inbox">
+            <header class="topbar">
+              <div>
+                <p class="eyebrow">Current Staff</p>
+                <h1 data-staff-name>--</h1>
+              </div>
+              <span class="status-pill" data-staff-status>--</span>
+            </header>
+            <div class="metric-row">
+              <div><strong data-today-conversations>0</strong><span>Today Chats</span></div>
+              <div><strong data-today-revenue>$0</strong><span>Revenue</span></div>
+            </div>
+            <div class="filter-row">
+              <button>All</button><button>New</button><button>Free</button><button>Paid</button><button>VIP</button><button>Timeout</button>
+            </div>
+            <div class="list" data-conversation-list></div>
+          </section>
+
+          <section class="page" data-page-id="chat_detail">
+            <header class="detail-topbar">
+              <button class="back-btn" data-action="back-to-inbox">Back</button>
+              <div class="identity-line" data-chat-header></div>
+            </header>
+            <div class="suggested-action" data-chat-action></div>
+            <div class="message-list" data-message-list></div>
+            <div class="composer">
+              <input data-chat-input type="text" placeholder="Type as current model..." />
+              <button data-action="send-message">Send</button>
+            </div>
+            <div class="tool-row">
+              <button data-action="quick-reply">Quick Reply</button>
+              <button data-action="translate">Translate</button>
+              <button data-action="photo">Photo</button>
+              <button data-action="private">Private</button>
+              <button data-action="call">Call</button>
+            </div>
+          </section>
+
+          <section class="page" data-page-id="models">
+            <header class="topbar">
+              <div>
+                <p class="eyebrow">My Models</p>
+                <h1>Bound Models</h1>
+              </div>
+            </header>
+            <div class="metric-row">
+              <div><strong data-bound-model-count>0</strong><span>Bound</span></div>
+              <div><strong data-online-model-count>0</strong><span>Online</span></div>
+            </div>
+            <div class="list" data-model-list></div>
+          </section>
+
+          <section class="page" data-page-id="model_detail">
+            <header class="detail-topbar">
+              <button class="back-btn" data-action="back-to-models">Back</button>
+              <h1>Model Detail</h1>
+            </header>
+            <div class="detail-stack" data-model-detail></div>
+          </section>
+
+          <section class="page" data-page-id="content">
+            <header class="topbar">
+              <div>
+                <p class="eyebrow">Asset Library</p>
+                <h1>Content</h1>
+              </div>
+            </header>
+            <div class="filter-row">
+              <button>All</button><button>Public Photo</button><button>Private Photo</button><button>Private Video</button><button>Script</button>
+            </div>
+            <div class="list" data-content-list></div>
+          </section>
+
+          <section class="page" data-page-id="content_picker">
+            <header class="detail-topbar">
+              <button class="back-btn" data-action="content-cancel">Back</button>
+              <h1>Send Preview</h1>
+            </header>
+            <div class="detail-stack" data-content-preview></div>
+          </section>
+
+          <section class="page" data-page-id="me">
+            <header class="topbar">
+              <div>
+                <p class="eyebrow">Staff Profile</p>
+                <h1>Me</h1>
+              </div>
+              <span class="status-pill" data-me-status>--</span>
+            </header>
+            <div class="detail-stack" data-me-panel></div>
+          </section>
+
+          <section class="page" data-page-id="work_status">
+            <header class="detail-topbar">
+              <button class="back-btn" data-action="back-to-me">Back</button>
+              <h1>Work Status</h1>
+            </header>
+            <div class="detail-stack">
+              <article class="card">
+                <p class="eyebrow">Current Status</p>
+                <h2 data-work-status>--</h2>
+                <p>Online: can receive new conversations.</p>
+                <p>Offline: no new conversations are assigned, but historical chats remain visible.</p>
+              </article>
+              <button class="primary-btn" data-action="switch-online">Switch to Online</button>
+              <button class="secondary-btn" data-action="switch-offline">Switch to Offline</button>
+            </div>
+          </section>
+
+          <nav class="bottom-tabs" aria-label="Main navigation">
+            <button data-tab="inbox">Inbox</button>
+            <button data-tab="models">Models</button>
+            <button data-tab="content">Content</button>
+            <button data-tab="me">Me</button>
+          </nav>
+        </div>
+      </section>
+
+      <aside class="annotation-panel" aria-label="Annotation panel">
+        <p class="eyebrow">Annotation / State Panel</p>
+        <h2 data-annotation-title>Login</h2>
+        <div data-annotation-body></div>
+      </aside>
+    </main>
+
+    <script src="../annotations/annotation-data.js"></script>
+    <script src="./data.js"></script>
+    <script src="./state.js"></script>
+    <script src="./app.js"></script>
+  </body>
+</html>

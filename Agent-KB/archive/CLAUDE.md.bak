@@ -1,0 +1,34 @@
+# Agent Workspace — Claude Code Entry
+
+## Directory Roles
+
+| Directory | Role | Default Access |
+|-----------|------|----------------|
+| `./Agent-KB/` | Shared knowledge base | **Read-only** |
+| `./Projects/` | Formal projects | Read-write (user-specified project only) |
+| `./Sandbox/` | Temporary experiments | Read-write |
+| `./Archive/` | Historical archive | Do not access |
+
+## Rules
+
+### Scope
+- Only modify files in the project the user explicitly specifies.
+- If no project is named, ask which project to work on.
+- One task stays in one project. Do not touch other projects.
+
+### Agent-KB
+- Default read-only. Treat as reference material.
+- Only write to `./Agent-KB/` when the user explicitly asks to "update the knowledge base" or "update/crate a skill".
+
+### Before Modifying
+Output a brief plan:
+1. **Will change**: files and nature of change
+2. **Will not change**: nearby files that won't be touched
+3. **Risk area**: what could break
+4. **Validation**: how to confirm the change works
+
+### After Modifying
+Output:
+1. Files changed
+2. What changed (one sentence)
+3. Verification result

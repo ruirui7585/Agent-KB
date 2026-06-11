@@ -1,0 +1,40 @@
+# Agent 工作区
+
+Codex、Claude Code、Cursor 共用的本地 Agent 工作区。
+
+## 目录说明
+
+```
+Agent-Workspace/
+├── AGENTS.md          # Codex 入口规则
+├── CLAUDE.md          # Claude Code 入口规则
+├── .cursorrules       # Cursor 规则入口
+├── README.md          # 本文件
+│
+├── Agent-KB/          # 共享知识库（Agent 默认只读）
+│   ├── AGENTS.md      # 知识库使用说明
+│   ├── skills/        # 通用 Skill
+│   ├── global-rules/  # 跨项目通用规则
+│   ├── templates/     # 文件模板
+│   ├── examples/      # 参考案例
+│   └── archive/       # 历史资料（Agent 默认不读取）
+│
+├── Projects/          # 正式项目（每个项目一个子目录）
+├── Sandbox/           # 临时实验（无规则约束）
+└── Archive/           # 已完成或废弃的项目
+```
+
+## 使用方式
+
+- 新建项目放在 `Projects/` 下。
+- 每个项目应有自己的 `AGENTS.md` 和 `CLAUDE.md`。
+- 通用 Skill 放在 `Agent-KB/skills/` 下。
+- 临时试验放在 `Sandbox/` 下。
+- 已完成项目移到 `Archive/`。
+
+## 规则要点
+
+- Agent 默认只能**读取** `Agent-KB/`，不能修改。
+- 只有用户明确说"更新知识库"或"更新 Skill"时才能写入 `Agent-KB/`。
+- 每个任务锁定一个项目，禁止跨项目修改。
+- `Agent-KB/archive/` 不作为活跃规则源。

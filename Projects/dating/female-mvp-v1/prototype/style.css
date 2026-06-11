@@ -1,0 +1,403 @@
+:root {
+  --bg: #f3efe8;
+  --surface: #ffffff;
+  --line: #ded7ce;
+  --text: #18252f;
+  --muted: #687781;
+  --primary: #16614f;
+  --primary-dark: #0f473a;
+  --accent: #b85b3f;
+  --soft: #eef6f2;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  font-family: Arial, sans-serif;
+  background: var(--bg);
+  color: var(--text);
+}
+
+button,
+input {
+  font: inherit;
+}
+
+button {
+  cursor: pointer;
+}
+
+.workspace {
+  min-height: 100vh;
+  display: grid;
+  grid-template-columns: minmax(320px, 390px) minmax(260px, 360px);
+  gap: 24px;
+  justify-content: center;
+  align-items: start;
+  padding: 24px;
+}
+
+.phone-shell {
+  min-height: 760px;
+  background: #0d171c;
+  border-radius: 28px;
+  padding: 14px;
+  box-shadow: 0 22px 52px rgba(21, 30, 35, 0.2);
+}
+
+.app-frame,
+.page {
+  min-height: 732px;
+}
+
+.app-frame {
+  position: relative;
+  overflow: hidden;
+  border-radius: 20px;
+  background: #fbfaf8;
+}
+
+.page {
+  display: none;
+  padding: 18px 16px 92px;
+  overflow-y: auto;
+}
+
+.page.active {
+  display: block;
+}
+
+.page[data-page-id="login"] {
+  display: none;
+  min-height: 732px;
+  border-radius: 20px;
+  background: #fbfaf8;
+  padding: 28px 20px;
+}
+
+.page[data-page-id="login"].active {
+  display: grid;
+  place-items: center;
+}
+
+.login-card,
+.card,
+.annotation-panel {
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: 8px;
+}
+
+.login-card {
+  width: 100%;
+  padding: 22px;
+}
+
+.brand-mark {
+  width: 54px;
+  height: 54px;
+  display: grid;
+  place-items: center;
+  border-radius: 50%;
+  background: var(--primary);
+  color: #fff;
+  font-weight: 800;
+}
+
+h1,
+h2,
+p {
+  margin-top: 0;
+}
+
+h1 {
+  margin-bottom: 4px;
+  font-size: 24px;
+}
+
+h2 {
+  margin-bottom: 8px;
+  font-size: 18px;
+}
+
+p {
+  line-height: 1.45;
+}
+
+label {
+  display: grid;
+  gap: 6px;
+  margin-top: 14px;
+  color: var(--muted);
+  font-size: 13px;
+}
+
+input {
+  width: 100%;
+  min-height: 42px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  padding: 0 12px;
+  color: var(--text);
+  background: #fff;
+}
+
+.primary-btn,
+.secondary-btn {
+  width: 100%;
+  min-height: 44px;
+  border: 0;
+  border-radius: 8px;
+  margin-top: 12px;
+  font-weight: 700;
+}
+
+.primary-btn {
+  background: var(--primary);
+  color: #fff;
+}
+
+.secondary-btn {
+  border: 1px solid var(--line);
+  background: #fff;
+  color: var(--primary-dark);
+}
+
+.topbar,
+.detail-topbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 14px;
+}
+
+.detail-topbar {
+  justify-content: flex-start;
+}
+
+.eyebrow {
+  margin-bottom: 4px;
+  color: var(--muted);
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0;
+}
+
+.status-pill,
+.badge {
+  display: inline-flex;
+  align-items: center;
+  min-height: 26px;
+  border-radius: 999px;
+  padding: 0 10px;
+  background: var(--soft);
+  color: var(--primary-dark);
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.metric-row {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 10px;
+  margin-bottom: 14px;
+}
+
+.metric-row div {
+  padding: 12px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: #fff;
+}
+
+.metric-row strong,
+.metric-row span {
+  display: block;
+}
+
+.metric-row span {
+  margin-top: 4px;
+  color: var(--muted);
+  font-size: 12px;
+}
+
+.filter-row,
+.tool-row {
+  display: flex;
+  gap: 8px;
+  overflow-x: auto;
+  padding-bottom: 8px;
+  margin-bottom: 10px;
+}
+
+.filter-row button,
+.tool-row button,
+.back-btn,
+.composer button,
+.bottom-tabs button {
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: #fff;
+  color: var(--text);
+  min-height: 34px;
+  padding: 0 10px;
+  white-space: nowrap;
+}
+
+.list,
+.detail-stack,
+.message-list {
+  display: grid;
+  gap: 10px;
+}
+
+.card {
+  padding: 12px;
+}
+
+.card.clickable {
+  text-align: left;
+}
+
+.identity-line,
+.card-head {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.avatar {
+  width: 42px;
+  height: 42px;
+  border-radius: 50%;
+  object-fit: cover;
+  background: #d9c7b7;
+  flex: 0 0 auto;
+}
+
+.mini-avatar {
+  width: 30px;
+  height: 30px;
+}
+
+.meta {
+  color: var(--muted);
+  font-size: 12px;
+}
+
+.card-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 8px;
+  margin-top: 10px;
+}
+
+.card-grid span {
+  display: block;
+  padding: 8px;
+  border-radius: 8px;
+  background: #f7f4ef;
+  font-size: 12px;
+}
+
+.suggested-action {
+  margin-bottom: 10px;
+  padding: 10px;
+  border-left: 4px solid var(--accent);
+  background: #fff5ef;
+  border-radius: 8px;
+}
+
+.message-list {
+  min-height: 360px;
+  align-content: start;
+}
+
+.message {
+  max-width: 88%;
+  padding: 10px;
+  border-radius: 8px;
+  background: #fff;
+  border: 1px solid var(--line);
+}
+
+.message.model {
+  justify-self: end;
+  background: var(--soft);
+}
+
+.message.system {
+  max-width: 100%;
+  justify-self: center;
+  background: #f7f4ef;
+  color: var(--muted);
+  font-size: 12px;
+}
+
+.composer {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 8px;
+  margin-top: 12px;
+}
+
+.bottom-tabs {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 6px;
+  padding: 10px;
+  border-top: 1px solid var(--line);
+  background: #fff;
+}
+
+.bottom-tabs button.active {
+  background: var(--primary);
+  color: #fff;
+  border-color: var(--primary);
+}
+
+.annotation-panel {
+  padding: 18px;
+  position: sticky;
+  top: 24px;
+}
+
+.annotation-panel ul {
+  padding-left: 18px;
+}
+
+.content-thumb {
+  width: 100%;
+  min-height: 110px;
+  display: grid;
+  place-items: center;
+  border-radius: 8px;
+  background: #d8c0ac;
+  color: #fff;
+  font-weight: 700;
+  margin-bottom: 10px;
+}
+
+@media (max-width: 820px) {
+  .workspace {
+    grid-template-columns: 1fr;
+  }
+
+  .phone-shell {
+    width: min(390px, 100%);
+    margin: 0 auto;
+  }
+
+  .annotation-panel {
+    position: static;
+  }
+}

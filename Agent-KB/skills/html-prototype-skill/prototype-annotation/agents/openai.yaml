@@ -1,0 +1,6 @@
+interface:
+  display_name: "Prototype Annotation"
+  short_description: "Plan, write, add, review, and fix prototype annotations"
+  default_prompt: "Use $prototype-annotation to plan, write, add, review, or fix product-rule annotations for this supplied interactive prototype."
+policy:
+  allow_implicit_invocation: false

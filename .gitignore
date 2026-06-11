@@ -1,0 +1,60 @@
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+._*
+
+# IDE / Editor
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# Dependencies
+node_modules/
+.pnpm-store/
+
+# Build output
+dist/
+build/
+.next/
+.vite/
+out/
+
+# Test / Coverage
+coverage/
+.nyc_output/
+
+# Environment / Secrets
+.env
+.env.local
+.env.*.local
+*.pem
+credentials*.json
+
+# Cache
+.cache/
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Large binaries
+*.mp4
+*.mov
+*.avi
+*.mkv
+*.zip
+*.tar.gz
+*.rar
+
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+
+# Sandbox experiments (temporary, not formal projects)
+# Uncomment if you don't want to track sandbox:
+# Sandbox/

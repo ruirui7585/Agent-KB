@@ -1,0 +1,6 @@
+# Cursor Rules
+
+Refer to AGENTS.md for global agent behavioral guidelines.
+Refer to Agent-KB/AGENTS.md for knowledge base structure and usage.
+
+Project-specific rules are in each project's directory under Projects/.

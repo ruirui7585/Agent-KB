@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="320" height="180" viewBox="0 0 320 180">
+  <rect width="320" height="180" fill="#c9a68f"/>
+  <circle cx="160" cy="80" r="42" fill="#7b4d3e"/>
+  <path d="M84 180c20-58 53-82 76-82s56 24 76 82z" fill="#b85b3f"/>
+  <text x="160" y="166" text-anchor="middle" fill="#fff" font-family="Arial" font-size="18">Layla Public Photo</text>
+</svg>
