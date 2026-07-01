@@ -1,0 +1,16 @@
+{
+  "version": "0.1.0",
+  "distributionMode": "weighted",
+  "normalization": "auto-scale",
+  "maxConcurrent": 20,
+  "routingBias": {
+    "newUser": "randomWeighted",
+    "returning": "highestAffinity"
+  },
+  "matrix": [
+    { "modelId": "m1", "modelName": "Zayna", "UAE": 35, "SA": 25, "QA": 15, "KW": 5,  "BH": 3, "OM": 2 },
+    { "modelId": "m2", "modelName": "Lina",  "UAE": 20, "SA": 30, "QA": 10, "KW": 5,  "BH": 2, "OM": 1 },
+    { "modelId": "m3", "modelName": "Noor",  "UAE": 5,  "SA": 5,  "QA": 20, "KW": 5,  "BH": 0, "OM": 0 },
+    { "modelId": "m4", "modelName": "Maya",  "UAE": 10, "SA": 10, "QA": 10, "KW": 25, "BH": 3, "OM": 2 }
+  ]
+}

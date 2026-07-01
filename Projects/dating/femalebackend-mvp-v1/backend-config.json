@@ -1,0 +1,13 @@
+{
+  "name": "femalebackend-mvp-v1",
+  "version": "0.1.0",
+  "description": "Backend configuration system for Female Operator App",
+  "configs": {
+    "models": "backend-config/model-config.json",
+    "traffic": "backend-config/traffic-rules.json",
+    "scheduling": "backend-config/scheduling-rules.json",
+    "risk": "backend-config/risk-rules.json",
+    "commission": "backend-config/commission-rules.json",
+    "constraints": "backend-config/system-constraints.json"
+  }
+}

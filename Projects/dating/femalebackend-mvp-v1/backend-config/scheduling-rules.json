@@ -1,0 +1,48 @@
+{
+  "version": "0.1.0",
+  "timezone": "Asia/Dubai",
+  "defaultOnlineRateTarget": 85,
+  "autoOfflineTimeoutMinutes": 15,
+  "schedules": [
+    {
+      "modelId": "m1",
+      "modelName": "Zayna",
+      "peakCoverage": "3/4",
+      "scheduledTime": "8h 30m",
+      "onlineTime": "8h 05m",
+      "onlineRateTarget": 95,
+      "scheduledHours": [5,6,7,8,9,10,11,16,17,18],
+      "peakHours": [6,12,19]
+    },
+    {
+      "modelId": "m2",
+      "modelName": "Lina",
+      "peakCoverage": "3/4",
+      "scheduledTime": "7h 45m",
+      "onlineTime": "7h 10m",
+      "onlineRateTarget": 91,
+      "scheduledHours": [7,8,13,17,18],
+      "peakHours": [6,12,19]
+    },
+    {
+      "modelId": "m3",
+      "modelName": "Noor",
+      "peakCoverage": "1/4",
+      "scheduledTime": "4h 20m",
+      "onlineTime": "3h 55m",
+      "onlineRateTarget": 72,
+      "scheduledHours": [18,19,20],
+      "peakHours": [6,12,19]
+    },
+    {
+      "modelId": "m4",
+      "modelName": "Maya",
+      "peakCoverage": "2/4",
+      "scheduledTime": "6h 40m",
+      "onlineTime": "6h 08m",
+      "onlineRateTarget": 88,
+      "scheduledHours": [9,10,16,17,21],
+      "peakHours": [6,12,19]
+    }
+  ]
+}

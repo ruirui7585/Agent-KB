@@ -1,9 +1,1 @@
-window.FEMALE_MVP_STATE = {
-  currentPageId: "login",
-  previousPageId: "login",
-  activeTab: "inbox",
-  selectedConversationId: "conv_001",
-  selectedModelId: "model_001",
-  selectedContentId: "content_001",
-  contentEntrySource: "content"
-};
+var state = {page:'login',activeTab:'inbox',currentModel:'all',selectedConversation:'c1',selectedModel:'m1',selectedAsset:'a2',selectedAssets:['a2'],selectedGift:'g1',pickerModel:'m1',pickerSource:'chat',online:true,currentFilter:'All',inboxMode:'chats'};

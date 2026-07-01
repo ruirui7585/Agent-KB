@@ -1,272 +1,160 @@
-(function () {
-  const data = window.FEMALE_MVP_DATA;
-  const state = window.FEMALE_MVP_STATE;
-  const annotations = window.FEMALE_MVP_ANNOTATIONS || {};
-  const primaryPages = ["inbox", "models", "content", "me"];
-
-  const $ = (selector) => document.querySelector(selector);
-  const $$ = (selector) => Array.from(document.querySelectorAll(selector));
-
-  function getModel(id) {
-    return data.models.find((model) => model.model_id === id);
-  }
-
-  function getMaleUser(id) {
-    return data.maleUsers.find((user) => user.male_user_id === id);
-  }
-
-  function getConversation(id) {
-    return data.conversations.find((conversation) => conversation.conversation_id === id);
-  }
-
-  function getContent(id) {
-    return data.contents.find((content) => content.content_id === id);
-  }
-
-  function money(value) {
-    return `$${value}`;
-  }
-
-  function navigateTo(pageId) {
-    state.previousPageId = state.currentPageId;
-    state.currentPageId = pageId;
-    if (primaryPages.includes(pageId)) state.activeTab = pageId;
-
-    $$(".page").forEach((page) => page.classList.toggle("active", page.dataset.pageId === pageId));
-    const appFrame = $("[data-app-frame]");
-    appFrame.hidden = pageId === "login";
-    $$(".bottom-tabs button").forEach((button) => {
-      button.classList.toggle("active", button.dataset.tab === state.activeTab);
-    });
-    renderPage(pageId);
-    syncAnnotation(pageId);
-  }
-
-  function syncAnnotation(pageId) {
-    const annotation = annotations[pageId];
-    $("[data-annotation-title]").textContent = annotation ? annotation.title : pageId;
-    $("[data-annotation-body]").innerHTML = annotation
-      ? `<p>${annotation.goal}</p><h3>Core Fields</h3><ul>${annotation.fields.map((item) => `<li>${item}</li>`).join("")}</ul><h3>Interactions</h3><ul>${annotation.interactions.map((item) => `<li>${item}</li>`).join("")}</ul><h3>Rules</h3><ul>${annotation.rules.map((item) => `<li>${item}</li>`).join("")}</ul>`
-      : "<p>No annotation data.</p>";
-  }
-
-  function renderPage(pageId) {
-    renderStaff();
-    if (pageId === "inbox") renderInbox();
-    if (pageId === "chat_detail") renderChatDetail();
-    if (pageId === "models") renderModels();
-    if (pageId === "model_detail") renderModelDetail();
-    if (pageId === "content") renderContent();
-    if (pageId === "content_picker") renderContentPicker();
-    if (pageId === "me") renderMe();
-    if (pageId === "work_status") renderWorkStatus();
-  }
-
-  function renderStaff() {
-    $("[data-staff-name]").textContent = data.staff.staff_name;
-    $("[data-staff-status]").textContent = data.staff.online_status;
-    $("[data-today-conversations]").textContent = data.staff.today_conversations;
-    $("[data-today-revenue]").textContent = money(data.staff.today_revenue);
-  }
-
-  function renderInbox() {
-    $("[data-conversation-list]").innerHTML = data.conversations
-      .map((conversation) => {
-        const user = getMaleUser(conversation.male_user_id);
-        const model = getModel(conversation.model_id);
-        return `<button class="card clickable" data-conversation-id="${conversation.conversation_id}">
-          <div class="card-head">
-            <img class="avatar" src="${user.avatar}" alt="${user.nickname}" />
-            <div>
-              <h2>${user.nickname}</h2>
-              <p class="meta">${user.payment_status} · Free messages left: ${user.free_messages_left}</p>
-            </div>
-            <img class="avatar mini-avatar" src="${model.avatar}" alt="${model.display_name}" />
-          </div>
-          <p>${conversation.last_message}</p>
-          <div class="card-grid">
-            <span>Model: ${model.display_name}</span>
-            <span>Unread: ${conversation.unread_count}</span>
-            <span>Waiting: ${conversation.reply_waiting_time}</span>
-            <span>${conversation.conversation_stage}</span>
-          </div>
-          <p class="meta">Action: ${conversation.suggested_action}</p>
-        </button>`;
-      })
-      .join("");
-  }
-
-  function renderChatDetail() {
-    const conversation = getConversation(state.selectedConversationId);
-    const user = getMaleUser(conversation.male_user_id);
-    const model = getModel(conversation.model_id);
-    $("[data-chat-header]").innerHTML = `
-      <img class="avatar" src="${user.avatar}" alt="${user.nickname}" />
-      <div><h2>${user.nickname}</h2><p class="meta">${user.payment_status} · Free messages left: ${user.free_messages_left}</p></div>
-      <img class="avatar mini-avatar" src="${model.avatar}" alt="${model.display_name}" />
-      <div><strong>${model.display_name}</strong><p class="meta">Reply identity</p></div>`;
-    $("[data-chat-action]").textContent = conversation.suggested_action;
-    const messages = data.messages[conversation.conversation_id] || [];
-    $("[data-message-list]").innerHTML = messages.map((message) => `<div class="message ${message.sender}">${message.text}</div>`).join("");
-  }
-
-  function renderModels() {
-    $("[data-bound-model-count]").textContent = data.models.length;
-    $("[data-online-model-count]").textContent = data.models.filter((model) => model.online_status === "Online").length;
-    $("[data-model-list]").innerHTML = data.models
-      .map((model) => `<button class="card clickable" data-model-id="${model.model_id}">
-        <div class="card-head">
-          <img class="avatar" src="${model.avatar}" alt="${model.display_name}" />
-          <div><h2>${model.display_name}, ${model.age}</h2><p class="meta">${model.city} · ${model.online_status}</p></div>
-        </div>
-        <div class="card-grid">
-          <span>Chats: ${model.today_conversations}</span>
-          <span>Revenue: ${money(model.today_revenue)}</span>
-          <span>Pending: ${model.pending_replies}</span>
-          <span>${model.tags.join(", ")}</span>
-        </div>
-      </button>`)
-      .join("");
-  }
-
-  function renderModelDetail() {
-    const model = getModel(state.selectedModelId);
-    $("[data-model-detail]").innerHTML = `
-      <article class="card">
-        <div class="card-head"><img class="avatar" src="${model.avatar}" alt="${model.display_name}" /><div><h2>${model.display_name}, ${model.age}</h2><p class="meta">${model.country} · ${model.city}</p></div></div>
-        <p>${model.bio}</p><p class="meta">Tags: ${model.tags.join(", ")}</p>
-      </article>
-      <article class="card"><h2>Persona Notes</h2><p>Voice: ${model.persona_note.tone}</p><p>Topics: ${model.persona_note.allowed_topics}</p><p>Blocked: ${model.persona_note.blocked_topics}</p><p>Push: ${model.persona_note.relationship_push}</p></article>
-      <article class="card"><h2>Content Pack</h2><div class="card-grid"><span>Public Photos: ${model.content_pack.public_photos}</span><span>Private Photos: ${model.content_pack.private_photos}</span><span>Private Videos: ${model.content_pack.private_videos}</span><span>Scripts: ${model.content_pack.scripts}</span></div></article>
-      <article class="card"><h2>Today Data</h2><div class="card-grid"><span>Chats: ${model.today_conversations}</span><span>Revenue: ${money(model.today_revenue)}</span><span>Pending: ${model.pending_replies}</span><span>Configured by backend. Operator can view only.</span></div></article>`;
-  }
-
-  function renderContent() {
-    $("[data-content-list]").innerHTML = data.contents
-      .map((content) => {
-        const model = getModel(content.model_id);
-        return `<button class="card clickable" data-content-id="${content.content_id}" data-content-source="content">
-          <div class="content-thumb">${content.thumbnail}</div>
-          <h2>${content.content_type}</h2>
-          <p class="meta">${model.display_name} · Price: ${money(content.unlock_price)} · ${content.send_status}</p>
-          <p>${content.conversion_tag}</p>
-          <span class="badge">${content.is_sent_to_current_user ? "Already sent" : "Not sent"}</span>
-        </button>`;
-      })
-      .join("");
-  }
-
-  function renderContentPicker() {
-    const content = getContent(state.selectedContentId);
-    const model = getModel(content.model_id);
-    const conversation = getConversation(state.selectedConversationId);
-    const user = getMaleUser(conversation.male_user_id);
-    const currentModel = getModel(conversation.model_id);
-    $("[data-content-preview]").innerHTML = `
-      <article class="card">
-        <div class="content-thumb">${content.thumbnail}</div>
-        <h2>${content.content_type}</h2>
-        <p>Model: ${model.display_name}</p>
-        <p>Unlock price: ${money(content.unlock_price)}</p>
-        <p>Status: ${content.is_sent_to_current_user ? "This content has already been sent to this user." : "Not sent to current user."}</p>
-      </article>
-      <article class="card">
-        <h2>Current Conversation</h2>
-        <p>${user.nickname} · ${user.payment_status} · Free messages left: ${user.free_messages_left}</p>
-        <p>Reply as ${currentModel.display_name}</p>
-        <p class="meta">${conversation.suggested_action}</p>
-      </article>
-      <button class="primary-btn" data-action="send-public-content">Send as Public</button>
-      <button class="primary-btn" data-action="send-private-content">Send as Private Unlock</button>
-      <button class="secondary-btn" data-action="content-cancel">Cancel</button>`;
-  }
-
-  function renderMe() {
-    const staff = data.staff;
-    $("[data-me-status]").textContent = staff.online_status;
-    $("[data-me-panel]").innerHTML = `
-      <article class="card">
-        <div class="card-head"><img class="avatar" src="${staff.avatar}" alt="${staff.staff_name}" /><div><h2>${staff.staff_name}</h2><p class="meta">${staff.staff_id} · ${staff.online_status}</p></div></div>
-      </article>
-      <article class="card"><h2>Today Summary</h2><div class="card-grid"><span>Chats: ${staff.today_conversations}</span><span>Revenue: ${money(staff.today_revenue)}</span><span>Pending: ${staff.pending_replies}</span><span>Models: ${staff.bound_model_count}</span></div></article>
-      <article class="card"><h2>Work Info</h2><p>Language: ${staff.language}</p><p>Market: ${staff.market}</p><p>Current Status: ${staff.online_status}</p></article>
-      <button class="primary-btn" data-action="open-work-status">Work Status</button>
-      <button class="secondary-btn" data-action="logout">Logout</button>`;
-  }
-
-  function renderWorkStatus() {
-    $("[data-work-status]").textContent = data.staff.online_status;
-  }
-
-  function addMessage(sender, text) {
-    const conversation = getConversation(state.selectedConversationId);
-    data.messages[conversation.conversation_id].push({ sender, text });
-    renderChatDetail();
-  }
-
-  document.addEventListener("click", (event) => {
-    const tab = event.target.closest("[data-tab]");
-    if (tab) navigateTo(tab.dataset.tab);
-
-    const conversationCard = event.target.closest("[data-conversation-id]");
-    if (conversationCard) {
-      state.selectedConversationId = conversationCard.dataset.conversationId;
-      navigateTo("chat_detail");
-    }
-
-    const modelCard = event.target.closest("[data-model-id]");
-    if (modelCard) {
-      state.selectedModelId = modelCard.dataset.modelId;
-      navigateTo("model_detail");
-    }
-
-    const contentCard = event.target.closest("[data-content-id]");
-    if (contentCard) {
-      state.selectedContentId = contentCard.dataset.contentId;
-      state.contentEntrySource = contentCard.dataset.contentSource || "content";
-      navigateTo("content_picker");
-    }
-
-    const action = event.target.closest("[data-action]")?.dataset.action;
-    if (!action) return;
-    if (action === "demo-login") navigateTo("inbox");
-    if (action === "back-to-inbox") navigateTo("inbox");
-    if (action === "back-to-models") navigateTo("models");
-    if (action === "back-to-me") navigateTo("me");
-    if (action === "open-work-status") navigateTo("work_status");
-    if (action === "logout") navigateTo("login");
-    if (action === "quick-reply") addMessage("model", "I like talking with you. Tell me what you want to know about me.");
-    if (action === "translate") addMessage("system", "Translation preview: Arabic / English tone checked.");
-    if (action === "photo") addMessage("model", "Public photo sent.");
-    if (action === "private") {
-      const conversation = getConversation(state.selectedConversationId);
-      const privateContent = data.contents.find((content) => content.model_id === conversation.model_id && content.content_type.includes("Private")) || data.contents[0];
-      state.selectedContentId = privateContent.content_id;
-      state.contentEntrySource = "chat_detail";
-      navigateTo("content_picker");
-    }
-    if (action === "call") addMessage("model", "Call invite sent. Would you like to talk for a few minutes?");
-    if (action === "send-message") {
-      const input = $("[data-chat-input]");
-      if (input.value.trim()) addMessage("model", input.value.trim());
-      input.value = "";
-    }
-    if (action === "content-cancel") navigateTo(state.contentEntrySource === "chat_detail" ? "chat_detail" : "content");
-    if (action === "send-public-content" || action === "send-private-content") {
-      const content = getContent(state.selectedContentId);
-      content.is_sent_to_current_user = true;
-      addMessage("model", `${content.content_type} sent: ${content.thumbnail}`);
-      navigateTo("chat_detail");
-    }
-    if (action === "switch-online") {
-      data.staff.online_status = "Online";
-      renderWorkStatus();
-    }
-    if (action === "switch-offline") {
-      data.staff.online_status = "Offline";
-      renderWorkStatus();
-    }
-  });
-
-  navigateTo("login");
-})();
+var $ = sel => document.querySelector(sel);
+var $$ = sel => document.querySelectorAll(sel);
+function getModel(id){return models.find(x=>x.id===id)} function getMale(id){return males.find(x=>x.id===id)} function getConv(id){return conversations.find(x=>x.id===id)} function getAsset(id){return assets.find(x=>x.id===id)}
+function waitToSeconds(wait){const raw=String(wait||'').trim();if(raw==='now')return 0;const n=parseInt(raw,10)||0;if(raw.includes('m'))return n*60;if(raw.includes('s'))return n;return n}
+function countdownSeconds(c){if(c.timeout)return null;if(!c.countdownEnd)c.countdownEnd=Date.now()+waitToSeconds(c.wait)*1000;return Math.max(0,Math.ceil((c.countdownEnd-Date.now())/1000))}
+function formatCountdown(seconds){const safe=Math.max(0,seconds||0),m=Math.floor(safe/60),s=safe%60;return `${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}`}
+function updateCountdownBadges(){$$('.wait-badge[data-conversation-id],.im-time[data-conversation-id]').forEach(b=>{const c=getConv(b.dataset.conversationId);if(!c)return;const seconds=countdownSeconds(c);const text=seconds===null?'Timeout':formatCountdown(seconds);const el=b.querySelector('.countdown-text')||b.querySelector('.im-countdown-text');if(el){el.textContent=text;return}if(b.classList.contains('im-time')){const icon=b.querySelector('.countdown-icon');b.innerHTML=icon?icon.outerHTML+text:text}})}
+function startCountdownTicker(){if(window.countdownTimer)return;window.countdownTimer=setInterval(updateCountdownBadges,1000)}
+function isConversationOnline(c){return c&&!c.timeout}
+function privatePriceValue(asset){return parseInt(String(asset.price||'0').replace(/[^\d]/g,''),10)||0}
+function privateRevenueForModel(id){return assets.filter(a=>a.model===id&&a.type.includes('Private')&&a.sent).reduce((sum,a)=>sum+privatePriceValue(a),0)}
+function replyRateForModel(m){const owned=conversations.filter(c=>c.model===m.id);if(!owned.length)return '0%';const replied=owned.filter(c=>!c.timeout).length;return `${Math.round((replied/owned.length)*100)}%`}
+function scriptStyleLabel(m){return (m.voice||'').split(',')[0].replace(/\.$/,'')}
+function currentModelName(){return state.currentModel==='all'?'All Models':getModel(state.currentModel).name}
+function convsByCurrent(){return state.currentModel==='all'?conversations:conversations.filter(c=>c.model===state.currentModel)}
+function assetsByCurrent(){return state.currentModel==='all'?[]:assets.filter(a=>a.model===state.currentModel)}
+function goPage(page){state.page=page;if(['inbox','models','assets','me'].includes(page))state.activeTab=page;$$('.screen').forEach(s=>s.classList.toggle('active',s.dataset.page===page));renderAll();updateAnnotation();}
+function renderAll(){renderTabs();renderModelSwitcher();renderModelContext();renderConversations();renderModels();renderAssets();renderMe();if(state.page==='chat_detail')renderChat();if(state.page==='model_detail')renderModelDetail();if(state.page==='work_status')renderWorkStatus();if(state.page==='income_detail')renderIncomeDetail();if(state.page==='ratio_detail')renderRatioDetail();}
+function renderTabs(){const tabs=[['inbox','💬','Inbox'],['models','👩','Models'],['assets','🔒','Assets'],['me','👤','Me']];$$('.bottom-tab').forEach(nav=>nav.innerHTML=tabs.map(t=>`<button class="tab ${state.activeTab===t[0]?'active':''}" onclick="goPage('${t[0]}')"><span class="ico">${t[1]}</span><span>${t[2]}</span></button>`).join(''))}
+function renderModelSwitcher(){const el=$('#modelSwitcher');if(!el)return;el.innerHTML=`<button class="model-chip-btn ${state.currentModel==='all'?'active':''}" onclick="switchModel('all')">All Models</button>`+models.map(m=>`<button class="model-chip-btn ${state.currentModel===m.id?'active':''}" onclick="switchModel('${m.id}')"><img src="${m.avatar}">${m.name}</button>`).join('')}
+function switchModel(id){state.currentModel=id;state.currentFilter='All';showToast(id==='all'?'Switched to All Models':`Switched to ${getModel(id).name}`);goPage('inbox')}
+function renderAssetsModelSwitcher(){const el=$('#assetsModelSwitcher');if(!el)return;el.innerHTML=`<button class="model-chip-btn ${state.currentModel==='all'?'active':''}" onclick="switchAssetsModel('all')">All Models</button>`+models.map(m=>`<button class="model-chip-btn ${state.currentModel===m.id?'active':''}" onclick="switchAssetsModel('${m.id}')"><img src="${m.avatar}">${m.name}</button>`).join('')}
+function switchAssetsModel(id){state.currentModel=id;state.currentFilter='All';showToast(id==='all'?'Showing all IM':`Showing ${getModel(id).name} IM`);renderAll();updateAnnotation()}
+function renderModelContext(){renderAssetsModelSwitcher();const ctx=$('#modelContext');if(ctx){if(state.currentModel==='all'){ctx.innerHTML=`<div class="context-head"><div style="font-size:26px">🌐</div><div><h3>All Models Overview</h3><p>Aggregated male conversations across assigned model identities.</p></div></div>`}else{const m=getModel(state.currentModel);ctx.innerHTML=`<div class="context-head"><img class="avatar md" src="${m.avatar}"><div><h3>${m.name}, ${m.age} · ${m.city}</h3><p>Dedicated IM list · ${m.lbs} · ${m.voice}</p></div></div>`}} $('#assetsSub') && ($('#assetsSub').textContent=state.currentModel==='all'?'Messages':`${getModel(state.currentModel).name} messages`)}
+function switchInboxMode(mode){state.inboxMode=mode;state.currentFilter='All';document.querySelectorAll('[data-page="inbox"] .filter').forEach((b,i)=>b.classList.toggle('active',i===0));renderConversations();updateAnnotation();}
+function leadsByCurrent(){return state.currentModel==='all'?leads:leads.filter(l=>l.model===state.currentModel)}
+function renderConversations(list){
+  const isLeads=state.inboxMode==='leads';
+  $('#modeChats')&&$('#modeChats').classList.toggle('active',!isLeads);
+  $('#modeLeads')&&$('#modeLeads').classList.toggle('active',isLeads);
+  $('#inboxModeLabel')&&($('#inboxModeLabel').textContent=isLeads?'System-assigned male leads':'Active male conversations');
+  if(isLeads) return renderLeads(list);
+  let arr=list||convsByCurrent();const type=state.currentFilter;
+  if(type&&type!=='All'){arr=arr.filter(c=>{const u=getMale(c.male);return c.status===type||u.intent===type||u.stage===type||(type==='New'&&(u.stage==='New Match'||u.stage==='Viewed Model'||u.stage==='Matched No Chat'))||(type==='Waiting')||(type==='Timeout'&&c.timeout)})}
+  const metricChats=$('#metricChats'), metricPending=$('#metricPending'), metricRevenue=$('#metricRevenue'); if(metricChats)metricChats.textContent=arr.length; if(metricPending)metricPending.textContent=arr.filter(c=>c.unread>0).length; const revenue=state.currentModel==='all'?'$128':getModel(state.currentModel).revenue; if(metricRevenue)metricRevenue.textContent=revenue; $('#inboxCountLabel')&&($('#inboxCountLabel').textContent=arr.length+' chats');
+  $('#conversationList').innerHTML=arr.map(c=>{const u=getMale(c.male),m=getModel(c.model);const titleBadge=u.payment==='VIP'?'VIP':'Free';const titleBadgeClass=u.payment==='VIP'?'vip':'free';return `<div class="conversation-card card active-conversation" onclick="selectConversation('${c.id}')"><div class="conv-top"><div class="conv-avatar-wrap"><img class="avatar md" src="${u.avatar}"><span class="conv-online ${isConversationOnline(c)?'show':''}"></span></div><div class="conv-info"><div class="conv-title"><div class="name-pay"><h3>${u.name}</h3><span class="age-inline">${u.age}</span><span class="pay-mini ${titleBadgeClass}">${titleBadge}</span></div></div><div class="model-line country-line"><span class="geo-item"><span class="geo-icon" aria-hidden="true"></span>${u.country}</span><span>${u.distance}</span></div><div class="tag-row compact"><span class="pill blue">${u.stage}</span></div></div></div><div class="conv-bottom top-action"><div class="action-stack"><button class="suggestion with-avatar send-action" onclick="event.stopPropagation();selectConversation('${c.id}')"><img src="${m.avatar}" alt=""><span>Send</span></button></div></div></div>`}).join('') || `<div class="empty card"><div class="icon">🕊️</div><h3>No conversations</h3><p>This identity has no matching conversations for the current filter.</p></div>`
+}
+function renderLeads(list){
+  let arr=list||leadsByCurrent();const type=state.currentFilter;
+  if(type&&type!=='All'){arr=arr.filter(l=>{const u=getMale(l.male);return u.payment===type||l.intent===type||l.stage===type||(type==='New'&&(l.stage==='Viewed Model'||l.stage==='Matched No Chat'||u.stage==='New Match'))||(type==='Waiting')||(type==='VIP'&&u.payment==='VIP')})}
+  $('#metricChats').textContent=arr.length; $('#metricPending').textContent=arr.filter(l=>l.intent==='High Intent'||l.intent==='Paywall Near').length; $('#metricRevenue').textContent=state.currentModel==='all'?'Leads':getModel(state.currentModel).revenue; $('#inboxCountLabel')&&($('#inboxCountLabel').textContent=arr.length+' leads');
+  $('#conversationList').innerHTML=arr.map(l=>{const u=getMale(l.male),m=getModel(l.model);const pc=u.payment==='VIP'?'gold':u.payment==='Paid'?'green':'warn';return `<div class="conversation-card card"><div class="conv-top"><div class="conv-avatar-wrap"><img class="avatar md" src="${u.avatar}"><span class="conv-online ${l.active==='Online now'?'show':''}"></span></div><div class="conv-info"><div class="conv-title"><h3>${u.name}</h3><span class="wait">${l.active}</span></div><div class="model-line"><img class="avatar sm" src="${m.avatar}"> Suggested for <strong>${m.name}</strong> · ${u.country}</div><div style="margin-top:8px;display:flex;gap:6px;flex-wrap:wrap"><span class="pill blue">${l.stage}</span><span class="pill ${pc}">${u.payment}${u.payment==='Free'?' · '+u.freeLeft+' left':''}</span><span class="pill ${l.intent==='High Intent'||l.intent==='Paywall Near'?'warn':'gray'}">${l.intent}</span></div><div class="lead-reason">${l.reason}</div></div></div><div class="lead-actions"><button class="soft-btn" onclick="sendLeadGreeting('${l.id}')">${l.action}</button><button class="ghost-btn" onclick="previewLead('${l.id}')">Preview</button></div></div>`}).join('') || `<div class="empty card"><div class="icon">🧭</div><h3>No leads</h3><p>No system-assigned leads match the current model or filter.</p></div>`
+}
+function filterConversations(type,btn){state.currentFilter=type;$$('[data-page="inbox"] .filter').forEach(b=>b.classList.remove('active'));btn.classList.add('active');renderConversations()}
+function previewLead(id){const l=leads.find(x=>x.id===id),u=getMale(l.male),m=getModel(l.model);showToast(`${u.name} · ${l.reason} · ${m.name}`)}
+function sendLeadGreeting(id){const l=leads.find(x=>x.id===id),u=getMale(l.male),m=getModel(l.model);const newId='c_from_'+id;let c=conversations.find(x=>x.id===newId);if(!c){c={id:newId,male:l.male,model:l.model,last:`${m.name} sent a warm greeting.`,wait:'now',action:'Continue chat',status:u.payment,timeout:false,unread:0};conversations.unshift(c)}state.currentModel=l.model;state.selectedConversation=c.id;showToast(`Greeting sent as ${m.name}`);goPage('chat_detail')}
+function selectConversation(id){state.selectedConversation=id;const c=getConv(id);state.currentModel=c.model;goPage('chat_detail')}
+function renderChat(){const c=getConv(state.selectedConversation),u=getMale(c.male),m=getModel(c.model);$('#chatMaleAvatar').src=u.avatar;$('#chatModelAvatar').src=m.avatar;$('#chatMaleName').textContent=u.name;$('#chatModelLine').textContent=`Replying as ${m.name} · ${m.city} · ${m.voice}`;$('#chatPayment').textContent=u.payment;$('#chatPayment').className='pill '+(u.payment==='VIP'?'gold':u.payment==='Paid'?'green':'warn');$('#chatStage').textContent=u.stage;$('#chatFree').textContent=u.payment==='Free'?`${u.freeLeft} msg left`:'Unlimited chat';$('#chatSuggest').textContent=c.action;const area=$('#messageArea');area.innerHTML=`<div class="system-note">Conversation bound to ${m.name}. Use only ${m.name}'s assets and scripts.</div><div class="system-note">${u.stage} · ${u.intent} · ${u.payment}${u.payment==='Free'?' · '+u.freeLeft+' free message left':''}</div><div class="bubble-row them"><div class="bubble">${c.last}</div></div><div class="bubble-row me"><div class="bubble">I’m here now. I was waiting for your reply 😊</div></div>`;setTimeout(()=>area.scrollTop=area.scrollHeight,0)}
+function appendMessage(html){const area=$('#messageArea');area.insertAdjacentHTML('beforeend',html);area.scrollTop=area.scrollHeight}
+function quickReply(){const m=getModel(getConv(state.selectedConversation).model);appendMessage(`<div class="bubble-row me"><div class="bubble">${m.name==='Lina'?'I’d like to hear your voice again tonight.':'Tell me one thing you like most at night ✨'}</div></div>`);showToast('Quick reply added')}
+function openSystemAlbum(){const input=$('#albumInput');if(!input)return showToast('Album unavailable');input.value='';input.click();showToast('Opening system album')}
+function handleAlbumPick(input){const files=[...(input.files||[])];if(!files.length)return;const c=getConv(state.selectedConversation),m=getModel(c.model);const first=files[0];const label=files.length>1?`${files.length} album items`:(first.type&&first.type.includes('video')?'Album video':'Album photo');appendMessage(`<div class="bubble-row me"><div class="album-card"><div class="album-preview"><span>${files.length>1?'Gallery':(first.type&&first.type.includes('video')?'Video':'Photo')}</span></div><h4>${label} sent</h4><p>${m.name} sent from system album</p></div></div>`);showToast(files.length>1?`${files.length} album items sent`:'Album item sent')}
+function sendPhoto(){openSystemAlbum()}
+function sendCallInvite(){appendMessage('<div class="bubble-row me"><div class="call-card"><h4>📞 Quick call invite</h4><p>Good timing: active in chat.</p></div></div>');showToast('Call invite sent')}
+function sendVideoCallInvite(){appendMessage('<div class="bubble-row me"><div class="call-card video-call-card"><h4>▣ Video call invite</h4><p>Invite sent for a short live video chat.</p></div></div>');showToast('Video call invite sent')}
+function sendText(){const input=$('#composerInput');const text=input.value.trim();if(!text)return showToast('Type a message first');appendMessage(`<div class="bubble-row me"><div class="bubble">${text}</div></div>`);input.value='';showToast('Message sent')}
+function openEmojiPicker(){$('#emojiLayer').classList.add('active');state.page='emoji_picker';updateAnnotation()}
+function closeEmojiPicker(){$('#emojiLayer').classList.remove('active');state.page=$('.screen.active').dataset.page;updateAnnotation()}
+function pickEmoji(emoji){closeEmojiPicker();appendMessage(`<div class="bubble-row me"><div class="bubble emoji-message">${emoji}</div></div>`);showToast('Emoji sent')}
+function openGiftPanel(){closeEmojiPicker();renderGiftPanel();$('#giftLayer').classList.add('active');state.page='gift_picker';updateAnnotation()}
+function closeGiftPanel(){$('#giftLayer').classList.remove('active');state.page=$('.screen.active').dataset.page;updateAnnotation()}
+function chooseGift(id){state.selectedGift=id;renderGiftPanel()}
+function renderGiftPanel(){const c=getConv(state.selectedConversation),u=getMale(c.male),m=getModel(c.model);$('#giftContext').textContent=`To ${u.name} · as ${m.name}`;$('#giftGrid').innerHTML=gifts.map(g=>`<button class="gift-option ${g.id===state.selectedGift?'active':''}" onclick="chooseGift('${g.id}')"><span class="gift-icon">${g.icon}</span><strong>${g.name}</strong><em>${g.price} coins</em><small>${g.tone}</small></button>`).join('')}
+function sendGift(){const gift=gifts.find(g=>g.id===state.selectedGift)||gifts[0];const c=getConv(state.selectedConversation),m=getModel(c.model);closeGiftPanel();appendMessage(`<div class="bubble-row me"><div class="gift-card"><div class="gift-card-icon">${gift.icon}</div><div><h4>${gift.name} sent · ${gift.price} coins</h4><p>${m.name} sent a ${gift.tone.toLowerCase()} gift</p></div></div></div>`);showToast('Gift sent')}
+var modelRosterFilter='all';
+function modelPriority(m){return m.id==='m3'?'risk':(m.id==='m2'?'new':'high')}
+function modelGrade(m){return ({m1:'A+',m2:'A',m3:'C',m4:'B+'})[m.id]||'B'}
+function modelServingId(m){return ({m1:'M100234',m2:'M100198',m3:'M100331',m4:'M100276'})[m.id]||('M100'+m.id.slice(1))}
+function modelStatus(m){if(m.id==='m3')return {label:'At Risk',cls:'risk'};if(modelPriority(m)==='new')return {label:'New',cls:'new'};return {label:m.online?'Active':'Offline',cls:m.online?'active':'offline'}}
+function modelExposure(m){return ({m1:{label:'High',delta:'↑',cls:'high'},m2:{label:'Medium',delta:'−',cls:'medium'},m3:{label:'Low',delta:'↓',cls:'low'},m4:{label:'Medium',delta:'↗',cls:'medium'}})[m.id]||{label:'Medium',delta:'−',cls:'medium'}}
+function modelRiskScore(m){return ({m1:{label:'Low',cls:'low'},m2:{label:'Low',cls:'low'},m3:{label:'High',cls:'high'},m4:{label:'Medium',cls:'medium'}})[m.id]||{label:'Low',cls:'low'}}
+function modelScheduleMatch(m){return ({m1:'95%',m2:'78%',m3:'30%',m4:'62%'})[m.id]||'70%'}
+function modelLocationLabel(m){return m.id==='m4'?'Kuwait · Salmiya':m.lbs}
+function modelIntentCount(m){return m.id==='m1'?3:m.id==='m4'?2:m.id==='m2'?2:1}
+function modelPrivateTiming(m){return m.id==='m1'?2:m.id==='m4'?3:m.id==='m2'?1:1}
+function modelRevenueValue(m){return ({m1:'$486',m4:'$243',m2:'$360',m3:'$128'})[m.id]||m.revenue}
+function modelTrendLine(m){return m.id==='m1'?'Response +2%':m.id==='m4'?'Payment +$56':m.id==='m2'?'VIP response +4%':'New match warming'}
+function modelShortDesc(m){return m.id==='m1'?'Playful, warm, coffee-date vibe':m.id==='m4'?'Confident, stylish, direct but warm':m.id==='m2'?'Calm, premium, voice-friendly':m.id==='m3'?'Soft, shy, slow warm-up':m.bio}
+function modelDisplayTags(m){var geo=[m.city,m.country,m.lbs,'Dubai','Riyadh','Doha','Kuwait','Kuwait City','UAE','SA','QA','KW','Salmiya','Dubai Marina','Riyadh Center','Doha West Bay'];return m.tags.filter(function(t){return geo.indexOf(t)<0}).slice(0,5)}
+function modelRosterOrdered(){return ['m1','m2','m4','m3'].map(getModel)}
+function modelRosterFiltered(){return modelRosterOrdered().filter(function(m){return modelRosterFilter==='all'||modelPriority(m)===modelRosterFilter})}
+function setModelRosterFilter(filter){modelRosterFilter=filter;renderModels()}
+function renderModelFilters(){var counts={all:modelRosterOrdered().length,high:modelRosterOrdered().filter(m=>modelPriority(m)==='high').length,risk:modelRosterOrdered().filter(m=>modelPriority(m)==='risk').length,new:modelRosterOrdered().filter(m=>modelPriority(m)==='new').length};var labels={all:'All',high:'High Priority',risk:'At Risk',new:'New'};$$('.model-filter-row button[data-model-filter]').forEach(function(btn){var key=btn.dataset.modelFilter;btn.classList.toggle('active',key===modelRosterFilter);btn.textContent=labels[key]+' ('+counts[key]+')'})}
+function renderModelServiceCard(items){var total=modelRosterOrdered().length;var online=Math.round(modelRosterOrdered().filter(m=>m.online).length/total*100);var card=$('#modelServiceCard');if(!card)return;card.innerHTML=`<div class="service-icon">▥</div><div><strong>You are serving ${total} models</strong><p>Keep online rate high to get more high-value models.</p></div><div class="service-rate"><span>Online Rate</span><b>${online}% ↑</b></div>`}
+function renderModels(){const ordered=modelRosterFiltered();$('#modelsCurrent').textContent=currentModelName();renderModelFilters();renderModelServiceCard(ordered);$('#modelList').innerHTML=ordered.map(m=>{const priority=modelPriority(m),status=modelStatus(m),exposure=modelExposure(m),risk=modelRiskScore(m);return `<div class="model-roster-card ${priority==='high'?'featured':''}" onclick="selectModel('${m.id}')"><div class="model-roster-avatar-wrap"><img class="model-roster-avatar" src="${m.avatar}" alt="${m.name}"><span class="model-online-dot ${m.online?'':'offline'}"></span></div><div class="model-roster-info"><div class="model-roster-head"><h3>${m.name}</h3><span class="grade-badge">${modelGrade(m)}</span><span class="status-badge ${status.cls}">${status.label}</span></div><p class="model-id-row">ID: ${modelServingId(m)} <span>·</span> ${m.city}, ${m.country}</p><div class="model-roster-metrics"><div class="model-roster-stat ${exposure.cls}"><em>Exposure</em><strong>${exposure.label} <span>${exposure.delta}</span></strong></div><div class="model-roster-stat risk-${risk.cls}"><em>Risk</em><strong>${risk.label}</strong></div><div class="model-roster-stat match"><em>Schedule Match</em><strong>${modelScheduleMatch(m)}</strong></div></div></div><button class="model-chevron" onclick="event.stopPropagation();selectModel('${m.id}')" aria-label="View ${m.name} details">›</button></div>`}).join('')||`<div class="empty card"><div class="icon">👩</div><h3>No models</h3><p>No model matches this filter.</p></div>`}
+function switchIdentity(id){state.currentModel=id;showToast(`Switched to ${getModel(id).name}`);goPage('inbox')}
+function selectModel(id){state.selectedModel=id;goPage('model_detail')}
+function modelOnlineRate(m){return ({m1:95,m2:91,m3:72,m4:88})[m.id]||86}
+function modelPriorityLabel(m){return modelPriority(m)==='risk'?'Risk':(modelPriority(m)==='new'?'New':'High')}
+function modelScheduleData(m){return ({m1:{coverage:'3 / 4',scheduled:'8h 30m',online:'8h 05m'},m2:{coverage:'3 / 4',scheduled:'7h 45m',online:'7h 10m'},m3:{coverage:'1 / 4',scheduled:'4h 20m',online:'3h 55m'},m4:{coverage:'2 / 4',scheduled:'6h 40m',online:'6h 08m'}})[m.id]||{coverage:'2 / 4',scheduled:'6h 00m',online:'5h 30m'}}
+function modelWeeklyRates(m){return ({m1:[84,97,72,93,90,88,95],m2:[88,90,86,92,94,89,91],m3:[61,68,64,70,69,71,72],m4:[78,83,80,86,84,87,88]})[m.id]||[80,82,79,85,86,84,88]}
+function modelScheduleSegments(m){var peak=[6,12,19];var active={m1:[5,10,11,16,17,18],m2:[7,8,13,17,18],m3:[18,19,20],m4:[9,10,16,17,21]}[m.id]||[10,11,17,18];return Array.from({length:24},function(_,i){var cls=active.indexOf(i)>=0?'scheduled':(peak.indexOf(i)>=0?'peak':'off');return `<span class="schedule-segment ${cls}"></span>`}).join('')}
+function modelChartSvg(points){var coords=points.map(function(v,i){return [8+i*45,96-(v*.78)]});var line=coords.map(function(p){return p.join(',')}).join(' ');var area='8,104 '+line+' 278,104';return `<svg class="model-chart-svg" viewBox="0 0 286 112" aria-label="7 day online rate"><polygon points="${area}"></polygon><polyline points="${line}"></polyline>${coords.map(function(p,i){return `<circle cx="${p[0]}" cy="${p[1]}" r="${i===coords.length-1?5:4}"></circle>`}).join('')}<g>${['Mon','Tue','Wed','Thu','Fri','Sat','Sun'].map(function(d,i){return `<text x="${8+i*45}" y="111">${d}</text>`}).join('')}</g></svg>`}
+function renderModelDetail(){const m=getModel(state.selectedModel);const exposure=modelExposure(m),risk=modelRiskScore(m),status=modelStatus(m),schedule=modelScheduleData(m),rate=modelOnlineRate(m);$('#modelDetailContent').innerHTML=`<section class="model-profile-hero"><div class="detail-profile-main"><div class="detail-avatar-wrap"><img src="${m.avatar}" alt="${m.name}"><span class="detail-online-dot"></span></div><div class="detail-profile-copy"><h2>${m.name}</h2><div class="detail-badge-row"><span class="grade-badge">${modelGrade(m)}</span><span class="status-badge ${status.cls}">${status.label}</span></div><p>ID: ${modelServingId(m)} <span>·</span> ${m.city}, ${m.country}</p></div></div><div class="model-score-strip"><div><em>Traffic Level</em><strong>${exposure.label}</strong></div><div><em>Risk Level</em><strong>${risk.label}</strong></div><div><em>Online Rate</em><strong>${rate}%</strong></div><div><em>Priority</em><strong>${modelPriorityLabel(m)}</strong></div></div></section><section class="model-detail-panel"><section class="model-schedule-card"><div class="model-section-head"><h3>Today's Schedule</h3><span>Jun 23, 2026</span></div><div class="schedule-hours"><span>00:00</span><span>06:00</span><span>12:00</span><span>18:00</span><span>24:00</span></div><div class="schedule-track">${modelScheduleSegments(m)}</div><div class="schedule-legend"><span><i class="scheduled"></i>Scheduled</span><span><i class="peak"></i>Peak Hours</span><span><i class="off"></i>Offline</span></div><div class="schedule-stat-grid"><div><em>Peak Coverage</em><strong>${schedule.coverage}</strong><span>Good</span></div><div><em>Scheduled Time</em><strong>${schedule.scheduled}</strong><span>Today</span></div><div><em>Online Time</em><strong>${schedule.online}</strong><span>${rate}%</span></div></div></section><section class="model-chart-card"><div class="model-section-head"><h3>7-Day Online Rate</h3><span>${rate}%</span></div>${modelChartSvg(modelWeeklyRates(m))}</section><section class="model-key-card"><h3>Key Metrics</h3><div class="model-key-grid"><div><span>💬</span><em>Chats</em><strong>${m.chats}</strong><small>Today</small></div><div><span>⚡</span><em>Response Rate</em><strong>${Math.min(99,rate+3)}%</strong><small>Today</small></div><div><span>◷</span><em>Avg. Response</em><strong>${m.id==='m3'?'28s':'12s'}</strong><small>Today</small></div><div><span>♡</span><em>Satisfaction</em><strong>${m.id==='m3'?'4.6':'4.9'}</strong><small>/5</small></div></div></section><div class="model-detail-actions"><button onclick="showToast('${m.name} guidelines opened')">View Guidelines</button><button class="primary" onclick="switchIdentity('${m.id}')">View Assignment</button></div></section>`}
+function renderAssets(list){let arr=list||convsByCurrent();const el=$('#assetList');if(!el)return;el.innerHTML=arr.map(c=>{const u=getMale(c.male),m=getModel(c.model);const online=c.unread>0&&!c.timeout;const seconds=countdownSeconds(c);const timeText=seconds===null?'Timeout':formatCountdown(seconds);const unread=c.unread>0?`<span class="im-unread">${c.unread}</span>`:'';return `<div class="im-row" onclick="selectConversation('${c.id}')"><div class="im-avatar-wrap"><img class="avatar im-avatar" src="${u.avatar}" alt=""><span class="im-online ${online?'show':''}"></span><img class="im-model-avatar" src="${m.avatar}" alt="${m.name}"></div><div class="im-row-info"><div class="im-row-main"><h3>${u.name}</h3><span>${u.age}</span></div><p class="im-last">${c.last}</p></div><div class="im-side"><span class="im-time" data-conversation-id="${c.id}"><i class="countdown-icon" aria-hidden="true"></i><span class="im-countdown-text">${timeText}</span></span>${unread}</div></div>`}).join('')||`<div class="empty card"><div class="icon">💬</div><h3>No conversations</h3><p>No messages for this model yet.</p></div>`}
+function filterAssets(type,btn){state.currentFilter=type;$$('[data-page="assets"] .filter').forEach(b=>b.classList.remove('active'));btn.classList.add('active');renderAssets()}
+function selectAsset(id,source='assets'){state.selectedAsset=id;state.pickerSource=source;openPicker(source)}
+function privateAssetsForModel(modelId){return assets.filter(a=>a.model===modelId&&(a.type==='Private Photo'||a.type==='Private Video'))}
+function firstPrivateAsset(modelId){return privateAssetsForModel(modelId)[0]||assets.find(a=>a.model===modelId)||assets[0]}
+function openPicker(source='chat'){state.pickerSource=source;if(source==='chat'){const c=getConv(state.selectedConversation);state.pickerModel=c.model}else{const a=getAsset(state.selectedAsset);state.pickerModel=a?a.model:(state.currentModel==='all'?'m1':state.currentModel)}const first=firstPrivateAsset(state.pickerModel);const validSelected=(state.selectedAssets||[]).filter(id=>{const a=getAsset(id);return a&&a.model===state.pickerModel&&a.type.includes('Private')});state.selectedAssets=validSelected.length?validSelected:[first.id];state.selectedAsset=state.selectedAssets[0];renderPrivatePicker();$('#sheetLayer').classList.add('active');state.page='content_picker';updateAnnotation()}
+function choosePickerModel(modelId){state.pickerModel=modelId;const first=firstPrivateAsset(modelId);state.selectedAssets=first?[first.id]:[];state.selectedAsset=state.selectedAssets[0]||'';renderPrivatePicker()}
+function choosePrivateAsset(id){const selected=new Set(state.selectedAssets||[]);selected.has(id)?selected.delete(id):selected.add(id);if(!selected.size)selected.add(id);state.selectedAssets=[...selected];state.selectedAsset=state.selectedAssets[0];renderPrivatePicker()}
+function renderPrivatePicker(){const activeModel=getModel(state.pickerModel);const selectedSet=new Set(state.selectedAssets||[]);$('#sheetModelTabs').innerHTML=models.map(m=>`<button class="sheet-model-tab ${m.id===state.pickerModel?'active':''}" onclick="choosePickerModel('${m.id}')"><img src="${m.avatar}" alt=""><span>${m.name}</span></button>`).join('');const privateAssets=privateAssetsForModel(state.pickerModel);$('#privateAssetGrid').innerHTML=privateAssets.map(a=>`<button class="private-asset-option ${selectedSet.has(a.id)?'active':''}" onclick="choosePrivateAsset('${a.id}')"><span class="asset-check"></span><span class="media-thumb ${a.type==='Private Video'?'video':''}" style="background-image:url('${a.thumb}')"><span>${a.type==='Private Video'?'Video':'Photo'}</span><b>${a.price}</b></span><strong>${a.title}</strong><em>${a.type.replace('Private ','')}</em></button>`).join('')||`<div class="empty picker-empty"><div class="icon">🔒</div><h3>No private assets</h3><p>${activeModel.name} has no private photos or videos yet.</p></div>`}
+function closePicker(){$('#sheetLayer').classList.remove('active');state.page=$('.screen.active').dataset.page;updateAnnotation()}
+function sendPrivateContent(){const c=getConv(state.selectedConversation);const selected=(state.selectedAssets||[]).map(getAsset).filter(Boolean);if(!selected.length){showToast('Choose private content first');return}if(selected.some(a=>a.model!==c.model)){showToast('This asset belongs to another model');return}selected.forEach(a=>{a.sent=true});closePicker();goPage('chat_detail');const model=getModel(c.model);if(selected.length>1){const total=selected.reduce((sum,a)=>sum+privatePriceValue(a),0);appendMessage(`<div class="bubble-row me"><div class="private-card private-bundle-card"><div class="bundle-grid">${selected.slice(0,4).map(a=>`<span style="background-image:url('${a.thumb}')"></span>`).join('')}</div><h4>${selected.length} private items · ${total} coins</h4><p>${model.name} bundled private unlock added to chat</p></div></div>`);showToast(`${selected.length} private items merged and sent`);return}const a=selected[0];appendMessage(`<div class="bubble-row me"><div class="private-card"><div class="thumb" style="background-image:url('${a.thumb}')"></div><h4>${a.title} · ${a.price}</h4><p>${model.name} private unlock card added to chat</p></div></div>`);showToast('Private content added to chat')}
+var meIncomePeriod='this';
+var meIncomePeriodMeta={this:{label:'This week',range:['2026/06/18','2026/06/22']},last:{label:'Last week',range:['2026/06/11','2026/06/17']}};
+function meIncomeItems(){var meta=meIncomePeriodMeta[meIncomePeriod]||meIncomePeriodMeta.this;return incomeAllItems.filter(function(item){var day=incomeDateKey(item);return day>=meta.range[0]&&day<=meta.range[1]})}
+function meIncomeValueText(){var items=meIncomeItems();var total=items.reduce(function(sum,item){return sum+(parseInt(item.amount.replace('+',''),10)||0)},0);return '💎'+total.toLocaleString()+' ≈ $'+(total/1000000).toFixed(2)}
+function toggleMeIncomePeriod(){meIncomePeriod=meIncomePeriod==='this'?'last':'this';renderMe();showToast((meIncomePeriodMeta[meIncomePeriod]||meIncomePeriodMeta.this).label)}
+var meLevelPeriod='this';
+var meLevelPeriodData={this:{label:'This week',summary:'Top 18%',ratios:{Unlock:82,Payment:76,Activity:91,Response:87}},last:{label:'Last week',summary:'Top 24%',ratios:{Unlock:78,Payment:72,Activity:88,Response:83}}};
+function toggleMeLevelPeriod(){meLevelPeriod=meLevelPeriod==='this'?'last':'this';renderMe();showToast(meLevelPeriodData[meLevelPeriod].label)}
+function renderMeLevel(){const level=meLevelPeriodData[meLevelPeriod]||meLevelPeriodData.this;const label=$('#meLevelPeriodLabel');if(label)label.textContent=level.label;const summary=$('#meLevelSummary');if(summary)summary.textContent=level.summary;[{id:'meRatioUnlock',key:'Unlock'},{id:'meRatioPayment',key:'Payment'},{id:'meRatioActivity',key:'Activity'},{id:'meRatioResponse',key:'Response'}].forEach(function(item){const el=$('#'+item.id);if(!el)return;const value=level.ratios[item.key];el.textContent=value+'%';el.style.setProperty('--value',value)})}
+function renderMe(){const online=$('#meOnlinePill');if(online){online.textContent=state.online?'Online':'Offline';online.className='pill '+(state.online?'green':'gray')}const current=$('#meCurrentModel');if(current)current.textContent=currentModelName();const income=meIncomePeriodMeta[meIncomePeriod]||meIncomePeriodMeta.this;const incomeLabel=$('#meIncomePeriodLabel');if(incomeLabel)incomeLabel.textContent=income.label;const incomeValue=$('#meIncomeValue');if(incomeValue)incomeValue.textContent=meIncomeValueText();renderMeLevel()}
+function renderWorkStatus(){$('#workStatusTitle').textContent=state.online?'Online':'Offline';$('#workStatusDesc').textContent=state.online?'You can receive new conversations. Historical conversations remain visible.':'New conversations will not be assigned. Historical conversations remain visible.'}
+var incomeAllItems=[{icon:'💬',type:'chat',title:'Chat reward · Ahmed',desc:'Warm chat bonus',amount:'+120',time:'Today 14:22',dayGroup:'Today 2026/06/22',model:'m1'},{icon:'🎁',type:'gift',title:'Gift received · from Omar',desc:'Rose gift → diamond conversion',amount:'+20',time:'Today 12:08',dayGroup:'Today 2026/06/22',model:'m2'},{icon:'📸',type:'photo',title:'Private photo · Fahad',desc:'Private moment unlock',amount:'+99',time:'Today 10:45',dayGroup:'Today 2026/06/22',model:'m4'},{icon:'💬',type:'chat',title:'Chat reward · Majed',desc:'Warm chat bonus',amount:'+120',time:'Yesterday 18:15',dayGroup:'Yesterday 2026/06/21',model:'m2'},{icon:'🎁',type:'gift',title:'Gift received · from Sultan',desc:'Diamond gift → conversion',amount:'+88',time:'Yesterday 15:40',dayGroup:'Yesterday 2026/06/21',model:'m2'},{icon:'📞',type:'call',title:'Call bonus · Nasser',desc:'Quick call reward',amount:'+50',time:'Yesterday 22:30',dayGroup:'Yesterday 2026/06/21',model:'m1'},{icon:'📸',type:'photo',title:'Private video · Adel',desc:'Private video unlock',amount:'+189',time:'Jun 20 21:10',dayGroup:'2026/06/20',model:'m4'},{icon:'💬',type:'chat',title:'Chat reward · Tariq',desc:'VIP chat bonus',amount:'+120',time:'Jun 20 16:55',dayGroup:'2026/06/20',model:'m2'},{icon:'🎁',type:'gift',title:'Gift received · from Ahmed',desc:'Coffee gift → diamond conversion',amount:'+20',time:'Jun 19 20:10',dayGroup:'2026/06/19',model:'m1'},{icon:'📸',type:'photo',title:'Private photo · Nasser',desc:'Private moment unlock',amount:'+99',time:'Jun 19 14:25',dayGroup:'2026/06/19',model:'m1'},{icon:'💬',type:'chat',title:'Chat reward · Khalid',desc:'Warm chat bonus',amount:'+120',time:'Jun 18 19:05',dayGroup:'2026/06/18',model:'m3'},{icon:'📞',type:'call',title:'Call bonus · Rashid',desc:'Quick call reward',amount:'+50',time:'Jun 18 12:30',dayGroup:'2026/06/18',model:'m3'}];var incomeFilter=state.incomeFilter||'all';function filterIncomeItems(){return incomeFilter==='all'?incomeAllItems:incomeAllItems.filter(function(d){return d.model===incomeFilter})}function incomeTotalFor(items){var sum=0;items.forEach(function(d){sum+=parseInt(d.amount.replace('+',''),10)||0});return sum.toLocaleString()}function renderIncomeSummary(){var displayValue='💎5656';$('#incomeModelSummary').innerHTML='<div class="income-model-stat"><span>💬</span><strong>'+displayValue+'</strong><em>Chat</em></div><div class="income-model-stat"><span>🎁</span><strong>'+displayValue+'</strong><em>Gifts</em></div><div class="income-model-stat"><span>📸</span><strong>'+displayValue+'</strong><em>Photos</em></div><div class="income-model-stat"><span>📞</span><strong>'+displayValue+'</strong><em>Phone calls</em></div><div class="income-model-stat"><span>📹</span><strong>'+displayValue+'</strong><em>Video calls</em></div>'}function renderIncomeList(){var items=filterIncomeItems();$('#incomeTotalDiamonds').textContent='💎 '+incomeTotalFor(items);$('#incomeTotalUSD').textContent='≈ $'+(items.reduce(function(s,d){return s+(parseInt(d.amount.replace('+',''),10)||0)},0)/1000000).toFixed(2);var groups=[],seen={};items.forEach(function(d){var g=d.dayGroup||'Earlier';if(!seen[g]){seen[g]=true;groups.push(g)}d._group=g});var html='';groups.forEach(function(g){html+='<div class="income-section-label">'+g+'</div>';items.filter(function(d){return d._group===g}).forEach(function(d){html+='<div class="income-row"><div class="income-row-icon '+d.type+'">'+d.icon+'</div><div class="income-row-body"><strong>'+d.title+'</strong><p>'+d.desc+'</p></div><div class="income-row-amount"><strong>'+d.amount+'</strong><span>'+d.time+'</span></div></div>'})});$('#incomeList').innerHTML=html||'<div class="empty card"><div class="icon">💎</div><h3>No income yet</h3><p>No diamond transactions for this model.</p></div>'}function renderIncomeModelSwitch(){var chips='<button class="income-model-chip '+(incomeFilter==='all'?'active':'')+'" onclick="setIncomeFilter(\'all\')">All Models</button>'+models.map(function(m){return '<button class="income-model-chip '+(incomeFilter===m.id?'active':'')+'" onclick="setIncomeFilter(\''+m.id+'\')"><img src="'+m.avatar+'">'+m.name+'</button>'}).join('');$('#incomeModelSwitch').innerHTML=chips}function setIncomeFilter(id){incomeFilter=id;renderIncomeModelSwitch();renderIncomeSummary();renderIncomeList()}function renderIncomeDetail(){renderIncomeModelSwitch();renderIncomeSummary();renderIncomeList()}
+function renderIncomeSummary(){var items=filterIncomeItems();function sum(type){return items.filter(function(d){return d.type===type}).reduce(function(total,d){return total+(parseInt(d.amount.replace('+',''),10)||0)},0).toLocaleString()}function diamond(type){return '💎'+sum(type)}$('#incomeModelSummary').innerHTML='<div class="income-model-stat"><span>💬</span><strong>'+diamond('chat')+'</strong><em>Chat</em></div><div class="income-model-stat"><span>🎁</span><strong>'+diamond('gift')+'</strong><em>Gifts</em></div><div class="income-model-stat"><span>📸</span><strong>'+diamond('photo')+'</strong><em>Photos</em></div><div class="income-model-stat"><span>📞</span><strong>'+diamond('call')+'</strong><em>Phone calls</em></div><div class="income-model-stat"><span>📹</span><strong>'+diamond('video')+'</strong><em>Video calls</em></div>'}
+var incomeDateRange=['2026/06/18','2026/06/22'],incomeDraftDateRange=null;
+function incomeDateKey(item){var match=String(item.dayGroup||'').match(/\d{4}\/\d{2}\/\d{2}/);return match?match[0]:'2026/06/22'}
+function incomeAvailableDays(){var seen={};incomeAllItems.forEach(function(item){seen[incomeDateKey(item)]=true});return Object.keys(seen).sort()}
+function incomeScopedItems(){return filterIncomeItems().filter(function(item){var day=incomeDateKey(item);return day>=incomeDateRange[0]&&day<=incomeDateRange[1]})}
+function renderIncomeDateFilter(){var el=$('#incomeListLabel');if(!el)return;var start=incomeDateRange[0],end=incomeDateRange[1];el.innerHTML='<span>Date range</span><strong>'+start+' - '+end+'</strong><em>'+incomeScopedItems().length+' records</em>'}
+function renderIncomeSummary(){var items=incomeScopedItems();function sum(type){return items.filter(function(d){return d.type===type}).reduce(function(total,d){return total+(parseInt(d.amount.replace('+',''),10)||0)},0).toLocaleString()}function diamond(type){return '💎'+sum(type)}$('#incomeModelSummary').innerHTML='<div class="income-model-stat"><span>💬</span><strong>'+diamond('chat')+'</strong><em>Chat</em></div><div class="income-model-stat"><span>🎁</span><strong>'+diamond('gift')+'</strong><em>Gifts</em></div><div class="income-model-stat"><span>📸</span><strong>'+diamond('photo')+'</strong><em>Photos</em></div><div class="income-model-stat"><span>📞</span><strong>'+diamond('call')+'</strong><em>Phone calls</em></div><div class="income-model-stat"><span>📹</span><strong>'+diamond('video')+'</strong><em>Video calls</em></div>'}
+function renderIncomeList(){var items=incomeScopedItems();$('#incomeTotalDiamonds').textContent='💎 '+incomeTotalFor(items);$('#incomeTotalUSD').textContent='≈ $'+(items.reduce(function(s,d){return s+(parseInt(d.amount.replace('+',''),10)||0)},0)/1000000).toFixed(2);renderIncomeDateFilter();$('#incomeList').innerHTML=items.map(function(d){return '<div class="income-row"><div class="income-row-icon '+d.type+'">'+d.icon+'</div><div class="income-row-body"><strong>'+d.title+'</strong><p>'+d.desc+'</p></div><div class="income-row-amount"><strong>'+d.amount+'</strong><span>'+d.time+'</span></div></div>'}).join('')||'<div class="empty card"><div class="icon">💎</div><h3>No income yet</h3><p>No diamond transactions for this date range.</p></div>'}
+function ensureIncomeDateLayer(){if($('#incomeDateLayer'))return;document.querySelector('.phone').insertAdjacentHTML('beforeend','<div class="income-date-layer" id="incomeDateLayer" onclick="if(event.target===this)closeIncomeDatePicker()"><div class="income-date-sheet"><div class="sheet-handle"></div><div class="income-date-head"><h2>Date filter</h2><p>Select a daily income range</p></div><div class="income-date-summary" id="incomeDateSummary"></div><div class="income-date-group"><strong>Start date</strong><div class="income-date-days" id="incomeStartDays"></div></div><div class="income-date-group"><strong>End date</strong><div class="income-date-days" id="incomeEndDays"></div></div><button class="primary-btn income-date-apply" onclick="applyIncomeDateRange()">Apply date range</button></div></div>')}
+function openIncomeDatePicker(){incomeDraftDateRange=[incomeDateRange[0],incomeDateRange[1]];ensureIncomeDateLayer();renderIncomeDatePicker();$('#incomeDateLayer').classList.add('active')}
+function closeIncomeDatePicker(){var layer=$('#incomeDateLayer');if(layer)layer.classList.remove('active')}
+function setIncomeDraftDate(which,day){if(!incomeDraftDateRange)incomeDraftDateRange=[incomeDateRange[0],incomeDateRange[1]];incomeDraftDateRange[which==='start'?0:1]=day;if(incomeDraftDateRange[0]>incomeDraftDateRange[1]){var tmp=incomeDraftDateRange[0];incomeDraftDateRange[0]=incomeDraftDateRange[1];incomeDraftDateRange[1]=tmp}renderIncomeDatePicker()}
+function renderIncomeDatePicker(){var days=incomeAvailableDays();var start=incomeDraftDateRange[0],end=incomeDraftDateRange[1];var count=filterIncomeItems().filter(function(item){var day=incomeDateKey(item);return day>=start&&day<=end}).length;$('#incomeDateSummary').innerHTML='<span>'+start+'</span><em>to</em><span>'+end+'</span><b>'+count+' records</b>';$('#incomeStartDays').innerHTML=days.map(function(day){return '<button class="'+(day===start?'active':'')+'" onclick="setIncomeDraftDate(&quot;start&quot;,'+ratioArg(day)+')">'+day+'</button>'}).join('');$('#incomeEndDays').innerHTML=days.map(function(day){return '<button class="'+(day===end?'active':'')+'" onclick="setIncomeDraftDate(&quot;end&quot;,'+ratioArg(day)+')">'+day+'</button>'}).join('')}
+function applyIncomeDateRange(){if(incomeDraftDateRange)incomeDateRange=[incomeDraftDateRange[0],incomeDraftDateRange[1]];renderIncomeSummary();renderIncomeList();closeIncomeDatePicker();showToast('Income date range updated')}
+var ratioDayData={'2026/06/22':[{icon:'🔓',label:'Unlock',pct:82,trend:'up',change:'+5%',subs:[{k:'Views',v:47},{k:'Unlocks',v:39},{k:'Rate',v:'82%'}]},{icon:'💳',label:'Payment',pct:76,trend:'up',change:'+12%',subs:[{k:'Free chats',v:38},{k:'Converted',v:29},{k:'Revenue',v:'$43'}]},{icon:'⚡',label:'Activity',pct:91,trend:'up',change:'+3%',subs:[{k:'Messages',v:'2.4k'},{k:'Sessions',v:86},{k:'Avg time',v:'14m'}]},{icon:'✅',label:'Response',pct:87,trend:'down',change:'-2%',subs:[{k:'Inbound',v:412},{k:'Replied',v:358},{k:'Avg min',v:'2.3'}]}],'2026/06/21':[{icon:'🔓',label:'Unlock',pct:78,trend:'up',change:'+3%',subs:[{k:'Views',v:41},{k:'Unlocks',v:32},{k:'Rate',v:'78%'}]},{icon:'💳',label:'Payment',pct:71,trend:'up',change:'+8%',subs:[{k:'Free chats',v:34},{k:'Converted',v:24},{k:'Revenue',v:'$38'}]},{icon:'⚡',label:'Activity',pct:88,trend:'down',change:'-1%',subs:[{k:'Messages',v:'2.1k'},{k:'Sessions',v:79},{k:'Avg time',v:'12m'}]},{icon:'✅',label:'Response',pct:90,trend:'up',change:'+4%',subs:[{k:'Inbound',v:389},{k:'Replied',v:350},{k:'Avg min',v:'1.9'}]}],'2026/06/20':[{icon:'🔓',label:'Unlock',pct:74,trend:'down',change:'-2%',subs:[{k:'Views',v:38},{k:'Unlocks',v:28},{k:'Rate',v:'74%'}]},{icon:'💳',label:'Payment',pct:68,trend:'down',change:'-4%',subs:[{k:'Free chats',v:31},{k:'Converted',v:21},{k:'Revenue',v:'$32'}]},{icon:'⚡',label:'Activity',pct:85,trend:'up',change:'+2%',subs:[{k:'Messages',v:'1.9k'},{k:'Sessions',v:72},{k:'Avg time',v:'11m'}]},{icon:'✅',label:'Response',pct:83,trend:'down',change:'-3%',subs:[{k:'Inbound',v:365},{k:'Replied',v:303},{k:'Avg min',v:'2.6'}]}]};var ratioActiveDay='2026/06/22';function renderRatioDateRow(){var days=Object.keys(ratioDayData).sort().reverse();$('#ratioDateRow').innerHTML=days.map(function(d){return '<button class="ratio-date-chip '+(ratioActiveDay===d?'active':'')+'" onclick="setRatioDay(\''+d+'\')">'+d+'</button>'}).join('')}function setRatioDay(day){ratioActiveDay=day;renderRatioDateRow();renderRatioDetail()}
+function renderRatioDetail(){renderRatioDateRow();var items=ratioDayData[ratioActiveDay]||ratioDayData['2026/06/22'];var avg=Math.round(items.reduce(function(s,d){return s+d.pct},0)/items.length);$('#ratioHeroTitle').textContent='Top '+(100-avg)+'%';$('#ratioHeroSub').textContent=ratioActiveDay+' performance';var descs={Unlock:'Private content unlock rate — users who viewed & unlocked your private moments.',Payment:'Payment conversion rate — free users who completed a payment after chatting.',Activity:'Combined score — responsiveness, message volume, and session continuity.',Response:'How many inbound messages you replied to within the expected window.'};$('#ratioDetailList').innerHTML=items.map(function(d){var trendCls=d.trend==='up'?'up':'down';var trendArrow=d.trend==='up'?'↑':'↓';var subsHtml=d.subs.map(function(s){return '<div class="ratio-sub-stat"><em>'+s.k+'</em><strong>'+s.v+'</strong></div>'}).join('');return '<div class="ratio-detail-card"><div class="ratio-detail-top"><div class="ratio-detail-info"><h3><span>'+d.icon+'</span>'+d.label+'</h3><p>'+(descs[d.label]||'')+'</p></div><div class="ratio-detail-pct '+trendCls+'"><strong>'+d.pct+'%</strong><span>'+trendArrow+d.change+' vs previous day</span></div></div><div class="ratio-bar-wrap-sm"><div class="ratio-bar-fill-sm" style="width:'+d.pct+'%"></div></div><div class="ratio-sub-stats">'+subsHtml+'</div></div>'}).join('')}
+var ratioActiveRange=['2026/06/20','2026/06/22'];
+function ratioDaysInRange(){var days=Object.keys(ratioDayData).sort();return days.filter(function(d){return d>=ratioActiveRange[0]&&d<=ratioActiveRange[1]})}
+function ratioArg(v){return JSON.stringify(v)}
+function setRatioRange(start,end){if(start>end){var tmp=start;start=end;end=tmp}ratioActiveRange=[start,end];renderRatioDateRow();renderRatioDetail()}
+function renderRatioDateRow(){var start=ratioActiveRange[0],end=ratioActiveRange[1];$('#ratioDateRow').innerHTML='<div class="ratio-range-picker"><div><em>Start</em><strong>'+start+'</strong></div><span>to</span><div><em>End</em><strong>'+end+'</strong></div><button type="button" onclick="openRatioRangePicker()">Daily</button></div>'}
+var ratioDraftRange=null;
+function ensureRatioRangeLayer(){if($('#ratioRangeLayer'))return;document.querySelector('.phone').insertAdjacentHTML('beforeend','<div class="ratio-layer" id="ratioRangeLayer" onclick="if(event.target===this)closeRatioRangePicker()"><div class="ratio-sheet"><div class="sheet-handle"></div><div class="ratio-sheet-head"><h2>Date range</h2><p>Daily performance window</p></div><div class="ratio-sheet-summary" id="ratioSheetSummary"></div><div class="ratio-sheet-group"><strong>Start date</strong><div class="ratio-sheet-days" id="ratioStartDays"></div></div><div class="ratio-sheet-group"><strong>End date</strong><div class="ratio-sheet-days" id="ratioEndDays"></div></div><button class="primary-btn ratio-apply-btn" onclick="applyRatioRange()">Apply range</button></div></div>')}
+function openRatioRangePicker(){ratioDraftRange=[ratioActiveRange[0],ratioActiveRange[1]];ensureRatioRangeLayer();renderRatioRangePicker();$('#ratioRangeLayer').classList.add('active')}
+function closeRatioRangePicker(){var layer=$('#ratioRangeLayer');if(layer)layer.classList.remove('active')}
+function setRatioDraft(which,day){if(!ratioDraftRange)ratioDraftRange=[ratioActiveRange[0],ratioActiveRange[1]];ratioDraftRange[which==='start'?0:1]=day;if(ratioDraftRange[0]>ratioDraftRange[1]){var tmp=ratioDraftRange[0];ratioDraftRange[0]=ratioDraftRange[1];ratioDraftRange[1]=tmp}renderRatioRangePicker()}
+function renderRatioRangePicker(){var days=Object.keys(ratioDayData).sort();var start=ratioDraftRange[0],end=ratioDraftRange[1];$('#ratioSheetSummary').innerHTML='<span>'+start+'</span><em>to</em><span>'+end+'</span><b>'+ratioDaysBetween(start,end)+' days</b>';$('#ratioStartDays').innerHTML=days.map(function(d){return '<button class="'+(d===start?'active':'')+'" onclick="setRatioDraft(&quot;start&quot;,'+ratioArg(d)+')">'+d+'</button>'}).join('');$('#ratioEndDays').innerHTML=days.map(function(d){return '<button class="'+(d===end?'active':'')+'" onclick="setRatioDraft(&quot;end&quot;,'+ratioArg(d)+')">'+d+'</button>'}).join('')}
+function ratioDaysBetween(start,end){return Object.keys(ratioDayData).sort().filter(function(d){return d>=start&&d<=end}).length}
+function applyRatioRange(){if(ratioDraftRange)setRatioRange(ratioDraftRange[0],ratioDraftRange[1]);closeRatioRangePicker();showToast('Date range updated')}
+function mergeRatioItems(days){var labels=['Unlock','Payment','Activity','Response'];return labels.map(function(label){var rows=days.map(function(day){return (ratioDayData[day]||[]).find(function(x){return x.label===label})}).filter(Boolean);var base=rows[0];var pct=Math.round(rows.reduce(function(s,d){return s+d.pct},0)/rows.length);var subs=base.subs.map(function(sub,idx){var values=rows.map(function(r){return r.subs[idx].v});var numeric=values.every(function(v){return !isNaN(parseFloat(String(v).replace(/[^0-9.]/g,'')))});if(!numeric)return {k:sub.k,v:values[values.length-1]};var total=values.reduce(function(s,v){return s+(parseFloat(String(v).replace(/[^0-9.]/g,''))||0)},0);var prefix=String(values[0]).trim().startsWith('$')?'$':'';return {k:sub.k,v:prefix+Math.round(total).toLocaleString()}});return Object.assign({},base,{pct:pct,subs:subs,change:days.length+' day range',trend:'up'})})}
+var ratioModelFilter=state.currentModel||'all';
+var ratioModelAdjustments={all:{scale:1,delta:{Unlock:0,Payment:0,Activity:0,Response:0}},m1:{scale:1.08,delta:{Unlock:4,Payment:2,Activity:3,Response:2}},m2:{scale:.92,delta:{Unlock:1,Payment:5,Activity:-1,Response:4}},m3:{scale:.58,delta:{Unlock:-8,Payment:-6,Activity:-4,Response:-3}},m4:{scale:.82,delta:{Unlock:5,Payment:3,Activity:1,Response:-1}}};
+function clampRatio(v){return Math.max(1,Math.min(99,v))}
+function renderRatioModelTabs(){var el=$('#ratioModelSwitch');if(!el)return;el.innerHTML='<button class="ratio-model-tab '+(ratioModelFilter==='all'?'active':'')+'" onclick="setRatioModelFilter(\'all\')">All Models</button>'+models.map(function(m){return '<button class="ratio-model-tab '+(ratioModelFilter===m.id?'active':'')+'" onclick="setRatioModelFilter(\''+m.id+'\')"><img src="'+m.avatar+'" alt="">'+m.name+'</button>'}).join('')}
+function setRatioModelFilter(id){ratioModelFilter=id;renderRatioDetail();showToast(id==='all'?'Ratio: All Models':'Ratio: '+getModel(id).name)}
+function ratioScopedValue(value,scale,delta){var raw=String(value);var n=parseFloat(raw.replace(/[^0-9.]/g,''));if(isNaN(n))return value;if(raw.indexOf('%')>-1)return clampRatio(Math.round(n+delta))+'%';if(raw.indexOf('k')>-1)return Math.max(.1,n*scale).toFixed(1).replace('.0','')+'k';if(raw.trim().charAt(0)==='$')return '$'+Math.max(0,Math.round(n*scale)).toLocaleString();if(/[m]$/.test(raw))return Math.max(1,Math.round(n*scale))+'m';return Math.max(0,Math.round(n*scale)).toLocaleString()}
+function ratioScopedItems(items){var cfg=ratioModelAdjustments[ratioModelFilter]||ratioModelAdjustments.all;return items.map(function(d){var delta=(cfg.delta&&cfg.delta[d.label])||0;var pct=clampRatio(Math.round(d.pct+delta));var subs=d.subs.map(function(s){return {k:s.k,v:ratioScopedValue(s.v,cfg.scale,delta)}});return Object.assign({},d,{pct:pct,subs:subs})})}
+function ratioFilterName(){return ratioModelFilter==='all'?'All Models':getModel(ratioModelFilter).name}
+function renderRatioDetail(){renderRatioDateRow();renderRatioModelTabs();var days=ratioDaysInRange();var items=ratioScopedItems(mergeRatioItems(days));var avg=Math.round(items.reduce(function(s,d){return s+d.pct},0)/items.length);$('#ratioHeroTitle').textContent='Top '+(100-avg)+'%';$('#ratioHeroSub').textContent=ratioFilterName()+' · '+ratioActiveRange[0]+' - '+ratioActiveRange[1];var descs={Unlock:'Private content unlock rate — users who viewed & unlocked your private moments.',Payment:'Payment conversion rate — free users who completed a payment after chatting.',Activity:'Combined score — responsiveness, message volume, and session continuity.',Response:'How many inbound messages you replied to within the expected window.'};$('#ratioDetailList').innerHTML=items.map(function(d){var subsHtml=d.subs.map(function(s){return '<div class="ratio-sub-stat"><em>'+s.k+'</em><strong>'+s.v+'</strong></div>'}).join('');return '<div class="ratio-detail-card"><div class="ratio-detail-top"><div class="ratio-detail-info"><h3><span>'+d.icon+'</span>'+d.label+'</h3><p>'+(descs[d.label]||'')+'</p></div><div class="ratio-detail-pct up"><strong>'+d.pct+'%</strong><span>'+d.change+'</span></div></div><div class="ratio-bar-wrap-sm"><div class="ratio-bar-fill-sm" style="width:'+d.pct+'%"></div></div><div class="ratio-sub-stats">'+subsHtml+'</div></div>'}).join('')}
+function setOnline(v){state.online=v;renderWorkStatus();showToast(v?'Status updated: Online':'Status updated: Offline')}
+function showToast(text){const t=$('#toast');t.textContent=text;t.classList.add('show');clearTimeout(window.toastTimer);window.toastTimer=setTimeout(()=>t.classList.remove('show'),3000)}
+function updateAnnotation(){const page=state.page==='content_picker'?'content_picker':state.page;const a=annotations[page]||annotations.inbox;$('#notePageChips').innerHTML=`<span class="note-chip">currentModel: ${currentModelName()}</span><span class="note-chip">Inbox: ${state.inboxMode}</span>`+a.chips.map(c=>`<span class="note-chip">${c}</span>`).join('');$('#notePurpose').textContent=a.purpose;$('#noteRules').innerHTML=a.rules.map(r=>`<li>${r}</li>`).join('')}
+renderAll();updateAnnotation();startCountdownTicker();

@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,user-scalable=no,viewport-fit=cover">
+  <meta name="theme-color" content="#22c55e">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <title>CalSnap</title>
+  <link rel="manifest" href="manifest.json">
+  <link rel="icon" type="image/png" sizes="192x192" href="assets/icon-192.png">
+  <link rel="icon" type="image/png" sizes="512x512" href="assets/icon-512.png">
+  <link rel="apple-touch-icon" href="assets/icon-192.png">
+  <link rel="stylesheet" href="css/style.css?v=20260701-6">
+  <script>
+    if (location.protocol === 'file:') {
+      location.replace('http://47.254.214.153/');
+    }
+  </script>
+</head>
+<body>
+  <div id="app">
+    <div id="toast"></div>
+    <main id="content"></main>
+    <nav id="tabbar"></nav>
+  </div>
+
+  <script src="js/utils/config.js?v=20260630-12"></script>
+  <script src="js/utils/format.js"></script>
+  <script src="js/utils/db.js"></script>
+  <script src="js/utils/body-composition.js?v=20260701-6"></script>
+  <script src="js/api.js?v=20260701-3"></script>
+  <script src="js/components/tabbar.js?v=20260630-12"></script>
+  <script src="js/components/food-card.js"></script>
+  <script src="js/components/chart.js?v=20260701-5"></script>
+  <script src="js/components/loader.js?v=20260701-3"></script>
+  <script src="js/components/empty.js"></script>
+  <script src="js/pages/dashboard.js?v=20260701-6"></script>
+  <script src="js/pages/camera.js?v=20260701-3"></script>
+  <script src="js/pages/barcode.js"></script>
+  <script src="js/pages/history.js?v=20260701-2"></script>
+  <script src="js/pages/exercise.js?v=20260630-12"></script>
+  <script src="js/pages/trends.js?v=20260701-6"></script>
+  <script src="js/pages/settings.js?v=20260701-6"></script>
+  <script src="js/app.js?v=20260701-2"></script>
+  <script>
+    if ('serviceWorker' in navigator) {
+      const offlineEnabled = location.protocol === 'https:'
+        || ['localhost', '127.0.0.1'].includes(location.hostname);
+
+      if (offlineEnabled) {
+        navigator.serviceWorker.register('sw.js?v=20260701-5').catch(() => {});
+      } else {
+        navigator.serviceWorker.getRegistrations()
+          .then((registrations) => Promise.all(registrations.map((registration) => registration.unregister())))
+          .catch(() => {});
+      }
+    }
+  </script>
+</body>
+</html>

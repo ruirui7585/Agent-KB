@@ -1,72 +1,134 @@
-# Dating Project — Claude Code Entry
+# Global Local File Control Protocol (GLFCP)
 
-## Project Path
+This protocol defines how AI agents interact with local filesystem safely and deterministically.
 
-`./male-mvp-v1/prototype-v2/` — active prototype (male, MENA market)
-`./female-mvp-v1/prototype/` — female-side prototype
+---
 
-## Active Knowledge Base
+## 1. Core Principle
 
-This project may reference shared knowledge from:
+> There must always be ONE Single Source of Truth (SSOT) file per task domain.
 
-- `../../Agent-KB/skills/html-prototype-skill/`
-- `../../Agent-KB/global-rules/`
+AI must never operate on multiple competing files unless explicitly instructed.
 
-These are **read-only** during project tasks.
+---
 
-## Project-Specific Context
+## 2. File Target Selection Rule (CRITICAL)
 
-Read these before modifying prototype files:
+Before ANY read or write operation:
 
-- `./male-mvp-v1/docs/codex-rules.md`
-- `./male-mvp-v1/docs/skills/dating-html-prototype-skill.md`
-- `./male-mvp-v1/docs/skills/mobile-ui-layout-skill.md`
-- `./male-mvp-v1/docs/skills/html-h5-prototype-delivery-skill.md`
-- `./male-mvp-v1/docs/skills/dating-design-system-skill.md`
-- `./agent/` — project-specific agent files
+AI must establish:
 
-## File Layout (male-mvp-v1)
+- Active project scope
+- Active file type (entry / config / logic / UI)
+- Single target file path
 
-```
-male-mvp-v1/
-├── prototype-v2/          # Active prototype (5-file split)
-│   ├── index.html         # Entry shell
-│   ├── style.css          # Styles
-│   ├── state.js           # Runtime state
-│   ├── data.js            # Static data
-│   └── app.js             # Render + interaction
-├── docs/                  # Rules, skills, state dictionary
-├── legacy/                # Do not modify
-├── prototype-v2_broken_before_restore_20260603_1105/  # Do not read
-└── prototype-v2_backup_before_claude_merge/           # Do not read
-```
+If multiple candidates exist:
+→ AI MUST STOP and ask user to choose
 
-## Forbidden
+---
 
-Unless the user explicitly requests it, Claude must not:
+## 3. Single Write Target Rule (ABSOLUTE)
 
-- modify `../../Agent-KB/`
-- modify any other project under `../../Projects/`
-- modify `../../Sandbox/` or `../../Archive/`
-- modify `./legacy/`, `./*backup*/`, `./*broken*/`
-- merge prototype-v2 files back into a single HTML
-- delete existing pages, tabs, modals, or annotation editor
-- change global visual system without explicit request
+AI is ONLY allowed to modify ONE file per task unless explicitly allowed.
 
-## Before Modifying
+Forbidden behavior:
 
-Output a brief plan:
-1. **Task type**
-2. **Will change**: exact files and nature of change
-3. **Will not change**: nearby protected files
-4. **Relevant rules or skills to read**
-5. **Risk area**: what could break
-6. **Validation plan**: how to confirm it works
+- modifying multiple HTML files for same UI
+- editing duplicate versions (copy / backup / v2 / tabs)
+- switching target file mid-task
+- guessing "better" entry file
 
-## After Modifying
+---
 
-1. Files changed
-2. One-sentence summary
-3. Protected files not changed
-4. Verification result
-5. Remaining risks
+## 4. No Fork Policy (CRITICAL)
+
+AI must NEVER create file forks.
+
+Strictly forbidden:
+
+- *_copy.*
+- *_backup.*
+- *_v2.*
+- *_final.*
+- *_new.*
+- alternative UI files
+
+All changes must be applied IN PLACE.
+
+---
+
+## 5. In-Place Modification Rule
+
+All changes must:
+
+- operate on existing file
+- preserve file identity
+- modify minimal diff only
+- avoid structural rewrite unless explicitly requested
+
+---
+
+## 6. Safe Write Mechanism
+
+AI must prefer:
+
+- diff output
+- patch-based updates
+- minimal edits
+
+NOT full file regeneration unless required.
+
+---
+
+## 7. File Confirmation Requirement
+
+Before writing:
+
+AI must explicitly output:
+
+"I will modify ONLY: <absolute file path>"
+
+Then proceed.
+
+---
+
+## 8. Post-Write Validation
+
+After modification, AI must verify:
+
+- correct file was modified
+- no new files created
+- no duplicates introduced
+- expected changes are visible in runtime
+- no structural regression occurred
+
+---
+
+## 9. Multi-File Projects Rule
+
+If project contains multiple entry points:
+
+AI must treat them as:
+
+- primary (active)
+- secondary (read-only)
+- legacy (do not touch)
+
+Only PRIMARY is editable.
+
+---
+
+## 10. Conflict Resolution Rule
+
+If AI is uncertain about:
+
+- correct file
+- correct version
+- correct environment
+
+It must:
+
+→ STOP execution
+→ ASK USER
+
+Never guess.

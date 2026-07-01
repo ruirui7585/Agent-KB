@@ -1,154 +1,164 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Female Operator Prototype</title>
-    <link rel="stylesheet" href="./style.css" />
-  </head>
-  <body>
-    <main class="workspace">
-      <section class="phone-shell" aria-label="Female operator app">
-        <div class="page active" data-page-id="login">
-          <div class="login-card">
-            <div class="brand-mark">FO</div>
-            <h1>Female Operator</h1>
-            <p>Staff workspace for model-based conversations.</p>
-            <label>Staff Account<input type="text" value="staff.mena01" /></label>
-            <label>Password<input type="password" value="demo1234" /></label>
-            <button class="primary-btn" data-action="demo-login">Demo Login</button>
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Female Operator App MVP v3 - Chats and Leads Workbench</title>
+  <link rel="stylesheet" href="style.css?v=20260623-model-detail-v2" />
+</head>
+<body>
+  <div class="workspace">
+    <div class="phone-frame"><div class="phone">
+      <div class="status-bar"><span>18:15</span><div><span>▮▮▮</span> Wi‑Fi 90%</div></div>
+
+      <section class="screen active" data-page="login">
+        <div class="hero-login"><div class="login-card">
+          <div class="brand">✦</div><h1>Female Operator</h1>
+          <p>Supply-side mobile workbench. Staff handles male user conversations through backend-configured model identities.</p>
+          <input class="input" value="aisha.operator" aria-label="Staff Account"><input class="input" value="••••••••" aria-label="Password">
+          <button class="primary-btn" onclick="goPage('inbox')">Demo Login</button>
+        </div></div>
+      </section>
+
+      <section class="screen" data-page="inbox">
+        <header class="app-header"><div class="header-row"><div class="title-block"><h1>Inbox</h1></div><span class="pill green"><span class="status-dot"></span>Online</span></div></header>
+        <main class="content">
+          <div class="model-switch" id="modelSwitcher"></div>
+          <div class="filter-row"><button class="filter active" onclick="filterConversations('All', this)">All</button><button class="filter" onclick="filterConversations('Waiting', this)">Waiting</button><button class="filter" onclick="filterConversations('New', this)">New</button><button class="filter" onclick="filterConversations('Free', this)">Free</button><button class="filter" onclick="filterConversations('VIP', this)">VIP</button></div>
+          <div class="section-label"><span id="inboxModeLabel">Active male conversations</span><span id="inboxCountLabel"></span></div>
+          <div class="conversation-list" id="conversationList"></div>
+        </main><nav class="bottom-tab"></nav>
+      </section>
+
+      <section class="screen" data-page="chat_detail">
+        <div class="chat-header"><div class="chat-row"><button class="back" onclick="goPage('inbox')">‹</button><div class="chat-avatars"><img class="avatar md" id="chatMaleAvatar" src="" alt=""><img class="avatar sm model-avatar" id="chatModelAvatar" src="" alt=""></div><div class="chat-person"><h2 id="chatMaleName">Ahmed</h2><p id="chatModelLine">Replying as Zayna</p></div><span class="pill warn" id="chatPayment">Free</span></div><div class="status-strip"><span class="pill blue" id="chatStage">Warm Chat</span><span class="pill warn" id="chatFree">1 msg left</span><span class="pill green" id="chatSuggest">Send a private moment</span></div></div>
+        <div class="message-area" id="messageArea"></div>
+        <div class="quick-actions"><button class="qa" onclick="quickReply()">Quick Reply</button><button class="qa" onclick="openSystemAlbum()">Photo</button><button class="qa private" onclick="openPicker('chat')">Private</button><button class="qa call" onclick="sendCallInvite()">Call</button><button class="qa video" onclick="sendVideoCallInvite()">Video Call</button></div>
+        <div class="composer">
+          <div class="composer-input-wrap">
+            <input id="composerInput" placeholder="Type a message..." />
+            <button class="send-btn" onclick="sendText()" aria-label="Send message">
+              <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M21 3 10 14"></path><path d="m21 3-7 18-4-7-7-4 18-7z"></path></svg>
+            </button>
           </div>
-        </div>
-
-        <div class="app-frame" data-app-frame hidden>
-          <section class="page" data-page-id="inbox">
-            <header class="topbar">
-              <div>
-                <p class="eyebrow">Current Staff</p>
-                <h1 data-staff-name>--</h1>
-              </div>
-              <span class="status-pill" data-staff-status>--</span>
-            </header>
-            <div class="metric-row">
-              <div><strong data-today-conversations>0</strong><span>Today Chats</span></div>
-              <div><strong data-today-revenue>$0</strong><span>Revenue</span></div>
-            </div>
-            <div class="filter-row">
-              <button>All</button><button>New</button><button>Free</button><button>Paid</button><button>VIP</button><button>Timeout</button>
-            </div>
-            <div class="list" data-conversation-list></div>
-          </section>
-
-          <section class="page" data-page-id="chat_detail">
-            <header class="detail-topbar">
-              <button class="back-btn" data-action="back-to-inbox">Back</button>
-              <div class="identity-line" data-chat-header></div>
-            </header>
-            <div class="suggested-action" data-chat-action></div>
-            <div class="message-list" data-message-list></div>
-            <div class="composer">
-              <input data-chat-input type="text" placeholder="Type as current model..." />
-              <button data-action="send-message">Send</button>
-            </div>
-            <div class="tool-row">
-              <button data-action="quick-reply">Quick Reply</button>
-              <button data-action="translate">Translate</button>
-              <button data-action="photo">Photo</button>
-              <button data-action="private">Private</button>
-              <button data-action="call">Call</button>
-            </div>
-          </section>
-
-          <section class="page" data-page-id="models">
-            <header class="topbar">
-              <div>
-                <p class="eyebrow">My Models</p>
-                <h1>Bound Models</h1>
-              </div>
-            </header>
-            <div class="metric-row">
-              <div><strong data-bound-model-count>0</strong><span>Bound</span></div>
-              <div><strong data-online-model-count>0</strong><span>Online</span></div>
-            </div>
-            <div class="list" data-model-list></div>
-          </section>
-
-          <section class="page" data-page-id="model_detail">
-            <header class="detail-topbar">
-              <button class="back-btn" data-action="back-to-models">Back</button>
-              <h1>Model Detail</h1>
-            </header>
-            <div class="detail-stack" data-model-detail></div>
-          </section>
-
-          <section class="page" data-page-id="content">
-            <header class="topbar">
-              <div>
-                <p class="eyebrow">Asset Library</p>
-                <h1>Content</h1>
-              </div>
-            </header>
-            <div class="filter-row">
-              <button>All</button><button>Public Photo</button><button>Private Photo</button><button>Private Video</button><button>Script</button>
-            </div>
-            <div class="list" data-content-list></div>
-          </section>
-
-          <section class="page" data-page-id="content_picker">
-            <header class="detail-topbar">
-              <button class="back-btn" data-action="content-cancel">Back</button>
-              <h1>Send Preview</h1>
-            </header>
-            <div class="detail-stack" data-content-preview></div>
-          </section>
-
-          <section class="page" data-page-id="me">
-            <header class="topbar">
-              <div>
-                <p class="eyebrow">Staff Profile</p>
-                <h1>Me</h1>
-              </div>
-              <span class="status-pill" data-me-status>--</span>
-            </header>
-            <div class="detail-stack" data-me-panel></div>
-          </section>
-
-          <section class="page" data-page-id="work_status">
-            <header class="detail-topbar">
-              <button class="back-btn" data-action="back-to-me">Back</button>
-              <h1>Work Status</h1>
-            </header>
-            <div class="detail-stack">
-              <article class="card">
-                <p class="eyebrow">Current Status</p>
-                <h2 data-work-status>--</h2>
-                <p>Online: can receive new conversations.</p>
-                <p>Offline: no new conversations are assigned, but historical chats remain visible.</p>
-              </article>
-              <button class="primary-btn" data-action="switch-online">Switch to Online</button>
-              <button class="secondary-btn" data-action="switch-offline">Switch to Offline</button>
-            </div>
-          </section>
-
-          <nav class="bottom-tabs" aria-label="Main navigation">
-            <button data-tab="inbox">Inbox</button>
-            <button data-tab="models">Models</button>
-            <button data-tab="content">Content</button>
-            <button data-tab="me">Me</button>
-          </nav>
+          <button class="composer-tool" onclick="openEmojiPicker()" aria-label="Emoji">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"></circle><path d="M8 14s1.4 2 4 2 4-2 4-2"></path><path d="M9 9h.01"></path><path d="M15 9h.01"></path></svg>
+          </button>
+          <button class="composer-tool" onclick="openGiftPanel()" aria-label="Gift">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 12v8H4v-8"></path><path d="M2 7h20v5H2z"></path><path d="M12 22V7"></path><path d="M12 7H8.5a2.5 2.5 0 1 1 2.1-3.85C11.5 4.5 12 7 12 7z"></path><path d="M12 7h3.5a2.5 2.5 0 1 0-2.1-3.85C12.5 4.5 12 7 12 7z"></path></svg>
+          </button>
         </div>
       </section>
 
-      <aside class="annotation-panel" aria-label="Annotation panel">
-        <p class="eyebrow">Annotation / State Panel</p>
-        <h2 data-annotation-title>Login</h2>
-        <div data-annotation-body></div>
-      </aside>
-    </main>
+      <section class="screen" data-page="models">
+        <header class="app-header models-header"><div class="header-row"><div class="title-block"><h1>My Models</h1><p>Overview of models you are currently serving</p></div><span class="pill green" id="modelsCurrent">All Models</span></div></header>
+        <main class="content models-content">
+          <div class="model-filter-row">
+            <button class="active" data-model-filter="all" onclick="setModelRosterFilter('all')">All</button>
+            <button data-model-filter="high" onclick="setModelRosterFilter('high')">High Priority</button>
+            <button data-model-filter="risk" onclick="setModelRosterFilter('risk')">At Risk</button>
+            <button data-model-filter="new" onclick="setModelRosterFilter('new')">New</button>
+          </div>
+          <section class="model-service-card" id="modelServiceCard"></section>
+          <div class="grid-cards model-roster-list" id="modelList"></div>
+        </main><nav class="bottom-tab"></nav>
+      </section>
 
-    <script src="../annotations/annotation-data.js"></script>
-    <script src="./data.js"></script>
-    <script src="./state.js"></script>
-    <script src="./app.js"></script>
-  </body>
+      <section class="screen" data-page="model_detail">
+        <header class="app-header model-detail-header"><div class="header-row"><button class="back model-detail-back" onclick="goPage('models')">‹</button><span></span><button class="model-menu-dot" onclick="showToast('Model options')">•••</button></div></header>
+        <main class="content model-detail-content" id="modelDetailContent"></main>
+      </section>
+
+      <section class="screen" data-page="assets">
+        <header class="app-header"><div class="header-row"><div class="title-block"><h1>IM</h1><p id="assetsSub">Messages</p></div></div></header>
+        <main class="content">
+          <div class="model-switch" id="assetsModelSwitcher"></div>
+          <div class="grid-cards" id="assetList"></div>
+        </main><nav class="bottom-tab"></nav>
+      </section>
+
+      <section class="screen" data-page="me">
+        <header class="app-header me-header"><div class="header-row"><div class="title-block"><h1>Me</h1><p>Operator income and rating</p></div><span class="pill green" id="meOnlinePill">Online</span></div></header>
+        <main class="content me-content">
+          <section class="me-hero-card">
+            <img class="me-hero-avatar" src="assets/avatars/staff.svg" alt="">
+            <div class="me-hero-body">
+              <h2>Aisha</h2>
+              <p>GCC Market · Arabic / English · 4 Models</p>
+              <div class="me-badge-row">
+                <span>ID 102486</span>
+                <span>Desert Rose Guild</span>
+              </div>
+            </div>
+          </section>
+          <section class="me-income-card">
+            <div class="me-card-head"><h2>Income</h2><div class="me-head-actions"><span id="meIncomePeriodLabel">This week</span><button onclick="toggleMeIncomePeriod()">↻</button></div></div>
+            <strong class="me-income-value" id="meIncomeValue">💎1,095 ≈ $0.00</strong>
+            <button class="me-dark-btn" onclick="goPage('income_detail')">Detail</button>
+          </section>
+          <section class="me-level-card">
+            <div class="me-level-head">
+              <div class="me-level-title"><span>S</span><div><h2>S Level</h2><p id="meLevelSummary">Top 18%</p></div></div>
+              <div class="me-head-actions"><span id="meLevelPeriodLabel">This week</span><button onclick="toggleMeLevelPeriod()">↻</button></div>
+            </div>
+            <div class="ratio-grid">
+              <div class="ratio-item"><span class="ratio-ring" id="meRatioUnlock" style="--value:82">82%</span><strong>Unlock</strong></div>
+              <div class="ratio-item"><span class="ratio-ring" id="meRatioPayment" style="--value:76">76%</span><strong>Payment</strong></div>
+              <div class="ratio-item"><span class="ratio-ring" id="meRatioActivity" style="--value:91">91%</span><strong>Activity</strong></div>
+              <div class="ratio-item"><span class="ratio-ring" id="meRatioResponse" style="--value:87">87%</span><strong>Response</strong></div>
+            </div>
+            <button class="me-dark-btn" onclick="goPage('ratio_detail')">Ratio Details</button>
+          </section>
+          <div class="action-list me-summary-actions">
+            <div class="me-action card" onclick="goPage('work_status')"><div><strong>Work Status</strong><span>Online / Offline control</span></div><span>›</span></div>
+            <div class="me-action card" onclick="showToast('Current identity: '+currentModelName())"><div><strong>Current Identity</strong><span id="meCurrentModel">All Models</span></div><span>›</span></div>
+          </div>
+        </main><nav class="bottom-tab"></nav>
+      </section>
+
+      <section class="screen" data-page="ratio_detail">
+        <header class="app-header"><div class="header-row"><button class="back" onclick="goPage('me')">‹</button><div class="title-block"><h1>Ratio Details</h1><p>Performance breakdown</p></div><span></span></div></header>
+        <main class="content ratio-detail-content">
+          <div class="ratio-date-row" id="ratioDateRow"></div>
+          <div class="ratio-model-switch" id="ratioModelSwitch"></div>
+          <div class="ratio-hero-card"><span class="ratio-hero-badge">S</span><div><strong id="ratioHeroTitle">Top 16%</strong><p id="ratioHeroSub">2026/06/22 performance</p></div></div>
+          <div class="ratio-detail-list" id="ratioDetailList"></div>
+        </main>
+      </section>
+
+      <section class="screen" data-page="work_status">
+        <header class="app-header"><div class="header-row"><button class="back" onclick="goPage('me')">‹</button><div class="title-block"><h1>Work Status</h1><p>Light shift control</p></div><span></span></div></header>
+        <main class="content"><div class="section-card card" style="text-align:center;padding:24px 18px"><div style="font-size:42px">🟢</div><h2 id="workStatusTitle" style="margin:10px 0 4px">Online</h2><p id="workStatusDesc" style="margin:0;color:var(--text-2);font-size:13px;line-height:1.45">You can receive new conversations. Historical conversations remain visible.</p><div style="display:flex;gap:10px;margin-top:18px"><button class="primary-btn" style="flex:1" onclick="setOnline(true)">Switch Online</button><button class="ghost-btn" style="height:48px;flex:1" onclick="setOnline(false)">Switch Offline</button></div></div></main>
+      </section>
+
+      <section class="screen" data-page="income_detail">
+        <header class="app-header"><div class="header-row"><button class="back" onclick="goPage('me')">‹</button><div class="title-block"><h1>Diamond Balance</h1><p>Income history</p></div><span></span></div></header>
+        <main class="content income-detail-content">
+          <div class="income-total-card"><div class="income-total-body"><strong id="incomeTotalDiamonds">54,545,454</strong><p id="incomeTotalUSD">≈ $43.00</p></div></div>
+          <div class="income-model-switch" id="incomeModelSwitch"></div>
+          <div class="income-model-summary" id="incomeModelSummary"></div>
+          <button class="income-date-filter" id="incomeListLabel" onclick="openIncomeDatePicker()">Date filter</button>
+          <div class="income-list" id="incomeList"></div>
+        </main>
+      </section>
+
+      <input id="albumInput" type="file" accept="image/*,video/*" multiple hidden onchange="handleAlbumPick(this)">
+      <div class="sheet-layer" id="sheetLayer"><div class="sheet private-picker"><div class="sheet-handle"></div><div class="sheet-title"><h2>Private content</h2><button class="close-sheet" onclick="closePicker()">×</button></div><div class="sheet-model-tabs" id="sheetModelTabs"></div><div class="private-asset-grid" id="privateAssetGrid"></div><div class="sheet-actions"><button class="primary-btn" onclick="sendPrivateContent()">Send selected</button></div></div></div>
+      <div class="emoji-layer" id="emojiLayer" onclick="if(event.target===this)closeEmojiPicker()"><div class="emoji-sheet"><div class="sheet-handle"></div><div class="emoji-head"><h2>Emoji pack</h2></div><div class="emoji-tabs"><span class="active">Mood</span><span>Love</span><span>Animated</span></div><div class="emoji-grid animated-pack" id="emojiGrid"><button class="animated-emoji floaty" onclick="pickEmoji('😊')">😊</button><button class="animated-emoji wink" onclick="pickEmoji('😉')">😉</button><button class="animated-emoji pop" onclick="pickEmoji('🥰')">🥰</button><button class="animated-emoji floaty" onclick="pickEmoji('😘')">😘</button><button class="animated-emoji pop" onclick="pickEmoji('😍')">😍</button><button class="animated-emoji wink" onclick="pickEmoji('🤭')">🤭</button><button class="animated-emoji sparkle" onclick="pickEmoji('✨')">✨</button><button class="animated-emoji floaty" onclick="pickEmoji('💕')">💕</button><button class="animated-emoji sway" onclick="pickEmoji('🌙')">🌙</button><button class="animated-emoji pop" onclick="pickEmoji('☕')">☕</button><button class="animated-emoji sway" onclick="pickEmoji('🌹')">🌹</button><button class="animated-emoji sparkle" onclick="pickEmoji('💌')">💌</button><button class="animated-emoji pop" onclick="pickEmoji('💃')">💃</button><button class="animated-emoji sparkle" onclick="pickEmoji('🔥')">🔥</button><button class="animated-emoji floaty" onclick="pickEmoji('💞')">💞</button><button class="animated-emoji wink" onclick="pickEmoji('😌')">😌</button><button class="animated-emoji sway" onclick="pickEmoji('🎁')">🎁</button><button class="animated-emoji pop" onclick="pickEmoji('💫')">💫</button></div></div></div>
+      <div class="gift-layer" id="giftLayer"><div class="gift-sheet"><div class="sheet-handle"></div><div class="gift-head"><h2>Send a gift</h2><button class="close-sheet" onclick="closeGiftPanel()">×</button></div><div class="gift-context"><span id="giftContext">To Ahmed · as Zayna</span><strong id="giftBalance">Balance 320 coins</strong></div><div class="gift-grid" id="giftGrid"></div><div class="sheet-actions gift-actions"><button class="ghost-btn" onclick="closeGiftPanel()">Cancel</button><button class="primary-btn" onclick="sendGift()">Send gift</button></div></div></div>
+      <div class="toast" id="toast">Message sent</div>
+    </div></div>
+
+    <aside class="annotation" id="annotation">
+      <h2>Prototype Notes</h2>
+      <p>Female Operator App MVP v2. Core logic: supply-side multi-model IM workbench with currentModel filtering and model-specific assets.</p>
+      <div class="note-section"><h3>Current Context</h3><div id="notePageChips"></div></div>
+      <div class="note-section"><h3>Purpose</h3><p id="notePurpose"></p></div>
+      <div class="note-section"><h3>Rules</h3><ul id="noteRules"></ul></div>
+    </aside>
+  </div>
+  <script type="text/javascript" src="data.js?v=20260625a"></script>
+  <script type="text/javascript" src="state.js?v=20260623-ratio-model-filter"></script>
+  <script type="text/javascript" src="app.js?v=20260625a"></script>
+</body>
 </html>

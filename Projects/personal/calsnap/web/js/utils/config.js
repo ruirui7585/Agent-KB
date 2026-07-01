@@ -1,0 +1,31 @@
+const CONFIG = {
+  API_BASE: '/api',
+  DEFAULT_GOAL: 2000,
+  MEAL_EMOJI: { breakfast: '🍳', lunch: '☀️', dinner: '🌙', snack: '🍎' },
+  MEAL_LABELS: { breakfast: '早餐', lunch: '午餐', dinner: '晚餐', snack: '加餐' },
+  EXERCISE_LABELS: {
+    walking: '步行',
+    running: '跑步',
+    cycling: '骑行',
+    strength: '力量训练',
+    swimming: '游泳',
+    yoga: '瑜伽',
+    other: '其他运动',
+  },
+  EXERCISE_EMOJI: {
+    walking: '🚶',
+    running: '🏃',
+    cycling: '🚴',
+    strength: '🏋️',
+    swimming: '🏊',
+    yoga: '🧘',
+    other: '⚡',
+  },
+  ACTIVITY_LABELS: {
+    sedentary: '久坐（几乎不运动）',
+    light: '轻度（每周 1-3 天）',
+    moderate: '中度（每周 3-5 天）',
+    active: '重度（每周 6-7 天）',
+    very_active: '运动员（每天高强度）',
+  },
+};

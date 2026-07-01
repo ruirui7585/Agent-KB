@@ -1,0 +1,2662 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Backend Operator OS — femalebackend-mvp-v1</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+<div class="app-layout">
+
+  <!-- ============================================================
+    LEFT SIDEBAR
+    ============================================================ -->
+  <aside class="sidebar">
+    <div class="sidebar-brand">
+      <span class="brand-icon">✦</span>
+      <div><strong>Female Operator</strong><small>Backend Console</small></div>
+    </div>
+    <nav class="sidebar-nav" id="sidebarNav"></nav>
+    <div class="sidebar-footer">
+      <div class="sidebar-user">
+        <img src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&w=60&q=80" alt="">
+        <div><strong>admin</strong><small>Super Admin</small></div>
+      </div>
+    </div>
+  </aside>
+
+  <!-- ============================================================
+    MAIN AREA
+    ============================================================ -->
+  <div class="main-area">
+
+    <!-- TOP BAR — persistent controls -->
+    <header class="topbar">
+      <div class="topbar-left">
+        <h1 id="topbarTitle">Models</h1>
+        <span class="breadcrumb" id="topbarBreadcrumb">Backend Console / Models</span>
+      </div>
+      <div class="topbar-ctrls">
+        <button class="tb-btn tb-add" onclick="Ops.openAddOperator()">+ Add Operator</button>
+        <button class="tb-btn tb-add" onclick="Ops.openAddModel()">+ Add Model</button>
+        <button class="tb-btn tb-add" onclick="Ops.openBulkAssign()">⇆ Bulk Assign</button>
+        <button class="tb-btn tb-save" onclick="Ops.saveAll()">💾 Save</button>
+        <button class="tb-btn tb-pub" onclick="Ops.publishAll()">🚀 Publish</button>
+        <button class="tb-btn tb-sim" id="btnSimToggle" onclick="Ops.toggleSim()">◉ Sim ON</button>
+      </div>
+    </header>
+
+    <div class="content-body">
+
+      <!-- ====================================================
+        PANEL: GUILD INFO
+        ==================================================== -->
+      <div class="section-panel" id="panel-guild-info" style="display:none;">
+        <div class="section-panel-inner">
+          <div class="section-hero"><h2>公会信息</h2><p>Guild-level profile, market coverage, and operator capacity.</p></div>
+          <div class="guild-kpi-grid" id="guildInfoSummary"></div>
+          <div class="table-container guild-table-container">
+            <div class="table-header-bar">
+              <div class="table-search">
+                <span class="search-icon">🔍</span>
+                <input type="text" placeholder="Search guilds..." readonly />
+              </div>
+              <div class="table-filters">
+                <select><option>All Countries</option><option>UAE</option><option>Jordan</option><option>Saudi Arabia</option></select>
+                <select><option>All Status</option><option>Active</option><option>Review</option></select>
+              </div>
+              <button class="tb-btn tb-add" onclick="Ops.openAddGuild()">+ Add Guild</button>
+              <span class="table-count" id="guildInfoCount">0 guilds</span>
+            </div>
+            <table class="model-table guild-info-table">
+              <thead>
+                <tr>
+                  <th>公会头像</th>
+                  <th>公会ID</th>
+                  <th>公会昵称</th>
+                  <th>所属国家</th>
+                  <th>联系方式</th>
+                  <th>签约人数</th>
+                  <th>运营人数</th>
+                  <th>状态</th>
+                </tr>
+              </thead>
+              <tbody id="guildInfoTableBody"></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- ====================================================
+        PANEL: GUILD MEMBERS
+        ==================================================== -->
+      <div class="section-panel" id="panel-guild-members" style="display:none;">
+        <div class="section-panel-inner">
+          <div class="section-hero"><h2>成员列表</h2><p>Guild-linked chat operators and membership status.</p></div>
+          <table class="model-table guild-members-table">
+            <thead><tr><th>公会ID</th><th>公会昵称</th><th>聊手昵称</th><th>聊手ID</th><th>聊手头像</th><th>状态</th><th>入会时间</th></tr></thead>
+            <tbody id="guildMembersTableBody"></tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- ====================================================
+        PANEL: GUILD DATA
+        ==================================================== -->
+      <div class="section-panel" id="panel-guild-data" style="display:none;">
+        <div class="section-panel-inner">
+          <div class="section-hero"><h2>公会数据</h2><p>公会财务收入概览 — 总收入 / 结算状态 / 公会与聊手分成 / 平台抽成</p></div>
+          <div class="dashboard-grid" id="guildFinanceSummary"></div>
+          <table class="model-table guild-finance-table" style="margin-top:20px;">
+            <thead>
+              <tr>
+                <th>Guild</th>
+                <th>总收入</th>
+                <th>可结算收入</th>
+                <th>已结算金额</th>
+                <th>待结算金额</th>
+                <th>公会收入</th>
+                <th>聊手收入总额</th>
+                <th>平台抽成金额</th>
+              </tr>
+            </thead>
+            <tbody id="guildDataTableBody"></tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- ====================================================
+        PANEL: MODELS
+        ==================================================== -->
+      <div class="section-panel active" id="panel-models">
+        <div class="content-body-inner">
+          <div class="table-container">
+            <div class="table-header-bar">
+              <div class="table-search">
+                <span class="search-icon">🔍</span>
+                <input type="text" placeholder="Search models..." oninput="Events.onSearch(this.value)" />
+              </div>
+              <div class="table-filters">
+                <select onchange="Events.onFilter('status', this.value)">
+                  <option>All Status</option><option>Published</option><option>Draft</option>
+                </select>
+                <select onchange="Events.onFilter('priority', this.value)">
+                  <option>All Priority</option><option>high</option><option>new</option><option>risk</option>
+                </select>
+                <select onchange="Events.onFilter('operator', this.value)" id="filterOperator">
+                  <option value="">All Operators</option>
+                </select>
+              </div>
+              <span class="table-count" id="tableCount">4 models</span>
+            </div>
+
+            <table class="model-table" id="modelTable">
+              <thead>
+                <tr>
+                  <th class="col-mid">Model ID</th>
+                  <th class="col-mname">Model名称/昵称</th>
+                  <th class="col-mavatar">头像</th>
+                  <th class="col-mage">年龄</th>
+                  <th class="col-mgender">性别</th>
+                  <th class="col-mcountry">国家/地区</th>
+                  <th class="col-mcity">城市(LBS)</th>
+                  <th class="col-mlang">语言能力</th>
+                  <th class="col-mpersona">人设标签</th>
+                  <th class="col-macct">账号状态</th>
+                  <th class="col-mcreated">创建时间</th>
+                  <th class="col-mactive">最近活跃时间</th>
+                  <th class="col-actions">Actions</th>
+                </tr>
+              </thead>
+              <tbody id="modelTableBody"></tbody>
+            </table>
+            <div class="table-footer">
+              <span class="showing" id="tableShowing">Showing 4 of 4 models</span>
+            </div>
+          </div>
+
+          <!-- Detail Panel Overlay -->
+          <div class="detail-backdrop" id="detailBackdrop" onclick="Events.closeDetail()"></div>
+          <aside class="detail-panel" id="detailPanel">
+            <span class="detail-close-btn" onclick="Events.closeDetail()">×</span>
+            <div class="detail-placeholder" id="detailPlaceholder">
+              <div class="placeholder-icon">👩</div>
+              <h3>Select a Model</h3>
+              <p>Click a row to edit. Use the top bar to add models and operators.</p>
+            </div>
+            <div class="detail-content" id="detailContent" style="display:none;">
+              <div class="detail-header">
+                <div class="detail-model-top">
+                  <img id="detailAvatar" class="detail-avatar-lg" src="" alt="" />
+                  <div><h2 id="detailName"></h2><p id="detailLocation"></p></div>
+                </div>
+                <span id="detailStatus" class="status-badge" style="margin-top:12px;display:inline-flex;"></span>
+              </div>
+              <div class="detail-tabs">
+                <button class="detail-tab active" onclick="Events.switchTab('profile', this)">Profile</button>
+                <button class="detail-tab" onclick="Events.switchTab('persona', this)">Persona</button>
+                <button class="detail-tab" onclick="Events.switchTab('binding', this)">Binding</button>
+                <button class="detail-tab" onclick="Events.switchTab('traffic', this)">Traffic</button>
+                <button class="detail-tab" onclick="Events.switchTab('config', this)">Config</button>
+              </div>
+              <div class="detail-tab-content active" id="tab-profile">
+                <div class="detail-field"><label>Model ID</label><input type="text" id="fieldId" readonly /></div>
+                <div class="detail-field"><label>Name</label><input type="text" id="fieldName" /></div>
+                <div class="detail-field"><label>昵称</label><input type="text" id="fieldNickname" /></div>
+                <div class="detail-row">
+                  <div class="detail-field"><label>Age</label><input type="number" id="fieldAge" /></div>
+                  <div class="detail-field"><label>Gender</label><select id="fieldGender"><option>女</option></select></div>
+                </div>
+                <div class="detail-row">
+                  <div class="detail-field"><label>Country</label><select id="fieldCountry"><option>阿联酋</option><option>沙特阿拉伯</option><option>卡塔尔</option><option>科威特</option><option>巴林</option><option>阿曼</option></select></div>
+                  <div class="detail-field"><label>City</label><input type="text" id="fieldCity" /></div>
+                </div>
+                <div class="detail-field"><label>Language</label><input type="text" id="fieldLang" /></div>
+                <div class="detail-field"><label>Persona Type</label><select id="fieldPersonaType"><option>甜妹</option><option>成熟</option><option>害羞</option><option>轻熟</option><option>熟女</option><option>高冷</option></select></div>
+                <div class="detail-field"><label>Account Status</label><select id="fieldAcctStatus"><option>启用</option><option>冻结</option><option>审核中</option></select></div>
+              </div>
+              <div class="detail-tab-content" id="tab-persona">
+                <div class="detail-field"><label>Persona Text</label><textarea id="fieldPersona" rows="3"></textarea></div>
+                <div class="detail-field"><label>Persona Type</label><select id="fieldPersonaType"><option>Warm & Playful</option><option>Mature & Calm</option><option>Shy & Gentle</option><option>Confident & Direct</option><option>Premium Caretaker</option></select></div>
+                <div class="detail-field"><label>Voice Style</label><input type="text" id="fieldVoice" /></div>
+                <div class="detail-field"><label>Tags</label><input type="text" id="fieldTags" /></div>
+              </div>
+              <div class="detail-tab-content" id="tab-binding">
+                <div class="detail-field"><label>Assigned Operator</label>
+                  <select id="fieldOperator" onchange="Events.onAssignOperator(this.value)"><option value="">Unassigned</option></select>
+                </div>
+                <div class="detail-field"><label>Operator Level</label>
+                  <select id="fieldOpLevel"><option>Junior</option><option>Mid</option><option>Senior</option><option>Lead</option></select>
+                </div>
+                <div class="detail-field"><label>Workload Status</label>
+                  <select id="fieldWorkload"><option>Light</option><option>Normal</option><option>Heavy</option><option>Overloaded</option></select>
+                </div>
+                <div class="detail-field"><label>Assignment Status</label>
+                  <select id="fieldAssignStatus"><option>Pending</option><option>Active</option><option>Deprecated</option></select>
+                </div>
+              </div>
+              <div class="detail-tab-content" id="tab-traffic">
+                <div class="detail-field"><label>Traffic Tier</label>
+                  <select id="fieldTrafficTier" onchange="Events.onTrafficTierChange(this.value)"><option>High</option><option>Mid</option><option>Low</option><option>Suppressed</option></select>
+                </div>
+                <div class="detail-field"><label>Exposure State</label>
+                  <select id="fieldExposureState"><option>Boosted</option><option>Normal</option><option>Suppressed</option></select>
+                </div>
+                <div class="detail-field"><label>Rank Position</label><input type="number" id="fieldRankPos" min="1" max="100" /></div>
+                <div class="detail-field"><label>Online / Active</label>
+                  <select id="fieldOnline" onchange="Events.toggleOnline()"><option value="1">Active</option><option value="0">Inactive</option></select>
+                </div>
+              </div>
+              <div class="detail-tab-content" id="tab-config">
+                <div class="detail-field"><label>Schedule Group ID</label><input type="text" id="fieldSchedGroup" /></div>
+                <div class="detail-field"><label>Rule Set ID</label><input type="text" id="fieldRuleSet" /></div>
+                <div class="detail-field"><label>Monetization Tier</label>
+                  <select id="fieldMonTier"><option>A+ Premium</option><option>A Standard</option><option>B+ Economy</option><option>C Basic</option></select>
+                </div>
+                <div class="detail-field"><label>LBS Segment</label><input type="text" id="fieldLbsSegment" /></div>
+                <div class="detail-field"><label>Compliance Status</label>
+                  <select id="fieldCompliance"><option>Compliant</option><option>Flagged</option><option>Under Review</option></select>
+                </div>
+              </div>
+              <div class="detail-actions">
+                <button class="detail-btn primary" onclick="Events.saveModel()">Save</button>
+                <button class="detail-btn publish" onclick="Events.togglePublish()" id="btnPublish">Publish</button>
+              </div>
+            </div>
+          </aside>
+        </div>
+      </div>
+
+      <!-- ====================================================
+        PANEL: OPERATORS
+        ==================================================== -->
+      <div class="section-panel" id="panel-operators" style="display:none;">
+        <div class="content-body-inner">
+          <div class="table-container">
+            <div class="table-header-bar">
+              <div class="table-search">
+                <span class="search-icon">🔍</span>
+                <input type="text" placeholder="Search operators..." oninput="Events.onOpSearch(this.value)" />
+              </div>
+              <div class="table-filters">
+                <select onchange="Events.onOpFilter('status', this.value)">
+                  <option>All Status</option><option>Online</option><option>Offline</option><option>Busy</option><option>Frozen</option>
+                </select>
+              </div>
+              <button class="tb-btn tb-add" onclick="Ops.openAddOperator()">+ Add Operator</button>
+              <span class="table-count" id="opTableCount">3 operators</span>
+            </div>
+            <table class="model-table op-info-table">
+              <thead>
+                <tr>
+                  <th class="col-op-id">聊手ID</th>
+                  <th class="col-op-name">聊手名称</th>
+                  <th class="col-op-avatar">聊手头像</th>
+                  <th class="col-op-gender">性别</th>
+                  <th class="col-op-age">年龄</th>
+                  <th class="col-op-country">国家</th>
+                  <th class="col-op-language">语言能力</th>
+                  <th class="col-op-contact">联系方式</th>
+                  <th class="col-op-guild-id">所属公会ID</th>
+                  <th class="col-op-guild-name">所属公会名称</th>
+                  <th class="col-op-models">绑定Model数量</th>
+                  <th class="col-op-status">当前状态</th>
+                  <th class="col-op-last-online">最后在线时间</th>
+                  <th class="col-op-today-min">今日在线时长</th>
+                  <th class="col-op-weekly-min">本周在线时长</th>
+                </tr>
+              </thead>
+              <tbody id="operatorTableBody"></tbody>
+            </table>
+            <div class="table-footer">
+              <span class="showing" id="opTableShowing">Showing 3 of 3 operators</span>
+            </div>
+          </div>
+
+          <!-- Operator Detail Panel Overlay -->
+          <div class="detail-backdrop" id="opDetailBackdrop" onclick="Events.closeOpDetail()"></div>
+          <aside class="detail-panel" id="opDetailPanel">
+            <span class="detail-close-btn" onclick="Events.closeOpDetail()">×</span>
+            <div class="detail-placeholder" id="opDetailPlaceholder">
+              <div class="placeholder-icon">👥</div>
+              <h3>Select an Operator</h3>
+              <p>Click a row to view and edit operator details.</p>
+            </div>
+            <div class="detail-content" id="opDetailContent" style="display:none;">
+              <div class="detail-header">
+                <div class="detail-model-top">
+                  <img id="opDetailAvatar" class="detail-avatar-lg" src="" alt="" />
+                  <div><h2 id="opDetailName"></h2><p id="opDetailMeta"></p></div>
+                </div>
+                <span id="opDetailStatus" class="status-badge" style="margin-top:12px;display:inline-flex;"></span>
+              </div>
+              <div class="detail-tabs">
+                <button class="detail-tab active" onclick="Events.switchTabOp('profile', this)">Profile</button>
+                <button class="detail-tab" onclick="Events.switchTabOp('models', this)">Assigned Models</button>
+                <button class="detail-tab" onclick="Events.switchTabOp('performance', this)">Performance</button>
+              </div>
+              <div class="detail-tab-content active" id="tab-op-profile">
+                <div class="detail-field"><label>聊手ID</label><input type="text" id="opFieldId" readonly /></div>
+                <div class="detail-field"><label>名称</label><input type="text" id="opFieldName" /></div>
+                <div class="detail-field"><label>公会</label><input type="text" id="opFieldGuild" /></div>
+                <div class="detail-row">
+                  <div class="detail-field"><label>国家</label><select id="opFieldMarket"><option>阿联酋</option><option>约旦</option><option>沙特阿拉伯</option><option>科威特</option><option>卡塔尔</option><option>黎巴嫩</option></select></div>
+                  <div class="detail-field"><label>语言能力</label><input type="text" id="opFieldLang" /></div>
+                </div>
+                <div class="detail-field"><label>当前状态</label>
+                  <select id="opFieldOnline" onchange="Events.toggleOpOnline()"><option value="Online">在线</option><option value="Offline">离线</option><option value="Busy">忙碌</option><option value="Frozen">冻结</option></select>
+                </div>
+              </div>
+              <div class="detail-tab-content" id="tab-op-models">
+                <div id="opModelAssignmentList" style="display:flex;flex-direction:column;gap:8px;"></div>
+                <div style="margin-top:12px;border-top:1px solid var(--border);padding-top:12px;">
+                  <div class="detail-field"><label>Add Model</label>
+                    <select id="opAddModelSelect" style="width:100%;"><option value="">— Select model —</option></select>
+                    <button class="detail-btn primary" onclick="Events.addModelToOp()" style="margin-top:8px;width:100%;padding:8px;">Assign Model</button>
+                  </div>
+                </div>
+              </div>
+              <div class="detail-tab-content" id="tab-op-performance">
+                <div class="perf-summary-grid" id="opPerfGrid"></div>
+              </div>
+              <div class="detail-actions">
+                <button class="detail-btn primary" onclick="Events.saveOp()">Save</button>
+                <button class="detail-btn publish" onclick="Events.toggleOpStatus()" id="btnOpToggle">Toggle Online</button>
+              </div>
+            </div>
+          </aside>
+        </div>
+      </div>
+
+      <!-- ====================================================
+        PANEL: OP INCOME
+        ==================================================== -->
+      <div class="section-panel" id="panel-op-income" style="display:none;">
+        <div class="section-panel-inner">
+          <div class="section-hero"><h2>聊手收入结构</h2><p>Operator-level revenue breakdown — 总收入 / ARPU / 转化率 / 私密内容收入</p></div>
+          <div class="dashboard-grid" id="opIncomeSummary"></div>
+          <table class="model-table op-income-table" style="margin-top:20px;">
+            <thead>
+              <tr>
+                <th>聊手</th>
+                <th>总收入</th>
+                <th>今日收入</th>
+                <th>本周收入</th>
+                <th>本月收入</th>
+                <th>ARPU</th>
+                <th>单聊天收益</th>
+                <th>单用户收益</th>
+                <th>用户付费转化数</th>
+                <th>聊天→付费转化率</th>
+                <th>私密内容解锁次数</th>
+                <th>私密内容收入</th>
+              </tr>
+            </thead>
+            <tbody id="opIncomeTableBody"></tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- ====================================================
+        PANEL: OP BEHAVIOR
+        ==================================================== -->
+      <div class="section-panel" id="panel-op-behavior" style="display:none;">
+        <div class="section-panel-inner">
+          <div class="section-hero"><h2>行为数据</h2><p>Operator engagement metrics — 接待 / 消息 / 响应 / 留存 / 聊天天数</p></div>
+          <div class="dashboard-grid" id="opBehaviorSummary"></div>
+          <table class="model-table op-behavior-table" style="margin-top:20px;">
+            <thead>
+              <tr>
+                <th>聊手</th>
+                <th>今日接待用户数</th>
+                <th>本周接待用户数</th>
+                <th>累计接待用户数</th>
+                <th>今日发送消息数</th>
+                <th>本周发送消息数</th>
+                <th>平均每用户消息数</th>
+                <th>平均首次响应时间(s)</th>
+                <th>平均回复间隔时间</th>
+                <th>超时未回复次数</th>
+                <th>好评率</th>
+                <th>差评率</th>
+                <th>首次破冰成功率</th>
+                <th>7分钟留存率</th>
+                <th>24小时回访率</th>
+                <th>平均聊天时长(分)</th>
+              </tr>
+            </thead>
+            <tbody id="opBehaviorTableBody"></tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- ====================================================
+        PANEL: OP PRIVATE CONTENT
+        ==================================================== -->
+      <div class="section-panel" id="panel-op-private" style="display:none;">
+        <div class="section-panel-inner">
+          <div class="section-hero"><h2>私密内容表现</h2><p>Private content performance — 照片 / 视频 / 转化率 / 收入占比</p></div>
+          <div class="dashboard-grid" id="opPrivateSummary"></div>
+          <table class="model-table op-private-table" style="margin-top:20px;">
+            <thead>
+              <tr>
+                <th>聊手</th>
+                <th>私密照片发送次数</th>
+                <th>私密视频发送次数</th>
+                <th>私密内容转化率</th>
+                <th>私密内容收入占比</th>
+              </tr>
+            </thead>
+            <tbody id="opPrivateTableBody"></tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- ====================================================
+        PANEL: MODEL ASSETS
+        ==================================================== -->
+      <div class="section-panel" id="panel-model-assets" style="display:none;">
+        <div class="section-panel-inner">
+          <div class="section-hero"><h2>内容资产</h2><p>Model content assets — 个人简介、兴趣标签、私密图片与视频</p></div>
+          <table class="model-table ma-table"><thead><tr><th>昵称</th><th>Model ID</th><th>头像</th><th>个人简介</th><th>兴趣标签</th><th>私密内容</th></tr></thead><tbody id="modelAssetsTableBody"></tbody></table>
+        </div>
+      </div>
+
+      <!-- ====================================================
+        PANEL: MODEL RATING
+        ==================================================== -->
+      <div class="section-panel" id="panel-model-rating" style="display:none;">
+        <div class="section-panel-inner">
+          <div class="section-hero"><h2>等级评定</h2><p>Model等级 / 评分 / 转化 / 收益 / 活跃度</p></div>
+          <table class="model-table mr-table"><thead><tr><th>昵称</th><th>ID</th><th>头像</th><th>等级</th><th>系统评分</th><th>解锁转化率</th><th>用户付费</th><th>会话时长</th><th>活跃度</th><th>响应秒</th><th>流量分发%</th><th>收入分成%</th><th>激励分成</th></tr></thead><tbody id="modelRatingTableBody"></tbody></table>
+        </div>
+      </div>
+
+      <!-- ====================================================
+        PANEL: MODEL TRAFFIC
+        ==================================================== -->
+      <div class="section-panel" id="panel-model-traffic" style="display:none;">
+        <div class="section-panel-inner">
+          <div class="section-hero"><h2>流量曝光数据</h2><p>曝光次数 / 来源 / CTR / Like率 / 匹配率</p></div>
+          <table class="model-table mt-table"><thead><tr><th>昵称</th><th>ID</th><th>头像</th><th>等级</th><th>今日曝光</th><th>本周曝光</th><th>Discover%</th><th>Likes%</th><th>Push%</th><th>推荐流%</th><th>CTR%</th><th>Like率%</th><th>匹配率%</th></tr></thead><tbody id="modelTrafficTableBody"></tbody></table>
+        </div>
+      </div>
+
+      <!-- ====================================================
+        PANEL: LIVE DASHBOARD
+        ==================================================== -->
+      <div class="section-panel" id="panel-model-live-dashboard" style="display:none;">
+        <div class="curve-dash">
+          <!-- Top 4 metric cards -->
+          <div class="curve-top-cards" id="curveTopCards"></div>
+          <!-- Day selector -->
+          <div class="curve-day-selector" id="curveDaySelector"></div>
+          <!-- Daily trend chart -->
+          <div class="curve-chart-area">
+            <div class="curve-chart-head">
+              <h3>全天趋势曲线 · 按小时</h3>
+              <div class="curve-legend">
+                <span class="curve-leg-item"><i class="curve-dot online-users"></i>在线用户数</span>
+                <span class="curve-leg-item"><i class="curve-dot online-models"></i>在线Model人数</span>
+                <span class="curve-leg-item"><i class="curve-dot model-count"></i>所属Model人数</span>
+                <span class="curve-leg-item"><i class="curve-dot supply-gap"></i>供给缺口</span>
+              </div>
+            </div>
+            <div class="curve-canvas-wrap">
+              <canvas id="curveMainCanvas" width="1300" height="380"></canvas>
+            </div>
+          </div>
+          <!-- Bottom row: Model structure bar + Donut chart -->
+          <div class="curve-bottom-row">
+            <div class="curve-card">
+              <h3>Model 等级结构 · 按小时分布</h3>
+              <canvas id="curveStackCanvas" width="640" height="280"></canvas>
+            </div>
+            <div class="curve-card">
+              <h3>Model 占比分布 · 环形图</h3>
+              <canvas id="curveDonutCanvas" width="560" height="280"></canvas>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ====================================================
+        PANEL: MODEL INCOMEPANEL: MODEL INCOMEPANEL: MODEL INCOME
+        ==================================================== -->
+      <div class="section-panel" id="panel-model-income" style="display:none;">
+        <div class="section-panel-inner">
+          <div class="section-hero"><h2>Model收入</h2><p>总收入 / 今日收入 / 收入来源 / ARPU / 单用户收益 / 付费转化</p></div>
+          <table class="model-table mi-table"><thead><tr><th>昵称</th><th>ID</th><th>头像</th><th>总收入</th><th>今日收入</th><th>收入来源</th><th>ARPU</th><th>单聊天收益</th><th>单用户收益</th><th>用户付费转化数</th></tr></thead><tbody id="modelIncomeTableBody"></tbody></table>
+        </div>
+      </div>
+
+      <!-- ====================================================
+        PANEL: MODEL INTERACT CHAT
+        ==================================================== -->
+      <div class="section-panel" id="panel-model-interact-chat" style="display:none;">
+        <div class="section-panel-inner">
+          <div class="section-hero"><h2>聊天转化数据</h2><p>今日/本周进入聊天人数、首条回复率、破冰成功率、聊天总收入、ARPU、私密内容收入</p></div>
+          <table class="model-table mc-table"><thead><tr><th>昵称</th><th>ID</th><th>头像</th><th>今日进入聊天人数</th><th>本周进入聊天人数</th><th>平均聊天开始时间</th><th>用户发起消息数</th><th>首条回复率</th><th>3条以上对话率</th><th>聊天总收入</th><th>ARPU</th><th>单会话收入</th><th>私密内容收入</th></tr></thead><tbody id="chatConvTableBody"></tbody></table>
+        </div>
+      </div>
+
+      <!-- ====================================================
+        PANEL: MODEL INTERACT PRIVATE
+        ==================================================== -->
+      <div class="section-panel" id="panel-model-interact-private" style="display:none;">
+        <div class="section-panel-inner">
+          <div class="section-hero"><h2>私密内容数据</h2><p>私密照片/视频被请求次数、解锁次数、转化率（请求→付费）、收入占比</p></div>
+          <table class="model-table mp-table"><thead><tr><th>昵称</th><th>ID</th><th>头像</th><th>私密照片被请求次数</th><th>私密视频被请求次数</th><th>私密照片解锁次数</th><th>私密视频解锁次数</th><th>私密内容转化率</th><th>私密内容收入占比</th></tr></thead><tbody id="modelInteractPrivateTableBody"></tbody></table>
+        </div>
+      </div>
+
+      <!-- ====================================================
+        PANEL: MODEL INTERACT HEALTH
+        ==================================================== -->
+      <div class="section-panel" id="panel-model-interact-health" style="display:none;">
+        <div class="section-panel-inner">
+          <div class="section-hero"><h2>Model健康度</h2><p>差评率、投诉/举报/被屏蔽次数、内容违规次数、是否限流</p></div>
+          <table class="model-table mh-table"><thead><tr><th>昵称</th><th>ID</th><th>头像</th><th>差评率</th><th>投诉次数</th><th>举报次数</th><th>被屏蔽次数</th><th>内容违规次数</th><th>是否限流</th></tr></thead><tbody id="modelInteractHealthTableBody"></tbody></table>
+        </div>
+      </div>
+
+      <!-- ====================================================
+        PANEL: MODEL INTERACT LIFECYCLE
+        ==================================================== -->
+      <div class="section-panel" id="panel-model-interact-lifecycle" style="display:none;">
+        <div class="section-panel-inner">
+          <div class="section-hero"><h2>生命周期</h2><p>创建/首次上线/活跃天数/最近活跃/使用/转化/下架时间</p></div>
+          <table class="model-table ml-table"><thead><tr><th>昵称</th><th>ID</th><th>头像</th><th>创建时间</th><th>首次上线时间</th><th>活跃天数</th><th>最近活跃时间</th><th>使用情况</th><th>转化情况</th><th>下架时间</th></tr></thead><tbody id="modelInteractLifecycleTableBody"></tbody></table>
+        </div>
+      </div>
+
+      <!-- ====================================================
+      <!-- ====================================================
+      <-- ====================================================
+        PANEL: SCHEDULE TIMELINE
+        ==================================================== -->
+      <div class="section-panel" id="panel-model-schedule-timeline" style="display:none;">
+        <div class="section-panel-inner" style="max-width:100%;padding:16px 20px;">
+          <div class="section-hero" style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px;">
+            <div><h2>排班时间轴 · 收入驱动调度</h2><p>7天 × 每小时 — Demand / Model / Operator / Revenue 四层叠加</p></div>
+            <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;">
+              <button class="sched-model-tab active" onclick="STL.switchModel('m1',this)">Zayna甜妹</button>
+              <button class="sched-model-tab" onclick="STL.switchModel('m2',this)">Lina轻熟</button>
+              <button class="sched-model-tab" onclick="STL.switchModel('m3',this)">Noor羞涩</button>
+              <button class="sched-model-tab" onclick="STL.switchModel('m4',this)">Maya御姐</button>
+              <button class="sched-model-tab all" onclick="STL.switchModel('all',this)">全Models</button>
+            </div>
+          </div>
+
+          <-- 4-layer legend -->
+          <div class="stl-legend">
+            <span class="stl-leg-item"><i class="stl-dot dmd"></i>Demand 用户需求</span>
+            <span class="stl-leg-item"><i class="stl-dot mdl"></i>Model 曝光</span>
+            <span class="stl-leg-item"><i class="stl-dot opr"></i>Operator 供给</span>
+            <span class="stl-leg-item"><i class="stl-dot rev"></i>Revenue 收入</span>
+            <span style="margin-left:auto;font-size:10px;color:var(--text-3);">点击格子查看详情</span>
+          </div>
+
+          <-- Day switcher -->
+          <div style="display:flex;gap:6px;margin-bottom:10px;flex-wrap:wrap;" id="stlDayTabs">
+            <button class="stl-day-tab active" onclick="STL.switchDay('all')">全周</button>
+            <button class="stl-day-tab" onclick="STL.switchDay('Mon')">周一</button>
+            <button class="stl-day-tab" onclick="STL.switchDay('Tue')">周二</button>
+            <button class="stl-day-tab" onclick="STL.switchDay('Wed')">周三</button>
+            <button class="stl-day-tab" onclick="STL.switchDay('Thu')">周四</button>
+            <button class="stl-day-tab" onclick="STL.switchDay('Fri')">周五</button>
+            <button class="stl-day-tab" onclick="STL.switchDay('Sat')">周六</button>
+            <button class="stl-day-tab" onclick="STL.switchDay('Sun')">周日</button>
+          </div>
+
+          <-- Heatmap grid -->
+          <div id="scheduleHeatmap" class="schedule-heatmap" style="overflow-x:auto;"></div>
+
+          <-- Efficiency summary row -->
+          <div class="stl-efficiency-bar" id="stlEfficiencyBar"></div>
+        </div>
+      </div>
+
+      <-- Cell click modal -->
+      <div class="stl-modal-backdrop" id="stlModalBackdrop" onclick="STL.closeModal()">
+        <div class="stl-modal" onclick="event.stopPropagation()">
+          <div class="stl-modal-header">
+            <h3 id="stlModalTitle">时间段详情</h3>
+            <button class="stl-modal-close" onclick="STL.closeModal()">×</button>
+          </div>
+          <div class="stl-modal-body" id="stlModalBody"></div>
+        </div>
+      </div>
+        PANEL: SCHEDULE CONFIG
+        ==================================================== -->
+      <div class="section-panel" id="panel-model-schedule-config" style="display:none;">
+        <div class="section-panel-inner">
+          <div class="section-hero"><h2>排班时常配置</h2><p>按等级（S/A/B/C）配置最大运营时长、排班区间、高峰小时数要求</p></div>
+          <table class="model-table sc-table">
+            <thead><tr><th>等级类型</th><th>最大运营时长(时)</th><th>排班区间</th><th>高峰时段要求(时)</th><th>适用Model</th></tr></thead>
+            <tbody id="scheduleConfigTableBody"></tbody>
+          </table>
+        </div>
+      </div>
+
+        PANEL: ROUTING
+        ==================================================== -->
+      <div class="section-panel" id="panel-routing" style="display:none;">
+        <div class="section-panel-inner">
+          <div class="section-hero"><h2>Traffic Routing</h2><p>Model × Geo weight matrix.</p></div>
+          <div id="routingMatrix"></div>
+          <div style="margin-top:12px;display:flex;gap:8px;">
+            <button class="tb-btn tb-pub" onclick="Sim.run('traffic')">Simulate Redistribution</button>
+            <button class="tb-btn tb-save" onclick="Sim.normalizeRouting()">Auto-Normalize</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- ====================================================
+        PANEL: RATING
+        ==================================================== -->
+      <div class="section-panel" id="panel-rating" style="display:none;">
+        <div class="section-panel-inner">
+          <div class="section-hero"><h2>Live Rating</h2><p>Real-time performance scores.</p></div>
+          <table class="model-table">
+            <thead><tr><th>Model</th><th>Grade</th><th>Unlock</th><th>Payment</th><th>Activity</th><th>Response</th><th>Risk</th><th>Trend</th></tr></thead>
+            <tbody id="ratingTableBody"></tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- ====================================================
+        PANEL: INCOME
+        ==================================================== -->
+      <div class="section-panel" id="panel-income" style="display:none;">
+        <div class="section-panel-inner">
+          <div class="section-hero"><h2>Income Simulation</h2><p>Revenue projections.</p></div>
+          <div class="dashboard-grid" id="incomeGrid"></div>
+          <table class="model-table" style="margin-top:16px;">
+            <thead><tr><th>Action</th><th>Op %</th><th>Platform %</th><th>Diamonds</th><th>A+ (1.5×)</th><th>C (0.7×)</th></tr></thead>
+            <tbody id="commissionTableBody"></tbody>
+          </table>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- PRIVATE CONTENT OVERLAY -->
+    <div class="detail-backdrop" id="privateContentBackdrop" onclick="Ops.closePrivateContent()"></div>
+    <div class="detail-panel" id="privateContentPanel" style="display:none;">
+      <span class="detail-close-btn" onclick="Ops.closePrivateContent()">×</span>
+      <h3 id="privateContentTitle" style="margin-bottom:6px;font-size:16px;">私密内容管理</h3>
+      <div id="privateContentBody"></div>
+    </div>
+
+    <!-- EVENT LOG -->
+    <div class="event-log" id="eventLog">
+      <div class="event-log-header">
+        <strong>Event Log</strong>
+        <button onclick="Store.clearLog()">Clear</button>
+      </div>
+      <div class="event-log-list" id="eventLogList">
+        <div class="log-entry info"><span class="log-time">00:00:00</span> System initialized</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ============================================================
+  MODALS
+  ============================================================ -->
+
+<!-- Add Operator Modal -->
+<div class="modal-backdrop" id="modalAddOperator" onclick="Ops.closeModal('modalAddOperator')">
+  <div class="modal" onclick="event.stopPropagation()">
+    <div class="modal-header"><h3>添加聊手</h3><button class="modal-close" onclick="Ops.closeModal('modalAddOperator')">×</button></div>
+    <div class="modal-body">
+      <div class="detail-field"><label>名称</label><input type="text" id="newOpName" placeholder="例: Aisha" /></div>
+      <div class="detail-row">
+        <div class="detail-field"><label>聊手ID</label><input type="text" id="newOpId" placeholder="例: 102486" /></div>
+        <div class="detail-field"><label>性别</label><select id="newOpGender"><option>女</option><option>男</option></select></div>
+      </div>
+      <div class="detail-row">
+        <div class="detail-field"><label>年龄</label><input type="number" id="newOpAge" placeholder="28" /></div>
+        <div class="detail-field"><label>国家</label><select id="newOpCountry"><option>阿联酋</option><option>约旦</option><option>沙特阿拉伯</option><option>科威特</option><option>卡塔尔</option><option>黎巴嫩</option></select></div>
+      </div>
+      <div class="detail-field"><label>语言能力</label><input type="text" id="newOpLang" placeholder="例: 阿拉伯语/英语" /></div>
+      <div class="detail-field"><label>联系方式</label><input type="text" id="newOpPhone" placeholder="例: +971 50 876 5432" /></div>
+      <div class="detail-row">
+        <div class="detail-field"><label>所属公会ID</label><input type="text" id="newOpGuildId" placeholder="例: G-10001" /></div>
+        <div class="detail-field"><label>所属公会名称</label><input type="text" id="newOpGuild" placeholder="例: Desert Rose" /></div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="detail-btn primary" onclick="Ops.createOperator()">创建聊手</button>
+      <button class="detail-btn" onclick="Ops.closeModal('modalAddOperator')">取消</button>
+    </div>
+  </div>
+</div>
+
+<!-- Add Model Modal -->
+<div class="modal-backdrop" id="modalAddModel" onclick="Ops.closeModal('modalAddModel')">
+  <div class="modal" onclick="event.stopPropagation()">
+    <div class="modal-header"><h3>Add Model</h3><button class="modal-close" onclick="Ops.closeModal('modalAddModel')">×</button></div>
+    <div class="modal-body">
+      <div class="detail-field"><label>Name</label><input type="text" id="newModelName" placeholder="e.g. Zayna" /></div>
+      <div class="detail-row">
+        <div class="detail-field"><label>Age</label><input type="number" id="newModelAge" placeholder="24" /></div>
+        <div class="detail-field"><label>Grade</label><select id="newModelGrade"><option>A+</option><option>A</option><option>B+</option><option>C</option></select></div>
+      </div>
+      <div class="detail-row">
+        <div class="detail-field"><label>Country</label><select id="newModelCountry"><option>UAE</option><option>SA</option><option>QA</option><option>KW</option><option>BH</option><option>OM</option></select></div>
+        <div class="detail-field"><label>City</label><input type="text" id="newModelCity" placeholder="e.g. Dubai" /></div>
+      </div>
+      <div class="detail-field"><label>LBS Zone</label><input type="text" id="newModelLbs" placeholder="e.g. Dubai Marina" /></div>
+      <div class="detail-field"><label>Persona</label><textarea id="newModelPersona" rows="2" placeholder="Short persona description..."></textarea></div>
+      <div class="detail-field"><label>Voice</label><input type="text" id="newModelVoice" placeholder="e.g. Soft, caring, light emoji." /></div>
+      <div class="detail-field"><label>Tags (comma separated)</label><input type="text" id="newModelTags" placeholder="e.g. Sweet, Dubai, Warm Chat" /></div>
+      <div class="detail-field"><label>Avatar URL</label><input type="text" id="newModelAvatar" placeholder="https://images.unsplash.com/photo-..." /></div>
+      <div class="detail-field"><label>Assign Operator</label><select id="newModelOperator"><option value="">Unassigned</option></select></div>
+    </div>
+    <div class="modal-footer">
+      <button class="detail-btn primary" onclick="Ops.createModel()">Create Model</button>
+      <button class="detail-btn" onclick="Ops.closeModal('modalAddModel')">Cancel</button>
+    </div>
+  </div>
+</div>
+
+<!-- Bulk Assign Modal -->
+<div class="modal-backdrop" id="modalBulkAssign" onclick="Ops.closeModal('modalBulkAssign')">
+  <div class="modal" onclick="event.stopPropagation()">
+    <div class="modal-header"><h3>Bulk Assign Operator</h3><button class="modal-close" onclick="Ops.closeModal('modalBulkAssign')">×</button></div>
+    <div class="modal-body">
+      <div class="detail-field"><label>Select Operator</label><select id="bulkOpSelect"></select></div>
+      <div class="detail-field"><label>Select Models</label></div>
+      <div id="bulkModelChecks" style="max-height:200px;overflow-y:auto;border:1px solid var(--border);border-radius:8px;padding:8px;"></div>
+    </div>
+    <div class="modal-footer">
+      <button class="detail-btn primary" onclick="Ops.bulkAssign()">Apply Assignment</button>
+      <button class="detail-btn" onclick="Ops.closeModal('modalBulkAssign')">Cancel</button>
+    </div>
+  </div>
+</div>
+
+<!-- Add Guild Modal -->
+<div class="modal-backdrop" id="modalAddGuild" onclick="Ops.closeModal('modalAddGuild')">
+  <div class="modal" onclick="event.stopPropagation()">
+    <div class="modal-header"><h3>新增公会</h3><button class="modal-close" onclick="Ops.closeModal('modalAddGuild')">×</button></div>
+    <div class="modal-body">
+      <div class="detail-row">
+        <div class="detail-field"><label>公会昵称</label><input type="text" id="newGuildNickname" placeholder="例: Desert Rose Guild" /></div>
+        <div class="detail-field"><label>公会名称</label><input type="text" id="newGuildName" placeholder="例: Desert Rose" /></div>
+      </div>
+      <div class="detail-row">
+        <div class="detail-field"><label>所属国家</label><select id="newGuildCountry"><option>UAE</option><option>Jordan</option><option>Saudi Arabia</option><option>Kuwait</option><option>Qatar</option><option>Lebanon</option><option>Oman</option><option>Bahrain</option></select></div>
+        <div class="detail-field"><label>联系方式</label><input type="text" id="newGuildContact" placeholder="例: ops@guild.com" /></div>
+      </div>
+      <div class="detail-field"><label>公会头像链接</label><input type="text" id="newGuildAvatar" placeholder="https://images.unsplash.com/photo-..." /></div>
+    </div>
+    <div class="modal-footer">
+      <button class="detail-btn primary" onclick="Ops.createGuild()">创建公会</button>
+      <button class="detail-btn" onclick="Ops.closeModal('modalAddGuild')">取消</button>
+    </div>
+  </div>
+</div>
+
+<input type="file" id="mediaUploadInput" accept="image/*,video/*" multiple style="display:none;" onchange="Ops.handleMediaUpload(this)" />
+
+<script>
+// ====================================================================
+// REACTIVE STORE
+// ====================================================================
+var Store = (function() {
+  var listeners = {};
+  var log = [];
+  var _nextModelId = 5;
+  var _nextOpId = 4;
+  var _simOn = true;
+
+  var _data = {
+    activeSection: 'models',
+    selectedModel: null,
+    selectedOperator: null,
+    opFilters: { status: 'All Status', search: '' },
+    filters: { status: 'All Status', priority: 'All Priority', operator: '', search: '' },
+
+    models: [
+      { id:'m1', servingId:'M100234', name:'Zayna', nickname:'Zayna甜妹', age:24, gender:'女', city:'迪拜', country:'阿联酋', language:'阿拉伯语/英语',
+        personaType:'甜妹', lbs:'Dubai Marina', online:true, grade:'A+', priority:'high',
+        avatar:'https://images.unsplash.com/photo-1517841905240-472988babdf9?auto=format&fit=crop&w=200&q=80',
+        persona:'Warm, playful, loves coffee and late-night chats.', voice:'Soft, caring, light emoji.',
+        accountStatus:'启用', createdAt:'2026-01-12 10:24', lastActiveTime:'2026-06-24 14:41',
+        riskLevel:'low', riskScore:8, status:'Published', operatorId:'op1' },
+      { id:'m2', servingId:'M100198', name:'Lina', nickname:'Lina轻熟', age:26, gender:'女', city:'利雅得', country:'沙特阿拉伯', language:'阿拉伯语',
+        personaType:'轻熟', lbs:'Riyadh Center', online:true, grade:'A', priority:'new',
+        avatar:'https://images.unsplash.com/photo-1524504388940-b1c1722653e1?auto=format&fit=crop&w=200&q=80',
+        persona:'Mature and calm. Likes music, travel, and quiet calls.', voice:'Mature, steady, premium.',
+        accountStatus:'启用', createdAt:'2026-01-20 15:08', lastActiveTime:'2026-06-24 13:55',
+        riskLevel:'low', riskScore:12, status:'Published', operatorId:'op1' },
+      { id:'m3', servingId:'M100331', name:'Noor', nickname:'Noor羞涩', age:23, gender:'女', city:'多哈', country:'卡塔尔', language:'阿拉伯语',
+        personaType:'害羞', lbs:'Doha West Bay', online:false, grade:'C', priority:'risk',
+        avatar:'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=200&q=80',
+        persona:'Shy but responsive. Short warm answers.', voice:'Shy, simple, gentle.',
+        accountStatus:'审核中', createdAt:'2026-02-03 09:42', lastActiveTime:'2026-06-20 21:10',
+        riskLevel:'high', riskScore:78, status:'Draft', operatorId:'op2' },
+      { id:'m4', servingId:'M100276', name:'Maya', nickname:'Maya御姐', age:25, gender:'女', city:'科威特城', country:'科威特', language:'阿拉伯语/英语',
+        personaType:'熟女', lbs:'Salmiya', online:true, grade:'B+', priority:'high',
+        avatar:'https://images.unsplash.com/photo-1524250502761-1ac6f2e30d43?auto=format&fit=crop&w=200&q=80',
+        persona:'Confident, stylish, good at private content conversion.', voice:'Confident, direct, warm.',
+        accountStatus:'启用', createdAt:'2026-02-18 18:31', lastActiveTime:'2026-06-24 14:08',
+        riskLevel:'medium', riskScore:42, status:'Published', operatorId:'op3' }
+    ],
+
+    // --- Model extra data (内容资产/等级/流量/收入/互动) ---
+    modelExtra: {
+      // Model收入 data
+      modelIncome: {
+        m1:{ totalRevenue:245680, todayRevenue:8420, revenueSource:'聊天68%·私密图22%·私密视频6%·礼物4%', arpu:82.3, chatRevenue:3.42, userRevenue:18.7, paidConverts:2147 },
+        m2:{ totalRevenue:98240, todayRevenue:3120, revenueSource:'聊天70%·私密图18%·私密视频5%·礼物7%', arpu:55.8, chatRevenue:2.15, userRevenue:11.2, paidConverts:892 },
+        m3:{ totalRevenue:18600, todayRevenue:420, revenueSource:'聊天85%·私密图8%·私密视频2%·礼物5%', arpu:18.5, chatRevenue:1.15, userRevenue:5.2, paidConverts:245 },
+        m4:{ totalRevenue:125400, todayRevenue:5680, revenueSource:'聊天58%·私密图28%·私密视频10%·礼物4%', arpu:94.5, chatRevenue:4.12, userRevenue:24.8, paidConverts:1328 }
+      },
+      // 排班时间轴 data (7-day hourly heatmap per model)
+      scheduleTimeline: null,
+      scheduleConfig: [
+        { grade:'S', maxHours:6, slots:'09:00-12:00, 18:00-21:00', peakRequired:4, models:'Zayna' },
+        { grade:'A', maxHours:8, slots:'08:00-12:00, 16:00-20:00', peakRequired:3, models:'Lina' },
+        { grade:'B', maxHours:10, slots:'07:00-12:00, 15:00-20:00', peakRequired:2, models:'Maya' },
+        { grade:'C', maxHours:4, slots:'18:00-22:00', peakRequired:1, models:'Noor' }
+      ],
+
+      m1: { bio:'Dubai-based barista.', interests:'咖啡,旅行,晚聊,音乐',
+        privatePhotos:[{name:'Coffee selfie', type:'引流图', price:'免费', thumb:'IMG'},{name:'Soft evening', type:'低价解锁图', price:'99 coins', thumb:'IMG'},{name:'Premium moment', type:'高价解锁图', price:'179 coins', thumb:'IMG'}],
+        privateVideos:[{name:'Good night clip', type:'高价解锁视频', price:'189 coins', thumb:'IMG'}] },
+      m2: { bio:'Riyadh-based mature host.', interests:'音乐,旅行,安静聊天',
+        privatePhotos:[{name:'Premium portrait', type:'低价解锁图', price:'129 coins', thumb:'IMG'}], privateVideos:[{name:'Short hello', type:'高价解锁视频', price:'199 coins', thumb:'IMG'}] },
+      m3: { bio:'Doha-based shy student.', interests:'学习,冰破', privatePhotos:[], privateVideos:[] },
+      m4: { bio:'Kuwait confident stylist.', interests:'时尚,私人内容,表达',
+        privatePhotos:[{name:'Evening look', type:'引流图', price:'免费', thumb:'IMG'},{name:'Confident selfie', type:'高价解锁图', price:'189 coins', thumb:'IMG'}],
+        privateVideos:[{name:'Return clip', type:'高价解锁视频', price:'189 coins', thumb:'IMG'}] },
+      rating: { m1:{ grade:'S', score:94, unlockRate:82, userPaid:42.5, sessionMin:18.4, activity:91, responseSec:12, trafficShare:28, revenueShare:25, incentiveBonus:8 }, m2:{ grade:'A', score:81, unlockRate:71, userPaid:36.0, sessionMin:14.8, activity:88, responseSec:15, trafficShare:22, revenueShare:20, incentiveBonus:5 }, m3:{ grade:'C', score:45, unlockRate:31, userPaid:18.5, sessionMin:8.2, activity:69, responseSec:28, trafficShare:8, revenueShare:10, incentiveBonus:0 }, m4:{ grade:'B', score:72, unlockRate:68, userPaid:31.0, sessionMin:16.2, activity:86, responseSec:12, trafficShare:18, revenueShare:18, incentiveBonus:3 } },
+      traffic: { m1:{ todayExposure:4820, weekExposure:32140, sources:{discover:45,likes:28,push:15,recommend:12}, ctr:12.4, likeRate:28.5, matchRate:18.2 }, m2:{ todayExposure:3540, weekExposure:24180, sources:{discover:40,likes:30,push:18,recommend:12}, ctr:10.8, likeRate:24.1, matchRate:15.8 }, m3:{ todayExposure:820, weekExposure:5840, sources:{discover:25,likes:15,push:35,recommend:25}, ctr:4.2, likeRate:8.5, matchRate:5.1 }, m4:{ todayExposure:2980, weekExposure:20560, sources:{discover:38,likes:32,push:12,recommend:18}, ctr:14.2, likeRate:30.2, matchRate:19.8 } },
+      chatConv: { m1:{ todayEntered:142, weekEntered:984, avgStartTime:'18:42', userMsgs:8450, firstReplyRate:88.5, threeMsgRate:72.3, chatRevenue:124500, arpu:82.3, singleConvRevenue:14.7, privateRevenue:93600 }, m2:{ todayEntered:98, weekEntered:652, avgStartTime:'19:15', userMsgs:5820, firstReplyRate:82.1, threeMsgRate:61.5, chatRevenue:68400, arpu:55.8, singleConvRevenue:11.2, privateRevenue:38400 }, m3:{ todayEntered:24, weekEntered:168, avgStartTime:'21:08', userMsgs:1120, firstReplyRate:48.2, threeMsgRate:28.4, chatRevenue:14200, arpu:18.5, singleConvRevenue:5.2, privateRevenue:6200 }, m4:{ todayEntered:118, weekEntered:782, avgStartTime:'17:55', userMsgs:7240, firstReplyRate:92.3, threeMsgRate:78.8, chatRevenue:89100, arpu:94.5, singleConvRevenue:18.2, privateRevenue:52100 } },
+      private: { m1:{ photoRequested:1840, videoRequested:890, photoUnlocked:612, videoUnlocked:280, privateConvRate:31.2, revenueShare:38.1 }, m2:{ photoRequested:1240, videoRequested:580, photoUnlocked:310, videoUnlocked:110, privateConvRate:22.8, revenueShare:39.1 }, m3:{ photoRequested:380, videoRequested:140, photoUnlocked:85, videoUnlocked:22, privateConvRate:8.2, revenueShare:33.5 }, m4:{ photoRequested:1520, videoRequested:720, photoUnlocked:445, videoUnlocked:153, privateConvRate:35.6, revenueShare:41.5 } },
+      health: { m1:{ badRate:1.2, complaints:2, reports:1, blockedCount:0, contentViolations:0, isRateLimited:'否' }, m2:{ badRate:3.4, complaints:5, reports:3, blockedCount:1, contentViolations:1, isRateLimited:'否' }, m3:{ badRate:12.8, complaints:18, reports:12, blockedCount:5, contentViolations:4, isRateLimited:'是' }, m4:{ badRate:0.8, complaints:1, reports:0, blockedCount:0, contentViolations:0, isRateLimited:'否' } },
+      lifecycle: { m1:{ createdAt:'2026-01-12 10:24', firstOnline:'2026-01-13 14:02', daysActive:162, lastActive:'2026-06-24 14:41', usage:'高频活跃·日均8.2h', conversion:'A+级·解锁率82%', offlineTime:'—' }, m2:{ createdAt:'2026-01-20 15:08', firstOnline:'2026-01-20 18:30', daysActive:155, lastActive:'2026-06-24 13:55', usage:'高频活跃·日均7.5h', conversion:'A级·解锁率71%', offlineTime:'—' }, m3:{ createdAt:'2026-02-03 09:42', firstOnline:'2026-02-04 11:00', daysActive:141, lastActive:'2026-06-20 21:10', usage:'低频·日均3.2h', conversion:'C级·解锁率31%', offlineTime:'预计 2026-08-15' }, m4:{ createdAt:'2026-02-18 18:31', firstOnline:'2026-02-19 10:15', daysActive:126, lastActive:'2026-06-24 14:08', usage:'高频活跃·日均8.8h', conversion:'B+级·解锁率68%', offlineTime:'—' } }
+    },
+
+    operators: [
+      { id:'op1', name:'Aisha', opId:'102486', gender:'女', age:28, country:'阿联酋', languages:'阿拉伯语/英语', phone:'+971 50 876 5432', guild:'Desert Rose', guildId:'G-10001', modelIds:['m1','m2'], status:'Online', lastOnline:'2026-06-24 14:32', todayMinutes:487, weeklyMinutes:2940 },
+      { id:'op2', name:'Fatima', opId:'102512', gender:'女', age:31, country:'约旦', languages:'阿拉伯语', phone:'+962 79 123 4567', guild:'Pearl Guild', guildId:'G-10002', modelIds:['m3'], status:'Online', lastOnline:'2026-06-24 14:28', todayMinutes:412, weeklyMinutes:2510 },
+      { id:'op3', name:'Noura', opId:'102598', gender:'女', age:25, country:'沙特阿拉伯', languages:'阿拉伯语/英语', phone:'+966 55 234 5678', guild:'Desert Rose', guildId:'G-10001', modelIds:['m4'], status:'Busy', lastOnline:'2026-06-24 14:19', todayMinutes:352, weeklyMinutes:2180 }
+    ],
+
+    // --- Operator performance mock data (收入/行为/私密) ---
+    opPerf: {
+      op1: { totalRevenue:245680, todayRevenue:8420, weekRevenue:58940, monthRevenue:245680, arpu: 82.3, chatRevenue: 3.42, userRevenue: 18.7, paidConverts: 2147, chatToPaidRate: 24.5, privateUnlocks: 892, privateRevenue: 93600,
+             todayServed: 47, weekServed: 312, totalServed: 8450, todayMsgs: 328, weekMsgs: 2184, avgMsgPerUser: 26.4, firstResponseSec: 8.2, avgReplyInterval: '42s', timeoutCount: 3, goodRate: 96.8, badRate: 1.2, icebreakRate: 88.5, retain7min: 72.3, return24h: 45.6, avgChatMin: 18.4,
+             privatePhotos: 612, privateVideos: 280, privateConvRate: 31.2, privateRevenueShare: 38.1 },
+      op2: { totalRevenue:98240, todayRevenue:3120, weekRevenue:21840, monthRevenue:98240, arpu: 55.8, chatRevenue: 2.15, userRevenue: 11.2, paidConverts: 892, chatToPaidRate: 18.2, privateUnlocks: 420, privateRevenue: 38400,
+             todayServed: 31, weekServed: 215, totalServed: 4520, todayMsgs: 198, weekMsgs: 1344, avgMsgPerUser: 18.2, firstResponseSec: 12.5, avgReplyInterval: '58s', timeoutCount: 8, goodRate: 91.2, badRate: 3.4, icebreakRate: 78.2, retain7min: 61.5, return24h: 34.2, avgChatMin: 14.8,
+             privatePhotos: 310, privateVideos: 110, privateConvRate: 22.8, privateRevenueShare: 39.1 },
+      op3: { totalRevenue:125400, todayRevenue:5680, weekRevenue:39760, monthRevenue:125400, arpu: 94.5, chatRevenue: 4.12, userRevenue: 24.8, paidConverts: 1328, chatToPaidRate: 28.8, privateUnlocks: 598, privateRevenue: 52100,
+             todayServed: 52, weekServed: 364, totalServed: 5720, todayMsgs: 412, weekMsgs: 2876, avgMsgPerUser: 28.5, firstResponseSec: 6.8, avgReplyInterval: '35s', timeoutCount: 1, goodRate: 98.2, badRate: 0.8, icebreakRate: 92.3, retain7min: 78.8, return24h: 51.2, avgChatMin: 21.5,
+             privatePhotos: 445, privateVideos: 153, privateConvRate: 35.6, privateRevenueShare: 41.5 }
+    },
+
+    guilds: [
+      { id:'G-10001', nickname:'Desert Rose Guild', name:'Desert Rose', country:'UAE', contact:'ops@desertrose.guild', avatar:'https://images.unsplash.com/photo-1512632578815-f6fc1bfde173?auto=format&fit=crop&w=100&q=80', signed:3, operators:2, status:'Active' },
+      { id:'G-10002', nickname:'Pearl Guild', name:'Pearl Guild', country:'Jordan', contact:'ops@pearlguild.guild', avatar:'https://images.unsplash.com/photo-1551884836-6ac5e0a393b9?auto=format&fit=crop&w=100&q=80', signed:1, operators:1, status:'Active' },
+      { id:'G-10003', nickname:'Falcon Star Network', name:'Falcon Star', country:'Saudi Arabia', contact:'bd@falconstar.guild', avatar:'https://images.unsplash.com/photo-1505740420928-5e560c06d30e?auto=format&fit=crop&w=100&q=80', signed:18, operators:6, status:'Active' },
+      { id:'G-10004', nickname:'Oasis Media House', name:'Oasis Media', country:'Kuwait', contact:'ops@oasismedia.guild', avatar:'https://images.unsplash.com/photo-1519125323398-675f0ddb6308?auto=format&fit=crop&w=100&q=80', signed:9, operators:3, status:'Review' },
+      { id:'G-10005', nickname:'Levant Bloom Guild', name:'Levant Bloom', country:'Lebanon', contact:'hello@levantbloom.guild', avatar:'https://images.unsplash.com/photo-1523712999610-f77fbcfc3843?auto=format&fit=crop&w=100&q=80', signed:12, operators:4, status:'Active' }
+    ],
+
+    // --- Live dashboard mock data ---
+    liveDashboard: {
+      users: [
+        { id:'u1', name:'Ahmed', avatar:'A', country:'SA', onlineTime:'14:22', stage:'Warm Chat', model:'Zayna', intent:'High' },
+        { id:'u2', name:'Omar', avatar:'O', country:'UAE', onlineTime:'14:18', stage:'VIP Care', model:'Lina', intent:'VIP' },
+        { id:'u3', name:'Fahad', avatar:'F', country:'QA', onlineTime:'14:15', stage:'Private', model:'Maya', intent:'High' }
+      ],
+      queue: [
+        { id:'q1', name:'Khalid', wait:'2m', model:'Zayna', msg:'Are you online now?' },
+        { id:'q2', name:'Yousef', wait:'4m', model:'Lina', msg:'Can we talk again tonight?' },
+        { id:'q3', name:'Nasser', wait:'6m', model:'Maya', msg:'I liked your coffee photo' },
+        { id:'q4', name:'Rashid', wait:'8m', model:'Zayna', msg:'Hi, nice to meet you' }
+      ],
+      revenue: [
+        { time:'14:20', amount:128, type:'chat', model:'Zayna' },
+        { time:'14:18', amount:99, type:'photo', model:'Maya' },
+        { time:'14:15', amount:20, type:'gift', model:'Zayna' },
+        { time:'14:12', amount:189, type:'video', model:'Lina' },
+        { time:'14:08', amount:120, type:'chat', model:'Maya' }
+      ],
+      convs: [
+        { id:'c1', user:'Ahmed', model:'Zayna', msgs:12, time:'14:20', stage:'Warm' },
+        { id:'c2', user:'Omar', model:'Lina', msgs:8, time:'14:15', stage:'VIP' },
+        { id:'c3', user:'Fahad', model:'Maya', msgs:15, time:'14:18', stage:'Private' },
+        { id:'c4', user:'Majed', model:'Zayna', msgs:5, time:'14:10', stage:'Warm' },
+        { id:'c5', user:'Sultan', model:'Lina', msgs:22, time:'14:05', stage:'VIP' },
+        { id:'c6', user:'Tariq', model:'Maya', msgs:3, time:'14:22', stage:'Call' }
+      ],
+      alerts: [
+        { level:'warn', msg:'Noor 响应超时 — 超过15分钟未回复', time:'14:05' },
+        { level:'info', msg:'Zayna 今日收入已达 $842', time:'13:55' },
+        { level:'warn', msg:'Maya 并发上限预警 — 当前6/10对话', time:'14:10' }
+      ],
+      modelStatus: [
+        { name:'Zayna', online:true, currentChats:3, maxChats:10, load:30 },
+        { name:'Lina', online:true, currentChats:2, maxChats:8, load:25 },
+        { name:'Noor', online:false, currentChats:0, maxChats:5, load:0 },
+        { name:'Maya', online:true, currentChats:3, maxChats:8, load:38 }
+      ]
+    },
+
+    routing: {
+      geoZones: ['UAE','SA','QA','KW','BH','OM'],
+      matrix: [
+        { modelId:'m1', UAE:35, SA:25, QA:15, KW:5,  BH:3, OM:2 },
+        { modelId:'m2', UAE:20, SA:30, QA:10, KW:5,  BH:2, OM:1 },
+        { modelId:'m3', UAE:5,  SA:5,  QA:20, KW:5,  BH:0, OM:0 },
+        { modelId:'m4', UAE:10, SA:10, QA:10, KW:25, BH:3, OM:2 }
+      ]
+    },
+
+    commission: {
+      diamondRate: 0.00079, payoutPeriod: 'Weekly', minPayout: 10,
+      tierMultipliers: { 'A+':1.5, 'A':1.2, 'B+':1.0, 'C':0.7 },
+      actions: [
+        { action:'Chat Reward', opPct:70, platPct:30, diamonds:120 },
+        { action:'Gift', opPct:65, platPct:35, diamonds:'20-188' },
+        { action:'Private Photo', opPct:75, platPct:25, diamonds:'89-129' },
+        { action:'Private Video', opPct:80, platPct:20, diamonds:'159-199' },
+        { action:'Call Bonus', opPct:60, platPct:40, diamonds:50 }
+      ]
+    }
+  };
+
+  function _log(action, detail) {
+    var entry = { time: new Date().toISOString().slice(11,19), action: action, detail: detail };
+    log.unshift(entry); if (log.length > 50) log.pop();
+    _notify('log');
+  }
+
+  function _notify(event) {
+    (listeners[event] || []).forEach(function(fn) { fn(); });
+    (listeners['*'] || []).forEach(function(fn) { fn(event); });
+  }
+
+  function _rebindOperator(modelId, newOpId) {
+    var m = _data.models.find(function(x){ return x.id === modelId; });
+    if (!m) return;
+    var oldOpId = m.operatorId;
+    if (oldOpId) {
+      var oldOp = _data.operators.find(function(x){ return x.id === oldOpId; });
+      if (oldOp) { oldOp.modelIds = oldOp.modelIds.filter(function(x){ return x !== modelId; }); oldOp.load = Math.max(0, oldOp.load - m.chats); }
+    }
+    if (newOpId) {
+      var newOp = _data.operators.find(function(x){ return x.id === newOpId; });
+      if (newOp) { newOp.modelIds.push(modelId); newOp.load += m.chats; }
+    }
+    m.operatorId = newOpId || '';
+  }
+
+  return {
+    data: _data,
+    simOn: function() { return _simOn; },
+    getModel: function(id) { return _data.models.find(function(m){ return m.id === id; }); },
+    getModels: function() {
+      var list = _data.models.slice();
+      if (_data.filters.status !== 'All Status') list = list.filter(function(m){ return m.status === _data.filters.status; });
+      if (_data.filters.priority !== 'All Priority') list = list.filter(function(m){ return m.priority === _data.filters.priority; });
+      if (_data.filters.operator) list = list.filter(function(m){ return m.operatorId === _data.filters.operator; });
+      if (_data.filters.search) {
+        var s = _data.filters.search.toLowerCase();
+        list = list.filter(function(m){ return m.name.toLowerCase().indexOf(s) >= 0 || m.city.toLowerCase().indexOf(s) >= 0; });
+      }
+      return list;
+    },
+    getOperator: function(id) { return _data.operators.find(function(o){ return o.id === id; }); },
+    getOperators: function() {
+      var list = _data.operators.slice();
+      if (_data.opFilters.status !== 'All Status') {
+        list = list.filter(function(o){ return o.status === _data.opFilters.status; });
+      }
+      if (_data.opFilters.search) {
+        var s = _data.opFilters.search.toLowerCase();
+        list = list.filter(function(o){ return o.name.toLowerCase().indexOf(s) >= 0; });
+      }
+      return list;
+    },
+    getModelsForOp: function(opId) { return _data.models.filter(function(m){ return m.operatorId === opId; }); },
+    totalOpRevenue: function(opId) {
+      return this.getModelsForOp(opId).reduce(function(s, m){ return s + (typeof m.revenue === 'number' ? m.revenue : parseFloat(m.revenue) || 0); }, 0);
+    },
+    totalOpChats: function(opId) {
+      return this.getModelsForOp(opId).reduce(function(s, m){ return s + (m.chats || 0); }, 0);
+    },
+    avgOpConvRate: function(opId) {
+      var models = this.getModelsForOp(opId); if (!models.length) return 0;
+      return Math.round(models.reduce(function(s, m){ return s + (m.convRate || 0); }, 0) / models.length);
+    },
+    avgOpResponse: function(opId) {
+      var models = this.getModelsForOp(opId); if (!models.length) return '—';
+      return models[0].response;
+    },
+    getOpPerf: function(opId) { return _data.opPerf[opId] || null; },
+    getAllOpPerf: function() {
+      var self = this;
+      return _data.operators.map(function(o){ var p = _data.opPerf[o.id] || {}; p.name = o.name; p.opId = o.id; return p; });
+    },
+    getModelExtra: function(modelId) { return _data.modelExtra[modelId] || { bio:'', interests:'', privatePhotos:[], privateVideos:[] }; },
+    getModelRating: function(modelId) { return (_data.modelExtra.rating || {})[modelId] || null; },
+    getModelTraffic: function(modelId) { return (_data.modelExtra.traffic || {})[modelId] || null; },
+    getModelChatConv: function(modelId) { return (_data.modelExtra.chatConv || {})[modelId] || null; },
+    getModelPrivate: function(modelId) { return (_data.modelExtra.private || {})[modelId] || null; },
+    getModelHealth: function(modelId) { return (_data.modelExtra.health || {})[modelId] || null; },
+    getModelLifecycle: function(modelId) { return (_data.modelExtra.lifecycle || {})[modelId] || null; },
+    getModelIncomeData: function(modelId) { return (_data.modelExtra.modelIncome || {})[modelId] || null; },
+    getLiveDashboard: function() { return _data.liveDashboard || { users:[], queue:[], revenue:[], convs:[], alerts:[] }; },
+
+    updateModel: function(id, changes) {
+      var m = this.getModel(id); if (!m) return;
+      var old = {}; Object.keys(changes).forEach(function(k){ old[k] = m[k]; m[k] = changes[k]; });
+      var detail = Object.keys(changes).map(function(k){ return k + ': ' + old[k] + ' → ' + changes[k]; }).join(', ');
+      _log('updateModel', m.name + ' — ' + detail);
+      this.recalcDerived(id);
+      _notify('models'); _notify('detail'); _notify('rating'); _notify('routing');
+    },
+
+    recalcDerived: function(id) {
+      var m = this.getModel(id); if (!m) return;
+      if (m.riskScore <= 15) m.riskLevel = 'low';
+      else if (m.riskScore <= 65) m.riskLevel = 'medium';
+      else m.riskLevel = 'high';
+      if (m.riskLevel === 'high') m.priority = 'risk';
+      else if (m.riskLevel === 'low' && m.priority === 'risk') m.priority = 'high';
+    },
+
+    updateOperator: function(id, changes) {
+      var o = this.getOperator(id); if (!o) return;
+      Object.keys(changes).forEach(function(k){ o[k] = changes[k]; });
+      _notify('operators');
+    },
+
+    createModel: function(fields) {
+      var id = 'm' + (_nextModelId++);
+      var m = {
+        id: id, servingId: 'M' + (100000 + _nextModelId),
+        name: fields.name, age: fields.age || 22, gender: fields.gender || 'Female',
+        city: fields.city || 'Dubai', country: fields.country || 'UAE', lat: fields.lat || '', lng: fields.lng || '', lbs: fields.lbs || '',
+        personaType: fields.personaType || 'Warm & Playful',
+        online: true, grade: fields.grade || 'B+', priority: 'new',
+        avatar: fields.avatar || 'https://images.unsplash.com/photo-1517841905240-472988babdf9?auto=format&fit=crop&w=200&q=80',
+        persona: fields.persona || '', voice: fields.voice || '', tags: fields.tags || '',
+        opLevel: fields.opLevel || 'Junior', workload: 'Light', assignStatus: 'Pending',
+        trafficTier: 'Mid', exposureState: 'Normal', rankPos: Store.data.models.length + 1,
+        riskLevel:'low', riskScore:0, activityStatus:'Active', compliance:'Compliant',
+        schedGroup: '', ruleSet: '', monTier: 'B+ Economy', lbsSegment: fields.lbs || '',
+        status:'Draft', operatorId: fields.operatorId || ''
+      };
+      _data.models.push(m);
+      if (fields.operatorId) _rebindOperator(id, fields.operatorId);
+      // Add to routing
+      var entry = { modelId: id }; _data.routing.geoZones.forEach(function(z){ entry[z] = 0; });
+      _data.routing.matrix.push(entry);
+      _log('createModel', m.name + ' created (' + m.grade + ', ' + m.city + ')');
+      _notify('models'); _notify('operators'); _notify('routing'); _notify('rating');
+      return m;
+    },
+
+    createOperator: function(fields) {
+      var id = 'op' + (_nextOpId++);
+      var o = {
+        id: id, name: fields.name, opId: fields.opId || ('10' + (2000 + _nextOpId)),
+        gender: fields.gender || 'Female', age: fields.age || 25, country: fields.country || 'UAE',
+        languages: fields.languages || 'Arabic', phone: fields.phone || '',
+        guild: fields.guild || '', guildId: fields.guildId || '',
+        modelIds: [], status: 'Online',
+        lastOnline: new Date().toISOString().slice(0,16).replace('T',' '), todayMinutes: 0, weeklyMinutes: 0
+      };
+      _data.operators.push(o);
+      _log('createOperator', o.name + ' created (' + o.country + ', ' + o.guild + ')');
+      _notify('operators'); _notify('models');
+      return o;
+    },
+    createGuild: function(fields) {
+      var id = 'G-100' + String(_data.guilds.length + 6).padStart(2,'0');
+      var g = { id: id, nickname: fields.nickname, name: fields.name, country: fields.country, contact: fields.contact || '', avatar: fields.avatar || 'https://images.unsplash.com/photo-1512632578815-f6fc1bfde173?auto=format&fit=crop&w=100&q=80', signed: 0, operators: 0, status: fields.status || 'Active' };
+      _data.guilds.push(g);
+      _log('createGuild', g.nickname + ' created (' + g.country + ')');
+      _notify('guilds');
+      return g;
+    },
+    getGuilds: function() { return _data.guilds; },
+
+    assignOperator: function(modelId, newOpId) {
+      _rebindOperator(modelId, newOpId);
+      _log('assign', 'Model ' + modelId + ' → operator ' + (newOpId || 'unassigned'));
+      _notify('models'); _notify('operators');
+    },
+
+    boostTraffic: function(id) {
+      var m = this.getModel(id); if (!m) return;
+      this.updateModel(id, { exposure: Math.min(100, m.exposure + 15), trafficWeight: Math.min(50, m.trafficWeight + 8) });
+    },
+    reduceTraffic: function(id) {
+      var m = this.getModel(id); if (!m) return;
+      this.updateModel(id, { exposure: Math.max(5, m.exposure - 15), trafficWeight: Math.max(1, m.trafficWeight - 8) });
+    },
+    suspendModel: function(id) {
+      var m = this.getModel(id); if (!m) return;
+      this.updateModel(id, { online: false, exposure: 0, trafficWeight: 0, status: 'Draft' });
+      _log('suspend', m.name + ' suspended');
+    },
+
+    selectModel: function(id) { _data.selectedModel = id; _notify('detail'); },
+    clearSelection: function() { _data.selectedModel = null; _notify('detail'); },
+    selectOperator: function(id) { _data.selectedOperator = id; _notify('opDetail'); },
+    clearOpSelection: function() { _data.selectedOperator = null; _notify('opDetail'); },
+    setOpFilter: function(type, val) { _data.opFilters[type] = val; _notify('operators'); },
+    setOpSearch: function(val) { _data.opFilters.search = val; _notify('operators'); },
+    setFilter: function(type, val) { _data.filters[type] = val; _notify('models'); },
+    setSearch: function(val) { _data.filters.search = val; _notify('models'); },
+    setSection: function(id) { _data.activeSection = id; _notify('section'); },
+    on: function(event, fn) { if (!listeners[event]) listeners[event] = []; listeners[event].push(fn); },
+    getLog: function() { return log; },
+    clearLog: function() { log = []; _notify('log'); },
+    _log: _log, _notify: _notify,
+    setSim: function(v) { _simOn = v; }
+  };
+})();
+
+// ====================================================================
+// SIMULATION ENGINE
+// ====================================================================
+var Sim = (function() {
+  var _snapshot = null;
+  function _takeSnapshot() { _snapshot = JSON.parse(JSON.stringify(Store.data.models)); Store._log('sim', 'Snapshot saved'); Store._notify('log'); }
+  return {
+    run: function(scenario) {
+      if (!_snapshot) _takeSnapshot();
+      var models = Store.data.models;
+      switch (scenario) {
+        case 'traffic':
+          models.forEach(function(m){
+            if (m.grade === 'A+' || m.grade === 'A') Store.updateModel(m.id, { trafficWeight: Math.min(50, m.trafficWeight + 10), exposure: Math.min(100, m.exposure + 15) });
+            else Store.updateModel(m.id, { trafficWeight: Math.max(0, m.trafficWeight - 5), exposure: Math.max(0, m.exposure - 10) });
+          });
+          Store._log('sim', 'Traffic redistributed — high-grade boosted');
+          break;
+        case 'operator-offline':
+          Store.data.operators[0] && Store.updateOperator(Store.data.operators[0].id, { online: false });
+          Store._log('sim', 'First operator taken offline');
+          break;
+        case 'peak-hour':
+          models.forEach(function(m){ Store.updateModel(m.id, { online: true, exposure: Math.min(100, m.exposure + 20) }); });
+          Store._log('sim', 'Peak hour — all online +20% exposure');
+          break;
+        case 'revenue':
+          var total = 0;
+          models.forEach(function(m){ var t = Store.data.commission.tierMultipliers[m.grade] || 1; var r = Math.round(m.chats * 120 * t * (m.exposure / 100)); total += r; Store.updateModel(m.id, { revenue: (r / 100).toFixed(1) }); });
+          Store._log('sim', 'Revenue projection: 💎' + total.toLocaleString() + ' ≈ $' + (total * Store.data.commission.diamondRate).toFixed(2));
+          break;
+      }
+      Store._notify('models'); Store._notify('detail'); Store._notify('rating'); Store._notify('income');
+    },
+    reset: function() {
+      if (!_snapshot) return;
+      _snapshot.forEach(function(s){ Store.updateModel(s.id, s); });
+      Store.data.operators.forEach(function(o){ o.online = true; });
+      Store._log('sim', 'Reset to snapshot');
+      Store._notify('models'); Store._notify('detail'); Store._notify('rating'); Store._notify('routing'); Store._notify('operators');
+      _snapshot = null;
+    },
+    normalizeRouting: function() {
+      var zones = Store.data.routing.geoZones, matrix = Store.data.routing.matrix;
+      zones.forEach(function(z){
+        var t = matrix.reduce(function(s, r){ return s + (r[z]||0); }, 0);
+        if (t > 0 && t !== 100) { matrix.forEach(function(r){ r[z] = Math.round(r[z] / t * 100); }); var nt = matrix.reduce(function(s, r){ return s + (r[z]||0); }, 0); if (nt !== 100) matrix[0][z] += (100 - nt); }
+      });
+      Store._log('sim', 'Routing normalized');
+      Store._notify('routing');
+    },
+    hasSnapshot: function() { return _snapshot !== null; }
+  };
+})();
+
+// ====================================================================
+// OPS — high-level operation actions
+// ====================================================================
+var Ops = {
+  mediaUploadModelId: null,
+
+  openModal: function(id) { document.getElementById(id).classList.add('open'); Ops._populateModal(id); },
+  closeModal: function(id) { document.getElementById(id).classList.remove('open'); },
+
+  _populateModal: function(id) {
+    if (id === 'modalAddModel' || id === 'modalBulkAssign') {
+      var ops = Store.getOperators();
+      var opts = '<option value="">Unassigned</option>' + ops.map(function(o){ return '<option value="' + o.id + '">' + o.name + ' (' + o.market + ')</option>'; }).join('');
+      if (id === 'modalAddModel') document.getElementById('newModelOperator').innerHTML = opts;
+      if (id === 'modalBulkAssign') {
+        document.getElementById('bulkOpSelect').innerHTML = '<option value="">— Choose operator —</option>' + opts;
+        document.getElementById('bulkModelChecks').innerHTML = Store.data.models.map(function(m){
+          return '<label style="display:flex;align-items:center;gap:8px;padding:7px 10px;cursor:pointer;font-size:12px;border-bottom:1px solid var(--border-light);"><input type="checkbox" value="' + m.id + '" /> ' + m.name + ' <span style="color:var(--text-3);font-size:10px;">(' + (m.operatorId ? Store.getOperator(m.operatorId) ? Store.getOperator(m.operatorId).name : m.operatorId : 'unassigned') + ')</span></label>';
+        }).join('');
+      }
+    }
+  },
+
+  openAddOperator: function() { Ops.openModal('modalAddOperator'); },
+  openAddModel: function() { Ops.openModal('modalAddModel'); },
+  openAddGuild: function() { Ops.openModal('modalAddGuild'); },
+  openBulkAssign: function() { Ops.openModal('modalBulkAssign'); },
+  openPrivateContent: function(modelId) {
+    document.getElementById('privateContentBackdrop').classList.add('open');
+    document.getElementById('privateContentPanel').style.display = 'block';
+    var extra = Store.getModelExtra(modelId);
+    var m = Store.getModel(modelId);
+    document.getElementById('privateContentTitle').textContent = (m ? m.name : '') + ' — 私密内容管理';
+    // Real thumbnails map
+    var thumbMap = { 'Coffee selfie':'https://images.unsplash.com/photo-1512316609839-ce289d3eba0a?auto=format&fit=crop&w=400&q=80', 'Soft evening':'https://images.unsplash.com/photo-1508214751196-bcfd4ca60f91?auto=format&fit=crop&w=400&q=80', 'Premium moment':'https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?auto=format&fit=crop&w=400&q=80', 'Good night clip':'https://images.unsplash.com/photo-1529139574466-a303027c1d8b?auto=format&fit=crop&w=400&q=80', 'Premium portrait':'https://images.unsplash.com/photo-1524504388940-b1c1722653e1?auto=format&fit=crop&w=400&q=80', 'Short hello':'https://images.unsplash.com/photo-1487412720507-e7ab37603c6f?auto=format&fit=crop&w=400&q=80', 'Evening look':'https://images.unsplash.com/photo-1524503033411-c9566986fc8f?auto=format&fit=crop&w=400&q=80', 'Confident selfie':'https://images.unsplash.com/photo-1524250502761-1ac6f2e30d43?auto=format&fit=crop&w=400&q=80', 'Return clip':'https://images.unsplash.com/photo-1502823403499-6ccfcf4fb453?auto=format&fit=crop&w=400&q=80' };
+    var photos = (extra.privatePhotos||[]).map(function(p){ var url = thumbMap[p.name] || 'https://images.unsplash.com/photo-1512316609839-ce289d3eba0a?auto=format&fit=crop&w=400&q=80'; return '<div class="content-card-item"><div class="content-media-thumb" style="background-image:url('+url+')">'+(p.type.indexOf('视频')>=0?'<span class="media-play-icon">▶</span>':'')+'</div><div class="content-card-body"><strong>'+p.name+'</strong><div class="content-card-meta"><span class="content-status-badge status-'+p.type.replace(/[^u4e00-\\u9fa5]/g,'').substring(0,2)+'">'+p.type+'</span><span class="content-price-tag">'+p.price+'</span></div><button class="content-del-btn" onclick="Ops.deletePrivateContent(\''+modelId+'\',\''+p.name+'\')" title="删除">🗑</button></div></div>'; }).join('')||'<p style="color:var(--text-3);grid-column:1/-1;text-align:center;padding:20px;">暂无图片内容，点击下方上传按钮添加</p>';
+    var videos = (extra.privateVideos||[]).map(function(v){ var url = thumbMap[v.name] || 'https://images.unsplash.com/photo-1529139574466-a303027c1d8b?auto=format&fit=crop&w=400&q=80'; return '<div class="content-card-item"><div class="content-media-thumb video-thumb" style="background-image:url('+url+')"><span class="media-play-icon">▶</span></div><div class="content-card-body"><strong>'+v.name+'</strong><div class="content-card-meta"><span class="content-status-badge status-'+v.type.replace(/[^u4e00-\\u9fa5]/g,'').substring(0,2)+'">'+v.type+'</span><span class="content-price-tag">'+v.price+'</span></div><button class="content-del-btn" onclick="Ops.deletePrivateContent(\''+modelId+'\',\''+v.name+'\')" title="删除">🗑</button></div></div>'; }).join('')||'<p style="color:var(--text-3);grid-column:1/-1;text-align:center;padding:20px;">暂无视频内容，点击下方上传按钮添加</p>';
+    var totalCount = (extra.privatePhotos||[]).length + (extra.privateVideos||[]).length;
+    document.getElementById('privateContentBody').innerHTML =
+      '<div class="content-section"><div class="content-section-head"><h4>📸 私密图片 <span class="count-pill">'+(extra.privatePhotos||[]).length+'</span></h4></div><div class="content-card-grid">'+photos+'</div></div>'+
+      '<div class="content-section"><div class="content-section-head"><h4>🎬 私密视频 <span class="count-pill">'+(extra.privateVideos||[]).length+'</span></h4></div><div class="content-card-grid">'+videos+'</div></div>'+
+      '<div class="content-upload-section"><h4>+ 上传新内容</h4><div class="upload-row"><select id="uploadContentType"><option>引流图 (免费)</option><option>低价解锁图 (99 coins)</option><option>高价解锁图 (179 coins)</option><option>高价解锁视频 (189 coins)</option></select><input type="file" id="uploadFileInput" accept="image/*,video/*" style="display:none;" onchange="Ops.handleContentUpload(\''+modelId+'\', this)" /><button class="tb-btn tb-add" onclick="document.getElementById(\'uploadFileInput\').click()">选择文件</button><button class="tb-btn tb-save" onclick="Ops.simulateContentUpload(\''+modelId+'\')">模拟上传</button></div></div>';
+  },
+  closePrivateContent: function() {
+    document.getElementById('privateContentBackdrop').classList.remove('open');
+    document.getElementById('privateContentPanel').style.display = 'none';
+  },
+  deletePrivateContent: function(modelId, name) {
+    var extra = Store.getModelExtra(modelId);
+    extra.privatePhotos = (extra.privatePhotos||[]).filter(function(p){ return p.name !== name; });
+    extra.privateVideos = (extra.privateVideos||[]).filter(function(v){ return v.name !== name; });
+    Store._log('content', 'Deleted: ' + name + ' from ' + (Store.getModel(modelId) ? Store.getModel(modelId).name : modelId));
+    this.openPrivateContent(modelId); // refresh panel
+  },
+  simulateContentUpload: function(modelId) {
+    var typeSelect = document.getElementById('uploadContentType');
+    var typeVal = typeSelect ? typeSelect.value : '引流图 (免费)';
+    var isVideo = typeVal.indexOf('视频') >= 0;
+    var extra = Store.getModelExtra(modelId);
+    var newName = isVideo ? 'New video ' + (extra.privateVideos.length+1) : 'New photo ' + (extra.privatePhotos.length+1);
+    var newItem = { name: newName, type: typeVal.replace(/ \(.*\)/,''), price: typeVal.indexOf('免费')>=0 ? '免费' : typeVal.indexOf('低价')>=0 ? '99 coins' : typeVal.indexOf('高价')>=0 ? (isVideo?'189 coins':'179 coins') : '99 coins', thumb:'https://images.unsplash.com/photo-1512316609839-ce289d3eba0a?auto=format&fit=crop&w=400&q=80' };
+    if (isVideo) { extra.privateVideos.push(newItem); } else { extra.privatePhotos.push(newItem); }
+    Store._log('content', 'Uploaded: ' + newName + ' (' + typeVal + ') to ' + (Store.getModel(modelId) ? Store.getModel(modelId).name : modelId));
+    if (document.getElementById('modelAssetsTableBody')) renderModelAssets();
+    this.openPrivateContent(modelId); // refresh
+  },
+  handleContentUpload: function(modelId, input) {
+    if (input.files && input.files.length > 0) {
+      this.simulateContentUpload(modelId);
+    }
+  },
+
+  createOperator: function() {
+    var name = document.getElementById('newOpName').value.trim();
+    if (!name) { alert('Operator name is required'); return; }
+    Store.createOperator({
+      name: name, opId: document.getElementById('newOpId').value.trim(),
+      gender: document.getElementById('newOpGender').value,
+      age: parseInt(document.getElementById('newOpAge').value) || 25,
+      country: document.getElementById('newOpCountry').value,
+      languages: document.getElementById('newOpLang').value.trim(),
+      phone: document.getElementById('newOpPhone').value.trim(),
+      guildId: document.getElementById('newOpGuildId').value.trim(),
+      guild: document.getElementById('newOpGuild').value.trim()
+    });
+    Ops.closeModal('modalAddOperator');
+    ['newOpName','newOpId','newOpAge','newOpLang','newOpPhone','newOpGuildId','newOpGuild'].forEach(function(f){ document.getElementById(f).value = ''; });
+  },
+
+  createGuild: function() {
+    var nickname = document.getElementById('newGuildNickname').value.trim();
+    var name = document.getElementById('newGuildName').value.trim();
+    if (!nickname && !name) { alert('公会名称不能为空'); return; }
+    var displayName = name || nickname;
+    Store.createGuild({
+      nickname: nickname || displayName,
+      name: name || displayName,
+      country: document.getElementById('newGuildCountry').value,
+      contact: document.getElementById('newGuildContact').value.trim(),
+      avatar: document.getElementById('newGuildAvatar').value.trim() || 'https://images.unsplash.com/photo-1512632578815-f6fc1bfde173?auto=format&fit=crop&w=100&q=80',
+      status: 'Active'
+    });
+    Ops.closeModal('modalAddGuild');
+    ['newGuildNickname','newGuildName','newGuildContact','newGuildAvatar'].forEach(function(f){ document.getElementById(f).value = ''; });
+    renderGuildInfo();
+    Ops.closeModal('modalAddOperator');
+    ['newOpName','newOpId','newOpAge','newOpLang','newOpPhone','newOpGuildId','newOpGuild'].forEach(function(f){ document.getElementById(f).value = ''; });
+  },
+
+  createModel: function() {
+    var name = document.getElementById('newModelName').value.trim();
+    if (!name) { alert('Model name is required'); return; }
+    Store.createModel({
+      name: name, age: parseInt(document.getElementById('newModelAge').value) || 22,
+      grade: document.getElementById('newModelGrade').value,
+      country: document.getElementById('newModelCountry').value,
+      city: document.getElementById('newModelCity').value.trim(),
+      lbs: document.getElementById('newModelLbs').value.trim(),
+      persona: document.getElementById('newModelPersona').value.trim(),
+      voice: document.getElementById('newModelVoice').value.trim(),
+      tags: document.getElementById('newModelTags').value.trim(),
+      avatar: document.getElementById('newModelAvatar').value.trim(),
+      operatorId: document.getElementById('newModelOperator').value
+    });
+    Ops.closeModal('modalAddModel');
+    ['newModelName','newModelAge','newModelCity','newModelLbs','newModelPersona','newModelVoice','newModelTags','newModelAvatar'].forEach(function(f){ document.getElementById(f).value = ''; });
+  },
+
+  bulkAssign: function() {
+    var opId = document.getElementById('bulkOpSelect').value;
+    var checks = document.querySelectorAll('#bulkModelChecks input:checked');
+    checks.forEach(function(cb){ Store.assignOperator(cb.value, opId || ''); });
+    Store._log('ops', 'Bulk assigned ' + checks.length + ' models to ' + (opId ? (Store.getOperator(opId) ? Store.getOperator(opId).name : opId) : 'unassigned'));
+    Store._notify('models'); Store._notify('operators');
+    Ops.closeModal('modalBulkAssign');
+  },
+
+  inlineAssign: function(modelId, opId) { Store.assignOperator(modelId, opId || ''); },
+
+  openMediaUpload: function(modelId) {
+    Ops.mediaUploadModelId = modelId;
+    var input = document.getElementById('mediaUploadInput');
+    input.value = '';
+    input.click();
+  },
+
+  handleMediaUpload: function(input) {
+    var model = Store.getModel(Ops.mediaUploadModelId);
+    var files = Array.from(input.files || []);
+    if (!model || !files.length) return;
+    var photos = files.filter(function(file){ return file.type.indexOf('image/') === 0; }).length;
+    var videos = files.filter(function(file){ return file.type.indexOf('video/') === 0; }).length;
+    Store._log('mediaUpload', model.name + ' — uploaded ' + photos + ' photo(s), ' + videos + ' video(s)');
+    Store._notify('log');
+  },
+
+  boostTraffic: function(id) { Store.boostTraffic(id); },
+  reduceTraffic: function(id) { Store.reduceTraffic(id); },
+  suspendModel: function(id) { Store.suspendModel(id); },
+
+  saveAll: function() { Store._log('ops', 'All changes saved — ' + Store.data.models.length + ' models, ' + Store.data.operators.length + ' operators'); Store._notify('log'); },
+
+  publishAll: function() {
+    Store.data.models.forEach(function(m){ Store.updateModel(m.id, { status: 'Published' }); });
+    Store._log('ops', 'All models published');
+    Store._notify('models');
+  },
+
+  updateOpField: function(opId, field, val) {
+    var o = Store.getOperator(opId); if (!o) return;
+    Store.updateOperator(opId, {});
+    var changes = {}; changes[field] = val;
+    Store.updateOperator(opId, changes);
+  },
+  addModelToOp: function(opId, modelId) {
+    Store.assignOperator(modelId, opId);
+    Store._notify('opDetail');
+    Store._notify('operators');
+    Store._notify('models');
+  },
+  removeModelFromOp: function(modelId) {
+    Store.assignOperator(modelId, '');
+    Store._notify('opDetail');
+    Store._notify('operators');
+    Store._notify('models');
+  },
+
+  toggleSim: function() {
+    Store.setSim(!Store.simOn());
+    var btn = document.getElementById('btnSimToggle');
+    if (Store.simOn()) { btn.textContent = '◉ Sim ON'; btn.classList.remove('tb-sim-off'); }
+    else { btn.textContent = '◎ Sim OFF'; btn.classList.add('tb-sim-off'); }
+  }
+};
+
+// ====================================================================
+// EVENT SYSTEM
+// ====================================================================
+var Events = {
+  onSelectModel: function(id) {
+    Store.selectModel(id);
+    document.getElementById('detailPlaceholder').style.display = 'none';
+    document.getElementById('detailContent').style.display = 'block';
+    document.getElementById('detailPanel').classList.add('open');
+    document.getElementById('detailBackdrop').classList.add('open');
+  },
+  closeDetail: function() {
+    Store.clearSelection();
+    document.getElementById('detailPanel').classList.remove('open');
+    document.getElementById('detailBackdrop').classList.remove('open');
+    document.getElementById('detailContent').style.display = 'none';
+    document.getElementById('detailPlaceholder').style.display = '';
+  },
+  onSearch: function(val) { Store.setSearch(val); },
+  onFilter: function(type, val) { Store.setFilter(type, val); },
+  onTrafficTierChange: function(val) {
+    var m = Store.getModel(Store.data.selectedModel); if (!m) return;
+    var expMap = { High:'Boosted', Mid:'Normal', Low:'Suppressed', Suppressed:'Suppressed' };
+    Store.updateModel(m.id, { trafficTier: val, exposureState: expMap[val] || 'Normal' });
+  },
+  onExposureSlider: function(val) { var m = Store.getModel(Store.data.selectedModel); if (m) Store.updateModel(m.id, { exposure: parseInt(val) }); },
+  onTrafficSlider: function(val) { var m = Store.getModel(Store.data.selectedModel); if (m) Store.updateModel(m.id, { trafficWeight: parseInt(val) }); },
+  onRiskSlider: function(val) { var m = Store.getModel(Store.data.selectedModel); if (m) Store.updateModel(m.id, { riskScore: parseInt(val) }); },
+  toggleOnline: function() { var m = Store.getModel(Store.data.selectedModel); if (m) Store.updateModel(m.id, { online: !m.online }); },
+  onAssignOperator: function(opId) { var m = Store.getModel(Store.data.selectedModel); if (m) Store.assignOperator(m.id, opId || ''); },
+  saveModel: function() {
+    var m = Store.getModel(Store.data.selectedModel); if (!m) return;
+    Store.updateModel(m.id, {
+      name: document.getElementById('fieldName').value,
+      nickname: document.getElementById('fieldNickname').value,
+      age: parseInt(document.getElementById('fieldAge').value) || m.age,
+      gender: document.getElementById('fieldGender').value,
+      country: document.getElementById('fieldCountry').value,
+      city: document.getElementById('fieldCity').value,
+      language: document.getElementById('fieldLang').value,
+      personaType: document.getElementById('fieldPersonaType').value,
+      accountStatus: document.getElementById('fieldAcctStatus').value,
+      persona: document.getElementById('fieldPersona').value,
+      voice: document.getElementById('fieldVoice').value,
+      tags: document.getElementById('fieldTags').value
+    });
+  },
+  onTrafficTierChange: function(val) {
+    var m = Store.getModel(Store.data.selectedModel); if (!m) return;
+    var exposureMap = { High:'Boosted', Mid:'Normal', Low:'Suppressed', Suppressed:'Suppressed' };
+    Store.updateModel(m.id, { trafficTier: val, exposureState: exposureMap[val] || 'Normal' });
+  },
+  togglePublish: function() {
+    var m = Store.getModel(Store.data.selectedModel); if (!m) return;
+    Store.updateModel(m.id, { status: m.status === 'Published' ? 'Draft' : 'Published' });
+  },
+  switchTab: function(name, btn) {
+    document.querySelectorAll('.detail-tab').forEach(function(t){ t.classList.remove('active'); });
+    btn.classList.add('active');
+    document.querySelectorAll('.detail-tab-content').forEach(function(c){ c.classList.remove('active'); });
+    document.getElementById('tab-' + name).classList.add('active');
+  },
+  switchSection: function(id) {
+    Store.setSection(id);
+    document.querySelectorAll('.nav-item').forEach(function(n){ n.classList.remove('active'); });
+    var navEl = document.querySelector('.nav-item[data-section="' + id + '"]');
+    if (navEl) navEl.classList.add('active');
+  },
+
+  toggleGroup: function(groupKey, firstChildId) {
+    Store._collapsed = Store._collapsed || {};
+    Store._collapsed[groupKey] = !Store._collapsed[groupKey];
+    // If opening, also navigate to the first child
+    if (!Store._collapsed[groupKey]) {
+      Events.switchSection(firstChildId);
+    }
+    renderSidebar();
+  },
+  toggleNestedGroup: function(groupKey, firstChildId) {
+    Store._collapsed = Store._collapsed || {};
+    Store._collapsed[groupKey] = !Store._collapsed[groupKey];
+    if (!Store._collapsed[groupKey]) {
+      Events.switchSection(firstChildId);
+    }
+    renderSidebar();
+  },
+
+  // Operator panel events
+  onOpSearch: function(val) { Store.setOpSearch(val); },
+  onOpFilter: function(type, val) { Store.setOpFilter(type, val); },
+
+  onSelectOperator: function(id) {
+    Store.selectOperator(id);
+    document.getElementById('opDetailPlaceholder').style.display = 'none';
+    document.getElementById('opDetailContent').style.display = 'block';
+    document.getElementById('opDetailPanel').classList.add('open');
+    document.getElementById('opDetailBackdrop').classList.add('open');
+  },
+  closeOpDetail: function() {
+    Store.clearOpSelection();
+    document.getElementById('opDetailPanel').classList.remove('open');
+    document.getElementById('opDetailBackdrop').classList.remove('open');
+    document.getElementById('opDetailContent').style.display = 'none';
+    document.getElementById('opDetailPlaceholder').style.display = '';
+  },
+  switchTabOp: function(name, btn) {
+    document.querySelectorAll('#opDetailPanel .detail-tab').forEach(function(t){ t.classList.remove('active'); });
+    btn.classList.add('active');
+    document.querySelectorAll('#opDetailPanel .detail-tab-content').forEach(function(c){ c.classList.remove('active'); });
+    document.getElementById('tab-op-' + name).classList.add('active');
+  },
+  saveOp: function() {
+    var o = Store.getOperator(Store.data.selectedOperator); if (!o) return;
+    Store.updateOperator(o.id, {
+      name: document.getElementById('opFieldName').value,
+      guild: document.getElementById('opFieldGuild').value,
+      country: document.getElementById('opFieldMarket').value,
+      languages: document.getElementById('opFieldLang').value
+    });
+    Store._notify('models');
+  },
+  toggleOpOnline: function() {
+    var o = Store.getOperator(Store.data.selectedOperator); if (!o) return;
+    var newStatus = o.status === 'Online' ? 'Offline' : 'Online';
+    Store.updateOperator(o.id, { status: newStatus });
+  },
+  toggleOpStatus: function() {
+    var o = Store.getOperator(Store.data.selectedOperator); if (!o) return;
+    var next = { Online:'Offline', Offline:'Busy', Busy:'Online' };
+    Store.updateOperator(o.id, { status: next[o.status] || 'Online' });
+  },
+  addModelToOp: function() {
+    var modelId = document.getElementById('opAddModelSelect').value;
+    var opId = Store.data.selectedOperator;
+    if (!modelId || !opId) return;
+    Ops.addModelToOp(opId, modelId);
+  },
+  removeModelFromOp: function(modelId) {
+    Ops.removeModelFromOp(modelId);
+  }
+};
+
+// ====================================================================
+// RENDER
+// ====================================================================
+function renderSidebar() {
+  // --- 公会管理 children ---
+  var guildChildren = [
+    { id:'guild-info', icon:'🏰', label:'公会信息' },
+    { id:'guild-members', icon:'👥', label:'成员列表' },
+    { id:'guild-data', icon:'📊', label:'公会数据' }
+  ];
+  // --- 聊手管理 children ---
+  var chatChildren = [
+    { id:'operators', icon:'👥', label:'Operators', badge:Store.data.operators.length },
+    { id:'op-income', icon:'💰', label:'聊手收入结构' },
+    { id:'op-behavior', icon:'📊', label:'行为数据' },
+    { id:'op-private', icon:'🔒', label:'私密内容表现' }
+  ];
+  // --- Model管理 children (top-level) ---
+  var modelChildren = [
+    { id:'models', icon:'👩', label:'Models', badge:Store.data.models.length },
+    { id:'model-assets', icon:'📦', label:'内容资产' },
+    { id:'model-rating', icon:'⭐', label:'等级评定' },
+    { id:'model-traffic', icon:'📊', label:'流量曝光数据' },
+    { id:'model-income', icon:'💰', label:'Model收入' },
+    { id:'model-interact-chat', icon:'💬', label:'聊天转化数据' },
+    { id:'model-interact-private', icon:'🔒', label:'私密内容数据' },
+    { id:'model-interact-health', icon:'❤️', label:'Model健康度' },
+    { id:'model-interact-lifecycle', icon:'🔄', label:'生命周期' },
+    { id:'model-live-dashboard', icon:'📡', label:'实时运营看板' }
+  ];
+  // --- 排班管理 sub-children under Model管理 ---
+  var scheduleChildren = [
+    { id:'model-schedule-config', label:'排班时常配置' }
+  ];
+  // Collapse state: track which groups are collapsed
+  if (!Store._collapsed) Store._collapsed = {};
+
+  function makeGroup(title, icon, children, groupKey, nestedTitle, nestedChildren, nestedTitle2, nestedChildren2) {
+    var nestedActive = nestedChildren && nestedChildren.some(function(c){ return Store.data.activeSection === c.id; });
+    var isActive = children.some(function(c){ return Store.data.activeSection === c.id; }) || nestedActive || Store.data.activeSection === groupKey;
+    var collapsed = Store._collapsed[groupKey];
+    var sublistStyle = collapsed ? 'display:none;' : '';
+    var arrow = collapsed ? '▸' : '▾';
+    var html = '<div class="nav-group">' +
+      '<div class="nav-group-title' + (isActive ? ' active' : '') + '" onclick="Events.toggleGroup(\'' + groupKey + '\',\'' + children[0].id + '\')"><span class="nav-icon">' + icon + '</span><span>' + title + '</span><span class="nav-arrow">' + arrow + '</span></div>' +
+      '<div class="nav-sublist" style="' + sublistStyle + '">';
+    children.forEach(function(s){
+      var badge = s.badge ? '<span class="nav-badge">' + s.badge + '</span>' : '';
+      var cls = 'nav-item nav-subitem' + (Store.data.activeSection === s.id ? ' active' : '');
+      html += '<a class="' + cls + '" data-section="' + s.id + '" onclick="Events.switchSection(\'' + s.id + '\')"><span class="nav-icon">' + s.icon + '</span> ' + s.label + badge + '</a>';
+    });
+    // helper to build nested subgroup
+    function buildNested(ntitle, nchildren, nKey) {
+      var nCollapsed = Store._collapsed[nKey];
+      var nStyle = nCollapsed ? 'display:none;' : '';
+      var nArrow = nCollapsed ? '▸' : '▾';
+      var nActive = nchildren && nchildren.some(function(c){ return Store.data.activeSection === c.id; });
+      var block = '<div class="nav-subgroup">' +
+        '<div class="nav-subgroup-title' + (nActive ? ' active' : '') + '" onclick="Events.toggleNestedGroup(\'' + nKey + '\',\'' + nchildren[0].id + '\')"><span style="font-size:10px;">' + nArrow + '</span> ' + ntitle + '</div>' +
+        '<div class="nav-sublist" style="padding-left:8px;' + nStyle + '">';
+      nchildren.forEach(function(s){
+        var cls = 'nav-item nav-subitem nav-deep-subitem' + (Store.data.activeSection === s.id ? ' active' : '');
+        block += '<a class="' + cls + '" data-section="' + s.id + '" onclick="Events.switchSection(\'' + s.id + '\')">' + s.label + '</a>';
+      });
+      block += '</div></div>';
+      return block;
+    }
+    if (nestedTitle && nestedChildren) html += buildNested(nestedTitle, nestedChildren, groupKey + '-nested');
+    html += '</div></div>';
+    return html;
+  }
+
+  document.getElementById('sidebarNav').innerHTML =
+    makeGroup('公会管理', '🏰', guildChildren, 'guild') +
+    makeGroup('聊手管理', '💬', chatChildren, 'chat') +
+    makeGroup('Model管理', '👩', modelChildren, 'model', '排班管理', scheduleChildren);
+  // Update operator filter dropdown
+  var filterSelect = document.getElementById('filterOperator');
+  if (filterSelect) {
+    var sel = filterSelect.value;
+    filterSelect.innerHTML = '<option value="">All Operators</option>' + Store.getOperators().map(function(o){ return '<option value="' + o.id + '"' + (sel === o.id ? ' selected' : '') + '>' + o.name + '</option>'; }).join('');
+  }
+}
+
+function renderModelTable() {
+  var models = Store.getModels();
+  var rows = models.map(function(m, i){
+    var accountCls = m.accountStatus === '启用' ? 'published' : m.accountStatus === '审核中' ? 'draft' : 'draft';
+    var isSel = Store.data.selectedModel === m.id;
+    return '<tr class="model-table-row' + (isSel ? ' selected' : '') + '" data-model="' + m.id + '" onclick="Events.onSelectModel(\'' + m.id + '\')">' +
+      '<td class="col-mid"><span class="op-id-tag">' + (m.servingId || m.id) + '</span></td>' +
+      '<td class="col-mname"><strong>' + (m.nickname || m.name) + '</strong><small style="display:block;color:var(--text-3);font-size:10px;">' + (m.name || '—') + '</small></td>' +
+      '<td class="col-mavatar"><img class="model-cell-avatar" src="' + m.avatar + '" alt="' + m.name + '" style="width:42px;height:42px;border-radius:50%;object-fit:cover;" /></td>' +
+      '<td class="col-mage">' + (m.age || '—') + '</td>' +
+      '<td class="col-mgender">' + (m.gender || '女') + '</td>' +
+      '<td class="col-mcountry">' + (m.country || '—') + '</td>' +
+      '<td class="col-mcity">' + (m.city || '—') + '</td>' +
+      '<td class="col-mlang"><span class="lang-tag">' + (m.language || '—') + '</span></td>' +
+      '<td class="col-mpersona"><span class="persona-tag">' + (m.personaType || '—') + '</span></td>' +
+      '<td class="col-macct"><span class="status-badge ' + accountCls + '">' + (m.accountStatus || '启用') + '</span></td>' +
+      '<td class="col-mcreated">' + (m.createdAt || '—') + '</td>' +
+      '<td class="col-mactive">' + (m.lastActiveTime || '—') + '</td>' +
+      '<td class="col-actions">' +
+        '<button class="act-btn edit" onclick="event.stopPropagation();Events.onSelectModel(\'' + m.id + '\')" title="Edit">✎</button>' +
+      '</td>' +
+    '</tr>';
+  }).join('');
+
+  document.getElementById('modelTableBody').innerHTML = rows || '<tr><td colspan="13" style="text-align:center;padding:40px;color:var(--text-3);">No models match filters</td></tr>';
+  document.getElementById('tableCount').textContent = models.length + ' models';
+  document.getElementById('tableShowing').textContent = 'Showing ' + models.length + ' of ' + Store.data.models.length + ' models';
+  renderSidebar();
+}
+
+function renderDetail() {
+  var m = Store.getModel(Store.data.selectedModel); if (!m) return;
+  document.getElementById('detailAvatar').src = m.avatar;
+  document.getElementById('detailName').textContent = m.name + ', ' + m.age;
+  document.getElementById('detailLocation').textContent = m.city + ', ' + m.country + ' · ' + (m.lbsSegment || m.lbs);
+  var st = document.getElementById('detailStatus');
+  st.textContent = m.assignStatus || m.status;
+  st.className = 'status-badge ' + (m.status === 'Published' ? 'published' : 'draft');
+
+  // Profile tab
+  document.getElementById('fieldId').value = m.servingId;
+  document.getElementById('fieldName').value = m.name;
+  document.getElementById('fieldNickname').value = m.nickname || '';
+  document.getElementById('fieldAge').value = m.age;
+  document.getElementById('fieldGender').value = m.gender || '女';
+  document.getElementById('fieldCountry').value = m.country;
+  document.getElementById('fieldCity').value = m.city || '';
+  document.getElementById('fieldLang').value = m.language || '';
+  document.getElementById('fieldPersonaType').value = m.personaType || '';
+  document.getElementById('fieldAcctStatus').value = m.accountStatus || '启用';
+
+  // Persona tab
+  document.getElementById('fieldPersona').value = m.persona;
+  document.getElementById('fieldPersonaType').value = m.personaType || 'Warm & Playful';
+  document.getElementById('fieldVoice').value = m.voice;
+  document.getElementById('fieldTags').value = m.tags;
+
+  // Binding tab
+  document.getElementById('fieldOperator').innerHTML = '<option value="">Unassigned</option>' + Store.getOperators().map(function(o){ return '<option value="' + o.id + '"' + (m.operatorId === o.id ? ' selected' : '') + '>' + o.name + ' (' + o.market + ')</option>'; }).join('');
+  document.getElementById('fieldOpLevel').value = m.opLevel || 'Mid';
+  document.getElementById('fieldWorkload').value = m.workload || 'Normal';
+  document.getElementById('fieldAssignStatus').value = m.assignStatus || 'Active';
+
+  // Traffic tab
+  document.getElementById('fieldTrafficTier').value = m.trafficTier || 'Mid';
+  document.getElementById('fieldExposureState').value = m.exposureState || 'Normal';
+  document.getElementById('fieldRankPos').value = m.rankPos || 1;
+  document.getElementById('fieldOnline').value = m.online ? '1' : '0';
+
+  // Config tab
+  document.getElementById('fieldSchedGroup').value = m.schedGroup || '';
+  document.getElementById('fieldRuleSet').value = m.ruleSet || '';
+  document.getElementById('fieldMonTier').value = m.monTier || 'B+ Economy';
+  document.getElementById('fieldLbsSegment').value = m.lbsSegment || m.lbs || '';
+  document.getElementById('fieldCompliance').value = m.compliance || 'Compliant';
+
+  document.getElementById('btnPublish').textContent = m.status === 'Published' ? 'Unpublish' : 'Publish';
+}
+
+function renderOperatorTable() {
+  var ops = Store.getOperators();
+  var avatarMap = { op1:'https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&w=80&q=80', op2:'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=80&q=80', op3:'https://images.unsplash.com/photo-1517841905240-472988babdf9?auto=format&fit=crop&w=80&q=80' };
+  var rows = ops.map(function(o){
+    var assignedNames = o.modelIds.map(function(mid){ var m = Store.getModel(mid); return m ? m.name : mid; }).join(', ') || '—';
+    var isSel = Store.data.selectedOperator === o.id;
+    var statusLabel = o.status === 'Online' ? '在线' : o.status === 'Offline' ? '离线' : o.status === 'Busy' ? '忙碌' : '冻结';
+    var statusCls = o.status === 'Online' ? 'published' : o.status === 'Busy' ? 'draft' : 'draft';
+    return '<tr class="op-table-row' + (isSel ? ' selected' : '') + '" onclick="Events.onSelectOperator(\'' + o.id + '\')">' +
+      '<td><span class="op-id-tag">' + (o.opId || '—') + '</span></td>' +
+      '<td><strong>' + (o.name || '—') + '</strong></td>' +
+      '<td><img class="model-cell-avatar" src="' + (avatarMap[o.id] || 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&w=80&q=80') + '" alt="' + o.name + '" style="width:36px;height:36px;border-radius:50%;object-fit:cover;" /></td>' +
+      '<td>' + (o.gender || 'Female') + '</td>' +
+      '<td>' + (o.age || '—') + '</td>' +
+      '<td>' + (o.country || '—') + '</td>' +
+      '<td><span class="lang-tag">' + (o.languages || '—') + '</span></td>' +
+      '<td><span class="config-tag">' + (o.phone || '—') + '</span></td>' +
+      '<td><span class="op-id-tag">' + (o.guildId || '—') + '</span></td>' +
+      '<td><span class="guild-tag">' + (o.guild || '—') + '</span></td>' +
+      '<td><span class="model-count-badge">' + o.modelIds.length + '</span> <small style="color:var(--text-3);font-size:10px;">' + assignedNames + '</small></td>' +
+      '<td><span class="status-badge ' + statusCls + '">' + statusLabel + '</span></td>' +
+      '<td><span style="font-size:10px;color:var(--text-2);">' + (o.lastOnline || '—') + '</span></td>' +
+      '<td><strong>' + (o.todayMinutes || 0) + '</strong></td>' +
+      '<td><strong>' + (o.weeklyMinutes || 0) + '</strong></td>' +
+    '</tr>';
+  }).join('');
+  document.getElementById('operatorTableBody').innerHTML = rows || '<tr><td colspan="15" style="text-align:center;padding:40px;color:var(--text-3);">No operators match filters</td></tr>';
+  document.getElementById('opTableCount').textContent = ops.length + ' operators';
+  document.getElementById('opTableShowing').textContent = 'Showing ' + ops.length + ' of ' + Store.data.operators.length + ' operators';
+}
+
+function renderOpDetail() {
+  var o = Store.getOperator(Store.data.selectedOperator);
+  if (!o) return;
+
+  document.getElementById('opDetailAvatar').src = 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&w=120&q=80';
+  document.getElementById('opDetailName').textContent = o.name;
+  document.getElementById('opDetailMeta').textContent = (o.gender || 'Female') + ' · ' + (o.age || '—') + ' · ' + (o.country || '—') + ' · ' + (o.languages || '');
+  var ost = document.getElementById('opDetailStatus');
+  var statusMap = { Online:'在线', Offline:'离线', Busy:'忙碌', Frozen:'冻结' };
+  ost.textContent = statusMap[o.status] || '在线';
+  var sc = o.status === 'Online' ? 'published' : o.status === 'Busy' ? 'draft' : 'draft';
+  ost.className = 'status-badge ' + sc;
+
+  document.getElementById('opFieldId').value = o.opId;
+  document.getElementById('opFieldName').value = o.name;
+  document.getElementById('opFieldGuild').value = o.guild || '';
+  document.getElementById('opFieldMarket').value = o.country || '';
+  document.getElementById('opFieldLang').value = o.languages;
+  document.getElementById('opFieldOnline').value = o.status || 'Online';
+
+  // Assigned models tab — editable list with remove buttons
+  var assigned = Store.getModelsForOp(o.id);
+  document.getElementById('opModelAssignmentList').innerHTML = assigned.map(function(m){
+    return '<div class="op-assigned-row"><div class="model-cell"><img class="model-cell-avatar" src="' + m.avatar + '" /><div class="model-cell-info"><strong>' + m.name + '</strong><small>' + m.grade + ' · ' + m.city + '</small></div></div><button class="remove-model-btn" onclick="Events.removeModelFromOp(\'' + m.id + '\')">✕</button></div>';
+  }).join('') || '<div style="font-size:12px;color:var(--text-3);padding:8px;">No models assigned. Use the dropdown below to add one.</div>';
+
+  // Add model dropdown — only show unassigned models + models assigned to this op
+  var allModels = Store.data.models;
+  document.getElementById('opAddModelSelect').innerHTML = '<option value="">— Select model —</option>' +
+    allModels.filter(function(m){ return !m.operatorId || m.operatorId === o.id; }).map(function(m){
+      return '<option value="' + m.id + '">' + m.name + ' (' + m.grade + ' · ' + (m.operatorId === o.id ? 'assigned' : 'unassigned') + ')</option>';
+    }).join('');
+
+  // Performance tab
+  var revenue = Store.totalOpRevenue(o.id);
+  var chats = Store.totalOpChats(o.id);
+  var convRate = Store.avgOpConvRate(o.id);
+  document.getElementById('opPerfGrid').innerHTML =
+    '<div class="perf-stat"><em>Models</em><strong>' + assigned.length + '</strong></div>' +
+    '<div class="perf-stat"><em>Total Chats</em><strong>' + chats + '</strong></div>' +
+    '<div class="perf-stat"><em>Revenue</em><strong>$' + revenue.toFixed(1) + '</strong></div>' +
+    '<div class="perf-stat"><em>Avg Conv.</em><strong>' + convRate + '%</strong></div>';
+
+  document.getElementById('btnOpToggle').textContent = o.online ? 'Go Offline' : 'Go Online';
+}
+
+function renderRoutingMatrix() {
+  var zones = Store.data.routing.geoZones, matrix = Store.data.routing.matrix;
+  var ths = '<th>Model</th>' + zones.map(function(z){ return '<th>' + z + '</th>'; }).join('') + '<th>Σ</th>';
+  var rows = matrix.map(function(row){
+    var m = Store.getModel(row.modelId), name = m ? m.name : row.modelId, sum = 0;
+    var cells = zones.map(function(z){ sum += (row[z] || 0); return '<td class="editable-cell">' + row[z] + '</td>'; }).join('');
+    return '<tr><td><strong>' + name + '</strong></td>' + cells + '<td><strong>' + sum + '</strong></td>';
+  }).join('');
+  var totals = '<tr style="background:#f9fafb;"><td><strong>Total</strong></td>';
+  zones.forEach(function(z){ var t = matrix.reduce(function(s, r){ return s + (r[z] || 0); }, 0); totals += '<td class="' + (t !== 100 ? 'col-warn' : '') + '"><strong>' + t + '</strong></td>'; });
+  totals += '<td></td></tr>';
+  document.getElementById('routingMatrix').innerHTML = '<table class="model-table"><thead><tr>' + ths + '</tr></thead><tbody>' + rows + totals + '</tbody></table>';
+}
+
+function renderRatingTable() {
+  document.getElementById('ratingTableBody').innerHTML = Store.data.models.map(function(m){
+    var trend = m.riskLevel === 'high' ? '↓' : m.exposure < 30 ? '→' : '↑';
+    var trendCls = m.riskLevel === 'high' ? 'trend-down' : m.exposure < 30 ? '' : 'trend-up';
+    return '<tr><td><strong>' + m.name + '</strong></td><td><span class="grade-badge' + (m.grade==='C'?' grade-c':'') + (m.grade==='B+'?' grade-b':'') + '">' + m.grade + '</span></td><td>' + Math.round(60 + m.satisfaction * 8) + '%</td><td>' + Math.round(55 + m.exposure * 0.3) + '%</td><td>' + Math.round(70 + m.satisfaction * 6) + '%</td><td>' + Math.round(65 + m.satisfaction * 5) + '%</td><td><span class="risk-badge ' + m.riskLevel + '">' + m.riskScore + '</span></td><td class="' + trendCls + '">' + trend + '</td></tr>';
+  }).join('');
+}
+
+function renderIncome() {
+  var total = 0;
+  Store.data.models.forEach(function(m){ var t = Store.data.commission.tierMultipliers[m.grade] || 1; total += Math.round(m.chats * 120 * t * (m.exposure / 100)); });
+  document.getElementById('incomeGrid').innerHTML = '<div class="dash-card"><em>Total Diamonds</em><strong>💎 ' + total.toLocaleString() + '</strong><small>≈ $' + (total * Store.data.commission.diamondRate).toFixed(2) + '</small></div>' + Store.data.models.map(function(m){ var t = Store.data.commission.tierMultipliers[m.grade] || 1; var r = Math.round(m.chats * 120 * t * (m.exposure / 100)); return '<div class="dash-card"><em>' + m.name + ' (' + m.grade + ')</em><strong>💎 ' + r.toLocaleString() + '</strong><small>' + m.chats + ' chats · ' + m.exposure + '% exp</small></div>'; }).join('');
+  document.getElementById('commissionTableBody').innerHTML = Store.data.commission.actions.map(function(a){ return '<tr><td>' + a.action + '</td><td class="editable-cell">' + a.opPct + '</td><td>' + a.platPct + '</td><td>' + a.diamonds + '</td><td>' + (typeof a.diamonds === 'number' ? Math.round(a.diamonds * 1.5) : a.diamonds) + '</td><td>' + (typeof a.diamonds === 'number' ? Math.round(a.diamonds * 0.7) : a.diamonds) + '</td></tr>'; }).join('');
+}
+
+function getGuildStats() {
+  // --- Realistic mock financial data per guild ---
+  var finData = {
+    'Desert Rose':  { grossRevenue:245680, settled:184260, pending:61420, guildCut:49136, opTotal:161322, platformCut:35220, operators:2, models:3, chats:2147, online:2 },
+    'Pearl Guild':  { grossRevenue:98240,  settled:73680,  pending:24560, guildCut:19648, opTotal:64488,  platformCut:14104, operators:1, models:1, chats:892,  online:1 },
+    'Falcon Star':  { grossRevenue:543210, settled:407408, pending:135802, guildCut:108642, opTotal:356780, platformCut:77788, operators:2, models:2, chats:4321, online:2 },
+    'Oasis Media':  { grossRevenue:125400, settled:94050,  pending:31350, guildCut:25080, opTotal:82300,  platformCut:18020, operators:1, models:1, chats:1120, online:0 },
+    'Levant Bloom': { grossRevenue:0,       settled:0,      pending:0,     guildCut:0,     opTotal:0,      platformCut:0,     operators:0, models:0, chats:0,    online:0 }
+  };
+  var map = {};
+  // Merge Store operator data into guild map
+  Store.data.operators.forEach(function(o){
+    var name = o.guild || 'Unassigned Guild';
+    if (!map[name]) map[name] = { name:name, operators:[], models:[], chats:0, online:0, onlineOpIds:[] };
+    map[name].operators.push(o);
+    if (o.status === 'Online' && map[name].onlineOpIds.indexOf(o.id) === -1) { map[name].onlineOpIds.push(o.id); map[name].online += 1; }
+    o.modelIds.forEach(function(mid){
+      var m = Store.getModel(mid);
+      if (!m) return;
+      map[name].models.push(m);
+    });
+  });
+  // Include all guilds from finData even if no operators in Store
+  Object.keys(finData).forEach(function(name){
+    if (!map[name]) map[name] = { name:name, operators:[], models:[], chats:0, online:0, onlineOpIds:[] };
+  });
+  return Object.keys(map).map(function(k){
+    var g = map[k];
+    var f = finData[k] || { grossRevenue:0, settled:0, pending:0, guildCut:0, opTotal:0, platformCut:0, chats:0 };
+    g.grossRevenue = f.grossRevenue;
+    g.settled = f.settled;
+    g.pending = f.pending;
+    g.guildCut = f.guildCut;
+    g.opTotal = f.opTotal;
+    g.platformCut = f.platformCut;
+    g.finChats = f.chats;
+    if (f.operators) g.operatorCount = f.operators;
+    if (f.models) g.modelCount = f.models;
+    return g;
+  });
+}
+
+function renderGuildInfo() {
+  var statMap = {};
+  getGuildStats().forEach(function(g){ statMap[g.name] = g; });
+  var guildRows = Store.getGuilds().map(function(row){
+    var stats = statMap[row.name];
+    row.signed = stats ? stats.models.length : row.signed;
+    row.operators = stats ? stats.operators.length : row.operators;
+    return row;
+  });
+  var totalSigned = guildRows.reduce(function(sum, row){ return sum + (row.signed || 0); }, 0);
+  var totalOperators = guildRows.reduce(function(sum, row){ return sum + (row.operators || 0); }, 0);
+  document.getElementById('guildInfoSummary').innerHTML =
+    '<div class="dash-card"><em>Total Guilds</em><strong>' + guildRows.length + '</strong><small>Active management scope</small></div>' +
+    '<div class="dash-card"><em>Signed Models</em><strong>' + totalSigned + '</strong><small>Real + virtual guild capacity</small></div>' +
+    '<div class="dash-card"><em>Operators</em><strong>' + totalOperators + '</strong><small>Across all guilds</small></div>';
+  document.getElementById('guildInfoCount').textContent = guildRows.length + ' guilds';
+  document.getElementById('guildInfoTableBody').innerHTML = guildRows.map(function(row){
+    var statusCls = row.status === 'Active' ? 'published' : 'draft';
+    return '<tr>' +
+      '<td><img class="guild-avatar-img" src="' + row.avatar + '" alt="' + row.nickname + '" /></td>' +
+      '<td><span class="op-id-tag">' + row.id + '</span></td>' +
+      '<td><strong>' + row.nickname + '</strong><small style="display:block;color:var(--text-3);font-size:10px;margin-top:2px;">' + row.name + '</small></td>' +
+      '<td>' + row.country + '</td>' +
+      '<td><span class="config-tag">' + row.contact + '</span></td>' +
+      '<td><span class="model-count-badge">' + row.signed + '</span></td>' +
+      '<td>' + row.operators + '</td>' +
+      '<td><span class="status-badge ' + statusCls + '">' + row.status + '</span></td>' +
+    '</tr>';
+  }).join('');
+}
+
+function renderGuildMembers() {
+  document.getElementById('guildMembersTableBody').innerHTML = Store.data.operators.map(function(o){
+    var guildId = 'G-' + (o.guild || 'Guild').toUpperCase().replace(/[^A-Z0-9]+/g, '-').replace(/^-|-$/g, '').slice(0, 12);
+    var joinDateMap = { op1:'2026-01-18', op2:'2026-02-06', op3:'2026-03-12' };
+    var avatar = o.name ? o.name.charAt(0).toUpperCase() : 'O';
+    return '<tr>' +
+      '<td><span class="op-id-tag">' + guildId + '</span></td>' +
+      '<td><span class="guild-tag">' + (o.guild || '—') + '</span></td>' +
+      '<td><strong>' + o.name + '</strong></td>' +
+      '<td><span class="op-id-tag">' + (o.opId || '—') + '</span></td>' +
+      '<td><div class="chat-operator-avatar">' + avatar + '</div></td>' +
+      '<td><span class="status-badge ' + (o.online ? 'published' : 'draft') + '">' + (o.online ? 'Online' : 'Offline') + '</span></td>' +
+      '<td><span class="config-tag">' + (joinDateMap[o.id] || '2026-04-01') + '</span></td>' +
+    '</tr>';
+  }).join('');
+}
+
+function renderGuildData() {
+  var stats = getGuildStats();
+  var grandTotal = { grossRevenue:0, settled:0, pending:0, guildCut:0, opTotal:0, platformCut:0, chats:0 };
+  stats.forEach(function(g){ grandTotal.grossRevenue += (g.grossRevenue || 0); grandTotal.settled += (g.settled || 0); grandTotal.pending += (g.pending || 0); grandTotal.guildCut += (g.guildCut || 0); grandTotal.opTotal += (g.opTotal || 0); grandTotal.platformCut += (g.platformCut || 0); grandTotal.chats += (g.finChats || g.chats || 0); });
+  document.getElementById('guildFinanceSummary').innerHTML =
+    '<div class="dash-card"><em>平台总收入</em><strong>💎 ' + grandTotal.grossRevenue.toLocaleString() + '</strong><small>All guilds combined</small></div>' +
+    '<div class="dash-card"><em>可结算收入</em><strong>💎 ' + grandTotal.settled.toLocaleString() + '</strong><small>Eligible for settlement</small></div>' +
+    '<div class="dash-card"><em>待结算金额</em><strong>💎 ' + grandTotal.pending.toLocaleString() + '</strong><small>Pending settlement</small></div>';
+  document.getElementById('guildDataTableBody').innerHTML = stats.map(function(g){
+    return '<tr>' +
+      '<td><span class="guild-tag">' + g.name + '</span></td>' +
+      '<td><strong style="color:var(--text);">💎 ' + (g.grossRevenue || 0).toLocaleString() + '</strong></td>' +
+      '<td><strong style="color:var(--green);">💎 ' + (g.settled || 0).toLocaleString() + '</strong></td>' +
+      '<td><span style="color:var(--text-2);">💎 ' + (g.settled || 0).toLocaleString() + '</span></td>' +
+      '<td><span style="color:var(--amber);font-weight:700;">💎 ' + (g.pending || 0).toLocaleString() + '</span></td>' +
+      '<td><span style="color:var(--primary);font-weight:700;">💎 ' + (g.guildCut || 0).toLocaleString() + '</span></td>' +
+      '<td><strong style="color:var(--text);">💎 ' + (g.opTotal || 0).toLocaleString() + '</strong></td>' +
+      '<td><span style="color:var(--red);">💎 ' + (g.platformCut || 0).toLocaleString() + '</span></td>' +
+    '</tr>';
+  }).join('');
+  // Grand total row
+  document.getElementById('guildDataTableBody').innerHTML +=
+    '<tr style="background:#fafbfc;font-weight:800;border-top:2px solid var(--border);">' +
+      '<td><strong>平台合计</strong></td>' +
+      '<td><strong>💎 ' + grandTotal.grossRevenue.toLocaleString() + '</strong></td>' +
+      '<td><strong style="color:var(--green);">💎 ' + grandTotal.settled.toLocaleString() + '</strong></td>' +
+      '<td><strong>💎 ' + grandTotal.settled.toLocaleString() + '</strong></td>' +
+      '<td><strong style="color:var(--amber);">💎 ' + grandTotal.pending.toLocaleString() + '</strong></td>' +
+      '<td><strong style="color:var(--primary);">💎 ' + grandTotal.guildCut.toLocaleString() + '</strong></td>' +
+      '<td><strong>💎 ' + grandTotal.opTotal.toLocaleString() + '</strong></td>' +
+      '<td><strong style="color:var(--red);">💎 ' + grandTotal.platformCut.toLocaleString() + '</strong></td>' +
+    '</tr>';
+}
+
+function renderOpIncome() {
+  var items = Store.getAllOpPerf();
+  var totalRev = 0, totalToday = 0, totalWeek = 0, totalMonth = 0, totalPrivateUnlocks = 0, totalPrivateRev = 0, totalPaidConv = 0;
+  items.forEach(function(p){ totalRev += (p.totalRevenue||0); totalToday += (p.todayRevenue||0); totalWeek += (p.weekRevenue||0); totalMonth += (p.monthRevenue||0); totalPrivateUnlocks += (p.privateUnlocks||0); totalPrivateRev += (p.privateRevenue||0); totalPaidConv += (p.paidConverts||0); });
+  document.getElementById('opIncomeSummary').innerHTML =
+    '<div class="dash-card"><em>聊手总收入</em><strong>💎 ' + totalRev.toLocaleString() + '</strong><small>All operators</small></div>' +
+    '<div class="dash-card"><em>今日收入</em><strong>💎 ' + totalToday.toLocaleString() + '</strong><small>Today</small></div>' +
+    '<div class="dash-card"><em>本周收入</em><strong>💎 ' + totalWeek.toLocaleString() + '</strong><small>This week</small></div>' +
+    '<div class="dash-card"><em>本月收入</em><strong>💎 ' + totalMonth.toLocaleString() + '</strong><small>This month</small></div>' +
+    '<div class="dash-card"><em>付费转化总数</em><strong>' + totalPaidConv.toLocaleString() + '</strong><small>All paid converts</small></div>' +
+    '<div class="dash-card"><em>私密内容总收入</em><strong>💎 ' + totalPrivateRev.toLocaleString() + '</strong><small>' + totalPrivateUnlocks + ' unlocks</small></div>';
+  document.getElementById('opIncomeTableBody').innerHTML = items.map(function(p){
+    return '<tr><td><strong>' + p.name + '</strong></td><td>💎 ' + (p.totalRevenue||0).toLocaleString() + '</td><td>💎 ' + (p.todayRevenue||0).toLocaleString() + '</td><td>💎 ' + (p.weekRevenue||0).toLocaleString() + '</td><td>💎 ' + (p.monthRevenue||0).toLocaleString() + '</td><td>$' + (p.arpu||0).toFixed(1) + '</td><td>$' + (p.chatRevenue||0).toFixed(2) + '</td><td>$' + (p.userRevenue||0).toFixed(1) + '</td><td>' + (p.paidConverts||0) + '</td><td>' + (p.chatToPaidRate||0) + '%</td><td>' + (p.privateUnlocks||0) + '</td><td>💎 ' + (p.privateRevenue||0).toLocaleString() + '</td></tr>';
+  }).join('');
+}
+
+function renderOpBehavior() {
+  var items = Store.getAllOpPerf();
+  var totalServed = 0, totalMsgs = 0, totalGood = 0, totalBad = 0;
+  items.forEach(function(p){ totalServed += (p.totalServed||0); totalMsgs += (p.weekMsgs||0); totalGood += (p.goodRate||0); totalBad += (p.badRate||0); });
+  document.getElementById('opBehaviorSummary').innerHTML =
+    '<div class="dash-card"><em>累计接待用户</em><strong>' + totalServed.toLocaleString() + '</strong><small>All time</small></div>' +
+    '<div class="dash-card"><em>本周消息总数</em><strong>' + totalMsgs.toLocaleString() + '</strong><small>This week</small></div>' +
+    '<div class="dash-card"><em>平均好评率</em><strong>' + (items.length ? (totalGood/items.length).toFixed(1) : 0) + '%</strong><small>Good rate avg</small></div>' +
+    '<div class="dash-card"><em>平均差评率</em><strong>' + (items.length ? (totalBad/items.length).toFixed(1) : 0) + '%</strong><small>Bad rate avg</small></div>';
+  document.getElementById('opBehaviorTableBody').innerHTML = items.map(function(p){
+    return '<tr><td><strong>' + p.name + '</strong></td><td>' + (p.todayServed||0) + '</td><td>' + (p.weekServed||0) + '</td><td>' + (p.totalServed||0).toLocaleString() + '</td><td>' + (p.todayMsgs||0) + '</td><td>' + (p.weekMsgs||0).toLocaleString() + '</td><td>' + (p.avgMsgPerUser||0) + '</td><td>' + (p.firstResponseSec||0) + 's</td><td>' + (p.avgReplyInterval||'—') + '</td><td>' + (p.timeoutCount||0) + '</td><td>' + (p.goodRate||0) + '%</td><td>' + (p.badRate||0) + '%</td><td>' + (p.icebreakRate||0) + '%</td><td>' + (p.retain7min||0) + '%</td><td>' + (p.return24h||0) + '%</td><td>' + (p.avgChatMin||0) + '</td></tr>';
+  }).join('');
+}
+
+function renderOpPrivate() {
+  var items = Store.getAllOpPerf();
+  var totalPhotos = 0, totalVideos = 0, totalPrivateRev = 0;
+  items.forEach(function(p){ totalPhotos += (p.privatePhotos||0); totalVideos += (p.privateVideos||0); totalPrivateRev += (p.privateRevenue||0); });
+  document.getElementById('opPrivateSummary').innerHTML =
+    '<div class="dash-card"><em>私密照片总数</em><strong>' + totalPhotos.toLocaleString() + '</strong><small>All operators</small></div>' +
+    '<div class="dash-card"><em>私密视频总数</em><strong>' + totalVideos.toLocaleString() + '</strong><small>All operators</small></div>' +
+    '<div class="dash-card"><em>私密内容总收入</em><strong>💎 ' + totalPrivateRev.toLocaleString() + '</strong><small>All operators</small></div>';
+  document.getElementById('opPrivateTableBody').innerHTML = items.map(function(p){
+    return '<tr><td><strong>' + p.name + '</strong></td><td>' + (p.privatePhotos||0) + '</td><td>' + (p.privateVideos||0) + '</td><td>' + (p.privateConvRate||0) + '%</td><td>' + (p.privateRevenueShare||0) + '%</td></tr>';
+  }).join('');
+}
+
+function renderModelAssets() {
+  document.getElementById('modelAssetsTableBody').innerHTML = Store.data.models.map(function(m){
+    var extra = Store.getModelExtra(m.id);
+    return '<tr><td><strong>'+(m.nickname||m.name)+'</strong></td><td><span class="op-id-tag">'+(m.servingId||m.id)+'</span></td><td><img src="'+m.avatar+'" style="width:34px;height:34px;border-radius:50%;object-fit:cover;" /></td><td style="max-width:180px;font-size:11px;">'+(extra.bio||'—')+'</td><td><span class="lang-tag">'+(extra.interests||'—')+'</span></td><td><button class="tb-btn tb-add" onclick="Ops.openPrivateContent(\''+m.id+'\')">查看私密内容 ('+((extra.privatePhotos||[]).length+(extra.privateVideos||[]).length)+')</button></td></tr>';
+  }).join('');
+}
+function renderModelRating() {
+  document.getElementById('modelRatingTableBody').innerHTML = Store.data.models.map(function(m){
+    var r = Store.getModelRating(m.id)||{};
+    return '<tr><td><strong>'+(m.nickname||m.name)+'</strong></td><td><span class="op-id-tag">'+(m.servingId||m.id)+'</span></td><td><img src="'+m.avatar+'" style="width:34px;height:34px;border-radius:50%;object-fit:cover;" /></td><td><span class="grade-badge'+(r.grade==='C'?' grade-c':'')+(r.grade==='B'?' grade-b':'')+'">'+r.grade+'</span></td><td><strong>'+(r.score||0)+'</strong></td><td>'+(r.unlockRate||0)+'%</td><td>$'+(r.userPaid||0)+'</td><td>'+(r.sessionMin||0)+'</td><td>'+(r.activity||0)+'%</td><td>'+(r.responseSec||0)+'s</td><td>'+(r.trafficShare||0)+'%</td><td>'+(r.revenueShare||0)+'%</td><td><span style="color:var(--green);font-weight:700;">+'+(r.incentiveBonus||0)+'%</span></td></tr>';
+  }).join('');
+}
+function renderModelTraffic() {
+  document.getElementById('modelTrafficTableBody').innerHTML = Store.data.models.map(function(m){
+    var t = Store.getModelTraffic(m.id)||{}, s=t.sources||{};
+    return '<tr><td><strong>'+(m.nickname||m.name)+'</strong></td><td><span class="op-id-tag">'+(m.servingId||m.id)+'</span></td><td><img src="'+m.avatar+'" style="width:34px;height:34px;border-radius:50%;object-fit:cover;" /></td><td><span class="grade-badge'+(m.grade==='C'?' grade-c':'')+(m.grade==='B+'?' grade-b':'')+'">'+(m.grade||'B')+'</span></td><td><strong>'+(t.todayExposure||0).toLocaleString()+'</strong></td><td>'+(t.weekExposure||0).toLocaleString()+'</td><td>'+(s.discover||0)+'%</td><td>'+(s.likes||0)+'%</td><td>'+(s.push||0)+'%</td><td>'+(s.recommend||0)+'%</td><td>'+(t.ctr||0)+'%</td><td>'+(t.likeRate||0)+'%</td><td><strong>'+(t.matchRate||0)+'%</strong></td></tr>';
+  }).join('');
+}
+function renderModelIncome() {
+  document.getElementById('modelIncomeTableBody').innerHTML = Store.data.models.map(function(m){
+    var mi = Store.getModelIncome(m.id)||{};
+    return '<tr><td><strong>'+(m.nickname||m.name)+'</strong></td><td><span class="op-id-tag">'+(m.servingId||m.id)+'</span></td><td><img src="'+m.avatar+'" style="width:34px;height:34px;border-radius:50%;object-fit:cover;" /></td><td>💎 '+(mi.totalRevenue||0).toLocaleString()+'</td><td>💎 '+(mi.todayRevenue||0).toLocaleString()+'</td><td><span style="font-size:10px;">'+(mi.revenueSource||'—')+'</span></td><td>$'+(mi.arpu||0).toFixed(1)+'</td><td>$'+(mi.chatRevenue||0).toFixed(2)+'</td><td>$'+(mi.userRevenue||0).toFixed(1)+'</td><td>'+(mi.paidConverts||0).toLocaleString()+'</td></tr>';
+  }).join('');
+}
+function renderModelInteractChat() {
+  document.getElementById('chatConvTableBody').innerHTML = Store.data.models.map(function(m){
+    var c = Store.getModelChatConv(m.id)||{};
+    return '<tr><td><strong>'+(m.nickname||m.name)+'</strong></td><td><span class="op-id-tag">'+(m.servingId||m.id)+'</span></td><td><img src="'+m.avatar+'" style="width:34px;height:34px;border-radius:50%;object-fit:cover;" /></td><td>'+(c.todayEntered||0)+'</td><td>'+(c.weekEntered||0)+'</td><td>'+(c.avgStartTime||'—')+'</td><td>'+(c.userMsgs||0).toLocaleString()+'</td><td>'+(c.firstReplyRate||0)+'%</td><td>'+(c.threeMsgRate||0)+'%</td><td>💎'+(c.chatRevenue||0).toLocaleString()+'</td><td>$'+(c.arpu||0)+'</td><td>$'+(c.singleConvRevenue||0)+'</td><td>💎'+(c.privateRevenue||0).toLocaleString()+'</td></tr>';
+  }).join('');
+}
+function renderModelInteractPrivate() {
+  document.getElementById('modelInteractPrivateTableBody').innerHTML = Store.data.models.map(function(m){
+    var p = Store.getModelPrivate(m.id)||{};
+    return '<tr><td><strong>'+(m.nickname||m.name)+'</strong></td><td><span class="op-id-tag">'+(m.servingId||m.id)+'</span></td><td><img src="'+m.avatar+'" style="width:34px;height:34px;border-radius:50%;object-fit:cover;" /></td><td>'+(p.photoRequested||0)+'</td><td>'+(p.videoRequested||0)+'</td><td>'+(p.photoUnlocked||0)+'</td><td>'+(p.videoUnlocked||0)+'</td><td>'+(p.privateConvRate||0)+'%</td><td>'+(p.revenueShare||0)+'%</td></tr>';
+  }).join('');
+}
+function renderModelInteractHealth() {
+  document.getElementById('modelInteractHealthTableBody').innerHTML = Store.data.models.map(function(m){
+    var h = Store.getModelHealth(m.id)||{};
+    var limitedCls = h.isRateLimited==='是' ? ' red' : ' green';
+    return '<tr><td><strong>'+(m.nickname||m.name)+'</strong></td><td><span class="op-id-tag">'+(m.servingId||m.id)+'</span></td><td><img src="'+m.avatar+'" style="width:34px;height:34px;border-radius:50%;object-fit:cover;" /></td><td><span class="risk-badge low">'+(h.badRate||0)+'%</span></td><td>'+(h.complaints||0)+'</td><td>'+(h.reports||0)+'</td><td>'+(h.blockedCount||0)+'</td><td>'+(h.contentViolations||0)+'</td><td><span class="status-badge'+limitedCls+'">'+(h.isRateLimited||'否')+'</span></td></tr>';
+  }).join('');
+}
+function renderModelInteractLifecycle() {
+  document.getElementById('modelInteractLifecycleTableBody').innerHTML = Store.data.models.map(function(m){
+    var l = Store.getModelLifecycle(m.id)||{};
+    var offlineCls = l.offlineTime==='—' ? 'published' : 'draft';
+    return '<tr><td><strong>'+(m.nickname||m.name)+'</strong></td><td><span class="op-id-tag">'+(m.servingId||m.id)+'</span></td><td><img src="'+m.avatar+'" style="width:34px;height:34px;border-radius:50%;object-fit:cover;" /></td><td><span class="stage-badge stage-'+(l.stage||'').charAt(0)+'">'+(l.createdAt||'—')+'</td><td>'+(l.firstOnline||'—')+'</td><td>'+(l.daysActive||0)+'</td><td>'+(l.lastActive||'—')+'</td><td>'+(l.usage||'—')+'</td><td>'+(l.conversion||'—')+'</td><td><span class="status-badge '+offlineCls+'">'+(l.offlineTime||'—')+'</span></td></tr>';
+  }).join('');
+}
+function renderScheduleTimeline() { STL.render(); }
+function renderScheduleConfig() {
+  var config = Store.data.modelExtra.scheduleConfig || [];
+  document.getElementById('scheduleConfigTableBody').innerHTML = config.map(function(c){
+    var gradeCls = c.grade==='S'?' grade-b':c.grade==='C'?' grade-c':'';
+    return '<tr><td><span class="grade-badge'+gradeCls+'">'+c.grade+'</span></td><td><strong>'+c.maxHours+'</strong></td><td><span class="config-tag">'+c.slots+'</span></td><td>'+c.peakRequired+'</td><td>'+c.models+'</td></tr>';
+  }).join('');
+}
+// ====================================================================
+// SCHEDULE TIMELINE DATA GENERATOR — 7×18, 4-layer mock data
+// ====================================================================
+function generateScheduleData() {
+  var days = ['Mon','Tue','Wed','Thu','Fri','Sat','Sun'];
+  var hours = [6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23];
+  var m1=[], m2=[], m3=[], m4=[], all=[];
+  var patterns = {
+    m1: { baseDemand:90, baseExposure:700, baseCtr:0.14, baseMatch:0.36, baseOp:30, baseCap:80, baseRev:280, vipBase:0.20 },
+    m2: { baseDemand:70, baseExposure:550, baseCtr:0.11, baseMatch:0.28, baseOp:22, baseCap:60, baseRev:200, vipBase:0.15 },
+    m3: { baseDemand:30, baseExposure:200, baseCtr:0.06, baseMatch:0.15, baseOp:8, baseCap:25, baseRev:80, vipBase:0.08 },
+    m4: { baseDemand:80, baseExposure:600, baseCtr:0.13, baseMatch:0.32, baseOp:28, baseCap:75, baseRev:250, vipBase:0.18 },
+    all:{ baseDemand:270, baseExposure:2050, baseCtr:0.12, baseMatch:0.30, baseOp:88, baseCap:240, baseRev:810, vipBase:0.17 }
+  };
+  Object.keys(patterns).forEach(function(key){
+    var p = patterns[key];
+    var arr = [];
+    days.forEach(function(d, di){
+      hours.forEach(function(h, hi){
+        var isPeak = (h>=8&&h<=11)||(h>=18&&h<=21);
+        var isWarm = (h>=6&&h<=7)||(h>=12&&h<=13)||(h>=16&&h<=17);
+        var isCold = h===14||h===15;
+        var isWeekend = di>=5;
+        var peakMul = isPeak ? 1.8 : isWarm ? 1.2 : isCold ? 0.6 : 0.25;
+        var weekendMul = isWeekend ? 0.85 : 1.0;
+        var noise = 0.85 + Math.random() * 0.3;
+        var mul = peakMul * weekendMul * noise;
+        var dmdUsers = Math.round(p.baseDemand * mul);
+        var dmdMsgs = Math.round(dmdUsers * 3.2 * noise);
+        var vipRatio = Math.min(0.45, p.vipBase * (isPeak?1.4:1.0) * noise);
+        var exposure = Math.round(p.baseExposure * mul);
+        var ctr = Math.min(0.30, p.baseCtr * (isPeak?1.3:1.0) * noise);
+        var matchRate = Math.min(0.55, p.baseMatch * (isPeak?1.2:1.0) * noise);
+        var opOnline = Math.round(p.baseOp * (isPeak?1.5:isWarm?1.1:0.4));
+        var opCap = Math.round(p.baseCap * (isPeak?1.4:1.0));
+        var idleRate = Math.max(0.05, (0.25 - (isPeak?0.12:0) + (isCold?0.15:0)) * noise);
+        var hourlyRev = Math.round(p.baseRev * mul * (key==='all'?4:1));
+        var privateShare = Math.min(0.55, (0.35 + (isPeak?0.08:0) + (Math.random()-0.5)*0.1));
+        var score = Math.round((matchRate*40 + ctr*30 + (1-idleRate)*20 + privateShare*10) * 10);
+        var actions = [];
+        if (idleRate>0.35) actions.push('增加聊手');
+        if (ctr<0.08) actions.push('替换低效Model');
+        if (exposure<dmdUsers*3) actions.push('提升曝光权重');
+        if (matchRate<0.2 && isPeak) actions.push('VIP优先调度');
+        if (privateShare<0.2 && isPeak) actions.push('降低低转化Model');
+        if (isPeak && opOnline*3<opCap) actions.push('高峰资源重分配');
+        arr.push({day:d,hour:h,isPeak:isPeak,isWarm:isWarm,isCold:isCold,
+          demand:{users:dmdUsers,messages:dmdMsgs,vip_ratio:Math.round(vipRatio*100)/100},
+          model:{exposure:exposure,ctr:Math.round(ctr*1000)/1000,match_rate:Math.round(matchRate*100)/100},
+          operator:{online:opOnline,capacity:opCap,idle_rate:Math.round(idleRate*100)/100},
+          revenue:{hourly_revenue:hourlyRev,private_unlock_share:Math.round(privateShare*100)/100, chat_revenue:Math.round(hourlyRev*(1-privateShare)), private_revenue:Math.round(hourlyRev*privateShare)},
+          score:score, actions:actions });
+      });
+    });
+    patterns[key].cells = arr;
+  });
+  return { cellsByModel:patterns, days:days, hours:hours };
+}
+
+// ====================================================================
+// STL — Schedule Timeline Logic (self-contained)
+// ====================================================================
+var STL = (function(){
+  var _activeModel = 'm1';
+  var _activeDay = 'all';
+  var _data = null;
+
+  function _ensureData() { if (!_data) _data = generateScheduleData(); return _data; }
+
+  function _renderGrid() {
+    var d = _ensureData();
+    var pattern = d.cellsByModel[_activeModel];
+    if (pattern === null || typeof pattern === 'undefined') return;
+    var cells = pattern.cells;
+    var days = d.days;
+    var hours = d.hours;
+    var filteredCells = _activeDay==='all' ? cells : cells.filter(function(c){ return c.day===_activeDay; });
+    var filteredDays = _activeDay==='all' ? days : [_activeDay];
+
+    // Header
+    var headerHtml = '<div class="stl-grid"><div class="stl-grid-header"><span class="stl-corner"></span>' +
+      hours.map(function(h){ return '<span class="stl-hour-label">'+h+':00</span>'; }).join('') + '</div>';
+
+    // Rows
+    filteredDays.forEach(function(dn){
+      var rowCells = filteredCells.filter(function(c){ return c.day===dn; });
+      var dayLabel = dn;
+      var cellsHtml = hours.map(function(h){
+        var c = rowCells.find(function(x){ return x.hour===h; });
+        if (!c) return '<span class="stl-cell stl-cell-empty"></span>';
+        var dmdH = Math.min(100, c.demand.users / 3);
+        var mdlH = Math.min(100, c.model.exposure / 12);
+        var oprH = Math.min(100, (1-c.operator.idle_rate) * 100);
+        var revH = Math.min(100, c.revenue.hourly_revenue / 5);
+        var scoreCls = c.score >= 75 ? 'high' : c.score >= 45 ? 'mid' : 'low';
+        return '<span class="stl-cell stl-cell-'+(c.isPeak?'peak ':c.isWarm?'warm ':c.isCold?'cold ':'off ')+'stl-score-'+scoreCls+'" data-day="'+dn+'" data-hour="'+h+'" title="'+dn+' '+h+':00 — Score:'+c.score+'">'+
+          '<span class="stl-bar stl-bar-dmd" style="height:'+dmdH+'%"></span>'+
+          '<span class="stl-bar stl-bar-mdl" style="height:'+mdlH+'%"></span>'+
+          '<span class="stl-bar stl-bar-opr" style="height:'+oprH+'%"></span>'+
+          '<span class="stl-bar stl-bar-rev" style="height:'+revH+'%"></span>'+
+          '<span class="stl-score-dot '+scoreCls+'"></span>'+
+        '</span>';
+      }).join('');
+      var daySummary = rowCells.reduce(function(s,c){ s.rev+=c.revenue.hourly_revenue; s.users+=c.demand.users; return s; }, {rev:0,users:0});
+      headerHtml += '<div class="stl-grid-row"><span class="stl-day-label"><strong>'+dayLabel+'</strong><small>💎'+daySummary.rev.toLocaleString()+'</small></span>' + cellsHtml + '</div>';
+    });
+    headerHtml += '</div>';
+    document.getElementById('scheduleHeatmap').innerHTML = headerHtml;
+
+    // Efficiency bar
+    var allCells = _activeDay==='all' ? cells : cells.filter(function(c){ return c.day===_activeDay; });
+    var avgScore = Math.round(allCells.reduce(function(s,c){ return s+c.score; },0) / allCells.length);
+    var totalRev = allCells.reduce(function(s,c){ return s+c.revenue.hourly_revenue; },0);
+    var totalUsers = allCells.reduce(function(s,c){ return s+c.demand.users; },0);
+    var avgCtr = Math.round(allCells.reduce(function(s,c){ return s+c.model.ctr; },0) / allCells.length * 10000)/100;
+    var peakCells = allCells.filter(function(c){ return c.isPeak; });
+    var peakRev = peakCells.reduce(function(s,c){ return s+c.revenue.hourly_revenue; },0);
+    document.getElementById('stlEfficiencyBar').innerHTML =
+      '<div class="stl-eff-item"><em>综合效率</em><strong class="stl-eff-score-'+ (avgScore>=70?'high':avgScore>=40?'mid':'low')+'">'+avgScore+'</strong></div>'+
+      '<div class="stl-eff-item"><em>总收入</em><strong>💎'+totalRev.toLocaleString()+'</strong></div>'+
+      '<div class="stl-eff-item"><em>服务用户</em><strong>'+totalUsers.toLocaleString()+'</strong></div>'+
+      '<div class="stl-eff-item"><em>平均CTR</em><strong>'+avgCtr+'%</strong></div>'+
+      '<div class="stl-eff-item"><em>高峰收入</em><strong>💎'+peakRev.toLocaleString()+'</strong></div>';
+
+    // Day tabs
+    document.querySelectorAll('.stl-day-tab').forEach(function(t){ t.classList.remove('active'); });
+    var activeTab = document.querySelector('.stl-day-tab[onclick*="'+_activeDay+'"]');
+    if (activeTab) activeTab.classList.add('active');
+  }
+
+  function _openCell(day, hour) {
+    var d = _ensureData();
+    var pattern = d.cellsByModel[_activeModel];
+    var c = pattern.cells.find(function(x){ return x.day===day && x.hour===hour; });
+    if (!c) return;
+    var modelName = { m1:'Zayna甜妹', m2:'Lina轻熟', m3:'Noor羞涩', m4:'Maya御姐', all:'全Models' }[_activeModel];
+    document.getElementById('stlModalTitle').textContent = day+' '+hour+':00 — '+modelName+' · Score '+c.score;
+    document.getElementById('stlModalBody').innerHTML =
+      '<div class="stl-detail-grid">'+
+        '<div class="stl-detail-col"><h4>🔵 Demand</h4><div class="stl-stat"><em>在线用户</em><strong>'+c.demand.users+'</strong></div><div class="stl-stat"><em>消息请求</em><strong>'+c.demand.messages+'</strong></div><div class="stl-stat"><em>VIP占比</em><strong>'+(c.demand.vip_ratio*100).toFixed(1)+'%</strong></div></div>'+
+        '<div class="stl-detail-col"><h4>🟣 Model</h4><div class="stl-stat"><em>曝光次数</em><strong>'+c.model.exposure+'</strong></div><div class="stl-stat"><em>CTR</em><strong>'+(c.model.ctr*100).toFixed(1)+'%</strong></div><div class="stl-stat"><em>Match率</em><strong>'+c.model.match_rate+'%</strong></div></div>'+
+        '<div class="stl-detail-col"><h4>🟢 Operator</h4><div class="stl-stat"><em>在线聊手</em><strong>'+c.operator.online+'</strong></div><div class="stl-stat"><em>承载能力</em><strong>'+c.operator.capacity+'</strong></div><div class="stl-stat"><em>空闲率</em><strong>'+(c.operator.idle_rate*100).toFixed(1)+'%</strong></div></div>'+
+        '<div class="stl-detail-col"><h4>🔴 Revenue</h4><div class="stl-stat"><em>每小时收入</em><strong>💎'+c.revenue.hourly_revenue+'</strong></div><div class="stl-stat"><em>私密收入</em><strong>'+c.revenue.private_revenue+'</strong></div><div class="stl-stat"><em>聊天收入</em><strong>'+c.revenue.chat_revenue+'</strong></div><div class="stl-stat"><em>私密占比</em><strong>'+(c.revenue.private_unlock_share*100).toFixed(1)+'%</strong></div></div>'+
+      '</div>'+
+      '<h4 style="margin-top:16px;">⚡ 系统推荐动作</h4>'+
+      '<div class="stl-actions">'+(c.actions.length?c.actions.map(function(a){ return '<span class="stl-action-tag">'+a+'</span>'; }).join(''):'<span style="color:var(--text-3);">无需调整 ✅</span>')+'</div>';
+    document.getElementById('stlModalBackdrop').classList.add('open');
+  }
+
+  return {
+    switchModel: function(modelId, btn) {
+      _activeModel = modelId;
+      document.querySelectorAll('.sched-model-tab').forEach(function(t){ t.classList.remove('active'); });
+      btn.classList.add('active');
+      _renderGrid();
+    },
+    switchDay: function(day) { _activeDay = day; _renderGrid(); },
+    openCell: _openCell,
+    closeModal: function() { document.getElementById('stlModalBackdrop').classList.remove('open'); },
+    render: function() { _ensureData(); _renderGrid(); }
+  };
+})();
+// --- Event delegation for schedule cells ---
+document.addEventListener('click', function(e) {
+  var cell = e.target.closest('.stl-cell[data-day][data-hour]');
+  if (cell) {
+    var day = cell.getAttribute('data-day');
+    var hour = parseInt(cell.getAttribute('data-hour'));
+    STL.openCell(day, hour);
+  }
+});
+
+// ====================================================================
+// CURVE — System Dispatch Dashboard with Canvas curves
+// ====================================================================
+var Curve = (function(){
+  var _data = null;
+  var _activeDayStart = 0;
+  var _activeDayEnd = 6;
+
+  function _generateData(dayStart, dayEnd) {
+    if (dayStart === undefined) dayStart = _activeDayStart;
+    if (dayEnd === undefined) dayEnd = _activeDayEnd;
+    var days = ['Mon','Tue','Wed','Thu','Fri','Sat','Sun'];
+    var hours = [];
+    for (var h=0;h<24;h++) hours.push(h);
+    var allPoints = [];
+    for (var di=dayStart; di<=dayEnd; di++){
+      var allDayPoints = [];
+      hours.forEach(function(h){
+        var isPeak = (h>=8&&h<=11)||(h>=18&&h<=21);
+        var isWarm = (h>=6&&h<=7)||(h>=12&&h<=13)||(h>=16&&h<=17);
+        var isCold = (h>=14&&h<=15);
+        var isNight = h<6||h>=23;
+        var peakMul = isPeak ? 1.8 : isWarm ? 1.3 : isCold ? 0.7 : 0.3;
+        var dayMul = 0.8 + (di*0.07);
+        var noise = 0.85 + Math.random()*0.3;
+        var onlineUsers = Math.round((680 + di*80)*peakMul*dayMul*noise);
+        onlineUsers = isNight ? Math.round(onlineUsers*0.15) : onlineUsers;
+        var onlineModels = Math.round((18+di*2)*peakMul*dayMul*(0.85+Math.random()*0.3));
+        onlineModels = isNight ? Math.max(1, Math.round(onlineModels*0.3)) : Math.max(3, onlineModels);
+        var modelByType = {
+          S: Math.max(1, Math.round(onlineModels*0.12*(0.8+Math.random()*0.4))),
+          A: Math.max(2, Math.round(onlineModels*0.32*(0.85+Math.random()*0.3))),
+          B: Math.max(3, Math.round(onlineModels*0.38*(0.9+Math.random()*0.2))),
+          C: Math.max(1, Math.round(onlineModels*0.18*(0.8+Math.random()*0.4)))
+        };
+        var supplyGap = Math.max(0, onlineUsers - onlineModels*38);
+        allDayPoints.push({
+          day:days[di], dayIdx:di, hour:h, onlineUsers:onlineUsers, onlineModels:onlineModels,
+          modelByType:modelByType, supplyGap:supplyGap,
+          isPeak:isPeak, isWarm:isWarm, isNight:isNight
+        });
+      });
+      allPoints.push({ day:days[di], dayIdx:di, points:allDayPoints });
+    }
+    return { days:days, hours:hours, dayPoints:allPoints, dayStart:dayStart, dayEnd:dayEnd, rangeLabel: days[dayStart]+' – '+days[dayEnd] };
+  }
+
+  function _drawMainCanvas() {
+    var canvas = document.getElementById('curveMainCanvas');
+    if (!canvas) return;
+    var ctx = canvas.getContext('2d');
+    var dpr = window.devicePixelRatio || 1;
+    var W = 1300, H = 380;
+    canvas.width = W * dpr; canvas.height = H * dpr;
+    canvas.style.width = W + 'px'; canvas.style.height = H + 'px';
+    ctx.scale(dpr, dpr);
+    ctx.clearRect(0,0,W,H);
+
+    var data = _generateData(_activeDayStart, _activeDayEnd);
+    var dayPts = data.dayPoints;
+    var numDays = dayPts.length;
+    var totalPts = numDays * 24;
+    var pad = { top:24, right:28, bottom:40, left:64 };
+    var pw = W - pad.left - pad.right;
+    var ph = H - pad.top - pad.bottom;
+
+    // Collect all points flat
+    var allPts = [];
+    dayPts.forEach(function(dp){ allPts = allPts.concat(dp.points); });
+
+    var maxVal = 0;
+    allPts.forEach(function(p){ maxVal = Math.max(maxVal, p.onlineUsers); });
+    maxVal = Math.ceil(maxVal/1000)*1000 + 1000;
+    var yScale = function(v){ return pad.top + ph*(1 - v/maxVal); };
+    var xScale = function(i){ return pad.left + pw*(i/(totalPts-1)); };
+
+    // Gap fill
+    var gapGrad = ctx.createLinearGradient(0,pad.top,0,H-pad.bottom);
+    gapGrad.addColorStop(0,'rgba(239,68,68,0.18)');
+    gapGrad.addColorStop(1,'rgba(239,68,68,0.02)');
+    ctx.fillStyle = gapGrad;
+    ctx.beginPath();
+    ctx.moveTo(xScale(0), H-pad.bottom);
+    allPts.forEach(function(p,i){ ctx.lineTo(xScale(i), yScale(p.supplyGap)); });
+    ctx.lineTo(xScale(totalPts-1), H-pad.bottom);
+    ctx.closePath(); ctx.fill();
+
+    // Grid
+    var ySteps = 6;
+    ctx.strokeStyle = '#e5e7eb'; ctx.lineWidth = 1;
+    for (var yi=0; yi<=ySteps; yi++){
+      var yv = Math.round(maxVal*yi/ySteps);
+      var yy = yScale(yv);
+      ctx.beginPath(); ctx.moveTo(pad.left, yy); ctx.lineTo(W-pad.right, yy); ctx.stroke();
+      ctx.fillStyle = '#9ca3af'; ctx.font = '10px Inter,sans-serif'; ctx.textAlign='right';
+      ctx.fillText(yv.toLocaleString(), pad.left-6, yy+4);
+    }
+
+    // Curves
+    function drawCurve(key, color, lw){
+      ctx.strokeStyle = color; ctx.lineWidth = lw; ctx.lineJoin='round';
+      ctx.beginPath();
+      allPts.forEach(function(p,i){ var x=xScale(i), y=yScale(p[key]||0); if(i===0)ctx.moveTo(x,y); else ctx.lineTo(x,y); });
+      ctx.stroke();
+    }
+    drawCurve('onlineUsers', '#3b82f6', 2.5);
+    drawCurve('onlineModels', '#10b981', 2.5);
+    ctx.strokeStyle = '#8b5cf6'; ctx.lineWidth = 2; ctx.lineJoin='round'; ctx.beginPath();
+    allPts.forEach(function(p,i){
+      var total = p.modelByType.S + p.modelByType.A + p.modelByType.B + p.modelByType.C;
+      var x=xScale(i), y=yScale(total*12);
+      if(i===0)ctx.moveTo(x,y); else ctx.lineTo(x,y);
+    }); ctx.stroke();
+    drawCurve('supplyGap', '#ef4444', 2.8);
+
+    // Day separator lines and labels
+    dayPts.forEach(function(dp, di){
+      var sx = xScale(di*24);
+      ctx.strokeStyle = '#d1d5db'; ctx.lineWidth = 1;
+      ctx.beginPath(); ctx.moveTo(sx, pad.top); ctx.lineTo(sx, H-pad.bottom); ctx.stroke();
+      // Day label
+      var midX = xScale(di*24+12);
+      ctx.fillStyle = '#6b7280'; ctx.font = 'bold 11px Inter'; ctx.textAlign='center';
+      ctx.fillText(dp.day, midX, H-18);
+    });
+
+    // X hour labels (small)
+    ctx.fillStyle = '#9ca3af'; ctx.font = '9px Inter'; ctx.textAlign='center';
+    allPts.forEach(function(p,i){ if (i%4===0) ctx.fillText(p.hour+':00', xScale(i), H-4); });
+
+    // Hit areas for hover/click
+    _hitAreas = allPts.map(function(p,i){ return { x:xScale(i)-12, w:24, y:pad.top, h:ph, p:p }; });
+    canvas.onmousemove = function(e){
+      var rect = canvas.getBoundingClientRect();
+      var mx = (e.clientX - rect.left)*(W/rect.width);
+      var hit = _hitAreas.find(function(a){ return mx>=a.x && mx<=a.x+a.w; });
+      if (hit){ canvas.style.cursor='pointer'; canvas.title=hit.p.day+' '+hit.p.hour+':00 — 用户:'+hit.p.onlineUsers+' Model:'+hit.p.onlineModels+' 缺口:'+hit.p.supplyGap; }
+      else { canvas.style.cursor='default'; }
+    };
+    canvas.onclick = function(e){
+      var rect = canvas.getBoundingClientRect();
+      var mx = (e.clientX - rect.left)*(W/rect.width);
+      var hit = _hitAreas.find(function(a){ return mx>=a.x && mx<=a.x+a.w; });
+      if (hit) alert(hit.p.day+' '+hit.p.hour+':00\n用户:'+hit.p.onlineUsers.toLocaleString()+'\nModel:'+hit.p.onlineModels+'\n缺口:'+hit.p.supplyGap.toLocaleString());
+    };
+  }
+
+  function _drawStackCanvas(){
+    var canvas = document.getElementById('curveStackCanvas');
+    if (!canvas) return;
+    var ctx = canvas.getContext('2d');
+    var dpr = window.devicePixelRatio || 1;
+    var W = 640, H = 280;
+    canvas.width = W * dpr; canvas.height = H * dpr;
+    canvas.style.width = W + 'px'; canvas.style.height = H + 'px';
+    ctx.scale(dpr, dpr);
+    ctx.clearRect(0,0,W,H);
+    var data = _generateData(_activeDayStart, _activeDayEnd);
+    var dayPts = data.dayPoints;
+    var numDays = dayPts.length;
+    var totalPts = numDays * 24;
+    var pad = { top:16, right:18, bottom:34, left:42 };
+    var pw = W - pad.left - pad.right;
+    var ph = H - pad.top - pad.bottom;
+    // Aggregate: average per day for summary
+    var dayAvgs = dayPts.map(function(dp){
+      var n = dp.points.length;
+      return {
+        S:Math.round(dp.points.reduce(function(s,p){return s+p.modelByType.S;},0)/n),
+        A:Math.round(dp.points.reduce(function(s,p){return s+p.modelByType.A;},0)/n),
+        B:Math.round(dp.points.reduce(function(s,p){return s+p.modelByType.B;},0)/n),
+        C:Math.round(dp.points.reduce(function(s,p){return s+p.modelByType.C;},0)/n),
+        day:dp.day
+      };
+    });
+    var maxStack = 0;
+    dayAvgs.forEach(function(d){ maxStack = Math.max(maxStack, d.S+d.A+d.B+d.C); });
+    maxStack = Math.ceil(maxStack/5)*5 + 5;
+    var yScale = function(v){ return pad.top + ph*(1 - v/maxStack); };
+    var barW = Math.max(8, pw/dayAvgs.length - 6);
+    var colors = { S:'#10b981', A:'#3b82f6', B:'#f59e0b', C:'#ef4444' };
+    var keys = ['S','A','B','C'];
+    dayAvgs.forEach(function(d, i){
+      var x = pad.left + pw*0.1 + i*(pw*0.8/dayAvgs.length);
+      var cumY = 0;
+      keys.forEach(function(k){
+        cumY += d[k];
+        var sy = yScale(cumY), h = yScale(cumY - d[k]) - sy;
+        ctx.fillStyle = colors[k];
+        ctx.fillRect(x, sy, barW, Math.max(0, h));
+      });
+      ctx.fillStyle = '#6b7280'; ctx.font = '10px Inter'; ctx.textAlign='center';
+      ctx.fillText(d.day, x+barW/2, H-4);
+    });
+    keys.forEach(function(k,i){ ctx.fillStyle=colors[k]; ctx.fillRect(pad.left+i*42, H-22, 10,10); ctx.fillStyle='#6b7280'; ctx.font='10px Inter'; ctx.fillText(k, pad.left+i*42+13, H-13); });
+  }
+
+  function _drawDonutCanvas(){
+    var canvas = document.getElementById('curveDonutCanvas');
+    if (!canvas) return;
+    var ctx = canvas.getContext('2d');
+    var dpr = window.devicePixelRatio || 1;
+    var W = 560, H = 280;
+    canvas.width = W * dpr; canvas.height = H * dpr;
+    canvas.style.width = W + 'px'; canvas.style.height = H + 'px';
+    ctx.scale(dpr, dpr);
+    ctx.clearRect(0,0,W,H);
+    var data = _generateData(_activeDayStart, _activeDayEnd);
+    var allPts = [];
+    data.dayPoints.forEach(function(dp){ allPts = allPts.concat(dp.points); });
+    var avgS = Math.round(allPts.reduce(function(s,p){return s+p.modelByType.S;},0)/allPts.length);
+    var avgA = Math.round(allPts.reduce(function(s,p){return s+p.modelByType.A;},0)/allPts.length);
+    var avgB = Math.round(allPts.reduce(function(s,p){return s+p.modelByType.B;},0)/allPts.length);
+    var avgC = Math.round(allPts.reduce(function(s,p){return s+p.modelByType.C;},0)/allPts.length);
+    var total = avgS+avgA+avgB+avgC;
+    var cx1=160, cy1=140;
+    var gradeData = [
+      { label:'S级', val:avgS, color:'#10b981' },
+      { label:'A级', val:avgA, color:'#3b82f6' },
+      { label:'B级', val:avgB, color:'#f59e0b' },
+      { label:'C级', val:avgC, color:'#ef4444' }
+    ];
+    function drawDonut(cx, cy, segments, innerR, outerR, title){
+      var startAngle = -Math.PI/2;
+      segments.forEach(function(seg){
+        var sliceAngle = (seg.val/total) * Math.PI * 2;
+        ctx.fillStyle = seg.color;
+        ctx.beginPath();
+        ctx.arc(cx, cy, outerR, startAngle, startAngle+sliceAngle);
+        ctx.arc(cx, cy, innerR, startAngle+sliceAngle, startAngle, true);
+        ctx.closePath();
+        ctx.fill();
+        var midAngle = startAngle + sliceAngle/2;
+        var lr = outerR + 18;
+        var lx = cx + Math.cos(midAngle)*lr;
+        var ly = cy + Math.sin(midAngle)*lr;
+        var pct = Math.round(seg.val/total*100);
+        ctx.fillStyle = '#1e2235'; ctx.font = 'bold 11px Inter'; ctx.textAlign='center';
+        ctx.fillText(seg.label+' '+pct+'%', lx, ly);
+        startAngle += sliceAngle;
+      });
+      ctx.fillStyle = '#fff'; ctx.beginPath(); ctx.arc(cx, cy, innerR-2, 0, Math.PI*2); ctx.fill();
+      ctx.fillStyle = '#1e2235'; ctx.font = 'bold 13px Inter'; ctx.textAlign='center';
+      ctx.fillText(title, cx, cy+5);
+    }
+    drawDonut(cx1, cy1, gradeData, 50, 88, '等级分布');
+    var cx2=400, cy2=140;
+    var regions = [
+      { label:'GCC', val:Math.round(total*0.45), color:'#3b82f6' },
+      { label:'Levant', val:Math.round(total*0.28), color:'#8b5cf6' },
+      { label:'N.Africa', val:Math.round(total*0.15), color:'#f59e0b' },
+      { label:'Other', val:Math.round(total*0.12), color:'#9ca3af' }
+    ];
+    drawDonut(cx2, cy2, regions, 48, 88, '区域分布');
+  }
+
+  function _render(){
+    _data = null;
+    var data = _generateData(_activeDayStart, _activeDayEnd);
+    var allPts = [];
+    data.dayPoints.forEach(function(dp){ allPts = allPts.concat(dp.points); });
+    var sum = { users:0, models:0, gap:0 };
+    allPts.forEach(function(p){ sum.users+=p.onlineUsers; sum.models+=p.onlineModels; sum.gap+=p.supplyGap; });
+    var current = allPts[Math.floor(allPts.length/2)]; // mid-point representative
+    // Top cards
+    document.getElementById('curveTopCards').innerHTML =
+      '<div class="curve-top-card blue"><em>区间在线用户数(均值)</em><strong>'+Math.round(sum.users/allPts.length).toLocaleString()+'</strong><small>峰值: '+Math.max.apply(null,allPts.map(function(p){return p.onlineUsers})).toLocaleString()+'</small></div>'+
+      '<div class="curve-top-card green"><em>区间在线Model(均值)</em><strong>'+Math.round(sum.models/allPts.length)+'</strong><small>峰值: '+Math.max.apply(null,allPts.map(function(p){return p.onlineModels}))+'</small></div>'+
+      '<div class="curve-top-card purple"><em>在线聊手人数(均值)</em><strong>'+Math.round(sum.models/allPts.length*1.8)+'</strong><small>平均服务Model: '+Math.round(sum.models/allPts.length*0.6)+'</small></div>'+
+      '<div class="curve-top-card amber"><em>区间总收入(合计)</em><strong>💎 '+(sum.users*0.72).toFixed(0)+'</strong><small>供给缺口均值: '+Math.round(sum.gap/allPts.length).toLocaleString()+'</small></div>';
+    // Day range selector with Start / End dropdowns
+    var allDays = ['Mon','Tue','Wed','Thu','Fri','Sat','Sun'];
+    var opts = allDays.map(function(d,i){ return '<option value="'+i+'"'+(i===_activeDayStart?' selected':'')+'>'+d+'</option>'; }).join('');
+    var optsEnd = allDays.map(function(d,i){ return '<option value="'+i+'"'+(i===_activeDayEnd?' selected':'')+'>'+d+'</option>'; }).join('');
+    document.getElementById('curveDaySelector').innerHTML =
+      '<span class="range-label">日期区间：</span>'+
+      '<select class="range-select" onchange="Curve.setStartDay(this.value)" id="rangeStart">'+opts+'</select>'+
+      '<span class="range-sep">至</span>'+
+      '<select class="range-select" onchange="Curve.setEndDay(this.value)" id="rangeEnd">'+optsEnd+'</select>'+
+      '<span class="range-result" id="rangeResultLabel">'+data.rangeLabel+' · '+allPts.length+'个时段</span>';
+    _drawMainCanvas();
+    _drawStackCanvas();
+    _drawDonutCanvas();
+  }
+
+  return {
+    render: _render,
+    setStartDay: function(v){ _activeDayStart = Math.min(parseInt(v), _activeDayEnd); if (_activeDayEnd===_activeDayStart) _activeDayEnd=Math.min(6, _activeDayStart+1); else _render(); },
+    setEndDay: function(v){ _activeDayEnd = Math.max(parseInt(v), _activeDayStart); if (_activeDayEnd===_activeDayStart) _activeDayStart=Math.max(0, _activeDayEnd-1); else _render(); }
+  };
+})();
+function renderEventLog() {
+  document.getElementById('eventLogList').innerHTML = Store.getLog().slice(0, 20).map(function(e){
+    var cls = e.action === 'sim' ? 'sim' : e.action === 'ops' ? 'ops' : e.action === 'updateModel' || e.action === 'assign' || e.action === 'suspend' || e.action === 'createModel' || e.action === 'createOperator' ? 'update' : 'info';
+    return '<div class="log-entry ' + cls + '"><span class="log-time">' + e.time + '</span> <span class="log-action">[' + e.action + ']</span> ' + e.detail + '</div>';
+  }).join('');
+}
+
+function renderTopbar() {
+  var titles = { 'guild-info':'公会信息', 'guild-members':'成员列表', 'guild-data':'公会数据', models:'Models', operators:'Operators', 'model-assets':'内容资产', 'model-rating':'等级评定', 'model-traffic':'流量曝光数据', 'model-income':'Model收入', 'model-interact-chat':'聊天转化数据', 'model-interact-private':'私密内容数据', 'model-interact-health':'Model健康度', 'model-interact-lifecycle':'生命周期', 'model-live-dashboard':'实时运营看板', 'model-schedule-timeline':'排班时间轴', 'model-schedule-config':'排班时常配置', 'op-income':'聊手收入结构', 'op-behavior':'行为数据', 'op-private':'私密内容表现', routing:'Traffic Routing', rating:'Live Rating', income:'Income Simulation' };
+  document.getElementById('topbarTitle').textContent = titles[Store.data.activeSection] || 'Models';
+  document.getElementById('topbarBreadcrumb').textContent = 'Backend Console / ' + (titles[Store.data.activeSection] || 'Models');
+}
+
+function renderPanel() {
+  var sec = Store.data.activeSection;
+  document.querySelectorAll('.section-panel').forEach(function(p){ p.style.display = 'none'; p.classList.remove('active'); });
+  var panel = document.getElementById('panel-' + sec);
+  if (panel) { panel.style.display = ''; panel.classList.add('active'); }
+  if (sec === 'guild-info') renderGuildInfo();
+  if (sec === 'guild-members') renderGuildMembers();
+  if (sec === 'guild-data') renderGuildData();
+  if (sec === 'operators') renderOperatorTable();
+  if (sec === 'op-income') renderOpIncome();
+  if (sec === 'op-behavior') renderOpBehavior();
+  if (sec === 'op-private') renderOpPrivate();
+  if (sec === 'model-assets') renderModelAssets();
+  if (sec === 'model-rating') renderModelRating();
+  if (sec === 'model-traffic') renderModelTraffic();
+  if (sec === 'model-income') { renderModelIncome(); }
+  if (sec === 'model-interact-chat') { renderModelInteractChat(); }
+  if (sec === 'model-interact-private') { renderModelInteractPrivate(); }
+  if (sec === 'model-interact-health') { renderModelInteractHealth(); }
+  if (sec === 'model-interact-lifecycle') { renderModelInteractLifecycle(); }
+  if (sec === 'model-live-dashboard') { Curve.render(); }
+  if (sec === 'model-schedule-config') { renderScheduleConfig(); }
+  if (sec === 'routing') renderRoutingMatrix();
+  if (sec === 'rating') renderRatingTable();
+  if (sec === 'income') renderIncome();
+}
+
+// ====================================================================
+// SUBSCRIBE
+// ====================================================================
+Store.on('models', function(){ renderModelTable(); renderSidebar(); if (Store.getOperator(Store.data.selectedOperator)) renderOpDetail(); });
+Store.on('detail', renderDetail);
+Store.on('section', function(){ renderTopbar(); renderPanel(); renderSidebar(); });
+Store.on('guilds', function(){ renderGuildInfo(); renderSidebar(); });
+Store.on('operators', function(){ renderOperatorTable(); renderSidebar(); if (Store.getOperator(Store.data.selectedOperator)) renderOpDetail(); });
+Store.on('opDetail', renderOpDetail);
+Store.on('routing', renderRoutingMatrix);
+Store.on('rating', renderRatingTable);
+Store.on('income', renderIncome);
+Store.on('log', renderEventLog);
+
+function setupSidebarNav() {
+  var nav = document.getElementById('sidebarNav');
+  if (!nav) return;
+  nav.addEventListener('click', function(event) {
+    var item = event.target.closest('[data-section]');
+    if (!item || !nav.contains(item)) return;
+    event.preventDefault();
+    Events.switchSection(item.getAttribute('data-section'));
+  });
+}
+
+// ====================================================================
+// LIVE TICK (only when Sim ON)
+// ====================================================================
+setInterval(function() {
+  if (!Store.simOn()) return;
+  Store.data.models.forEach(function(m){
+    if (m.online && m.riskScore < 80) {
+      var d = Math.round((Math.random() - 0.5) * 4);
+      Store.updateModel(m.id, { riskScore: Math.max(0, Math.min(100, m.riskScore + d)), chats: m.chats + (Math.random() > 0.7 ? 1 : 0) });
+    }
+  });
+  Store._notify('models'); Store._notify('rating');
+}, 3000);
+
+// ====================================================================
+// INIT
+// ====================================================================
+setupSidebarNav();
+renderSidebar();
+renderModelTable();
+renderEventLog();
+renderTopbar();
+</script>
+</body>
+</html>PANEL: LIVE DASHBOARD
+        ==================================================== -->
+      <div class="section-panel" id="panel-model-live-dashboard" style="display:none;">
+        <div class="curve-dash">
+          <!-- Top KPI bar -->
+          <div class="curve-kpi-bar" id="curveKpiBar"></div>
+          <!-- Main chart canvas -->
+          <div class="curve-chart-area">
+            <div class="curve-chart-head">
+              <h3>供需调度曲线 · 7天趋势</h3>
+              <div class="curve-legend">
+                <span class="curve-leg-item"><i class="curve-dot dmd"></i>Demand</span>
+                <span class="curve-leg-item"><i class="curve-dot sup"></i>Supply</span>
+                <span class="curve-leg-item"><i class="curve-dot gap"></i>Gap</span>
+                <span class="curve-leg-item"><i class="curve-dot rev"></i>Revenue</span>
+              </div>
+            </div>
+            <div class="curve-canvas-wrap">
+              <canvas id="curveMainCanvas" width="1200" height="340"></canvas>
+              <div class="curve-thresholds">
+                <span class="thresh-label safe">━━ 安全线 8,000</span>
+                <span class="thresh-label risk">━━ 风险线 12,000</span>
+              </div>
+            </div>
+          </div>
+          <!-- Bottom row: Model structure + Operators -->
+          <div class="curve-bottom-row">
+            <div class="curve-card">
+              <h3>Model 等级结构 (S/A/B/C)</h3>
+              <canvas id="curveStackCanvas" width="560" height="220"></canvas>
+            </div>
+            <div class="curve-card">
+              <h3>聊手承载能力</h3>
+              <canvas id="curveOpCanvas" width="560" height="220"></canvas>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Curve detail modal -->
+      <div class="curve-modal-backdrop" id="curveModalBackdrop" onclick="Curve.closeModal()">
+        <div class="curve-modal" onclick="event.stopPropagation()">
+          <div class="curve-modal-header">
+            <h3 id="curveModalTitle">时间点详情</h3>
+            <button class="curve-modal-close" onclick="Curve.closeModal()">×</button>
+          </div>
+          <div class="curve-modal-body" id="curveModalBody"></div>
+        </div>
+      </div>
+
+      <!-- ====================================================
+        PANEL: MODEL INCOME

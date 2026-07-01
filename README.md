@@ -1,46 +1,97 @@
-# Agent 工作区
+# Agent Workspace
 
-Codex、Claude Code、Cursor 共用的本地 Agent 工作区。
+A unified local workspace shared by Codex, Claude Code, and Cursor.
 
-本工作区的目标是：让不同 Agent 使用同一个正式知识库，避免读取 Desktop、Documents、plugins、旧日期目录中的混乱文件。
+This workspace ensures all agents operate on a **single authoritative knowledge base**, preventing accidental reads from Desktop, Documents, plugins, legacy folders, or date-stamped directories.
 
 ---
 
-## 目录说明
+## Directory Structure
 
 ```text
 Agent-Workspace/
-├── AGENTS.md          # Codex / 通用 Coding Agent 入口规则
-├── CLAUDE.md          # Claude Code 入口规则
-├── .cursorrules       # Cursor 规则入口，可选
-├── README.md          # 本文件
+├── AGENTS.md              # Entry rules for Codex / general coding agents
+├── CLAUDE.md              # Entry rules for Claude Code
+├── .cursorrules           # Cursor rules entry (optional)
+├── README.md              # This file
 │
-├── Agent-KB/          # 唯一正式启用的共享知识库，项目任务中默认只读
-│   ├── AGENTS.md      # 知识库使用说明
-│   ├── skills/        # 通用 Skill
-│   ├── global-rules/  # 跨项目通用规则
-│   ├── templates/     # 文件模板
-│   ├── examples/      # 参考案例
-│   └── archive/       # 历史资料，默认不作为 active rule
+├── Agent-KB/              # Single source of truth knowledge base (read-only by default)
+│   ├── AGENTS.md          # Knowledge base usage rules
+│   ├── skills/            # Shared reusable skills
+│   ├── global-rules/      # Cross-project global rules
+│   ├── templates/         # File templates
+│   ├── examples/          # Reference examples
+│   └── archive/           # Historical materials (not active by default)
 │
-├── Projects/          # 正式项目，每个项目一个子目录
-├── Sandbox/           # 临时实验区，不作为正式规则或项目来源
-└── Archive/           # 已完成、废弃或迁移前的历史项目
-```
+├── Projects/              # Active projects (one folder per project)
+├── Sandbox/               # Experimental workspace (non-production)
+└── Archive/               # Completed, deprecated, or migrated projects
 
----
+Usage Guidelines
 
-## 使用方式
+* All new projects must be created under Projects/.
+* Each project must include its own AGENTS.md and CLAUDE.md.
+* Shared skills must be stored under Agent-KB/skills/.
+* Temporary experiments must be placed in Sandbox/.
+* Completed or deprecated projects must be moved to Archive/.
 
-- 新建项目放在 `Projects/` 下，每个项目应有自己的 `AGENTS.md` 和 `CLAUDE.md`。
-- 通用 Skill 放在 `Agent-KB/skills/` 下。
-- 临时试验放在 `Sandbox/` 下。
-- 已完成或废弃项目移到 `Archive/`。
+⸻
 
-## 核心规则
+Core Principles
 
-- `Agent-KB/` 是唯一正式知识库，项目任务中 Agent 默认只读。
-- 只有用户明确说"更新知识库"或"更新 Skill"时才能写入 `Agent-KB/`。
-- 每个任务锁定一个项目，禁止跨项目修改。
-- `Agent-KB/archive/` 和 `Archive/` 不作为活跃规则源。
-- Agent 不得默认读取 Desktop、Documents、Downloads、plugins、old、backup、日期目录中的文件作为活跃规则。
+* Agent-KB/ is the only authoritative knowledge base and is read-only during normal operations.
+* The knowledge base may only be modified when explicitly requested by the user (e.g., “update knowledge base” or “update skill”).
+* Each task must be strictly scoped to a single project only. Cross-project modifications are forbidden.
+* Agent-KB/archive/ and Archive/ are not considered active sources of truth.
+* Agents must NOT treat Desktop, Documents, Downloads, plugins, legacy folders, backup folders, or date-stamped directories as valid sources of operational data.
+
+⸻
+
+Governance Hierarchy
+
+All agents must follow this strict priority order:
+
+1. Projects/<active-project>/ → highest priority, writable scope
+2. Agent-KB/ → read-only authoritative reference
+3. External directories → ignored unless explicitly provided by user
+
+⸻
+
+Safety Constraints
+
+Agents must NEVER:
+
+* Modify multiple projects in a single task
+* Cross-reference unrelated project contexts
+* Infer missing files from external or non-project directories
+* Create duplicate or forked project structures without explicit instruction
+* Modify Agent-KB/ without explicit user approval
+
+⸻
+
+Execution Rules
+
+Before performing any file operation, the agent must:
+
+1. Identify active project scope
+2. Identify exact file path to be modified
+3. Confirm file is within allowed scope
+4. Output planned change summary
+
+If any ambiguity exists:
+→ The agent must STOP and request clarification.
+
+⸻
+
+File Modification Rules
+
+* Prefer minimal, targeted diffs over full file rewrites
+* Never generate duplicate files (e.g., *_copy, *_v2, *_backup)
+* All modifications must be applied IN PLACE
+* Preserve existing project structure unless explicitly instructed otherwise
+
+⸻
+
+Final Principle
+
+Single Source of Truth + Single Write Target + In-Place Modification Only
