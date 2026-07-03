@@ -8,8 +8,10 @@ let cameraState = {
 };
 let cameraSelfTestStarted = false;
 let cameraRequestSequence = 0;
+let ingredientEditorState = null;
 
 function renderCamera() {
+  closeIngredientEditor();
   cancelActiveAnalysis(false);
   cameraRequestSequence += 1;
   cameraState = {
@@ -21,7 +23,9 @@ function renderCamera() {
     analysis: null,
   };
 
-  document.getElementById('content').innerHTML = `
+  const content = document.getElementById('content');
+  content.classList.remove('camera-result-view');
+  content.innerHTML = `
     <div class="page-header camera-page-header">
       <h1>记录饮食</h1>
       <p class="page-lead">选择一种方式计算本餐热量</p>
@@ -45,10 +49,28 @@ function renderCamera() {
   runCameraSelfTest();
 }
 
-function mealOptions() {
+function mealButtons() {
   return Object.entries(CONFIG.MEAL_LABELS)
-    .map(([key, label]) => `<option value="${key}" ${cameraState.mealType === key ? 'selected' : ''}>${label}</option>`)
+    .map(([key, label]) => {
+      const active = cameraState.mealType === key;
+      return `
+        <button type="button" class="${active ? 'active' : ''}" data-meal-option="${key}" aria-pressed="${active}">
+          <span>${CONFIG.MEAL_EMOJI[key]}</span><b>${label}</b>
+        </button>`;
+    })
     .join('');
+}
+
+function renderMealChoice() {
+  return `
+    <div class="meal-choice">
+      <div class="meal-choice-head">
+        <b>记录到</b><small>选择本餐类型</small>
+      </div>
+      <div class="meal-choice-buttons" role="group" aria-label="记录餐别">
+        ${mealButtons()}
+      </div>
+    </div>`;
 }
 
 function renderCameraModePanel() {
@@ -79,10 +101,7 @@ function renderCameraModePanel() {
           `).join('')}
         </div>
         <button class="manual-add" id="btn-add-manual-food" type="button"><span>＋</span> 添加另一种食物</button>
-        <div class="meal-select meal-select-modern">
-          <label for="meal-select">记录到</label>
-          <select id="meal-select">${mealOptions()}</select>
-        </div>
+        ${renderMealChoice()}
         <button class="btn btn-primary btn-block weight-calculate-btn" id="btn-calculate-weight" type="button">
           计算本餐热量 <span>→</span>
         </button>
@@ -104,10 +123,7 @@ function renderCameraModePanel() {
           <p>尽量拍全餐盘并保持光线清晰</p>
         </div>
         <input type="file" accept="image/*" capture="environment" id="file-input" class="hidden-input">
-        <div class="meal-select meal-select-modern">
-          <label for="meal-select">记录到</label>
-          <select id="meal-select">${mealOptions()}</select>
-        </div>
+        ${renderMealChoice()}
         <div class="camera-actions">
           <button class="btn btn-secondary" id="btn-album">从相册选择</button>
           <button class="btn btn-primary" id="btn-camera">拍照识别</button>
@@ -132,9 +148,16 @@ function renderCameraModePanel() {
     if (cameraState.file) previewPhoto(cameraState.file);
   }
 
-  document.getElementById('meal-select').onchange = (event) => {
-    cameraState.mealType = event.target.value;
-  };
+  document.querySelectorAll('[data-meal-option]').forEach((button) => {
+    button.onclick = () => {
+      cameraState.mealType = button.dataset.mealOption;
+      document.querySelectorAll('[data-meal-option]').forEach((item) => {
+        const active = item.dataset.mealOption === cameraState.mealType;
+        item.classList.toggle('active', active);
+        item.setAttribute('aria-pressed', String(active));
+      });
+    };
+  });
 }
 
 function setCameraMode(mode) {
@@ -228,6 +251,7 @@ function resetCurrentEntry() {
     renderCamera();
     return;
   }
+  document.getElementById('content')?.classList.remove('camera-result-view');
   cameraState.result = null;
   document.getElementById('result-zone').innerHTML = '';
   renderCameraModePanel();
@@ -395,6 +419,40 @@ function showAnalysisError({ title, message }) {
   `;
 }
 
+function formatMacroGrams(value) {
+  const grams = Number(value) || 0;
+  return Number.isInteger(grams) ? String(grams) : grams.toFixed(1);
+}
+
+function renderNutritionDistribution(nutrition) {
+  if (!nutrition.available) {
+    return `
+      <section class="result-nutrition nutrition-empty result-macro-panel" id="result-nutrition">
+        <div class="nutrition-head"><b>三大营养素</b><small>暂无完整数据</small></div>
+        <p>本次结果未返回完整的蛋白质、碳水和脂肪数据。</p>
+      </section>`;
+  }
+
+  return `
+    <section class="result-nutrition result-macro-panel" id="result-nutrition"
+      aria-label="蛋白质 ${nutrition.protein_pct}%，碳水 ${nutrition.carbs_pct}%，脂肪 ${nutrition.fat_pct}%">
+      <div class="nutrition-head"><b>三大营养素</b><small>按热量占比</small></div>
+      <div class="result-macro-grid">
+        <div class="macro-carbs"><span>⌁ 碳水</span><b>${formatMacroGrams(nutrition.carbs_g)}g</b><em>${nutrition.carbs_pct}%</em></div>
+        <div class="macro-protein"><span>⌇ 蛋白质</span><b>${formatMacroGrams(nutrition.protein_g)}g</b><em>${nutrition.protein_pct}%</em></div>
+        <div class="macro-fat"><span>◉ 脂肪</span><b>${formatMacroGrams(nutrition.fat_g)}g</b><em>${nutrition.fat_pct}%</em></div>
+      </div>
+    </section>`;
+}
+
+function refreshNutritionDistribution() {
+  const node = document.getElementById('result-nutrition');
+  if (!node || !cameraState.result) return;
+  node.outerHTML = renderNutritionDistribution(
+    FoodPortion.summarizeNutrition(cameraState.result.foods)
+  );
+}
+
 function showResult(result) {
   if (!result.foods?.length) {
     document.getElementById('result-zone').innerHTML = `
@@ -407,51 +465,98 @@ function showResult(result) {
     return;
   }
 
+  const resultImage = document.querySelector('#photo-preview img')?.src || '';
+  const mealLabel = CONFIG.MEAL_LABELS[cameraState.mealType] || '本餐';
+  document.getElementById('content')?.classList.add('camera-result-view');
   document.getElementById('result-zone').innerHTML = `
-    <div class="card result-card">
-      <div class="result-title-row">
-        <h2 class="card-title">${cameraState.mode === 'weight' ? '克重计算结果' : '识别结果'}</h2>
-        <span>${cameraState.mode === 'weight' ? '按实际重量' : 'AI 图片估算'}</span>
+    <div class="result-experience">
+      <div class="result-photo-stage ${resultImage ? '' : 'no-photo'}">
+        ${resultImage
+          ? `<img src="${resultImage}" alt="本餐识别图片" onerror="this.parentElement.classList.add('no-photo');this.remove()">`
+          : ''}
+        <div class="result-photo-fallback">
+          <span>${cameraState.mode === 'weight' ? '⚖️' : '🍽️'}</span>
+          <b>${cameraState.mode === 'weight' ? '按实际克重计算' : '餐盘图片暂不可用'}</b>
+          <small>${cameraState.mode === 'weight' ? '本次未使用餐盘照片' : '识别结果和编辑功能不受影响'}</small>
+        </div>
+        <button type="button" class="result-stage-button back" onclick="resetCurrentEntry()" aria-label="返回修改">‹</button>
+        <button type="button" class="result-stage-button retry" onclick="${cameraState.mode === 'weight' ? 'resetCurrentEntry()' : 'retryCurrentAnalysis()'}" aria-label="${cameraState.mode === 'weight' ? '修改克重' : '重新识别'}">↻</button>
+        <span class="result-stage-status">${cameraState.mode === 'weight' ? '实际克重' : 'AI 识别完成'}</span>
       </div>
-      ${result.description ? `<p class="result-desc">${esc(result.description)}</p>` : ''}
-      <p class="result-caveat">${cameraState.mode === 'weight'
-        ? '已按填写克重计算。请核对烹饪方式与热量后再保存。'
-        : 'AI 估算仅供参考。请核对食物和份量后再保存。'}</p>
 
-      <div class="food-list" id="food-list">
-        ${result.foods.map((f, i) => `
-          <div class="food-item food-edit-row" data-index="${i}">
-            <div class="food-edit-head">
-              <input class="input food-name-input" data-field="name" value="${esc(f.name)}" aria-label="食物名称" ${cameraState.mode === 'weight' ? 'readonly' : ''}>
-              <button class="food-remove" type="button" data-remove="${i}" aria-label="删除${esc(f.name)}">删除</button>
-            </div>
-            <div class="food-edit-numbers">
-              <label>份量(g)<input type="number" class="input" data-field="weight_g" value="${f.weight_g || 0}" min="0" max="5000" ${cameraState.mode === 'weight' ? 'readonly' : ''}></label>
-              <label>热量(kcal)<input type="number" class="input" data-field="calories" value="${f.calories || 0}" min="0" max="10000"></label>
-            </div>
-            <p class="food-estimate">估算范围 ${f.calorie_min || f.calories}–${f.calorie_max || f.calories} kcal · 置信度 ${confidenceLabel(f.confidence)}</p>
+      <div class="result-sheet result-card">
+        <div class="result-sheet-handle" aria-hidden="true"></div>
+        <div class="result-meal-heading">
+          <div>
+            <small>${cameraState.mode === 'weight' ? '克重计算结果' : '识别结果'}</small>
+            <h2>${cameraState.mode === 'weight' ? '本餐营养计算' : 'AI 识别餐盘'}</h2>
           </div>
-        `).join('')}
-      </div>
+          <span>${esc(CONFIG.MEAL_EMOJI[cameraState.mealType] || '🍽️')} ${esc(mealLabel)}</span>
+        </div>
 
-      <div class="result-total">
-        <span>总计</span>
-        <span class="total-cal" id="result-total-cal">${fmtCal(result.total_calories)} kcal</span>
-      </div>
-      ${result.caveat ? `<p class="result-caveat">${esc(result.caveat)}</p>` : ''}
+        <div class="result-primary-summary">
+          <div>
+            <small>本餐总热量</small>
+            <strong id="result-total-cal">${fmtCal(result.total_calories)}<em>kcal</em></strong>
+          </div>
+          <div class="result-food-count"><b>${result.foods.length}</b><span>种食材</span></div>
+        </div>
 
-      <div class="result-actions">
-        <button class="btn btn-outline" onclick="resetCurrentEntry()">${cameraState.mode === 'weight' ? '修改克重' : '重新拍'}</button>
-        <button class="btn btn-primary" id="btn-save">✅ 确认</button>
+        ${renderNutritionDistribution(FoodPortion.summarizeNutrition(result.foods))}
+
+        <div class="result-summary-copy">
+          <span>AI</span>
+          <div>
+            ${result.description ? `<p>${esc(result.description)}</p>` : ''}
+            <small>${result.caveat
+              ? `影响因素：${esc(result.caveat)}`
+              : (cameraState.mode === 'weight'
+                ? '已按填写克重计算，请核对烹饪方式。'
+                : '估算仅供参考，请核对食物和份量。')}</small>
+          </div>
+        </div>
+
+        <div class="ingredient-section-head">
+          <div><h3>食材 <small>(kcal)</small></h3><span>点击食材可修改名称、克重和热量</span></div>
+          <em>${result.foods.length} 项</em>
+        </div>
+
+        <div class="food-list result-ingredient-grid" id="food-list">
+          ${result.foods.map((f, i) => `
+            <div class="food-item food-edit-row ingredient-card" data-index="${i}" role="button" tabindex="0" aria-label="修改${esc(f.name)}">
+              <button class="food-remove" type="button" data-remove="${i}" aria-label="删除${esc(f.name)}">×</button>
+              <div class="ingredient-card-summary">
+                <b data-display-name>${esc(f.name)}</b>
+                <strong><span data-display-calories>${f.calories || 0}</span><em>kcal</em></strong>
+                <small><span data-display-weight>${f.weight_g || 0}</span>g · ${confidenceLabel(f.confidence)}置信度</small>
+              </div>
+            </div>
+          `).join('')}
+        </div>
+
+        <div class="result-actions">
+          <button class="btn btn-outline" onclick="${cameraState.mode === 'weight' ? 'resetCurrentEntry()' : 'openResultEditor()'}">✦ ${cameraState.mode === 'weight' ? '修改克重' : '修正结果'}</button>
+          <button class="btn btn-primary" id="btn-save">记录 <span>→</span></button>
+        </div>
       </div>
     </div>
   `;
 
-  document.querySelectorAll('[data-field="calories"]').forEach((input) => {
-    input.addEventListener('input', refreshEditableTotal);
+  document.querySelectorAll('.ingredient-card').forEach((card) => {
+    card.onclick = (event) => {
+      if (event.target.closest('button')) return;
+      openFoodEditor(Number(card.dataset.index));
+    };
+    card.onkeydown = (event) => {
+      if (event.key === 'Enter' || event.key === ' ') {
+        event.preventDefault();
+        openFoodEditor(Number(card.dataset.index));
+      }
+    };
   });
   document.querySelectorAll('[data-remove]').forEach((button) => {
-    button.onclick = () => {
+    button.onclick = (event) => {
+      event.stopPropagation();
       syncEditedFoods();
       cameraState.result.foods.splice(Number(button.dataset.remove), 1);
       cameraState.result.total_calories = cameraState.result.foods
@@ -469,20 +574,162 @@ function showResult(result) {
 
     const button = document.getElementById('btn-save');
     button.disabled = true;
-    button.textContent = '保存中...';
+    button.innerHTML = '保存中...';
     try {
       await API.saveRecord({
         meal_type: cameraState.mealType,
         foods: cameraState.result.foods,
       });
       showToast('已保存');
+      document.getElementById('content')?.classList.remove('camera-result-view');
       navigate('dashboard');
     } catch (err) {
       button.disabled = false;
-      button.textContent = '✅ 确认';
+      button.innerHTML = '记录 <span>→</span>';
       showToast(err.message || '保存失败');
     }
   };
+}
+
+function openResultEditor() {
+  if (!cameraState.result?.foods?.length) return;
+  openFoodEditor(0);
+}
+
+function openFoodEditor(index) {
+  const food = cameraState.result?.foods?.[index];
+  if (!food) return;
+
+  closeIngredientEditor();
+  ingredientEditorState = {
+    index,
+    basis: { ...food },
+    draft: { ...food },
+    scrollY: window.scrollY,
+  };
+
+  const layer = document.createElement('div');
+  layer.id = 'ingredient-editor-layer';
+  layer.className = 'ingredient-editor-layer';
+  layer.innerHTML = `
+    <button class="ingredient-editor-backdrop" type="button" aria-label="关闭食材修改页"></button>
+    <section class="ingredient-editor-page" role="dialog" aria-modal="true" aria-labelledby="ingredient-editor-title">
+      <header class="ingredient-editor-header">
+        <button class="ingredient-editor-back" type="button" aria-label="返回">‹</button>
+        <div><small>食材详情</small><h2 id="ingredient-editor-title">修改食材</h2></div>
+        <button class="ingredient-editor-close" type="button" aria-label="关闭">×</button>
+      </header>
+
+      <div class="ingredient-editor-summary">
+        <div><span>当前食材</span><strong id="ingredient-editor-preview-name">${esc(food.name)}</strong></div>
+        <div><strong><b id="ingredient-editor-preview-calories">${fmtCal(food.calories || 0)}</b><em>kcal</em></strong><small id="ingredient-editor-preview-weight">${fmtCal(food.weight_g || 0)}g</small></div>
+      </div>
+
+      <form id="ingredient-editor-form" class="ingredient-editor-form">
+        <label>
+          <span>食物名称</span>
+          <input class="input" id="ingredient-editor-name" value="${esc(food.name)}" maxlength="40" ${cameraState.mode === 'weight' ? 'readonly' : ''}>
+        </label>
+        <div class="ingredient-editor-number-grid">
+          <label>
+            <span>份量</span>
+            <div><input type="number" class="input" id="ingredient-editor-weight" value="${food.weight_g || 0}" min="0" max="5000" inputmode="decimal" ${cameraState.mode === 'weight' ? 'readonly' : ''}><em>g</em></div>
+          </label>
+          <label>
+            <span>热量</span>
+            <div><input type="number" class="input" id="ingredient-editor-calories" value="${food.calories || 0}" min="0" max="10000" inputmode="decimal"><em>kcal</em></div>
+          </label>
+        </div>
+        <div class="ingredient-editor-estimate">
+          <span>估算范围 ${food.calorie_min || food.calories || 0}–${food.calorie_max || food.calories || 0} kcal</span>
+          <em>${confidenceLabel(food.confidence)}置信度</em>
+        </div>
+        ${cameraState.mode === 'photo'
+          ? '<p class="ingredient-editor-tip">修改份量后，热量与三大营养素会按识别基准同步换算；保存后才更新一级页面。</p>'
+          : '<p class="ingredient-editor-tip">克重计算结果的食材和份量不可修改，可校正最终热量。</p>'}
+        <div class="ingredient-editor-actions">
+          <button class="btn btn-outline" type="button" id="ingredient-editor-cancel">取消</button>
+          <button class="btn btn-primary" type="submit">保存修改</button>
+        </div>
+      </form>
+    </section>
+  `;
+
+  document.body.appendChild(layer);
+  document.body.classList.add('ingredient-editor-open');
+
+  const nameInput = document.getElementById('ingredient-editor-name');
+  const weightInput = document.getElementById('ingredient-editor-weight');
+  const caloriesInput = document.getElementById('ingredient-editor-calories');
+
+  const refreshPreview = () => {
+    document.getElementById('ingredient-editor-preview-name').textContent = nameInput.value.trim() || '未命名食物';
+    document.getElementById('ingredient-editor-preview-calories').textContent = fmtCal(Number(caloriesInput.value) || 0);
+    document.getElementById('ingredient-editor-preview-weight').textContent = `${fmtCal(Number(weightInput.value) || 0)}g`;
+  };
+
+  nameInput.oninput = refreshPreview;
+  caloriesInput.oninput = refreshPreview;
+  if (cameraState.mode === 'photo') {
+    weightInput.oninput = () => {
+      const scaled = FoodPortion.scaleFoodByWeight(
+        ingredientEditorState.basis,
+        Number(weightInput.value)
+      );
+      ingredientEditorState.draft = { ...ingredientEditorState.draft, ...scaled };
+      caloriesInput.value = scaled.calories || 0;
+      refreshPreview();
+    };
+  }
+
+  layer.querySelector('.ingredient-editor-backdrop').onclick = closeIngredientEditor;
+  layer.querySelector('.ingredient-editor-back').onclick = closeIngredientEditor;
+  layer.querySelector('.ingredient-editor-close').onclick = closeIngredientEditor;
+  document.getElementById('ingredient-editor-cancel').onclick = closeIngredientEditor;
+  document.getElementById('ingredient-editor-form').onsubmit = saveIngredientEditor;
+  document.addEventListener('keydown', handleIngredientEditorKeydown);
+
+  requestAnimationFrame(() => layer.classList.add('open'));
+}
+
+function saveIngredientEditor(event) {
+  event.preventDefault();
+  if (!ingredientEditorState || !cameraState.result) return;
+
+  const name = document.getElementById('ingredient-editor-name').value.trim();
+  if (!name) {
+    showToast('请填写食物名称');
+    return;
+  }
+
+  const weight = Number(document.getElementById('ingredient-editor-weight').value) || 0;
+  const calories = Number(document.getElementById('ingredient-editor-calories').value) || 0;
+  const nextFood = {
+    ...ingredientEditorState.draft,
+    name,
+    weight_g: weight,
+    calories,
+  };
+  const index = ingredientEditorState.index;
+  const scrollY = ingredientEditorState.scrollY;
+  cameraState.result.foods[index] = nextFood;
+  refreshEditableTotal();
+  closeIngredientEditor();
+  showResult(cameraState.result);
+  requestAnimationFrame(() => window.scrollTo(0, scrollY));
+  showToast('食材已更新');
+}
+
+function closeIngredientEditor() {
+  const layer = document.getElementById('ingredient-editor-layer');
+  if (layer) layer.remove();
+  document.body.classList.remove('ingredient-editor-open');
+  document.removeEventListener('keydown', handleIngredientEditorKeydown);
+  ingredientEditorState = null;
+}
+
+function handleIngredientEditorKeydown(event) {
+  if (event.key === 'Escape') closeIngredientEditor();
 }
 
 function confidenceLabel(value) {
@@ -490,23 +737,17 @@ function confidenceLabel(value) {
 }
 
 function syncEditedFoods() {
-  const rows = document.querySelectorAll('.food-edit-row');
-  cameraState.result.foods = Array.from(rows).map((row) => {
-    const original = cameraState.result.foods[Number(row.dataset.index)] || {};
-    return {
-      ...original,
-      name: row.querySelector('[data-field="name"]').value.trim(),
-      weight_g: Number(row.querySelector('[data-field="weight_g"]').value) || 0,
-      calories: Number(row.querySelector('[data-field="calories"]').value) || 0,
-    };
-  }).filter((food) => food.name);
+  if (!cameraState.result) return;
+  cameraState.result.foods = cameraState.result.foods.filter((food) => food.name);
   cameraState.result.total_calories = cameraState.result.foods
-    .reduce((sum, food) => sum + food.calories, 0);
+    .reduce((sum, food) => sum + (Number(food.calories) || 0), 0);
 }
 
 function refreshEditableTotal() {
-  const total = Array.from(document.querySelectorAll('[data-field="calories"]'))
-    .reduce((sum, input) => sum + (Number(input.value) || 0), 0);
+  const total = (cameraState.result?.foods || [])
+    .reduce((sum, food) => sum + (Number(food.calories) || 0), 0);
+  if (cameraState.result) cameraState.result.total_calories = total;
   const totalNode = document.getElementById('result-total-cal');
-  if (totalNode) totalNode.textContent = `${fmtCal(total)} kcal`;
+  if (totalNode) totalNode.innerHTML = `${fmtCal(total)}<em>kcal</em>`;
+  refreshNutritionDistribution();
 }

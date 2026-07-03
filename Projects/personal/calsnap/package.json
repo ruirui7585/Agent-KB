@@ -1,0 +1,12 @@
+{
+  "name": "foodmind-local-preview",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "build": "node build.mjs",
+    "dev": "node dev-server.mjs",
+    "start": "node dev-server.mjs",
+    "test": "npm --prefix server test"
+  }
+}

@@ -74,6 +74,19 @@
 
 `GET /api/stats?range=` 支持 `1–365` 天；趋势页使用 `7/30/90/365`。超出范围会被限制到 365 天，非法值回退为 7 天。
 
+## 每日目标设置
+
+`GET /api/settings` 返回每日热量和三大营养素目标；尚未保存营养目标时使用服务端默认值。
+
+| Field | Type | Range | Default |
+|---|---|---|---|
+| `daily_cal_goal` | integer | 500–10000 kcal | 使用产品热量默认值 |
+| `daily_protein_goal` | integer | 20–400 g | 80 g |
+| `daily_carbs_goal` | integer | 20–800 g | 180 g |
+| `daily_fat_goal` | integer | 10–300 g | 45 g |
+
+`PUT /api/settings` 支持一次提交其中任意一项或多项，成功后返回 `updated` 字段列表及本次保存的数值。
+
 ## 错误码
 
 | HTTP | Scenario |

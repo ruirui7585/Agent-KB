@@ -2,9 +2,9 @@ function renderTabbar(active) {
   const tabs = [
     { id: 'dashboard', icon: '⌂', label: '首页' },
     { id: 'history', icon: '▤', label: '记录' },
-    { id: 'action', icon: '+', label: '添加', action: true },
     { id: 'trends', icon: '⌁', label: '趋势' },
     { id: 'settings', icon: '○', label: '我的' },
+    { id: 'action', icon: '+', label: '添加', action: true },
   ];
 
   const html = tabs.map(t => `

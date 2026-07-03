@@ -1,5 +1,5 @@
-const CACHE = 'calsnap-v18';
-const ASSETS = ['/', '/index.html', '/css/style.css?v=20260701-6', '/js/utils/config.js?v=20260630-12', '/js/utils/format.js', '/js/utils/db.js', '/js/utils/body-composition.js?v=20260701-6', '/js/api.js?v=20260701-3', '/js/components/tabbar.js?v=20260630-12', '/js/components/food-card.js', '/js/components/chart.js?v=20260701-5', '/js/components/loader.js?v=20260701-3', '/js/components/empty.js', '/js/pages/dashboard.js?v=20260701-6', '/js/pages/camera.js?v=20260701-3', '/js/pages/barcode.js', '/js/pages/history.js?v=20260701-2', '/js/pages/exercise.js?v=20260630-12', '/js/pages/trends.js?v=20260701-6', '/js/pages/settings.js?v=20260701-6', '/js/app.js?v=20260701-2'];
+const CACHE = 'calsnap-v38';
+const ASSETS = ['/', '/index.html', '/assets/foodmind-logo.png', '/css/style.css?v=20260703-9', '/js/utils/config.js?v=20260630-12', '/js/utils/format.js', '/js/utils/db.js', '/js/utils/body-composition.js?v=20260701-6', '/js/utils/food-portion.js?v=20260702-9', '/js/api.js?v=20260701-3', '/js/components/tabbar.js?v=20260703-1', '/js/components/food-card.js', '/js/components/chart.js?v=20260703-9', '/js/components/loader.js?v=20260701-3', '/js/components/empty.js', '/js/pages/dashboard.js?v=20260703-2', '/js/pages/camera.js?v=20260703-9', '/js/pages/barcode.js', '/js/pages/history.js?v=20260701-2', '/js/pages/exercise.js?v=20260630-12', '/js/pages/trends.js?v=20260702-3', '/js/pages/settings.js?v=20260703-1', '/js/app.js?v=20260701-2'];
 
 self.addEventListener('install', e => {
   e.waitUntil(

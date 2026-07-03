@@ -167,14 +167,17 @@ Response 200: { "tdee": 2350, "daily_cal_goal": 2350 }
 ```
 Response 200:
 { "has_bailian_key": true, "bailian_model": "qwen3.7-plus",
-  "access_protection_enabled": true, "daily_cal_goal": "2281" }
+  "daily_cal_goal": 2281, "daily_protein_goal": 80,
+  "daily_carbs_goal": 180, "daily_fat_goal": 45 }
 ```
 
 ### 3.8 `PUT /api/settings`
 
 ```
-Request: { "daily_cal_goal": "2200" }
-Response 200: { "updated": ["daily_cal_goal"] }
+Request: { "daily_cal_goal": 2200, "daily_protein_goal": 95,
+  "daily_carbs_goal": 220, "daily_fat_goal": 60 }
+Response 200: { "updated": ["daily_cal_goal", "daily_protein_goal",
+  "daily_carbs_goal", "daily_fat_goal"] }
 ```
 
 ### 3.9 `GET /api/health`

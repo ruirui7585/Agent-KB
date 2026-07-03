@@ -4,98 +4,82 @@ function formatSignedNumber(value, digits = 1) {
   return `${normalized > 0 ? '+' : ''}${normalized.toFixed(digits)}`;
 }
 
-function renderFatEquivalentCard(projection) {
+function summarizeDailyNutrition(meals = {}) {
+  const totals = { protein_g: 0, carbs_g: 0, fat_g: 0 };
+  Object.values(meals).flat().forEach((record) => {
+    (record.foods || []).forEach((food) => {
+      totals.protein_g += Number(food.protein_g) || 0;
+      totals.carbs_g += Number(food.carbs_g) || 0;
+      totals.fat_g += Number(food.fat_g) || 0;
+    });
+  });
+  return totals;
+}
+
+function formatMacroValue(value) {
+  const number = Math.round((Number(value) || 0) * 10) / 10;
+  return Number.isInteger(number) ? String(number) : number.toFixed(1);
+}
+
+function renderMacroProgress(label, key, value, goal) {
+  const safeGoal = Math.max(Number(goal) || 0, 1);
+  const percentage = Math.min(Math.round((value / safeGoal) * 100), 100);
+  return `
+    <div class="daily-macro-row ${key} ${value > safeGoal ? 'over' : ''}">
+      <span>${label}</span>
+      <div class="daily-macro-track" aria-label="${label}完成 ${percentage}%">
+        <i style="width:${percentage}%"></i>
+      </div>
+      <b>${formatMacroValue(value)}<em>/${formatMacroValue(safeGoal)}g</em></b>
+    </div>`;
+}
+
+function renderWellnessCards(projection, nutrition, goals) {
   const isDeficit = projection.calorie_delta <= 0;
   const isBalanced = projection.calorie_delta === 0;
   const tone = isBalanced ? 'balanced' : (isDeficit ? 'deficit' : 'surplus');
-  const action = isBalanced ? '维持平衡' : (isDeficit ? '脂肪消耗等价' : '脂肪储存等价');
-  const energyAction = isBalanced ? '能量收支接近平衡' : `${isDeficit ? '消耗' : '盈余'} ${fmtCal(Math.abs(projection.calorie_delta))} kcal`;
+  const action = isBalanced ? '脂肪等价' : (isDeficit ? '脂肪消耗等价' : '脂肪储存等价');
+  const energyAction = isBalanced ? '能量收支接近平衡' : `${isDeficit ? '缺口' : '盈余'} ${fmtCal(Math.abs(projection.calorie_delta))} kcal`;
+  const bodyFat = projection.body_fat;
 
   return `
-    <section class="fat-equivalent-card ${tone}" aria-label="预计脂肪变化">
-      <div class="projection-card-head">
-        <div><h2>预计脂肪变化</h2><small>按 7700 kcal ≈ 1 kg 脂肪</small></div>
-        <span>${isBalanced ? '平衡' : (isDeficit ? '缺口' : '盈余')}</span>
-      </div>
-      <div class="fat-equivalent-main">
-        <div>
+    <section class="wellness-grid" aria-label="身体与营养概览">
+      <article class="wellness-card current-data-card ${tone}" aria-label="当前身体数据">
+        <div class="wellness-card-head">
+          <div><h2>当前数据</h2><small>热量差与身体趋势</small></div>
+          <span>${isBalanced ? '平衡' : (isDeficit ? '缺口' : '盈余')}</span>
+        </div>
+        <div class="current-fat-value">
           <small>今日${action}</small>
-          <strong>${formatSignedNumber(projection.fat_change.today_kg, 2)}<em> kg</em></strong>
+          <strong>${formatSignedNumber(projection.fat_change.today_kg, 2)}<em>kg</em></strong>
           <p>≈ ${energyAction}</p>
         </div>
-        <div class="fat-week-preview">
-          <small>7 天线性预估</small>
-          <b>${formatSignedNumber(projection.fat_change.week_kg, 2)}<em> kg</em></b>
-          <svg viewBox="0 0 92 26" role="img" aria-label="7天脂肪变化趋势">
-            <path d="${isDeficit ? 'M3 7 C25 8, 33 4, 48 10 S70 15, 89 21' : 'M3 20 C25 18, 34 21, 50 14 S71 9, 89 5'}"></path>
-            <circle cx="89" cy="${isDeficit ? '21' : '5'}" r="2.5"></circle>
-          </svg>
+        <div class="current-data-list">
+          <div><span>7天脂肪等价</span><b>${formatSignedNumber(projection.fat_change.week_kg, 2)}kg</b></div>
+          ${projection.available ? `
+            <div><span>${projection.method === 'provided_body_fat' ? '当前体脂' : '估算体脂'}</span><b>${bodyFat.current_pct.toFixed(1)}%</b></div>
+            <div><span>7天预计体脂</span><b class="${bodyFat.week_change_pct <= 0 ? 'improving' : 'rising'}">${bodyFat.week_pct.toFixed(1)}%</b></div>
+          ` : `
+            <div><span>当前体脂</span><b>--</b></div>
+            <button type="button" onclick="navigate('settings')"><span>完善资料</span><b>去设置 ›</b></button>
+          `}
         </div>
-      </div>
-      <p class="projection-disclaimer">能量等价不代表体重会即时变化，水分与代谢波动会影响实际结果。</p>
-    </section>`;
-}
+      </article>
 
-function bodyFatChart(bodyFat) {
-  const values = [bodyFat.current_pct, bodyFat.week_pct, bodyFat.month_pct];
-  const min = Math.min(...values);
-  const max = Math.max(...values);
-  const range = Math.max(max - min, 1);
-  const points = values.map((value, index) => {
-    const x = [20, 150, 280][index];
-    const y = 72 - ((value - min) / range) * 42;
-    return { x, y: Math.round(y), value };
-  });
-  const polyline = points.map((point) => `${point.x},${point.y}`).join(' ');
-
-  return `
-    <svg class="body-fat-chart" viewBox="0 0 300 108" role="img" aria-label="今天、7天后和30天后的体脂率预估趋势">
-      <line x1="18" y1="82" x2="282" y2="82" class="chart-axis"></line>
-      <polyline points="${polyline}" class="chart-line"></polyline>
-      ${points.map((point) => `
-        <line x1="${point.x}" y1="${point.y}" x2="${point.x}" y2="82" class="chart-guide"></line>
-        <circle cx="${point.x}" cy="${point.y}" r="5" class="chart-point"></circle>
-        <text x="${point.x}" y="${Math.max(point.y - 10, 13)}" text-anchor="middle">${point.value.toFixed(1)}%</text>
-      `).join('')}
-      <text x="20" y="103" text-anchor="middle" class="chart-label">今天</text>
-      <text x="150" y="103" text-anchor="middle" class="chart-label">7天后</text>
-      <text x="280" y="103" text-anchor="middle" class="chart-label">30天后</text>
-    </svg>`;
-}
-
-function renderBodyFatProjectionCard(projection) {
-  if (!projection.available) {
-    return `
-      <section class="body-fat-card body-fat-empty">
-        <div class="projection-card-head">
-          <div><h2>体脂率趋势预估</h2><small>基于身高、体重、年龄和性别</small></div>
+      <article class="wellness-card daily-nutrition-card" aria-label="今日三大营养素摄入">
+        <div class="wellness-card-head">
+          <div><h2>营养摄入</h2><small>今日摄入 / 每日目标</small></div>
+          <span>今日</span>
         </div>
-        <div class="body-fat-empty-content">
-          <span>◎</span>
-          <div><b>完善资料后生成预测</b><p>补充个人资料即可查看当前、7 天和 30 天体脂率估算。</p></div>
+        <div class="daily-macro-list">
+          ${renderMacroProgress('蛋白质', 'protein', nutrition.protein_g, goals.protein)}
+          ${renderMacroProgress('碳水', 'carbs', nutrition.carbs_g, goals.carbs)}
+          ${renderMacroProgress('脂肪', 'fat', nutrition.fat_g, goals.fat)}
         </div>
-        <button type="button" onclick="navigate('settings')">去完善资料</button>
-      </section>`;
-  }
-
-  const bodyFat = projection.body_fat;
-  const usesMeasuredBodyFat = projection.method === 'provided_body_fat';
-  const weekImproving = bodyFat.week_change_pct <= 0;
-  const monthImproving = bodyFat.month_change_pct <= 0;
-
-  return `
-    <section class="body-fat-card">
-      <div class="projection-card-head">
-        <div><h2>体脂率趋势预估</h2><small>${usesMeasuredBodyFat ? '基于实测体脂率与热量差' : 'BMI + 年龄 + 性别模型估算'}</small></div>
-        <span>预测值</span>
-      </div>
-      <div class="body-fat-summary">
-        <div class="current"><small>${usesMeasuredBodyFat ? '当前实测' : '当前估算'}</small><strong>${bodyFat.current_pct.toFixed(1)}<em>%</em></strong></div>
-        <div><small>7 天后</small><b>${bodyFat.week_pct.toFixed(1)}%</b><em class="${weekImproving ? 'improving' : 'rising'}">${formatSignedNumber(bodyFat.week_change_pct, 1)}%</em></div>
-        <div><small>30 天后</small><b>${bodyFat.month_pct.toFixed(1)}%</b><em class="${monthImproving ? 'improving' : 'rising'}">${formatSignedNumber(bodyFat.month_change_pct, 1)}%</em></div>
-      </div>
-      ${bodyFatChart(bodyFat)}
-      <p class="projection-disclaimer">${usesMeasuredBodyFat ? '当前值来自你的实测记录，未来值' : '全部数值'}按今日热量差线性外推，仅用于趋势参考。</p>
+        <button type="button" class="nutrition-goal-link" onclick="navigate('settings')">
+          调整每日目标 <b>›</b>
+        </button>
+      </article>
     </section>`;
 }
 
@@ -104,14 +88,25 @@ async function renderDashboard() {
 
   try {
     const today = fmtDate();
-    const [data, profile] = await Promise.all([
+    const [data, profile, settings] = await Promise.all([
       API.getRecords(today),
       API.getProfile().catch(() => ({})),
+      API.getSettings().catch(() => ({
+        daily_protein_goal: 80,
+        daily_carbs_goal: 180,
+        daily_fat_goal: 45,
+      })),
     ]);
     const balance = fmtCal(data.calorie_delta);
     const deficit = balance <= 0;
     const intakePct = Math.min(fmtPct(data.day_total, data.goal), 100);
     const bodyProjection = BodyComposition.buildProjection(data.calorie_delta, profile);
+    const dailyNutrition = summarizeDailyNutrition(data.meals);
+    const nutritionGoals = {
+      protein: Number(settings.daily_protein_goal) || 80,
+      carbs: Number(settings.daily_carbs_goal) || 180,
+      fat: Number(settings.daily_fat_goal) || 45,
+    };
 
     const mealRows = ['breakfast', 'lunch', 'dinner', 'snack'].map((key) => {
       const items = data.meals[key] || [];
@@ -134,7 +129,11 @@ async function renderDashboard() {
 
     document.getElementById('content').innerHTML = `
       <header class="home-header">
-        <div><span class="brand-mark">C</span><b class="brand-name">CalSnap</b></div>
+        <div>
+          <svg class="brand-lockup" viewBox="160 690 940 210" role="img" aria-label="Foodmind">
+            <image href="assets/foodmind-logo.png" x="0" y="0" width="1254" height="1254"></image>
+          </svg>
+        </div>
         <button class="avatar-button" onclick="navigate('settings')" aria-label="我的">☺</button>
       </header>
       <section class="greeting">
@@ -159,8 +158,7 @@ async function renderDashboard() {
         <div class="metric-card baseline"><span>●</span><small>基础消耗</small><b>${fmtCal(data.baseline_expenditure)}</b><em>kcal</em></div>
       </section>
 
-      ${renderFatEquivalentCard(bodyProjection)}
-      ${renderBodyFatProjectionCard(bodyProjection)}
+      ${renderWellnessCards(bodyProjection, dailyNutrition, nutritionGoals)}
 
       <section class="section-block">
         <div class="section-title"><h2>今日记录</h2><button onclick="navigate('history')">详情 ›</button></div>
@@ -184,7 +182,7 @@ async function renderDashboard() {
     });
   } catch (err) {
     document.getElementById('content').innerHTML = `
-      <div class="page-header"><h1>CalSnap</h1></div>
+      <div class="page-header"><h1>Foodmind</h1></div>
       <div class="card error-card"><p>首页加载失败：${esc(err.message || '请检查服务器')}</p>
       <button class="btn btn-outline btn-block" onclick="navigate('dashboard')">重新加载</button></div>`;
   }

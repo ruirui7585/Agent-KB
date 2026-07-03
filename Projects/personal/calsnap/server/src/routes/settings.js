@@ -1,11 +1,16 @@
 import db from '../db.js';
 import { ok } from '../utils/response.js';
+import {
+  normalizeSettingsUpdates,
+  parseSettingsRows,
+  SETTING_KEYS,
+} from '../utils/settings.js';
 
 export default async function settingsRoutes(app) {
   app.get('/', async (_req, reply) => {
-    const rows = db.prepare("SELECT key, value FROM settings WHERE key IN ('daily_cal_goal')").all();
-    const settings = {};
-    for (const row of rows) settings[row.key] = row.value;
+    const placeholders = SETTING_KEYS.map(() => '?').join(', ');
+    const rows = db.prepare(`SELECT key, value FROM settings WHERE key IN (${placeholders})`).all(...SETTING_KEYS);
+    const settings = parseSettingsRows(rows);
     settings.has_bailian_key = !!process.env.DASHSCOPE_API_KEY;
     settings.bailian_model = process.env.BAILIAN_PRIMARY_MODEL || 'qwen3.7-plus';
     return ok(reply, settings);
@@ -13,13 +18,11 @@ export default async function settingsRoutes(app) {
 
   app.put('/', async (req, reply) => {
     const updates = req.body || {};
-    const allowedUpdates = {};
-    if (Object.hasOwn(updates, 'daily_cal_goal')) {
-      const goal = Number.parseInt(updates.daily_cal_goal, 10);
-      if (!Number.isFinite(goal) || goal < 500 || goal > 10000) {
-        return reply.status(400).send({ error: '热量目标必须在 500–10000 kcal 之间' });
-      }
-      allowedUpdates.daily_cal_goal = String(goal);
+    let allowedUpdates;
+    try {
+      allowedUpdates = normalizeSettingsUpdates(updates);
+    } catch (error) {
+      return reply.status(error.statusCode || 400).send({ error: error.message });
     }
 
     if (!Object.keys(allowedUpdates).length) {
@@ -33,11 +36,13 @@ export default async function settingsRoutes(app) {
       }
     });
     batch();
+
+    const savedSettings = Object.fromEntries(
+      Object.entries(allowedUpdates).map(([key, value]) => [key, Number.parseInt(value, 10)]),
+    );
     return ok(reply, {
       updated: Object.keys(allowedUpdates),
-      daily_cal_goal: allowedUpdates.daily_cal_goal
-        ? parseInt(allowedUpdates.daily_cal_goal, 10)
-        : undefined,
+      ...savedSettings,
     });
   });
 }

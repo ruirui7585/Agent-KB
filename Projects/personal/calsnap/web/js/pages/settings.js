@@ -18,11 +18,14 @@ async function renderSettings() {
     const displayedBodyFat = Number(profile.body_fat_pct) || estimatedBodyFat;
     const bodyFatSource = Number(profile.body_fat_pct) ? '实测' : '估算';
     const dailyGoal = settings.daily_cal_goal || CONFIG.DEFAULT_GOAL;
+    const proteinGoal = settings.daily_protein_goal || 80;
+    const carbsGoal = settings.daily_carbs_goal || 180;
+    const fatGoal = settings.daily_fat_goal || 45;
 
     document.getElementById('content').innerHTML = `
       <div class="settings-header">
         <div>
-          <span class="settings-eyebrow">CALSNAP PROFILE</span>
+          <span class="settings-eyebrow">FOODMIND PROFILE</span>
           <h1>我的</h1>
           <p>维护身体数据，让热量与体脂预测更贴近你</p>
         </div>
@@ -139,11 +142,33 @@ async function renderSettings() {
           </div>
           <small>用于计算今日还可摄入热量，不会改变基础代谢。</small>
         </label>
+
+        <div class="macro-goal-block">
+          <div class="macro-goal-head">
+            <div><b>每日营养素目标</b><small>用于追踪每日饮食结构</small></div>
+            <span>g / 天</span>
+          </div>
+          <div class="macro-goal-grid">
+            <label class="macro-goal protein">
+              <span><i></i>蛋白质</span>
+              <div><input type="number" id="protein-goal-input" value="${proteinGoal}" min="20" max="400" step="5"><em>g</em></div>
+            </label>
+            <label class="macro-goal carbs">
+              <span><i></i>碳水</span>
+              <div><input type="number" id="carbs-goal-input" value="${carbsGoal}" min="20" max="800" step="5"><em>g</em></div>
+            </label>
+            <label class="macro-goal fat">
+              <span><i></i>脂肪</span>
+              <div><input type="number" id="fat-goal-input" value="${fatGoal}" min="10" max="300" step="5"><em>g</em></div>
+            </label>
+          </div>
+          <p>可根据减脂、维持或增肌目标调整；如有专业营养建议，请以专业建议为准。</p>
+        </div>
       </section>
 
       <button class="btn btn-primary btn-block settings-save" id="btn-save-all">
         <span>保存全部设置</span>
-        <i>同步首页与趋势</i>
+        <i>同步热量与营养目标</i>
       </button>
 
       <section class="settings-section-card settings-service-card">
@@ -157,11 +182,11 @@ async function renderSettings() {
         </div>
         <div class="settings-service-row">
           <span class="service-icon server">↗</span>
-          <div><b>服务器连接</b><small>当前 CalSnap API 服务</small></div>
+          <div><b>服务器连接</b><small>当前 Foodmind API 服务</small></div>
           <em id="health-status">检查中</em>
         </div>
         <div class="settings-about">
-          <b>CalSnap v1.0</b>
+          <b>Foodmind v1.0</b>
           <p>识别、热量和体脂预测仅用于个人健康记录，不构成医疗建议。</p>
         </div>
       </section>
@@ -191,6 +216,9 @@ async function renderSettings() {
       const baseline = Number(baselineInput.value);
       const baselineIsManual = baselineInput.dataset.mode === 'manual';
       const goal = Number(document.getElementById('goal-input').value);
+      const proteinGoal = Number(document.getElementById('protein-goal-input').value);
+      const carbsGoal = Number(document.getElementById('carbs-goal-input').value);
+      const fatGoal = Number(document.getElementById('fat-goal-input').value);
 
       if (!gender) return showToast('请选择性别');
       if (!height || !weight || !age) return showToast('请填写身高、体重和年龄');
@@ -206,6 +234,15 @@ async function renderSettings() {
       if (!goal || goal < 500 || goal > 10000) {
         return showToast('热量目标应在 500–10000 kcal 之间');
       }
+      if (!proteinGoal || proteinGoal < 20 || proteinGoal > 400) {
+        return showToast('蛋白质目标应在 20–400 g 之间');
+      }
+      if (!carbsGoal || carbsGoal < 20 || carbsGoal > 800) {
+        return showToast('碳水目标应在 20–800 g 之间');
+      }
+      if (!fatGoal || fatGoal < 10 || fatGoal > 300) {
+        return showToast('脂肪目标应在 10–300 g 之间');
+      }
 
       button.disabled = true;
       button.innerHTML = '<span>保存中...</span><i>正在同步相关页面</i>';
@@ -219,13 +256,18 @@ async function renderSettings() {
           activity_level: activity,
           baseline_expenditure: baselineIsManual ? baseline : null,
         });
-        await API.updateSettings({ daily_cal_goal: String(Math.round(goal)) });
-        notifyAppDataChanged('profile_and_goal');
-        showToast('设置已保存，首页与趋势已同步');
+        await API.updateSettings({
+          daily_cal_goal: String(Math.round(goal)),
+          daily_protein_goal: String(Math.round(proteinGoal)),
+          daily_carbs_goal: String(Math.round(carbsGoal)),
+          daily_fat_goal: String(Math.round(fatGoal)),
+        });
+        notifyAppDataChanged('profile_and_goals');
+        showToast('热量与营养目标已保存');
         await renderSettings();
       } catch (err) {
         button.disabled = false;
-        button.innerHTML = '<span>保存全部设置</span><i>同步首页与趋势</i>';
+        button.innerHTML = '<span>保存全部设置</span><i>同步热量与营养目标</i>';
         showToast(err.message || '设置保存失败');
       }
     };

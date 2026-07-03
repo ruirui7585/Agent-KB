@@ -1,13 +1,12 @@
 {
-  "name": "CalSnap",
-  "short_name": "CalSnap",
+  "name": "Foodmind",
+  "short_name": "Foodmind",
   "start_url": "/",
   "display": "standalone",
   "orientation": "portrait",
-  "background_color": "#f8fafc",
-  "theme_color": "#22c55e",
+  "background_color": "#f5f7f2",
+  "theme_color": "#5aa33a",
   "icons": [
-    { "src": "assets/icon-192.png", "sizes": "192x192", "type": "image/png" },
-    { "src": "assets/icon-512.png", "sizes": "512x512", "type": "image/png" }
+    { "src": "assets/foodmind-logo.png", "sizes": "1254x1254", "type": "image/png", "purpose": "any maskable" }
   ]
 }
