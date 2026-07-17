@@ -1,0 +1,85 @@
+{
+  "version": "1.0",
+  "updatedAt": "2026-07-15T03:57:37.147Z",
+  "annotations": [
+    {
+      "id": "ann-chat-video-call",
+      "page": "chat",
+      "title": "视频通话权限",
+      "description": "会话建立后展示视频通话入口。",
+      "rules": [
+        "S/A/B 等级用户可以发起视频通话。",
+        "C/D 等级用户点击后提示当前等级暂不可用。"
+      ],
+      "target": {
+        "annotationId": "chat-video-call",
+        "selector": "[data-annotation-id=\"chat-video-call\"]"
+      },
+      "context": {
+        "pageState": "accepted",
+        "userLevel": "B"
+      },
+      "status": "active",
+      "createdAt": "2026-07-14T00:00:00Z",
+      "updatedAt": "2026-07-14T00:00:00Z"
+    },
+    {
+      "id": "ann-wish-gift-banner",
+      "page": "chat",
+      "title": "心愿礼物横幅",
+      "description": "展示当前心愿礼物及完成进度。",
+      "rules": [
+        "注释绑定整个横幅，不只绑定礼物图片或按钮。",
+        "点击赠送按钮后进入送礼流程。"
+      ],
+      "target": {
+        "annotationId": "wish-gift-banner",
+        "selector": "[data-annotation-id=\"wish-gift-banner\"]"
+      },
+      "context": {
+        "pageState": "accepted"
+      },
+      "status": "active",
+      "createdAt": "2026-07-14T00:00:00Z",
+      "updatedAt": "2026-07-14T00:00:00Z"
+    },
+    {
+      "id": "ann-chat-photo-entry",
+      "page": "chat",
+      "title": "图片发送入口",
+      "description": "提供从聊天输入区发送图片内容的入口。",
+      "rules": [
+        "注释绑定输入区左侧的加号按钮。",
+        "不要绑定整个底部输入区域。"
+      ],
+      "target": {
+        "annotationId": "chat-photo-entry",
+        "selector": "[data-annotation-id=\"chat-photo-entry\"]"
+      },
+      "context": {
+        "pageState": "accepted"
+      },
+      "status": "active",
+      "createdAt": "2026-07-14T00:00:00Z",
+      "updatedAt": "2026-07-14T00:00:00Z"
+    },
+    {
+      "id": "ann-manual-mrlju1oc",
+      "page": "chat",
+      "title": "发送消息按钮",
+      "description": "发送当前输入框中的消息内容。",
+      "rules": [
+        "输入框为空时不发送消息。",
+        "发送成功后清空输入内容。"
+      ],
+      "target": {
+        "annotationId": "chat-send-message",
+        "selector": "[data-annotation-id=\"chat-send-message\"]"
+      },
+      "context": {},
+      "status": "active",
+      "createdAt": "2026-07-15T03:57:17.435Z",
+      "updatedAt": "2026-07-15T03:57:37.137Z"
+    }
+  ]
+}

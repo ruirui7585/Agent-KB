@@ -1,0 +1,4 @@
+interface:
+  display_name: "Prototype Agent Annotation"
+  short_description: "Agent-built annotations for HTML prototypes"
+  default_prompt: "Use $prototype-agent-annotation to annotate this high-fidelity HTML prototype from the latest feature requirement."

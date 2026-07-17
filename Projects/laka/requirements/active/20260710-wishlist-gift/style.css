@@ -1,0 +1,304 @@
+/* ========== 全局基础 ========== */
+* { box-sizing: border-box; }
+body {
+  margin: 0;
+  min-height: 100vh;
+  background: #18141f;
+  font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "Helvetica Neue", Arial, sans-serif;
+  display: flex; align-items: center; justify-content: center;
+  padding: 24px; color: #25152d;
+}
+
+/* ========== 手机模拟器 ========== */
+.phone {
+  width: 420px;
+  height: 900px;
+  border-radius: 34px;
+  overflow: hidden;
+  position: relative;
+  background: linear-gradient(180deg, #fff0fb 0%, #f6efff 28%, #f5f3f8 100%);
+  box-shadow: 0 30px 90px rgba(0,0,0,.45);
+}
+
+.screen {
+  width: 100%; height: 100%;
+  position: absolute; inset: 0; overflow-y: auto;
+  overflow-x: hidden;
+}
+
+/* ========== 状态栏 ========== */
+.status-bar {
+  height: 54px; padding: 14px 24px 0;
+  display: flex; justify-content: space-between; align-items: flex-start;
+  color: #08070a; font-size: 19px; font-weight: 800; letter-spacing: -.3px;
+}
+.status-icons {
+  display: flex; align-items: center; gap: 6px; font-size: 13px; font-weight: 900;
+}
+.signal { display: flex; gap: 2px; align-items: flex-end; height: 15px; }
+.signal span { width: 3px; border-radius: 1.5px; background: #08070a; display: block; }
+.signal span:nth-child(1){height:5px} .signal span:nth-child(2){height:8px}
+.signal span:nth-child(3){height:11px} .signal span:nth-child(4){height:14px}
+.battery { background: #59c667; color: #fff; padding: 1px 6px; border-radius: 7px; font-size: 13px; }
+
+/* ========== 聊天头部 ========== */
+.chat-header {
+  height: 60px;
+  display: grid; grid-template-columns: 52px 1fr 52px; align-items: center;
+  padding: 0 14px;
+}
+.round-btn {
+  width: 34px; height: 34px; border-radius: 50%;
+  background: rgba(255,255,255,.88);
+  border: 1px solid rgba(115,61,149,.08);
+  display: flex; justify-content: center; align-items: center;
+  color: #351146; font-size: 22px;
+  box-shadow: 0 2px 8px rgba(127,65,180,.06);
+  cursor: default;
+}
+.profile-title {
+  justify-self: center;
+  display: flex; align-items: center; gap: 8px;
+  font-size: 18px; font-weight: 600; color: #25152d;
+}
+.mini-avatar {
+  width: 36px; height: 36px; border-radius: 50%;
+  background: #e8e0f0; overflow: hidden; flex-shrink: 0;
+}
+.mini-avatar img { width: 100%; height: 100%; object-fit: cover; display: block; }
+
+/* ========== 请求信息 ========== */
+.request-info {
+  margin: 0 17px 10px; padding: 11px 14px;
+  border-radius: 16px;
+  background: rgba(255,255,255,.82);
+  border: 1px solid rgba(213,112,255,.32);
+  box-shadow: 0 8px 22px rgba(127,65,180,.06);
+}
+.request-title {
+  font-size: 14px; line-height: 20px; font-weight: 750;
+  text-align: center; color: #25152d;
+}
+.request-desc {
+  margin-top: 4px; color: #8c8194; font-size: 12px;
+  line-height: 17px; text-align: center;
+}
+
+/* ========== 奖励区域 ========== */
+.reward-card {
+  margin: 0 17px; height: 62px;
+  border-radius: 14px;
+  background: linear-gradient(135deg, #efe5ff, #ffdff6);
+  display: grid; grid-template-columns: 58px 1fr 44px;
+  align-items: center; padding: 7px 9px;
+  color: #2a1b35; border: 1px solid rgba(220,120,255,.22);
+}
+.reward-left { font-size: 11.5px; line-height: 20px; color: #5d4a68; font-weight: 500; }
+.reward-left .diamond { color: #a14cff; font-size: 15px; font-weight: 800; display: block; line-height: 17px; }
+.reward-title { font-size: 13.5px; font-weight: 800; color: #33203f; white-space: nowrap; }
+.reward-track {
+  height: 15px; border-radius: 9px; background: rgba(255,255,255,.78);
+  display: grid; grid-template-columns: repeat(6,1fr); align-items: center;
+  text-align: center; color: #9a45ff; font-size: 11.5px; font-weight: 700; margin-top: 2px;
+}
+.reward-num {
+  display: grid; grid-template-columns: repeat(6,1fr);
+  text-align: center; color: #93869f; font-size: 10.5px; line-height: 13px; margin-top: 1px;
+}
+.reward-detail { color: #b943f5; font-size: 13px; font-weight: 700; text-align: right; }
+
+/* ========== 用户资料卡片 ========== */
+.im-profile-card {
+  margin: 14px 17px 0;
+  min-height: 150px;
+  border-radius: 16px;
+  background: rgba(255,255,255,.92);
+  border: 1px solid rgba(220,150,255,.35);
+  position: relative;
+  padding: 16px 14px 18px;
+  box-shadow: 0 8px 28px rgba(127,65,180,.07);
+}
+
+/* ===== 心愿礼物入口：悬浮在资料卡片右上区域（1:1 还原截图）===== */
+.wish-gift-entry {
+  position: absolute;
+  top: -14px;
+  right: 10px;
+  width: 196px;
+  height: 66px;
+  border-radius: 14px;
+  background: linear-gradient(135deg, #f3e8ff 0%, #ece0fc 45%, #e5dbfa 100%);
+  border: 1px solid rgba(185,140,245,.25);
+  box-shadow:
+    0 4px 16px rgba(160,110,230,.12),
+    0 1px 3px rgba(160,110,230,.06);
+  padding: 8px 10px 5px;
+  cursor: pointer;
+  z-index: 10;
+  display: flex; flex-direction: column;
+  overflow: hidden;
+  transition: transform .18s ease, box-shadow .18s ease, opacity .15s ease;
+  user-select: none; -webkit-user-select: none;
+}
+.wish-gift-entry:hover {
+  transform: translateY(-1px) scale(1.01);
+  box-shadow: 0 6px 22px rgba(160,110,230,.18), 0 2px 6px rgba(160,110,230,.1);
+}
+.wish-gift-entry:active { transform: scale(.97) translateY(0); }
+
+.wge-body { display: flex; align-items: center; gap: 7px; flex: 1; min-height: 0; }
+.wge-icon {
+  flex-shrink: 0; display: flex; align-items: center; justify-content: center;
+  filter: drop-shadow(0 1px 3px rgba(200,130,210,.25));
+}
+.wge-text {
+  display: flex; flex-direction: column; gap: 1px; min-width: 0; flex: 1;
+}
+.wge-title {
+  font-size: 13px; font-weight: 800; color: #3a1a60;
+  letter-spacing: -.2px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+.wge-sub {
+  font-size: 11px; font-weight: 500; color: #9978b5;
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+.wge-arrow {
+  position: absolute; right: 9px; top: 50%;
+  transform: translateY(-50%);
+  font-size: 20px; color: #b89de0; font-weight: 300; line-height: 1;
+  transition: transform .18s ease;
+}
+.wish-gift-entry:hover .wge-arrow { transform: translateY(-50%) translateX(2px); }
+
+/* 轮播指示点：6 个圆点（与截图一致） */
+.wge-dots {
+  display: flex; justify-content: center; gap: 4px;
+  margin-top: 4px; padding: 0 6px;
+}
+.wge-dots .dot {
+  width: 5px; height: 5px; border-radius: 50%;
+  background: rgba(170,140,215,.35);
+  transition: all .25s ease; flex-shrink: 0;
+}
+.wge-dots .dot.active {
+  width: 14px; border-radius: 3px;
+  background: linear-gradient(90deg, #a78bfa, #c084fc);
+  box-shadow: 0 0 4px rgba(168,139,250,.35);
+}
+
+/* 点击提示 */
+.wish-toast {
+  position: absolute; left: 50%; top: 12px;
+  transform: translateX(-50%) translateY(-8px);
+  padding: 5px 12px; border-radius: 999px;
+  background: rgba(90,40,140,.88); color: #fff;
+  font-size: 11px; font-weight: 700; white-space: nowrap;
+  opacity: 0; pointer-events: none;
+  transition: all .2s ease; z-index: 20;
+}
+.wish-toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+
+/* ========== 资料卡片内容 ========== */
+.user-name {
+  font-size: 19px; font-weight: 900; color: #303036;
+  display: flex; align-items: center; gap: 5px; margin-bottom: 2px;
+}
+.flag { font-size: 15px; }
+.age-row {
+  font-size: 13px; color: #63aeea; font-weight: 600;
+  display: inline-flex; align-items: center; gap: 3px;
+  margin-bottom: 8px;
+}
+
+/* LAKA 预览图（1:1 截图中的聊天界面缩略图） */
+.im-card-preview {
+  border-radius: 12px; overflow: hidden;
+  background: #14101a;
+  width: 100%; max-width: 195px;
+  aspect-ratio: 9 / 14;
+  border: 1px solid rgba(190,165,225,.2);
+  box-shadow: inset 0 0 0 1px rgba(0,0,0,.04);
+}
+.im-card-preview img {
+  width: 100%; height: 100%;
+  object-fit: cover; display: block;
+}
+
+/* 卡片内爱心计数 */
+.im-card-like {
+  position: absolute; right: 10px; bottom: 12px;
+  display: flex; flex-direction: column; align-items: center; gap: 1px;
+}
+.like-heart { font-size: 26px; line-height: 1; filter: drop-shadow(0 2px 4px rgba(255,120,180,.28)); }
+.like-count { font-size: 13px; font-weight: 800; color: #e87dbf; }
+
+/* ========== 日期 / 提示 ========== */
+.im-date {
+  margin-top: 18px; text-align: center;
+  font-size: 14px; font-weight: 600; color: #a396ad;
+}
+.system-tip {
+  margin: 30px auto 0; width: 300px; text-align: center;
+  color: #685d70; font-size: 13.5px; line-height: 21px; letter-spacing: .2px; font-weight: 430;
+}
+.expand-btn {
+  position: absolute; right: 18px; bottom: 148px;
+  width: 28px; height: 28px; border-radius: 8px;
+  background: rgba(240,235,245,.85);
+  border: 1px solid rgba(200,185,220,.3);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 12px; color: #9a8ba4; cursor: default;
+  box-shadow: 0 2px 6px rgba(127,65,180,.04);
+}
+
+/* ========== 快捷回复（阿拉伯语）========== */
+.quick-replies {
+  display: flex; gap: 8px; margin: 16px 17px 0;
+  overflow: hidden; direction: rtl;
+}
+.quick {
+  height: 31px; min-width: 86px; padding: 0 12px;
+  background: #f6efff; border-radius: 10px; border: 1px solid rgba(220,200,240,.4);
+  color: #6d527a; font-size: 12.5px;
+  display: flex; align-items: center; justify-content: center;
+  white-space: nowrap;
+}
+
+/* ========== 底部输入区 + 工具栏 ========== */
+.bottom-panel {
+  position: fixed; left: 0; right: 0; bottom: 0;
+  min-height: 108px;
+  background: rgba(255,255,255,.96);
+  border-radius: 24px 24px 0 0;
+  box-shadow: 0 -10px 32px rgba(127,65,180,.10);
+  border-top: 1px solid rgba(220,120,255,.18);
+  padding: 12px 16px 16px;
+  z-index: 20;
+}
+.input-row {
+  height: 42px;
+  display: grid; grid-template-columns: 1fr 48px; gap: 8px; align-items: center;
+}
+.input {
+  height: 42px; border-radius: 21px;
+  background: #f2edf6; color: #222;
+  font-size: 15px; display: flex; align-items: center; padding-left: 18px;
+}
+.send {
+  height: 42px; width: 48px; border-radius: 21px;
+  background: linear-gradient(135deg, #ff73dc, #c47cff);
+  color: #fff; border: none;
+  display: flex; align-items: center; justify-content: center;
+  cursor: pointer;
+}
+.chat-toolbar {
+  display: flex; justify-content: space-around; align-items: center;
+  padding: 8px 2px 0;
+}
+.tb-btn {
+  width: 40px; height: 40px; border: none; background: transparent;
+  cursor: pointer; border-radius: 10px; font-size: 21px;
+  display: flex; align-items: center; justify-content: center;
+  transition: background .15s ease;
+}
+.tb-btn:hover { background: #f8f6fb; }

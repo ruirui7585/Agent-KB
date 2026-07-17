@@ -1,0 +1,101 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>通用版高保真 HTML 原型讲解器</title>
+    <link rel="icon" href="data:," />
+    <link rel="stylesheet" href="./styles.css" />
+  </head>
+  <body>
+    <div id="app" class="app-shell">
+      <header class="topbar">
+        <div class="brand">
+          <span class="brand-mark">P</span>
+          <div>
+            <input id="projectNameInput" class="project-name-input" value="通用版 HTML 原型讲解器" aria-label="项目名称" />
+            <p id="saveStatus" class="save-status">本地高保真注释器</p>
+          </div>
+        </div>
+        <nav class="toolbar" aria-label="全局操作">
+          <button id="importHtmlBtn" class="button button-secondary" type="button">导入单 HTML</button>
+          <button id="importFolderBtn" class="button button-secondary" type="button">导入文件夹</button>
+          <button id="importZipBtn" class="button button-secondary" type="button">导入 ZIP</button>
+          <button id="openRawPrototypeBtn" class="button button-secondary">新标签打开原型</button>
+          <button id="saveProjectBtn" class="button">保存项目</button>
+          <button id="importProjectBtn" class="button button-secondary" type="button">导入项目 JSON</button>
+          <button id="exportJsonBtn" class="button button-secondary">导出项目 JSON</button>
+          <button id="exportShareBtn" class="button button-primary">导出分享版 HTML</button>
+          <button id="clearProjectBtn" class="button button-danger">清空当前项目</button>
+        </nav>
+        <input id="htmlFileInput" type="file" accept=".html,text/html" hidden />
+        <input id="folderFileInput" type="file" webkitdirectory directory multiple hidden />
+        <input id="zipFileInput" type="file" accept=".zip,application/zip" hidden />
+        <input id="projectFileInput" type="file" accept=".json,application/json" hidden />
+        <div class="mode-tabs" role="tablist" aria-label="工作模式">
+          <button class="mode-tab is-active" data-mode="annotate">标注模式</button>
+          <button class="mode-tab" data-mode="experience">体验模式</button>
+          <button class="mode-tab" data-mode="preview">分享预览模式</button>
+        </div>
+      </header>
+
+      <main class="workspace">
+        <aside class="left-panel">
+          <div class="panel-header">
+            <div>
+              <h2>功能与场景</h2>
+              <p>最多三层：功能 / 分组 / 场景</p>
+            </div>
+            <button id="addFeatureBtn" class="icon-button" title="新建功能">+</button>
+          </div>
+          <button id="loadDemoBtn" class="wide-action">加载示例项目</button>
+          <div id="treeView" class="tree-view"></div>
+        </aside>
+
+        <section class="center-panel">
+          <div class="prototype-toolbar">
+            <div>
+              <span class="toolbar-kicker">Prototype Canvas</span>
+              <strong id="currentSceneTitle">未选择场景</strong>
+              <span id="prototypeConfigBadge" class="badge muted">未读取到状态协议</span>
+              <button id="annotateToolBtn" class="button button-secondary" type="button" title="开启后可点击原型添加标注；关闭后原型可正常交互">标注工具</button>
+              <span id="annotateHint" class="annotate-hint is-hidden">标注工具已开启，点击原型添加标注</span>
+            </div>
+            <div class="view-actions">
+              <button id="fitOriginalBtn" class="button button-secondary" data-viewport="original">1:1 原始</button>
+              <button id="fitPhoneBtn" class="button button-secondary" data-viewport="phone">手机尺寸</button>
+              <button id="fitWebBtn" class="button button-secondary" data-viewport="web">Web 尺寸</button>
+            </div>
+          </div>
+          <div id="guideBox" class="guide-box is-hidden"></div>
+          <div id="prototypeStage" class="prototype-stage original-size">
+            <div id="emptyState" class="empty-state">
+              <h1>导入一个静态原型项目</h1>
+              <p>支持单 HTML、完整文件夹和 ZIP。导入后会保留目录结构，并通过真实 HTTP 地址加载原始原型。</p>
+              <button id="emptyLoadDemoBtn" class="button button-primary">加载示例项目</button>
+            </div>
+            <div id="prototypeCanvas" class="prototype-canvas">
+              <iframe id="prototypeFrame" title="原型预览" sandbox="allow-scripts allow-forms allow-modals allow-popups allow-popups-to-escape-sandbox allow-downloads allow-same-origin"></iframe>
+              <div id="annotationLayer" class="annotation-layer" aria-label="标注层"></div>
+            </div>
+          </div>
+        </section>
+
+        <aside class="right-panel">
+          <div class="panel-header">
+            <div>
+              <h2 id="editorTitle">说明编辑</h2>
+              <p id="editorSubtitle">选择功能、场景或标注后编辑</p>
+            </div>
+          </div>
+          <div id="editorPanel" class="editor-panel"></div>
+        </aside>
+      </main>
+    </div>
+
+    <div id="modalRoot" class="modal-root" aria-live="polite"></div>
+    <div id="toast" class="toast" role="status"></div>
+
+    <script type="module" src="./app.js"></script>
+  </body>
+</html>

@@ -1,0 +1,9 @@
+node_modules/
+dist/
+.vite/
+.DS_Store
+*.log
+self-test/downloads/
+imported-prototypes/*
+!imported-prototypes/.gitkeep
+runtime/prototypes/*

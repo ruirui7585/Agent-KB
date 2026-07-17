@@ -1,0 +1,222 @@
+[
+  {
+    "priority_order": 1,
+    "source_index": 5,
+    "file": "assets/lanhu/20260714-secondary-prototypes/01-voice-match-country-filter.webp",
+    "name": "01-voice-match-country-filter.webp",
+    "desc": "视频匹配 / 国家筛选",
+    "sha256": "6105d1502c37f0162e972b432c2fe4cb7ea2cbee5a5ef8ea796ae6797cb0e0f0",
+    "url": "https://assets.lanhuapp.com/SketchCoverdc942d477e15ec224e0df4076ea78bef05afe84c94f503cbc27fb2a9ecd4c50e?x-oss-process=image/quality,q_lossless/resize,w_375/format,webp",
+    "asset_id": "8fd0ce0397185229",
+    "content_type": "image/webp"
+  },
+  {
+    "priority_order": 2,
+    "source_index": 9,
+    "file": "assets/lanhu/20260714-secondary-prototypes/02-chat-settings-detail.webp",
+    "name": "02-chat-settings-detail.webp",
+    "desc": "设置 / 聊天设置详情",
+    "sha256": "bb90012b2ffbeab5f7c7abfaa4d493a57045350da4a961d8556e9111ebcd97cd",
+    "url": "https://assets.lanhuapp.com/SketchCoverccfe48a86edf2cf5ab0e15b1385fecf2123a77680ed33f7601e32e89e3581a7e?x-oss-process=image/quality,q_lossless/resize,w_195/format,webp",
+    "asset_id": "3590159bff9b0402",
+    "content_type": "image/webp"
+  },
+  {
+    "priority_order": 3,
+    "source_index": 13,
+    "file": "assets/lanhu/20260714-secondary-prototypes/03-voice-room-ludo-gameplay.webp",
+    "name": "03-voice-room-ludo-gameplay.webp",
+    "desc": "语音房 / Ludo 进行态",
+    "sha256": "8097d3b83ddbc517b4fce19484cdaa442d99696855c249374070b3c85adccf35",
+    "url": "https://assets.lanhuapp.com/SketchCover621828d2f47b1938a8e57b30f55d7d1570ca080c05391f1edee914ecfdf38516?x-oss-process=image/quality,q_lossless/resize,w_195/format,webp",
+    "asset_id": "84089d0243257adb",
+    "content_type": "image/webp"
+  },
+  {
+    "priority_order": 4,
+    "source_index": 15,
+    "file": "assets/lanhu/20260714-secondary-prototypes/04-voice-room-type-selector.webp",
+    "name": "04-voice-room-type-selector.webp",
+    "desc": "语音房 / 房间类型选择",
+    "sha256": "15228cda9b0757d55afbaad9dad94ed1096b6c5e7642fa30008c5f844d066074",
+    "url": "https://assets.lanhuapp.com/SketchCoverabbfcc59837f7c41bf30a2929aaa065e19f315928b7af490bcabfb62b66b6ff9?x-oss-process=image/quality,q_lossless/resize,w_195/format,webp",
+    "asset_id": "4caf81caf360cc41",
+    "content_type": "image/webp"
+  },
+  {
+    "priority_order": 5,
+    "source_index": 19,
+    "file": "assets/lanhu/20260714-secondary-prototypes/05-private-photo-delete-sheet.webp",
+    "name": "05-private-photo-delete-sheet.webp",
+    "desc": "私密照 / 删除操作面板",
+    "sha256": "bc68191a3d1b08f99d48d7ff1542d04798229e5dc232882ab1cb096b9de5f6f5",
+    "url": "https://assets.lanhuapp.com/SketchCover2bcb86326a6c35245a7439f6047ebce993508dea2728c7e524ddd2036d8100f3?x-oss-process=image/quality,q_lossless/resize,w_195/format,webp",
+    "asset_id": "8f338aede5e29ff2",
+    "content_type": "image/webp"
+  },
+  {
+    "priority_order": 6,
+    "source_index": 21,
+    "file": "assets/lanhu/20260714-secondary-prototypes/06-relationship-unlock-sheet.webp",
+    "name": "06-relationship-unlock-sheet.webp",
+    "desc": "关系 / 亲密等级解锁面板",
+    "sha256": "8b926b12a3b2c3a47f8e47a1bd5c142b6c3382bb03c35b27164dc11fee04fec3",
+    "url": "https://assets.lanhuapp.com/SketchCover0153fa3f5ff07f621053585c8fd9eb13edf261706238903d2e8071ebea700192?x-oss-process=image/quality,q_lossless/resize,w_195/format,webp",
+    "asset_id": "a3ea9eef6575a20a",
+    "content_type": "image/webp"
+  },
+  {
+    "priority_order": 7,
+    "source_index": 25,
+    "file": "assets/lanhu/20260714-secondary-prototypes/07-custom-background-editor.webp",
+    "name": "07-custom-background-editor.webp",
+    "desc": "自定义背景 / 编辑器",
+    "sha256": "e2e3712f8390bd456bd26d2d1d31dcb0c503f530891ad4186e8d80ad731afac9",
+    "url": "https://assets.lanhuapp.com/SketchCovercc3b04ebc591e092677131eafe0f7fad5e1e95dc8f372a9d802a0066180d6303?x-oss-process=image/quality,q_lossless/resize,w_195/format,webp",
+    "asset_id": "e582566661d852fa",
+    "content_type": "image/webp"
+  },
+  {
+    "priority_order": 8,
+    "source_index": 28,
+    "file": "assets/lanhu/20260714-secondary-prototypes/08-voice-room-toolbox.webp",
+    "name": "08-voice-room-toolbox.webp",
+    "desc": "语音房 / 工具箱",
+    "sha256": "8231e5647b24a086074bd6f9dbde698e406226cedc2ec2952d76c1696d8a3eaa",
+    "url": "https://assets.lanhuapp.com/SketchCoverd690b1b4a9f505aa71629fd24f4afcfe9efca6621d50ee4f36ed6e8c0d73ecdc?x-oss-process=image/quality,q_lossless/resize,w_195/format,webp",
+    "asset_id": "fc5887efe44bd9a9",
+    "content_type": "image/webp"
+  },
+  {
+    "priority_order": 9,
+    "source_index": 29,
+    "file": "assets/lanhu/20260714-secondary-prototypes/09-shop-border-catalog.webp",
+    "name": "09-shop-border-catalog.webp",
+    "desc": "商城 / 头像边框目录",
+    "sha256": "99cab2ee19345386dd4295e2fb8f46afa3415b92830c31632c76aad41493ce94",
+    "url": "https://assets.lanhuapp.com/SketchCover0b6db19f2e792718f81f5d653511526266dc820589672d8da08224b762fde94f?x-oss-process=image/quality,q_lossless/resize,w_195/format,webp",
+    "asset_id": "7fdf1cb011ceaa2a",
+    "content_type": "image/webp"
+  },
+  {
+    "priority_order": 10,
+    "source_index": 32,
+    "file": "assets/lanhu/20260714-secondary-prototypes/10-edit-profile.webp",
+    "name": "10-edit-profile.webp",
+    "desc": "用户资料 / 编辑资料",
+    "sha256": "791f11e59269f90af143b2eb0553459b80f4a00b2008ce740b06e929b278718a",
+    "url": "https://assets.lanhuapp.com/SketchCover74ee3355419aad8eaba95c24361bde3c3dbea6c1ce1a3e60a46b67de25c1269e?x-oss-process=image/quality,q_lossless/resize,w_195/format,webp",
+    "asset_id": "0b6ce2e0be3ab3c1",
+    "content_type": "image/webp"
+  },
+  {
+    "priority_order": 11,
+    "source_index": 34,
+    "file": "assets/lanhu/20260714-secondary-prototypes/11-relationship-notice-center.webp",
+    "name": "11-relationship-notice-center.webp",
+    "desc": "关系 / 通知中心",
+    "sha256": "33257eaea30f1304becdc9c26626c3ad4438597950a4d6db58d9c167d1935aeb",
+    "url": "https://assets.lanhuapp.com/SketchCoverb09f9e6b793c80962fbb16273b838ec1e5da0f3e752d3567ae5fc95a11536904?x-oss-process=image/quality,q_lossless/resize,w_195/format,webp",
+    "asset_id": "494d5494eaf1d8cd",
+    "content_type": "image/webp"
+  },
+  {
+    "priority_order": 12,
+    "source_index": 35,
+    "file": "assets/lanhu/20260714-secondary-prototypes/12-relationship-gift-send.webp",
+    "name": "12-relationship-gift-send.webp",
+    "desc": "关系 / 关系礼物发送",
+    "sha256": "0c6ae50191bb092f3348f7d6f97ca3d6838cb48902fd59d36674fd7d922ae825",
+    "url": "https://assets.lanhuapp.com/SketchCover206540f415a74114fe1ce39b550d4fba56af7df41a4077e747a118effef8a4d5?x-oss-process=image/quality,q_lossless/resize,w_195/format,webp",
+    "asset_id": "aa309c8eafcb1934",
+    "content_type": "image/webp"
+  },
+  {
+    "priority_order": 13,
+    "source_index": 38,
+    "file": "assets/lanhu/20260714-secondary-prototypes/13-relationship-pick-friend.webp",
+    "name": "13-relationship-pick-friend.webp",
+    "desc": "关系 / 选择好友建立关系",
+    "sha256": "696fb30655d4eaae66aa0f0b6420ac36accb9885fabdb0d4f8766669a6fb80b4",
+    "url": "https://assets.lanhuapp.com/SketchCover067bc74a341af2bf2713c4c2c635f461cb384556082a67acaeff2eb1e220e708?x-oss-process=image/quality,q_lossless/resize,w_195/format,webp",
+    "asset_id": "689fbb29f843cba3",
+    "content_type": "image/webp"
+  },
+  {
+    "priority_order": 14,
+    "source_index": 45,
+    "file": "assets/lanhu/20260714-secondary-prototypes/14-chat-service-leaderboard.webp",
+    "name": "14-chat-service-leaderboard.webp",
+    "desc": "聊天服务中心 / 绩效榜单",
+    "sha256": "8c2a3ea4343c6ec6cd23fa518a6c9ce8fe006d74ffd68b5e98c5f2300db69659",
+    "url": "https://assets.lanhuapp.com/SketchCover93554ab1a5d40a05eb31d538422f073635cef460ae97f7861a96cc3d95217f87?x-oss-process=image/quality,q_lossless/resize,w_195/format,webp",
+    "asset_id": "36e213ea19a4fe48",
+    "content_type": "image/webp"
+  },
+  {
+    "priority_order": 15,
+    "source_index": 53,
+    "file": "assets/lanhu/20260714-secondary-prototypes/15-gift-gallery.webp",
+    "name": "15-gift-gallery.webp",
+    "desc": "用户主页 / 礼物墙",
+    "sha256": "c97ad34ccb02ee496657a890befc3695e48c6d22ff36054bbbad465e478df447",
+    "url": "https://assets.lanhuapp.com/SketchCover994ec8d3340e7732b1f5a285f7e966c63bd4d6e2e7d485550ae512f24e912bd9?x-oss-process=image/quality,q_lossless/resize,w_195/format,webp",
+    "asset_id": "5c2e9f94426db81e",
+    "content_type": "image/webp"
+  },
+  {
+    "priority_order": 16,
+    "source_index": 61,
+    "file": "assets/lanhu/20260714-secondary-prototypes/16-creator-center-earnings.webp",
+    "name": "16-creator-center-earnings.webp",
+    "desc": "创作者中心 / 收益概览",
+    "sha256": "5b6df50c01143f25c38aaad0370763565db64b4ffcac9ed468e424f5d5a49727",
+    "url": "https://assets.lanhuapp.com/SketchCoverc1a409af69afbdb994eca5995cdb6e5e57379b1082d2092269c2c1736a0bd37c?x-oss-process=image/quality,q_lossless/resize,w_195/format,webp",
+    "asset_id": "f3343d9e2dc26d99",
+    "content_type": "image/webp"
+  },
+  {
+    "priority_order": 17,
+    "source_index": 89,
+    "file": "assets/lanhu/20260714-secondary-prototypes/17-chat-message-request.webp",
+    "name": "17-chat-message-request.webp",
+    "desc": "IM / 消息请求状态",
+    "sha256": "952bb6ab8ed3e355c313c5ba2cfb995f124363eddad41e0d33ffcc65f452b7d9",
+    "url": "https://assets.lanhuapp.com/SketchCover3ac48cc681c7cbfb0f5b18285bddca39c804c2548303d84a52af3a923e8e82b0?x-oss-process=image/quality,q_lossless/resize,w_195/format,webp",
+    "asset_id": "372b29c03f8136d2",
+    "content_type": "image/webp"
+  },
+  {
+    "priority_order": 18,
+    "source_index": 105,
+    "file": "assets/lanhu/20260714-secondary-prototypes/18-vip-center.webp",
+    "name": "18-vip-center.webp",
+    "desc": "VIP / 权益中心",
+    "sha256": "f40c3e71e3145822408c43a945fecd36b3d33fb95dcea1142afbae345655da56",
+    "url": "https://assets.lanhuapp.com/SketchCovera57c0ce5672395fed3a4336fc1c917f5ed1f255f53f19417a9fab4481f419791?x-oss-process=image/quality,q_lossless/resize,w_195/format,webp",
+    "asset_id": "7ff8fde814162b10",
+    "content_type": "image/webp"
+  },
+  {
+    "priority_order": 19,
+    "source_index": 132,
+    "file": "assets/lanhu/20260714-secondary-prototypes/19-password-setting.webp",
+    "name": "19-password-setting.webp",
+    "desc": "账号体系 / 密码设置",
+    "sha256": "33326f3e3cffbb39077c113fb2565f4b74956e203d4dd20c8cba2c49226a22b0",
+    "url": "https://assets.lanhuapp.com/SketchCover47b0c90e5379d9d8dc303757843f9ff4c1cd9f14f9121c89f6bfb6458185ff0b?x-oss-process=image/quality,q_lossless/resize,w_195/format,webp",
+    "asset_id": "fc7691df30b7a647",
+    "content_type": "image/webp"
+  },
+  {
+    "priority_order": 20,
+    "source_index": 146,
+    "file": "assets/lanhu/20260714-secondary-prototypes/20-sign-in.webp",
+    "name": "20-sign-in.webp",
+    "desc": "账号体系 / 登录页",
+    "sha256": "77a893bf75e72637b40079bb7145405147961ebaa9e3c3388e2fd0d402aa5c7b",
+    "url": "https://assets.lanhuapp.com/SketchCoverc4c2e6f6ba3e9378ea5950a964acfbf44316fa8b3de78ca9adc82090f1656df2?x-oss-process=image/quality,q_lossless/resize,w_195/format,webp",
+    "asset_id": "f58164aa585b10b1",
+    "content_type": "image/webp"
+  }
+]

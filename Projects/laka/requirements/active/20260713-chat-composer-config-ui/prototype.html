@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>Laka - Chat Composer and User Profile Config UI</title>
+  <link rel="stylesheet" href="css/prototype.css">
+</head>
+<body class="annotation-mode">
+  <main class="workspace">
+    <section class="phone state-icon-moved user-core access-locked" aria-label="Laka IM Chat high-fidelity prototype">
+      <div class="screen-view chat-view active" data-screen-view="chat" aria-hidden="false">
+      <img class="product-screen chat-product-screen" src="assets/images/im-chat-reference.png" alt="Laka current IM chat screen">
+      <div class="asset-fallback chat-asset-fallback" role="status">The chat background could not be loaded. The composer remains available for review.</div>
+      <section
+        class="composer annotatable"
+        data-spec-key="chat-composer"
+        data-spec-title="Chat composer layout"
+        data-spec-note="Configured moves Emoji into the input and renders the lower toolbar from user type and unlock status."
+      >
+        <div class="composer-row">
+          <input class="message-input annotatable" type="text" maxlength="500" placeholder="Say something..." aria-label="Message input" data-spec-key="message-input" data-spec-title="Message input" data-spec-note="The input keeps its original dimensions. Configured adds trailing padding so text does not overlap the Emoji icon.">
+
+          <div class="tool-strip" aria-label="Chat tools">
+            <button class="icon-button locked annotatable" type="button" aria-label="Album" data-tool="Album" data-spec-key="tool-album" data-spec-title="Album" data-spec-note="Remains in its original lower-toolbar position in both states.">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><rect x="3" y="4" width="18" height="16" rx="3"/><circle cx="8.5" cy="9" r="1.5"/><path d="m4 17 4.5-4.5 3.5 3 2.5-2.5 5.5 5"/></svg>
+              <svg class="lock-badge" viewBox="0 0 24 24" fill="none" stroke="currentColor"><rect x="5" y="10" width="14" height="10" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/></svg>
+            </button>
+            <button class="icon-button locked annotatable" type="button" aria-label="Voice" data-tool="Voice" data-spec-key="tool-voice" data-spec-title="Voice" data-spec-note="Remains in its original lower-toolbar position in both states.">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><rect x="9" y="2" width="6" height="12" rx="3"/><path d="M5 10a7 7 0 0 0 14 0M12 17v4M9 21h6"/></svg>
+              <svg class="lock-badge" viewBox="0 0 24 24" fill="none" stroke="currentColor"><rect x="5" y="10" width="14" height="10" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/></svg>
+            </button>
+            <button class="icon-button gift annotatable" type="button" aria-label="Gift" data-tool="Gift" data-spec-key="tool-gift" data-spec-title="Gift" data-spec-note="Remains in its original lower-toolbar position and keeps the stronger pink emphasis from the current product UI.">
+              <svg viewBox="0 0 24 24" fill="none">
+                <rect x="3" y="9" width="18" height="12" rx="2" fill="#f35bc6"/>
+                <path d="M12 9v12M3 13h18" stroke="#ffb6e7" stroke-width="2"/>
+                <path d="M7.5 9C5.6 9 5 7.9 5 6.8 5 5.3 6.2 4 7.8 4 10.2 4 12 9 12 9M16.5 9C18.4 9 19 7.9 19 6.8 19 5.3 17.8 4 16.2 4 13.8 4 12 9 12 9" stroke="#f35bc6" stroke-width="2"/>
+              </svg>
+            </button>
+            <button class="icon-button annotatable" type="button" aria-label="Emoji" data-tool="Emoji" data-spec-key="tool-emoji" data-spec-title="Emoji" data-spec-note="Configured places Emoji in the input's far-right trailing area.">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><circle cx="12" cy="12" r="9"/><path d="M8 14s1.4 2 4 2 4-2 4-2M9 9h.01M15 9h.01"/></svg>
+            </button>
+            <button class="icon-button locked prototype-action" type="button" aria-label="Audio Call, locked" data-tool="Audio Call" data-call-trigger="true" data-spec-key="tool-audio-call" data-spec-title="Audio Call" data-spec-note="Occupies slot four for both user types in Configured. Locked states show it greyed with a lock badge.">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M7.2 3.5 10 6.3 8.1 9.1a15.2 15.2 0 0 0 6.8 6.8l2.8-1.9 2.8 2.8-1.8 3.1c-.5.8-1.4 1.2-2.3 1-7-1.6-11.7-6.3-13.3-13.3-.2-.9.2-1.8 1-2.3Z"/></svg>
+              <svg class="lock-badge" viewBox="0 0 24 24" fill="none" stroke="currentColor"><rect x="5" y="10" width="14" height="10" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/></svg>
+            </button>
+            <button class="icon-button locked prototype-action" type="button" aria-label="Video Call, locked" data-tool="Video Call" data-call-trigger="true" data-spec-key="tool-video-call" data-spec-title="Video Call" data-spec-note="Remains in slot five for Core woman and is hidden for Blocked woman in Configured.">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><rect x="3" y="6" width="13" height="12" rx="3"/><path d="m16 10 5-3v10l-5-3Z"/></svg>
+              <svg class="lock-badge" viewBox="0 0 24 24" fill="none" stroke="currentColor"><rect x="5" y="10" width="14" height="10" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/></svg>
+            </button>
+          </div>
+
+          <button class="send-button annotatable" type="button" aria-label="Send message" data-spec-key="send-button" data-spec-title="Send button" data-spec-note="The send button remains fixed at the far right.">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m22 2-7 20-4-9-9-4Z"/><path d="M22 2 11 13"/></svg>
+          </button>
+        </div>
+      </section>
+
+      <div class="call-sheet-layer chat-call-sheet-layer" aria-hidden="true" inert>
+        <button class="call-sheet-backdrop prototype-action" type="button" aria-label="Close call options"></button>
+        <section class="call-sheet" role="dialog" aria-modal="true" aria-label="Call options">
+          <div class="call-option-group">
+            <button class="call-option video prototype-action" type="button" data-call-choice="Video Call">
+              <span class="call-option-icon" aria-hidden="true">
+                <svg data-primary-icon="video" viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><rect x="10" y="8" width="17" height="16" rx="4" fill="currentColor" stroke="none"/><path d="m10 13-5-3v12l5-3Z" fill="currentColor" stroke="none"/></svg>
+                <svg data-primary-icon="audio" viewBox="0 0 32 32" fill="currentColor"><path d="M10.2 4.6 14 8.4l-3 4.4a20.8 20.8 0 0 0 8.2 8.2l4.4-3 3.8 3.8-2.4 4.1c-.7 1.2-2.1 1.8-3.4 1.5C12.8 25.5 6.5 19.2 4.6 10.4 4.3 9 4.9 7.7 6.1 7Z"/></svg>
+              </span>
+              <span class="call-option-copy">
+                <span class="call-option-title">Video Call</span>
+                <span class="call-option-cost" aria-label="Cost 300 diamonds per minute">Cost 300 <span class="diamond-mark" aria-hidden="true"><svg viewBox="0 0 20 20" fill="none"><path d="M2.8 7.2 6.2 3.4h7.6l3.4 3.8L10 16.7Z" fill="currentColor"/><path d="M2.8 7.2h14.4M6.2 3.4 10 16.7l3.8-13.3M6.2 3.4 10 7.2l3.8-3.8" stroke="#dff6ff" stroke-width="1.1" stroke-linejoin="round"/></svg></span> per minute</span>
+              </span>
+              <svg class="call-option-chevron" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2.2"><path d="m7 4 6 6-6 6"/></svg>
+            </button>
+            <button class="call-option audio prototype-action" type="button" data-call-choice="Audio Call">
+              <span class="call-option-icon" aria-hidden="true">
+                <svg data-trigger-icon="video" viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><rect x="10" y="8" width="17" height="16" rx="4" fill="currentColor" stroke="none"/><path d="m10 13-5-3v12l5-3Z" fill="currentColor" stroke="none"/></svg>
+                <svg data-trigger-icon="audio" viewBox="0 0 32 32" fill="currentColor"><path d="M10.2 4.6 14 8.4l-3 4.4a20.8 20.8 0 0 0 8.2 8.2l4.4-3 3.8 3.8-2.4 4.1c-.7 1.2-2.1 1.8-3.4 1.5C12.8 25.5 6.5 19.2 4.6 10.4 4.3 9 4.9 7.7 6.1 7Z"/></svg>
+              </span>
+              <span class="call-option-copy">
+                <span class="call-option-title">Audio Call</span>
+                <span class="call-option-cost" aria-label="Cost 200 coins per minute">Cost 200 <span class="coin-mark" aria-hidden="true">C</span> per minute</span>
+              </span>
+              <svg class="call-option-chevron" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2.2"><path d="m7 4 6 6-6 6"/></svg>
+            </button>
+          </div>
+          <button class="call-sheet-cancel prototype-action" type="button">Cancel</button>
+        </section>
+      </div>
+
+      <div class="toast" role="status" aria-live="polite"></div>
+      </div>
+
+      <section
+        class="screen-view profile-view annotatable"
+        data-screen-view="profile"
+        aria-hidden="true"
+        hidden
+        data-spec-key="user-profile-baseline"
+        data-spec-title="User Profile initialization"
+        data-spec-note="Canonical iOS 1.4.7 other-woman profile baseline from M09. Only the lower-left call entry changes with user type and unlock status."
+      >
+        <img class="product-screen profile-product-screen" src="assets/images/user-profile-reference.png" alt="Laka current other-woman user profile screen">
+        <div class="asset-fallback profile-asset-fallback" role="status">The User Profile baseline could not be loaded.</div>
+        <button
+          class="profile-call-entry prototype-action"
+          type="button"
+          aria-label="Video Call"
+          data-profile-call-entry
+          data-spec-key="profile-call-entry"
+          data-spec-title="User Profile call entry"
+          data-spec-note="Core woman keeps the original locked entry until unlocked, then shows a combined Video and Audio icon with four Invite/direct options. Blocked unlocked shows the Audio icon and two Audio options."
+          hidden
+        >
+          <svg class="profile-video-icon" viewBox="0 0 32 32" fill="currentColor" aria-hidden="true"><rect x="10" y="8" width="17" height="16" rx="4"/><path d="m10 13-5-3v12l5-3Z"/></svg>
+          <svg class="profile-audio-icon" viewBox="0 0 32 32" fill="currentColor" aria-hidden="true"><path d="M10.2 4.6 14 8.4l-3 4.4a20.8 20.8 0 0 0 8.2 8.2l4.4-3 3.8 3.8-2.4 4.1c-.7 1.2-2.1 1.8-3.4 1.5C12.8 25.5 6.5 19.2 4.6 10.4 4.3 9 4.9 7.7 6.1 7Z"/></svg>
+          <svg class="profile-call-lock" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="5" y="10" width="14" height="10" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/></svg>
+        </button>
+        <button
+          class="profile-video-permission-badge prototype-action annotatable"
+          type="button"
+          aria-label="Video permission, officially verified"
+          title="Officially verified"
+          data-profile-video-badge
+          data-spec-key="profile-video-permission"
+          data-spec-title="Video permission badge"
+          data-spec-note="Shown only for Core woman on User Profile. Tap displays Officially verified."
+          hidden
+        >
+          <svg viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><rect x="3" y="5" width="10" height="10" rx="2.5"/><path d="m13 8 4-2v8l-4-2Z"/></svg>
+        </button>
+      </section>
+
+      <div class="call-sheet-layer profile-call-sheet-layer" aria-hidden="true" inert>
+        <button class="call-sheet-backdrop profile-call-sheet-backdrop prototype-action" type="button" aria-label="Close profile call options"></button>
+        <section class="call-sheet" role="dialog" aria-modal="true" aria-label="Profile call options">
+          <div class="call-option-group">
+            <button class="call-option video prototype-action" type="button" data-profile-call-choice="Invite to Video Call">
+              <span class="call-option-icon" aria-hidden="true">
+                <svg viewBox="0 0 32 32" fill="currentColor"><rect x="10" y="8" width="17" height="16" rx="4"/><path d="m10 13-5-3v12l5-3Z"/></svg>
+              </span>
+              <span class="call-option-copy">
+                <span class="call-option-title">Invite to Video Call</span>
+                <span class="call-option-cost" aria-label="Earn 300 diamonds per minute">Earn 300 <span class="diamond-mark" aria-hidden="true"><svg viewBox="0 0 20 20" fill="none"><path d="M2.8 7.2 6.2 3.4h7.6l3.4 3.8L10 16.7Z" fill="currentColor"/><path d="M2.8 7.2h14.4M6.2 3.4 10 16.7l3.8-13.3M6.2 3.4 10 7.2l3.8-3.8" stroke="#dff6ff" stroke-width="1.1" stroke-linejoin="round"/></svg></span> per minute</span>
+              </span>
+              <svg class="call-option-chevron" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2.2"><path d="m7 4 6 6-6 6"/></svg>
+            </button>
+            <button class="call-option video prototype-action" type="button" data-profile-call-choice="Video Call">
+              <span class="call-option-icon" aria-hidden="true">
+                <svg viewBox="0 0 32 32" fill="currentColor"><rect x="10" y="8" width="17" height="16" rx="4"/><path d="m10 13-5-3v12l5-3Z"/></svg>
+              </span>
+              <span class="call-option-copy">
+                <span class="call-option-title">Video Call</span>
+                <span class="call-option-cost" aria-label="Cost 300 coins per minute">Cost 300 <span class="coin-mark" aria-hidden="true">C</span> per minute</span>
+              </span>
+              <svg class="call-option-chevron" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2.2"><path d="m7 4 6 6-6 6"/></svg>
+            </button>
+            <button class="call-option audio audio-first prototype-action" type="button" data-profile-call-choice="Invite to Audio Call">
+              <span class="call-option-icon" aria-hidden="true">
+                <svg viewBox="0 0 32 32" fill="currentColor"><path d="M10.2 4.6 14 8.4l-3 4.4a20.8 20.8 0 0 0 8.2 8.2l4.4-3 3.8 3.8-2.4 4.1c-.7 1.2-2.1 1.8-3.4 1.5C12.8 25.5 6.5 19.2 4.6 10.4 4.3 9 4.9 7.7 6.1 7Z"/></svg>
+              </span>
+              <span class="call-option-copy">
+                <span class="call-option-title">Invite to Audio Call</span>
+                <span class="call-option-cost" aria-label="Earn 200 diamonds per minute">Earn 200 <span class="diamond-mark" aria-hidden="true"><svg viewBox="0 0 20 20" fill="none"><path d="M2.8 7.2 6.2 3.4h7.6l3.4 3.8L10 16.7Z" fill="currentColor"/><path d="M2.8 7.2h14.4M6.2 3.4 10 16.7l3.8-13.3M6.2 3.4 10 7.2l3.8-3.8" stroke="#dff6ff" stroke-width="1.1" stroke-linejoin="round"/></svg></span> per minute</span>
+              </span>
+              <svg class="call-option-chevron" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2.2"><path d="m7 4 6 6-6 6"/></svg>
+            </button>
+            <button class="call-option audio prototype-action" type="button" data-profile-call-choice="Audio Call">
+              <span class="call-option-icon" aria-hidden="true">
+                <svg viewBox="0 0 32 32" fill="currentColor"><path d="M10.2 4.6 14 8.4l-3 4.4a20.8 20.8 0 0 0 8.2 8.2l4.4-3 3.8 3.8-2.4 4.1c-.7 1.2-2.1 1.8-3.4 1.5C12.8 25.5 6.5 19.2 4.6 10.4 4.3 9 4.9 7.7 6.1 7Z"/></svg>
+              </span>
+              <span class="call-option-copy">
+                <span class="call-option-title">Audio Call</span>
+                <span class="call-option-cost" aria-label="Cost 200 coins per minute">Cost 200 <span class="coin-mark" aria-hidden="true">C</span> per minute</span>
+              </span>
+              <svg class="call-option-chevron" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2.2"><path d="m7 4 6 6-6 6"/></svg>
+            </button>
+          </div>
+          <button class="call-sheet-cancel profile-call-sheet-cancel prototype-action" type="button">Cancel</button>
+        </section>
+      </div>
+
+      <div class="intimacy-modal-layer" aria-hidden="true" inert>
+        <button class="intimacy-modal-backdrop prototype-action" type="button" aria-label="Close insufficient intimacy dialog"></button>
+        <section class="intimacy-modal" role="dialog" aria-modal="true" aria-labelledby="intimacy-title">
+          <div class="intimacy-heart" aria-hidden="true">
+            <svg viewBox="0 0 100 100" fill="none">
+              <defs>
+                <linearGradient id="heart-left" x1="18" y1="22" x2="49" y2="79" gradientUnits="userSpaceOnUse"><stop stop-color="#ffd8f3"/><stop offset="1" stop-color="#ed57c8"/></linearGradient>
+                <linearGradient id="heart-right" x1="82" y1="22" x2="51" y2="79" gradientUnits="userSpaceOnUse"><stop stop-color="#ffc9ed"/><stop offset="1" stop-color="#e42fba"/></linearGradient>
+              </defs>
+              <path d="M47 25C38 12 17 17 13 32 8 50 26 63 45 80l3-28-9-10Z" fill="url(#heart-left)"/>
+              <path d="M53 25c9-13 30-8 34 7 5 18-13 31-32 48l-3-26 10-12Z" fill="url(#heart-right)"/>
+              <path d="m49 28-7 18 9 8-5 23" stroke="#fff" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+          </div>
+          <h2 class="intimacy-title" id="intimacy-title">Insufficient intimacy</h2>
+          <p class="intimacy-copy">Unlock call function when your intimacy reaches 1, chatting and sending gifts can increase intimacy</p>
+          <div class="intimacy-actions">
+            <button class="intimacy-action gift prototype-action" type="button" data-intimacy-action="Send a gift">Send a gift</button>
+            <button class="intimacy-action chat prototype-action" type="button" data-intimacy-action="Chat">Chat</button>
+          </div>
+        </section>
+      </div>
+    </section>
+
+    <aside class="annotation-panel" aria-label="Prototype annotation editor">
+      <h1 class="panel-title">Chat Composer</h1>
+      <p class="meta">Draft v0.22 · Core woman · Locked</p>
+      <h2>Preview page</h2>
+      <div class="state-control" role="group" aria-label="Preview page">
+        <button class="state-option active" type="button" data-preview-page="chat" aria-pressed="true">IM Chat</button>
+        <button class="state-option" type="button" data-preview-page="profile" aria-pressed="false">User Profile</button>
+      </div>
+      <section class="control-section chat-controls">
+        <h2>Screen state</h2>
+        <div class="state-control" role="group" aria-label="Composer state">
+          <button class="state-option active" type="button" data-composer-state="configured" aria-pressed="true">Configured</button>
+        </div>
+        <h2>User type</h2>
+        <div class="state-control" role="group" aria-label="User type">
+          <button class="state-option active" type="button" data-user-type="core" aria-pressed="true">Core woman</button>
+          <button class="state-option" type="button" data-user-type="blocked" aria-pressed="false">Blocked woman</button>
+        </div>
+        <h2>Unlock status</h2>
+        <div class="state-control" role="group" aria-label="Unlock status">
+          <button class="state-option active" type="button" data-access-state="locked" aria-pressed="true">Locked</button>
+          <button class="state-option" type="button" data-access-state="unlocked" aria-pressed="false">Unlocked</button>
+        </div>
+        <p class="control-hint">User type and unlock status control the configured preview.</p>
+      </section>
+      <section class="control-section profile-controls" hidden>
+        <h2>User type</h2>
+        <div class="state-control" role="group" aria-label="Profile user type">
+          <button class="state-option active" type="button" data-user-type="core" aria-pressed="true">Core woman</button>
+          <button class="state-option" type="button" data-user-type="blocked" aria-pressed="false">Blocked woman</button>
+        </div>
+        <h2>Unlock status</h2>
+        <div class="state-control" role="group" aria-label="Profile unlock status">
+          <button class="state-option active" type="button" data-access-state="locked" aria-pressed="true">Locked</button>
+          <button class="state-option" type="button" data-access-state="unlocked" aria-pressed="false">Unlocked</button>
+        </div>
+        <p class="control-hint">User type and unlock status stay synchronized with IM Chat.</p>
+      </section>
+      <p class="state-description">Original composer before this UI change.</p>
+      <div class="mode-row">
+        <span>Annotation Mode</span>
+        <button class="switch active" type="button" aria-label="Toggle annotation mode" aria-pressed="true"></button>
+      </div>
+      <h2>Current change</h2>
+      <ul class="scenario-summary">
+        <li class="scenario-primary">Configured is the active review state.</li>
+        <li class="scenario-secondary">Configured is controlled by user type and unlock status.</li>
+        <li class="scenario-detail">Core woman · Locked: five lower tools with locked calls.</li>
+      </ul>
+      <p class="prototype-price-note">Call prices are prototype-only demonstration values.</p>
+      <p class="profile-source-note" hidden>User Profile uses the canonical iOS 1.4.7 M09 baseline; only the lower-left call entry changes.</p>
+      <h2>Selected component</h2>
+      <div class="annotation-detail">Select a highlighted component in the phone preview.</div>
+      <h2>PM notes</h2>
+      <textarea class="notes" placeholder="Add review notes..."></textarea>
+      <button class="save-note" type="button">Save notes</button>
+    </aside>
+  </main>
+
+  <script src="js/prototype.js"></script>
+</body>
+</html>
