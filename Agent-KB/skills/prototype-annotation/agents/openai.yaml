@@ -1,0 +1,4 @@
+interface:
+  display_name: "Prototype Annotation"
+  short_description: "Generate and maintain product annotations for prototypes"
+  default_prompt: "Use $prototype-annotation to generate and integrate maintainable product annotations for this prototype."

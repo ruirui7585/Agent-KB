@@ -1,0 +1,53 @@
+{
+  "documentVersion": 1,
+  "format": "axhub-annotation-source",
+  "data": {
+    "version": 2,
+    "prototypeName": "express-delivery-home",
+    "pageId": "home",
+    "updatedAt": 1784764800000,
+    "nodes": [
+      {
+        "id": "global-header", "index": 1, "title": "全局导航", "pageId": "home",
+        "locator": {"selectors": ["[data-annotation-id=\"global-header\"]"], "fingerprint": "header|data-annotation-id=global-header", "path": []},
+        "aiPrompt": "说明官网全局导航的页面入口与登录注册位置。", "annotationText": "全局导航保留个人寄件、商家服务与服务支持三条主要路径，右侧提供登录与注册。", "hasMarkdown": false, "color": "#D97706", "images": [], "createdAt": 1784764800000, "updatedAt": 1784764800000
+      },
+      {
+        "id": "hero-section", "index": 2, "title": "首屏信息层级", "pageId": "home",
+        "locator": {"selectors": ["[data-annotation-id=\"hero-section\"]"], "fingerprint": "section|data-annotation-id=hero-section", "path": []},
+        "aiPrompt": "说明首屏品牌表达与任务入口的优先级。", "annotationText": "首屏左侧建立可靠、快捷的品牌认知；右侧视觉占位承载品牌素材；操作卡始终保持在首屏可见区域。", "hasMarkdown": false, "color": "#2563EB", "images": [], "createdAt": 1784764800000, "updatedAt": 1784764800000
+      },
+      {
+        "id": "primary-task-card", "index": 3, "title": "寄件与查件状态", "pageId": "home",
+        "locator": {"selectors": ["[data-annotation-id=\"primary-task-card\"]"], "fingerprint": "div|data-annotation-id=primary-task-card", "path": []},
+        "aiPrompt": "说明寄件、查件以及表单结果状态。", "annotationText": "寄件和查件复用同一卡片。可通过标注状态控件切换任务类型及默认、成功、错误状态。", "hasMarkdown": false, "color": "#7C3AED", "images": [], "createdAt": 1784764800000, "updatedAt": 1784764800000,
+        "controls": [
+          {"type": "segmented", "attributeId": "delivery_mode", "displayName": "任务类型", "info": "切换首屏核心操作。", "initialValue": "send", "options": [{"label": "寄快递", "value": "send"}, {"label": "查快递", "value": "track"}]},
+          {"type": "segmented", "attributeId": "form_state", "displayName": "表单状态", "info": "查看默认及结果反馈。", "initialValue": "default", "options": [{"label": "默认", "value": "default"}, {"label": "成功", "value": "success"}, {"label": "错误", "value": "error"}]}
+        ]
+      },
+      {
+        "id": "service-grid", "index": 4, "title": "服务分类", "pageId": "home",
+        "locator": {"selectors": ["[data-annotation-id=\"service-grid\"]"], "fingerprint": "section|data-annotation-id=service-grid", "path": []},
+        "aiPrompt": "说明个人用户可选择的寄递服务分类。", "annotationText": "六类服务采用统一卡片结构；线框阶段只确认名称、顺序和信息层级，不确认正式插画与颜色。", "hasMarkdown": false, "color": "#059669", "images": [], "createdAt": 1784764800000, "updatedAt": 1784764800000
+      },
+      {
+        "id": "merchant-section", "index": 5, "title": "小商家专区", "pageId": "home",
+        "locator": {"selectors": ["[data-annotation-id=\"merchant-section\"]"], "fingerprint": "section|data-annotation-id=merchant-section", "path": []},
+        "aiPrompt": "说明小商家转化入口与工作台示意。", "annotationText": "商家专区作为独立深色分区，突出批量下单、电子面单、订单管理与月结对账；右侧工作台仅为结构示意。", "hasMarkdown": false, "color": "#DC2626", "images": [], "createdAt": 1784764800000, "updatedAt": 1784764800000
+      }
+    ]
+  },
+  "markdownMap": {},
+  "assetMap": {},
+  "directory": {
+    "nodes": [
+      {"type": "folder", "id": "wireframe-directory", "title": "快递官网线框图", "defaultExpanded": true, "children": [
+        {"type": "link", "id": "wireframe-home", "title": "首页线框", "href": "/prototypes/express-delivery-home", "target": "self"},
+        {"type": "route", "id": "state-send", "title": "寄件默认状态", "route": "home", "payload": {"delivery_mode": "send", "form_state": "default"}},
+        {"type": "route", "id": "state-track", "title": "查件默认状态", "route": "home", "payload": {"delivery_mode": "track", "form_state": "default"}},
+        {"type": "markdown", "id": "wireframe-note", "title": "线框说明", "markdown": "# 线框说明\n\n本版本用于确认信息架构、模块顺序、任务入口和关键状态，不代表最终视觉稿。"}
+      ]}
+    ]
+  }
+}

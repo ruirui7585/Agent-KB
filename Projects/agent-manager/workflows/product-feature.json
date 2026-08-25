@@ -1,0 +1,33 @@
+{
+  "$schema": "../schemas/workflow.schema.json",
+  "id": "product-feature",
+  "name": "Product Feature",
+  "description": "Turn a product requirement into analysis, PRD, prototype, and review drafts.",
+  "steps": [
+    {
+      "id": "pm",
+      "agent": "pm-agent",
+      "output": "pm-analysis.md",
+      "requires": []
+    },
+    {
+      "id": "prd",
+      "agent": "prd-agent",
+      "output": "PRD.md",
+      "requires": ["pm"]
+    },
+    {
+      "id": "prototype",
+      "agent": "prototype-agent",
+      "output": "prototype/index.html",
+      "requires": ["prd"]
+    },
+    {
+      "id": "review",
+      "agent": "review-agent",
+      "output": "review.md",
+      "requires": ["pm", "prd", "prototype"]
+    }
+  ]
+}
+

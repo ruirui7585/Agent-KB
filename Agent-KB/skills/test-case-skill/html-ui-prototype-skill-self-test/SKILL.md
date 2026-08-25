@@ -1,13 +1,13 @@
 ---
 name: html-ui-prototype-skill-self-test
-description: Use when testing and repairing another HTML/UI prototype Skill before Codex uses it for real product work, verifying whether it can generate visual, interactive, previewable, downloadable HTML prototypes and directly repairing weak or conflicting Skill rules.
+description: Use when testing and repairing another HTML/UI prototype Skill before an Agent uses it for real product work, verifying whether it can generate visual, interactive, previewable, downloadable HTML prototypes and directly repairing weak or conflicting Skill rules.
 ---
 
 # HTML / UI Prototype Skill Self-Test
 
-Use this Skill to test and repair another HTML / UI prototype Skill before Codex uses it in real product work. The goal is not to check whether the target Skill document looks complete. The real goal is to verify whether Codex can use the target Skill to generate a visual, interactive, previewable HTML prototype that matches the user's expected product effect.
+Use this Skill to test and repair another HTML / UI prototype Skill before an Agent uses it in real product work. The goal is not to check whether the target Skill document looks complete. The real goal is to verify whether an Agent can use the target Skill to generate a visual, interactive, previewable HTML prototype that matches the user's expected product effect.
 
-If the target Skill is incomplete, ambiguous, conflicting, or unlikely to produce the expected visual result, Codex must repair the target Skill files directly and then re-run the test. Do not stop at giving suggestions.
+If the target Skill is incomplete, ambiguous, conflicting, or unlikely to produce the expected visual result, the Agent must repair the target Skill files directly and then re-run the test. Do not stop at giving suggestions.
 
 ## Target Skill Type
 
@@ -17,7 +17,7 @@ Do not use this Skill to test PRD, translation, test case, or general writing sk
 
 ## Final Expected Output
 
-A valid HTML / UI prototype Skill must guide Codex to produce:
+A valid HTML / UI prototype Skill must guide an Agent to produce:
 
 1. A visual HTML prototype.
 2. A previewable result.
@@ -53,9 +53,9 @@ Read this package in this order: `critical-fail-items.md`, `test-cases.md`, `vis
 ## Result Levels
 
 - Blocked: the target Skill cannot be tested because the entry file, goal, structure, or test input is missing. Repair the basic structure before continuing when possible.
-- Fail: the target Skill cannot reliably guide Codex to produce the expected visual HTML/UI prototype, or it contains critical issues that make the output unusable.
-- Pass with Issues: the target Skill can produce a partially usable result, but some visual, interaction, state, delivery, or repair rules are missing. Codex must repair the Skill and re-test.
-- Pass: the target Skill can reliably guide Codex to produce the expected visual prototype with correct structure, interaction, and delivery quality.
+- Fail: the target Skill cannot reliably guide an Agent to produce the expected visual HTML/UI prototype, or it contains critical issues that make the output unusable.
+- Pass with Issues: the target Skill can produce a partially usable result, but some visual, interaction, state, delivery, or repair rules are missing. The Agent must repair the Skill and re-test.
+- Pass: the target Skill can reliably guide an Agent to produce the expected visual prototype with correct structure, interaction, and delivery quality.
 - Excellent: the target Skill is reusable, robust, and includes clear rules, visual checks, failure handling, test cases, repair rules, and reporting format.
 
 ## Scoring
@@ -77,7 +77,7 @@ Verify that the target Skill includes rules for previewable HTML output, downloa
 
 ## Auto-Repair Requirement
 
-If the target Skill is incomplete, Codex must directly edit the target Skill files. Codex must not only provide advice.
+If the target Skill is incomplete, the Agent must directly edit the target Skill files. The Agent must not only provide advice.
 
 Repair priority:
 
@@ -92,11 +92,11 @@ Repair priority:
 9. Add output report template.
 10. Remove duplicate or conflicting rules.
 
-After repair, Codex must re-run the self-test.
+After repair, the Agent must re-run the self-test.
 
 ## Preservation Rule
 
-When the target task is to modify an existing HTML prototype, Codex must preserve all user-approved UI, interactions, data, and logic unless the user explicitly asks to change them. If Codex deletes, rewrites, or breaks unrelated existing functionality, the test result must be Fail.
+When the target task is to modify an existing HTML prototype, the Agent must preserve all user-approved UI, interactions, data, and logic unless the user explicitly asks to change them. If the Agent deletes, rewrites, or breaks unrelated existing functionality, the test result must be Fail.
 
 HTML prototypes should include the Prototype Annotation Editor by default unless the user explicitly opts out. Preserve `data-spec-key`, `data-spec-title`, `data-spec-note`, `.annotation-panel`, `.annotatable`, `annotation-mode`, `annotationState`, `annotations.json`, and export-embedded annotation state when present.
 
@@ -110,4 +110,4 @@ If the visual output is far from the user's target, the result is Fail or Pass w
 
 ## Output
 
-Return a report using `output-report-template.md`. Include final result level, final score, critical fail items found, issues repaired, files modified, test cases executed, remaining human decisions, and whether the target Skill is ready for real Codex use.
+Return a report using `output-report-template.md`. Include final result level, final score, critical fail items found, issues repaired, files modified, test cases executed, remaining human decisions, and whether the target Skill is ready for real-world use by an Agent.

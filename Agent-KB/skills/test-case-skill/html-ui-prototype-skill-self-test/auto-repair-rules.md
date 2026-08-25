@@ -1,6 +1,6 @@
 # Auto Repair Rules for HTML / UI Prototype Skill
 
-When the target HTML / UI prototype Skill is incomplete, ambiguous, weak, or likely to produce poor visual results, Codex must repair the target Skill files directly.
+When the target HTML / UI prototype Skill is incomplete, ambiguous, weak, or likely to produce poor visual results, the Agent must repair the target Skill files directly.
 
 Do not only give suggestions.
 
@@ -35,7 +35,7 @@ Fix immediately before the target Skill can be used.
 
 ### P1: Should Fix
 
-Fix to make the Skill stable and Codex-friendly.
+Fix to make the Skill stable and Agent-friendly.
 
 - Weak visual quality standard.
 - Weak interaction standard.
@@ -73,10 +73,10 @@ If missing, add these sections to the target Skill:
 
 ## Re-Test Requirement
 
-After every repair, Codex must re-run the test.
+After every repair, the Agent must re-run the test.
 
 The repaired Skill cannot be marked as Pass unless:
 
 1. The previous issue is fixed.
 2. No new critical fail item appears.
-3. The target Skill can guide Codex to produce the expected visual prototype.
+3. The target Skill can guide an Agent to produce the expected visual prototype.

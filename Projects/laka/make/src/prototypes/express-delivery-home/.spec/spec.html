@@ -1,0 +1,130 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>迅达快递官网首页 · 原型主规格</title>
+  <style>
+    :root{font-family:Inter,"PingFang SC","Microsoft YaHei",system-ui,sans-serif;color:#222;background:#f5f7fb;--brand:#146ef5;--soft:#eaf2ff;--line:#dfe4ee;--muted:#667085}*{box-sizing:border-box}body{margin:0;padding:32px 20px 64px}.shell{display:grid;grid-template-columns:220px minmax(0,1fr);gap:24px;width:min(1200px,100%);margin:auto;align-items:start}.sidebar{position:sticky;top:32px;padding:18px 14px;border:1px solid var(--line);border-radius:8px;background:#fff}.sidebar p{margin:0 8px 10px;color:var(--muted);font-size:12px;font-weight:600}.page-nav{display:flex;flex-direction:column;gap:4px}.page-nav button{padding:9px 10px;border:0;border-radius:6px;background:transparent;color:#475467;text-align:left;cursor:pointer}.page-nav button:hover,.page-nav button[aria-current="page"]{color:#0656c9;background:var(--soft);font-weight:600}main{min-width:0;padding:40px;border:1px solid var(--line);border-radius:8px;background:#fff;box-shadow:0 4px 16px rgb(30 45 75 / 6%)}h1{margin:0;font-size:32px}h2{margin:42px 0 18px;padding-bottom:8px;border-bottom:1px solid #eaecf0;font-size:21px}h3{margin:26px 0 10px;font-size:17px}p,li{font-size:15px;line-height:1.85}.definition{padding:14px 16px;border-left:3px solid var(--brand);background:#f4f8ff;color:#475467}.tag{display:inline-block;margin:0 6px 6px 0;padding:4px 8px;border-radius:4px;background:var(--soft);color:#0656c9;font-size:12px;font-weight:600}table{width:100%;border-collapse:collapse}th,td{padding:10px 12px;border:1px solid var(--line);font-size:14px;line-height:1.6;text-align:left;vertical-align:top}th{background:#f8fafc}.spec-page[hidden]{display:none}code{padding:2px 5px;border-radius:4px;background:#eef2f6}.decision{padding:16px;border:1px solid #bcd4fb;border-radius:8px;background:#f6f9ff}.decision strong{color:#0656c9}@media(max-width:760px){body{padding:0 8px 40px}.shell{display:block}.sidebar{position:sticky;top:0;z-index:2;margin:0 -8px 12px;border-radius:0}.page-nav{flex-direction:row;overflow:auto}.page-nav button{white-space:nowrap}main{padding:24px 18px}.table-wrap{overflow:auto}}
+  </style>
+</head>
+<body>
+  <div class="shell">
+    <aside class="sidebar">
+      <p>规格目录</p>
+      <nav class="page-nav" aria-label="规格文档页面">
+        <button type="button" data-page-target="overview" aria-current="page">方案总览</button>
+        <button type="button" data-page-target="content">页面内容</button>
+        <button type="button" data-page-target="interaction">交互与状态</button>
+        <button type="button" data-page-target="design">设计与边界</button>
+      </nav>
+    </aside>
+    <main>
+      <article class="spec-page" data-spec-page="overview">
+        <h1>迅达快递官网首页 · 原型主规格</h1>
+        <p class="definition">当前版本已由高保真页面转换为可标注低保真线框图，用于确认产品范围、信息架构、关键状态与评审说明。</p>
+        <p><span class="tag">个人寄件</span><span class="tag">小商家</span><span class="tag">中文官网</span><span class="tag">桌面优先 · 响应式</span></p>
+        <h2>当前方案</h2>
+        <ul>
+          <li><strong>原型意图：</strong>建立现代、可信赖的快递品牌首页，让个人用户快速寄件或查件，同时为小商家提供清晰的批量寄件入口。</li>
+          <li><strong>核心体验：</strong>首屏直接完成“寄、查、算”三个高频任务；服务区清楚分类；商家区突出批量发货、对账与专属价格。</li>
+          <li><strong>页面形态：</strong>单页官网低保真线框图，桌面端为主并适配平板与手机；通过 Axhub Annotation 提供目录、组件标注与状态切换。</li>
+        </ul>
+        <h2>用户确认事实</h2>
+        <ul>
+          <li>目标用户为个人寄件用户和小商家用户。</li>
+          <li>设计方向采用“顺丰的清晰首屏 + 京东的服务分类 + 小商家专属入口”。</li>
+          <li>视觉基底采用 <code>src/themes/webflow/DESIGN.md</code>，主规格采用 HTML。</li>
+        </ul>
+        <h2>当前假设</h2>
+        <ul>
+          <li>使用虚构品牌“迅达快递”，避免误用真实快递品牌标识。</li>
+          <li>使用可信的示例文案与运单号；不连接真实物流、支付或账户系统。</li>
+          <li>首页突出全国寄递；同城急送、大件寄送作为服务分类，不展开独立详情页。</li>
+        </ul>
+      </article>
+
+      <article class="spec-page" data-spec-page="content" hidden>
+        <h1>页面与内容方案</h1>
+        <div class="table-wrap"><table>
+          <thead><tr><th>区域</th><th>页面作用</th><th>主要内容</th><th>视觉重点</th></tr></thead>
+          <tbody>
+            <tr><td>顶部导航</td><td>品牌识别与全站入口</td><td>品牌标识、个人寄件、商家服务、服务支持、登录/注册</td><td>白底细分隔线，导航克制，右侧主 CTA</td></tr>
+            <tr><td>首屏 Hero</td><td>传达速度与可靠性，承接高频操作</td><td>品牌主张、城市配送视觉、寄快递/查快递切换卡、运费时效入口</td><td>大字号标题、蓝色信息面板、包裹路径动态装饰</td></tr>
+            <tr><td>核心服务</td><td>像京东快递一样清晰分类</td><td>标准快递、同城急送、大件寄送、生鲜冷链、国际寄递、文件专送</td><td>六张彩色分类卡，保持 Webflow 的高饱和分类色使用方式</td></tr>
+            <tr><td>商家专区</td><td>为小商家建立独立转化入口</td><td>批量下单、电子面单、订单管理、月结对账、阶梯优惠；免费开通按钮</td><td>深色横向模块，展示模拟经营数据和发货工作台缩略界面</td></tr>
+            <tr><td>服务保障</td><td>强化可信赖感</td><td>最快 1 小时上门、全程轨迹、隐私面单、7×24 客服</td><td>大数字与细线图标，减少营销噪音</td></tr>
+            <tr><td>口碑与底部</td><td>提供社会证明和补充导航</td><td>用户评价、企业客户数字、城市覆盖、客服与协议入口</td><td>浅灰分区、留白充足</td></tr>
+          </tbody>
+        </table></div>
+      </article>
+
+      <article class="spec-page" data-spec-page="interaction" hidden>
+        <h1>交互与状态方案</h1>
+        <div class="table-wrap"><table>
+          <thead><tr><th>对象/场景</th><th>用户操作</th><th>原型表现</th><th>状态边界</th></tr></thead>
+          <tbody>
+            <tr><td>首屏任务切换</td><td>切换“寄快递 / 查快递”标签</td><td>同一卡片内切换表单，保留清晰选中状态</td><td>不跳转新页面</td></tr>
+            <tr><td>寄快递</td><td>选择寄件城市、收件城市并点击“立即寄件”</td><td>显示模拟成功提示和预计上门时间</td><td>城市为空时提示补充，不提交真实订单</td></tr>
+            <tr><td>查快递</td><td>输入运单号并点击查询</td><td>合法示例显示运输进度；空值显示输入提示</td><td>使用本地模拟状态</td></tr>
+            <tr><td>运费时效</td><td>点击快捷入口</td><td>打开轻量浮层，展示起终点与预估价格/时效</td><td>结果为示例数据并明确标记</td></tr>
+            <tr><td>服务卡片</td><td>悬停或点击</td><td>卡片轻微上浮并展示“了解服务”反馈</td><td>不创建详情页</td></tr>
+            <tr><td>商家入口</td><td>点击“免费开通商家服务”</td><td>打开注册意向浮层，可关闭</td><td>不提交真实手机号或企业资料</td></tr>
+            <tr><td>响应式导航</td><td>手机端点击菜单</td><td>展开/收起移动导航</td><td>页面滚动与焦点状态可用</td></tr>
+          </tbody>
+        </table></div>
+        <h2>验收重点</h2>
+        <ul>
+          <li>首次进入即可识别寄件、查件和商家服务三条核心路径。</li>
+          <li>所有按钮有可见反馈；表单具备空值和模拟成功/结果状态。</li>
+          <li>桌面、平板和手机宽度下不出现横向溢出或内容遮挡。</li>
+          <li>页面无关键控制台错误，原型验收脚本返回 READY。</li>
+        </ul>
+      </article>
+
+      <article class="spec-page" data-spec-page="design" hidden>
+        <h1>设计基底与实施边界</h1>
+        <h2>设计基底</h2>
+        <ul>
+          <li><strong>采用：</strong><code>src/themes/webflow/DESIGN.md</code>。</li>
+          <li><strong>首屏目标：</strong>主任务效率优先，品牌表达服务于“快速、可靠、清晰”。</li>
+          <li><strong>信息层级：</strong>寄/查/算 → 服务分类 → 商家专区 → 服务保障 → 口碑与底部导航。</li>
+          <li><strong>布局：</strong>宽屏 12 栏结构；首屏左文案、右操作卡；其余模块按内容带展开。</li>
+          <li><strong>视觉语气：</strong>继承 Webflow 的白色画布、近黑标题、4–8px 紧凑圆角和分类色卡；将强调蓝作为物流路径与状态信息色。</li>
+          <li><strong>动效：</strong>仅使用进入、悬停、标签切换和浮层过渡；尊重 reduced-motion 设置。</li>
+        </ul>
+        <h2>本次呈现</h2>
+        <ul><li>完整单页首页、响应式布局、导航、寄件/查件模拟交互、服务分类、商家专区、保障与底部信息。</li></ul>
+        <h2>本次不呈现</h2>
+        <ul>
+          <li>真实登录、支付、下单、物流接口、地图、客服会话和商家后台。</li>
+          <li>二级详情页、真实品牌素材、真实客户 Logo 与对外承诺数据。</li>
+          <li>Laka 公共上下文、UI 基线、现有原型或主题文件的修改。</li>
+        </ul>
+        <h2>待确认事项</h2>
+        <div class="decision"><strong>状态：</strong>用户已于 2026-07-23 要求转换为可标注线框图；当前实现包含结构化标注、状态控件和 Axhub 资源画布预览节点。</div>
+        <h2>用户重要决策</h2>
+        <div class="table-wrap"><table>
+          <thead><tr><th>日期</th><th>用户决策</th><th>影响</th></tr></thead>
+          <tbody>
+            <tr><td>2026-07-22</td><td>采用“顺丰清晰首屏 + 京东服务分类 + 小商家专属入口”</td><td>确定首页信息架构和三条核心转化路径</td></tr>
+            <tr><td>2026-07-22</td><td>选择 Webflow + HTML</td><td>确定设计基底与主规格格式</td></tr>
+            <tr><td>2026-07-23</td><td>确认主规格并进入实现</td><td>生成首页、响应式布局与本地模拟交互</td></tr>
+            <tr><td>2026-07-23</td><td>转换为线框图且能标注</td><td>灰阶化页面、接入结构化标注与状态控制，并新增资源画布节点</td></tr>
+          </tbody>
+        </table></div>
+      </article>
+    </main>
+  </div>
+  <script>
+    const buttons=[...document.querySelectorAll('[data-page-target]')];
+    const pages=[...document.querySelectorAll('[data-spec-page]')];
+    buttons.forEach(button=>button.addEventListener('click',()=>{
+      const target=button.dataset.pageTarget;
+      buttons.forEach(item=>item.toggleAttribute('aria-current',item===button));
+      pages.forEach(page=>page.hidden=page.dataset.specPage!==target);
+      window.scrollTo({top:0,behavior:'smooth'});
+    }));
+  </script>
+</body>
+</html>

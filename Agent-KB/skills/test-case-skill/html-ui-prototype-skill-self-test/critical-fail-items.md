@@ -11,8 +11,8 @@ If any item below appears when testing a target HTML / UI prototype Skill, the r
 5. The target Skill does not include pass/fail criteria.
 6. The target Skill contains conflicting rules.
 7. The target Skill only checks document completeness and does not simulate real prototype output.
-8. Codex finds issues but does not repair the target Skill.
-9. Codex repairs the Skill but does not re-test it.
+8. The Agent finds issues but does not repair the target Skill.
+9. The Agent repairs the Skill but does not re-test it.
 
 ## HTML Prototype Critical Fail Items
 
@@ -29,11 +29,11 @@ If any item below appears when testing a target HTML / UI prototype Skill, the r
 
 ## Modification Critical Fail Items
 
-1. Codex deletes user-approved UI without request.
-2. Codex removes existing interactions without request.
-3. Codex rewrites unrelated code and introduces new bugs.
-4. Codex changes copy, colors, layout, or logic outside the requested scope.
-5. Codex fails to compare the modified result against the original behavior.
+1. The Agent deletes user-approved UI without request.
+2. The Agent removes existing interactions without request.
+3. The Agent rewrites unrelated code and introduces new bugs.
+4. The Agent changes copy, colors, layout, or logic outside the requested scope.
+5. The Agent fails to compare the modified result against the original behavior.
 
 ## Delivery Critical Fail Items
 

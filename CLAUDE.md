@@ -1,178 +1,275 @@
 # Claude Workspace Entry
 
-## Default Workspace
+> Version: 2.0
+> Last Updated: 2026-08-03
+> Workspace: `/Users/shilv/Agent-Workspace`
 
-Default workspace is:
+## 1. 文件职责与优先级
 
+本文件是 Claude / Claude Code 进入 Agent Workspace 的执行入口，不是独立的项目事实源。
+
+开始任务时，按以下顺序读取规则：
+
+1. `/Users/shilv/Agent-Workspace/AGENTS.md`；
+2. `/Users/shilv/Agent-Workspace/COMMON_RULES.md`；
+3. 任务涉及共享规则、Skill、模板、案例或通用标准时，读取 `~/.kb/AGENTS.md`；
+4. 修改项目文件前，读取 `/Users/shilv/Agent-Workspace/Projects/<project-name>/AGENTS.md`；
+5. 使用 Claude Code 时，再读取项目级 `CLAUDE.md`；
+6. 任务命中可复用 Skill 时，读取对应 `SKILL.md`。
+
+项目级规则只能在该项目内覆盖工作区通用规则。用户在当前任务中的最新明确指令优先于历史规则和 AI 推测。
+
+## 2. 默认工作区
+
+默认工作区是：
+
+```text
 /Users/shilv/Agent-Workspace
+```
 
-Do not treat the user home directory, Desktop, Downloads, or temporary folders as the project workspace.
+不得把 `~/.codex/`、`Desktop/`、`Documents/`、`Downloads/` 或随机本地目录当作默认项目工作区，除非用户明确指定。
 
-The active knowledge base is:
+活动知识库是：
 
+```text
 ~/.kb/
+```
 
-~/.kb/ points to:
+`~/.kb/` 指向：
 
+```text
 /Users/shilv/Agent-Workspace/Agent-KB
+```
 
-## Priority
+## 3. 目录职责
 
-1. Read /Users/shilv/Agent-Workspace/CLAUDE.md first.
-2. Read /Users/shilv/Agent-Workspace/AGENTS.md for shared workspace rules.
-3. If the task involves shared rules, skills, templates, examples, delivery standards, or reusable workflows, read ~/.kb/AGENTS.md.
-4. Before touching any project file, read the project-level CLAUDE.md or AGENTS.md under:
-   /Users/shilv/Agent-Workspace/Projects/<project-name>/
-5. If no project is specified, ask the user to confirm the target project path before editing files.
-
-## Directory Roles
-
-| Directory | Purpose | Default Access |
+| 目录 | 用途 | 默认权限 |
 |---|---|---|
-| /Users/shilv/Agent-Workspace/Agent-KB/ | Shared knowledge base, skills, templates, examples | Read-only |
-| /Users/shilv/Agent-Workspace/Projects/ | Active formal projects | Read/write only inside confirmed project |
-| /Users/shilv/Agent-Workspace/Sandbox/ | Temporary experiments | Read/write when explicitly used |
-| /Users/shilv/Agent-Workspace/Archive/ | Old or inactive workspace files | Do not read by default |
-| ~/.kb/archive/ | Deprecated or backup KB entries | Do not read by default |
+| `Agent-KB/` | 共享知识库、Skill、模板、案例、全局规则 | 只读 |
+| `Projects/` | 正式活跃项目 | 仅在已确认项目内读写 |
+| `Sandbox/` | 临时实验、Demo、快速测试 | 明确使用时可读写 |
+| `Archive/` | 旧版、停用或历史内容 | 默认不读取 |
 
-## Default Ignore
+Sandbox 文件不是正式项目事实源，除非用户明确将其提升到 `Projects/`。
 
-Do not read or reference files under these directories unless the user explicitly points to them:
+## 4. 默认忽略范围
 
-- Desktop/
-- Documents/
-- Downloads/
-- plugins/
-- .git/
-- node_modules/
-- dist/
-- build/
-- .next/
-- .vite/
-- coverage/
-- Any directory named old, archive, backup, legacy, broken, checkpoint
-- Any date-named directory, for example 2026-04-20/
+除非用户明确指定，不读取、引用或修改：
 
-## Before Every Modification
+- `Desktop/`、`Documents/`、`Downloads/`、`plugins/`、`~/.codex/`；
+- `.git/`、`node_modules/`、`dist/`、`build/`、`.next/`、`.vite/`、`coverage/`；
+- 任意名为 `old`、`archive`、`backup`、`legacy`、`broken`、`checkpoint` 的目录；
+- 日期命名目录，例如 `2026-04-20/`。
 
-Before making any file changes, state:
+只有当用户明确要求比较、恢复、迁移或检查历史版本时，才读取归档、备份或废弃目录。
 
-1. Task type: what kind of change this is
-2. Target project: the exact project path
-3. Allowed files: exact file paths that will be modified
-4. Forbidden files: files explicitly excluded from this change
-5. Validation plan: how the change will be verified
+## 5. 项目选择与边界
 
-Do not modify files until the scope is clear.
+修改项目文件前，必须确认项目绝对路径。有效项目默认位于：
 
-## Safety Rules
-
-- Do not modify ~/.kb/ unless the user explicitly says:
-  - update knowledge base
-  - update skill
-  - save this rule
-  - revise the KB
-  - 写入知识库
-  - 更新知识库
-  - 更新 skill
-- Do not modify files outside the confirmed project directory.
-- Do not read archive, backup, legacy, broken, or checkpoint folders by default.
-- Do not overwrite user files without explaining which exact file will be changed.
-- Do not create duplicate project copies unless the user explicitly asks.
-- Do not move files between projects unless the user explicitly asks.
-- For coding tasks, always state the exact target path before giving code or terminal commands.
-
-## User Communication Rules
-
-The user is a product manager and a code beginner.
-
-When giving code, terminal commands, or file edits:
-
-1. First state the exact path where the action should happen.
-2. Then provide the command or code.
-3. Keep steps sequential and avoid giving too many alternatives at once.
-4. Explain what the command does in plain language.
-5. If there is risk of deleting or overwriting files, stop and ask for confirmation.
-
-Bad:
-
-bash npm run dev 
-
-Good:
-
-Path:
-
+```text
 /Users/shilv/Agent-Workspace/Projects/<project-name>/
+```
 
-Command:
+如果用户没有指定项目，而任务需要修改项目文件，必须先请用户确认目标路径。
 
-bash cd /Users/shilv/Agent-Workspace/Projects/<project-name>/ npm run dev 
+项目工作必须：
 
-## Project Work Rules
+- 只在已确认的项目目录内修改；
+- 使用当前活跃源文件，不使用备份、归档或历史副本；
+- 有多个相似文件时，先确定唯一活跃版本；
+- 不得在一个任务中默认修改多个项目；
+- 项目专属规则必须保存在项目目录内。
 
-For any project task:
+### Laka 路由
 
-1. Identify the project path first.
-2. Read the project-level CLAUDE.md or AGENTS.md if it exists.
-3. Work only inside that project folder.
-4. Prefer modifying the current source files instead of creating new duplicate files.
-5. If a file appears outdated, compare before replacing.
-6. If multiple similar files exist, ask which one is the active version before editing.
+目标项目为 `Projects/laka/` 时，必须先读取：
 
-## HTML / UI Prototype Rules
+```text
+Projects/laka/AGENTS.md
+```
 
-When working on HTML prototypes:
+Laka 的产品规则、UI 规则、需求流程、事实源和交付标准均以该项目级文件为准。工作区级规则只负责路由，不复制 Laka 专属产品内容。
 
-1. Use the project's active prototype folder only.
-2. Do not use files from legacy, backup, broken, or archive folders unless explicitly asked.
-3. Preserve existing interactions unless the user asks to remove them.
-4. For every UI change, verify:
-   - page opens without blank screen
-   - console has no critical errors
-   - main click paths still work
-   - mobile layout still fits the target device
-5. For product prototype delivery, prefer high-fidelity mobile UI.
-6. Use English UI copy by default unless the user asks for Chinese.
-7. For social/dating prototypes, use realistic MENA-style female avatars when avatar assets are needed.
+## 6. 每次修改前的强制声明
 
-## Testing Rules
+修改任何文件前，必须先向用户说明：
 
-When modifying code, run the most relevant validation available for the project.
+1. **Task type**：任务类型；
+2. **Target project**：目标项目的准确路径；
+3. **Allowed files**：允许修改的确切文件；
+4. **Forbidden files**：明确排除的文件或目录；
+5. **Validation plan**：实际验证方法。
 
-Preferred checks:
+目标路径不清晰、存在多个可能的活跃文件且无法确定时，不得开始修改。
 
-1. Syntax or build check
-2. Local preview check
-3. Console error check
-4. Main user-flow check
-5. Regression check for previously fixed issues
+## 7. 文件修改规则
 
-If validation cannot be run, clearly say what was not verified and why.
+- 优先就地修改已确认的活跃源文件；
+- 保留用户已有改动，不覆盖无关内容；
+- 不得为方便创建 `copy`、`backup`、`new`、`latest`、`final-final` 等重复版本；
+- 不移动跨项目文件，不自动重构无关模块；
+- 未经明确授权不删除文件；
+- 创建新文件时，说明必要性、准确路径及其是活跃、临时还是归档文件；
+- 未经明确授权不修改 `~/.codex/` 或知识库。
 
-## Knowledge Base Usage
+## 8. 知识库与 Skill
 
-Use ~/.kb/ for shared context:
+知识库默认只读。只有用户明确说出以下等价指令时才能写入：
 
-- ~/.kb/skills/ for reusable skills
-- ~/.kb/global-rules/ for global behavior rules
-- ~/.kb/templates/ for reusable document or project templates
-- ~/.kb/examples/ for reference examples
-- ~/.kb/archive/ only when explicitly asked
+- update knowledge base / 更新知识库；
+- update skill / 更新 Skill；
+- save this rule / 保存规则；
+- revise the KB / 修订知识库。
 
-The knowledge base is read-only by default.
+任务命中可复用 Skill 时，必须先读取对应 `SKILL.md`，只应用与当前任务相关的部分。不得因为 Skill 不完整就自动修改 Skill。
 
-Do not write to the knowledge base unless the user explicitly asks to update it.
+### 产品原型 Skill 路由
 
-## Output Style
+新产品需求必须先完成需求讨论并确认 Feature Contract，再进入原型交付。
 
-Be direct and operational.
+将 `pm-delivery-workflow` 作为唯一的产品原型编排器，按以下链路执行：
 
-For implementation tasks, structure the response as:
+```text
+pm-delivery-workflow
+→ ui-html-build（静态线框确认 → 在同一个 index.html 中生成高保真静态原型 → prototype-annotation）
+→ implementation-review
+→ 审查与必要修复通过后最终同步
+```
 
-1. Target path
-2. Change scope
-3. Files to modify
-4. Commands or edits
-5. Validation steps
+- `pm-delivery-workflow` 已内置执行准备检查，不得在该流程中增加或调用独立的契约检查 Skill；
+- 单独检查契约可执行性不属于本交付链路，只有用户明确要求时才执行；
+- 不得使用第二个编排器，也不得调用 `~/.kb/archive/` 中的 Skill；
+- 普通 Bug、文案修改、局部样式调整或技术重构不启动 `pm-delivery-workflow`，应直接使用对应专项 Skill 或进行限定范围的执行；
+- 每个阶段开始时读取 `~/.kb/skills/<skill-name>/SKILL.md`，本入口文件不重复专项 Skill 的详细规则。
 
-Avoid vague wording such as "maybe", "should be fine", or "try this" when an exact path or command is available.
+### Skill 变更同步
+
+每次安装、更新、重命名、移动或删除 `~/.kb/skills/` 下的 Skill 后，任务完成前必须同时检查工作区 `AGENTS.md` 和本文件。
+
+- Skill 的名称、路径、触发条件、适用范围、前置条件、权限或调用流程发生变化时，必须同步更新两个文件中的相关路由指令；
+- 仅修改 Skill 内部实现、脚本、案例或说明，且现有路由仍然准确时，不机械修改入口文件，但必须在完成报告中说明已检查且无需更新；
+- `AGENTS.md` 是工作区规则事实源，本文件是 Claude 专用入口镜像；两者的 Skill 名称、路径、触发条件和适用范围必须保持语义一致；
+- 完成前验证所有被引用的 Skill 路径存在，并检查是否残留失效引用。
+
+非简单的编码实现、代码审查、Bug 修复或重构任务，规划或编辑前必须读取 `~/.kb/skills/karpathy-guidelines/SKILL.md`。只读问题和明确的一行简单修改可以跳过。
+
+## 9. 新需求端到端协作
+
+当用户提出新产品需求、功能想法、优化方向或业务问题时，除非用户明确要求只讨论、只分析或只完成单一环节，Claude 应把任务理解为从需求探索到正式交付的端到端产品协作。
+
+工作流程包括：
+
+1. 读取已有项目背景、产品事实、历史决策、相关需求和现有页面；
+2. 完成问题定义、用户与场景分析、业务目标、现有能力复用、核心规则、方案比较、风险边界和数据验证设计；
+3. 从产品、用户、设计、开发、测试、数据、运营和风险控制视角主动发现缺口；
+4. 形成需求基线：目标、用户、场景、推荐方案、本期范围、非目标、核心规则、系统边界、风险和遗留问题；
+5. 需求基线确认后，根据需求类型继续产出 PRD、用户流程、状态矩阵、后台配置、数据埋点、验收标准、测试场景和原型；
+6. 正式交付前进行跨角色自审，补齐可安全确定的缺口。
+
+存在会改变产品方向、范围、系统复用方式、核心业务规则、统计口径、结算、奖励成本、权限、风险或验收标准的不确定项时，每轮原则上只提不超过 3 个最高价值问题。每个问题应说明决策影响、可选方案、主要权衡和 Claude 的明确推荐。
+
+用户明确要求“先讨论”“只分析”“暂不输出 PRD”或“暂不制作原型”时，严格遵守该阶段边界，不自动创建或修改正式项目文件。
+
+## 10. UI 与 HTML 原型
+
+任务涉及 UI 或 HTML 原型时：
+
+- 先识别活跃原型路径；
+- 不默认使用归档、备份、损坏或历史文件；
+- 用户期待修改现有文件时，不创建新的平行版本；
+- 保留用户未要求删除的现有交互和 UI；
+- 移动端原型默认采用高保真移动 UI；
+- App 前台文案默认使用英文，除非项目规则或用户另有指定；
+- 社交、Dating 或 MENA 产品需要头像时，使用真实感的 MENA 女性头像；
+- 实际验证页面非空白、主要点击路径可用、浏览器控制台无关键错误。
+
+具体交付形式必须服从项目级规则和用户当前明确指令，不得把工作区通用原型偏好覆盖项目专属交付规则。
+
+## 11. 产品文档
+
+产品文档应根据需求需要覆盖：
+
+- PRD；
+- 用户流程；
+- 状态矩阵和边界条件；
+- 后台配置字段；
+- 测试场景和验收标准；
+- 数据埋点与统计口径；
+- Toast 和界面文案。
+
+指标或埋点至少定义：事件名、触发时机、属性、用户范围、分母、分子、去重规则、时间窗口，以及必要的 `msg_id`、`reply_to_msg_id` 或 session id 关系。
+
+## 12. 验证完整性
+
+修改代码或原型文件时，按风险和可用性执行最相关的验证，优先顺序为：
+
+1. 语法或静态检查；
+2. 构建检查；
+3. 本地预览或运行检查；
+4. 控制台与阻断性错误检查；
+5. 主要用户流程检查；
+6. 受影响功能的回归检查。
+
+不得声称执行了实际未执行的构建、预览、浏览器、测试或交互验证。无法验证时，必须说明未验证项、原因、已检查的替代证据和手动验证方法。
+
+## 13. 用户沟通与输出
+
+用户是产品经理和代码初学者。提供终端命令、代码片段或文件修改说明时：
+
+1. 先说明准确路径；
+2. 再提供命令或代码；
+3. 用简明语言说明其作用；
+4. 步骤按顺序排列；
+5. 不一次提供过多替代方案；
+6. 删除、覆盖或迁移等风险操作前，先获得确认。
+
+实现或文件编辑任务的输出应包含：
+
+1. 目标路径；
+2. 任务类型；
+3. 允许修改的文件；
+4. 禁止修改的文件；
+5. 计划变更；
+6. 验证计划；
+7. 实际命令或编辑。
+
+分析或说明任务直接回答，不要过度格式化。
+
+## 14. 指令提炼与写入门禁
+
+当用户对同一项输出主动调整、纠正或补充至少 1 次后，Claude 必须判断该反馈是否值得沉淀为长期指令。
+
+候选内容必须分类为：
+
+1. 通用指令：适用于整个 `/Users/shilv/Agent-Workspace`；
+2. Laka 指令：只适用于 `Projects/laka/`；
+3. 单次需求规则：只适用于当前需求；
+4. 临时偏好：只适用于当前对话。
+
+建议沉淀时，必须先向用户同步：
+
+- 完整指令正文；
+- 分类与适用范围；
+- 建议写入的准确路径；
+- 是否会合并或修改已有规则。
+
+必须等待用户回复“无误”“确认”“可以写入”“执行同步”或同等明确授权后才能写入。“先整理”“先看看”“继续补充”“再优化”“调整一下”不代表允许写入。
+
+用户继续修改指令时，必须重新整理完整版本并重新等待确认，不得沿用旧确认。正式写入时，只能写入用户最后确认的版本。
+
+建议存放位置：
+
+- 跨项目执行规则：`AGENTS.md`；
+- 跨项目 UI / HTML / 原型规则：`COMMON_UI_RULES.md`；
+- Laka 项目执行规则：`Projects/laka/AGENTS.md`；
+- Laka 全局 UI 规范：`Projects/laka/ui/UI_SYSTEM.md`；
+- Laka 页面长期规则：对应 `SCREEN_SPEC.md`；
+- 单个需求逻辑：当前需求的 `PRD.md` 或 `README.md`；
+- 可复用 Skill、模板或知识库内容：`Agent-KB/` 对应目录，但需单独获得知识库写入授权。
+
+## 15. 最终规则
+
+对路径、活跃文件或项目范围存疑时，先确认再修改。
+
+不得猜测后跨目录、跨项目或跨规则层级修改文件。

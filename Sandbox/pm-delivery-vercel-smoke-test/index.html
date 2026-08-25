@@ -1,0 +1,59 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="robots" content="noindex,nofollow" />
+    <title>PM Delivery Workflow Vercel Smoke Test</title>
+    <style>
+      :root {
+        color-scheme: light;
+        font-family: Arial, sans-serif;
+      }
+
+      body {
+        display: grid;
+        min-height: 100vh;
+        margin: 0;
+        place-items: center;
+        background: #f5f5f5;
+        color: #111;
+      }
+
+      main {
+        width: min(560px, calc(100% - 48px));
+        padding: 32px;
+        border: 1px solid #d7d7d7;
+        border-radius: 16px;
+        background: #fff;
+        box-shadow: 0 12px 30px rgb(0 0 0 / 8%);
+      }
+
+      h1 {
+        margin: 0 0 12px;
+        font-size: 28px;
+      }
+
+      p {
+        margin: 0;
+        line-height: 1.6;
+      }
+
+      code {
+        display: inline-block;
+        margin-top: 20px;
+        padding: 8px 12px;
+        border-radius: 8px;
+        background: #111;
+        color: #fff;
+      }
+    </style>
+  </head>
+  <body>
+    <main data-page-id="deployment-smoke-test">
+      <h1>Vercel 自动部署验证通过</h1>
+      <p>此页面用于验证 pm-delivery-workflow 的 Production 自动部署和公网访问流程。</p>
+      <code id="verification-marker">PM_DELIVERY_VERCEL_SMOKE_OK</code>
+    </main>
+  </body>
+</html>

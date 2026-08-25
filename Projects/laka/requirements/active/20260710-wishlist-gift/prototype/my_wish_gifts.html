@@ -1,0 +1,438 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>My Wish Gifts · Laka Host Prototype</title>
+<style>
+  :root{
+    --p:#8a4bf0; --p2:#b06bff; --p3:#c47cff;
+    --grad:linear-gradient(135deg,#b06bff,#8a4bf0 60%,#7c3aed);
+    --gold:#f0a93a; --goldg:linear-gradient(135deg,#ffd27a,#f0a93a);
+    --bg:#faf7fd; --card:#fff; --line:#efe7f6;
+    --ink:#2b2335; --sub:#8a7a9c; --sub2:#a897bb;
+    --green:#27c08a; --gray:#b6abc4; --red:#ef4a4a;
+  }
+  *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+  body{margin:0;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    background:#ece6f3;color:var(--ink);display:flex;justify-content:center;gap:28px;padding:28px;align-items:flex-start;flex-wrap:wrap}
+  /* ===== phone ===== */
+  .phone{width:390px;height:844px;background:var(--bg);border-radius:38px;overflow:hidden;position:relative;
+    box-shadow:0 24px 60px rgba(80,40,140,.28);border:1px solid #e3d8ef;display:flex;flex-direction:column}
+  .sb{height:44px;display:flex;align-items:center;justify-content:space-between;padding:0 22px;font-size:13px;font-weight:700;color:#1c1726}
+  .sb .sig{display:inline-flex;gap:2px;align-items:flex-end;height:11px}
+  .sb .sig b{width:3px;background:#1c1726;border-radius:1px}
+  .sb .sig b:nth-child(1){height:4px}.sb .sig b:nth-child(2){height:6px}.sb .sig b:nth-child(3){height:8px}.sb .sig b:nth-child(4){height:11px}
+  .topnav{display:flex;align-items:center;gap:10px;padding:6px 16px 12px;border-bottom:1px solid var(--line);background:#fff}
+  .nav-btn{width:34px;height:34px;border-radius:50%;border:none;background:#f3edfa;color:var(--p);font-size:20px;font-weight:700;display:flex;align-items:center;justify-content:center;cursor:pointer}
+  .nav-title{flex:1;font-size:18px;font-weight:900;letter-spacing:.2px}
+  .sample{font-size:9px;font-weight:800;color:var(--p2);background:#f3edfa;border-radius:999px;padding:3px 8px;letter-spacing:.4px}
+  .scroll{flex:1;overflow-y:auto;padding:16px 14px 30px}
+  .scroll::-webkit-scrollbar{width:0}
+  h2.sec{font-size:15px;font-weight:900;margin:0;display:flex;align-items:center;gap:6px}
+  .sec-sub{font-size:10px;color:var(--sub2);font-weight:600}
+  /* segmented */
+  .seg{display:flex;background:#f1ebf8;border-radius:12px;padding:3px;margin:12px 0 12px;position:relative}
+  .seg button{flex:1;border:none;background:transparent;padding:9px 4px;border-radius:9px;font-size:11.5px;font-weight:800;color:var(--sub);cursor:pointer;transition:.18s;z-index:1}
+  .seg button.on{background:#fff;color:var(--p);box-shadow:0 2px 8px rgba(138,75,240,.18)}
+  /* perf */
+  .metrics{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+  .metric{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:13px 8px;text-align:center;box-shadow:0 4px 16px rgba(127,65,180,.05)}
+  .mv{font-size:20px;font-weight:900;color:var(--ink);line-height:1.1}
+  .ml{font-size:9.5px;color:var(--sub);font-weight:700;margin-top:5px;line-height:1.25}
+  .perf-foot{text-align:center;font-size:10.5px;color:var(--sub);font-weight:700;margin-top:11px}
+  .perf-sub{text-align:center;font-size:10px;color:var(--p2);font-weight:700;margin-top:3px}
+  /* wishes */
+  .wishes{margin-top:24px}
+  .wh{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px}
+  .slots{font-size:11px;font-weight:800;color:var(--sub);background:#f3edfa;border-radius:999px;padding:4px 10px}
+  .edit-btn{border:1.5px solid var(--p2);background:#fff;color:var(--p);font-size:11.5px;font-weight:800;border-radius:999px;padding:5px 12px;cursor:pointer;margin-left:8px}
+  .gcard{display:flex;gap:11px;background:var(--card);border:1px solid var(--line);border-radius:16px;padding:12px;margin-bottom:10px;box-shadow:0 4px 16px rgba(127,65,180,.05)}
+  .g-ic{width:50px;height:50px;border-radius:14px;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:24px;background:linear-gradient(135deg,#f3e8ff,#e9d9fb)}
+  .g-info{flex:1;min-width:0}
+  .g-name{font-size:14px;font-weight:900}
+  .g-price{font-size:11.5px;color:var(--p);font-weight:800;margin-top:1px}
+  .g-goal{font-size:11px;color:var(--sub);font-weight:700;margin-top:3px}
+  .g-status{display:inline-block;font-size:9.5px;font-weight:800;border-radius:999px;padding:2px 8px;margin-top:6px}
+  .s-active{background:#e6f8f1;color:var(--green)}
+  .s-noactivity{background:#f1edf6;color:var(--gray)}
+  .s-completedbyusers{background:#fff5e2;color:var(--gold)}
+  .g-agg{font-size:10px;color:var(--sub);font-weight:700;margin-top:6px;line-height:1.4}
+  .empty{text-align:center;background:var(--card);border:1px dashed var(--line);border-radius:16px;padding:26px 16px}
+  .empty-ic{font-size:30px}
+  .empty p{font-size:13px;font-weight:800;margin:8px 0 2px}
+  .muted{color:var(--sub2);font-size:10.5px;font-weight:600}
+  .btn-p{background:var(--grad);color:#fff;border:none;border-radius:999px;padding:10px 18px;font-size:13px;font-weight:800;cursor:pointer;box-shadow:0 6px 16px rgba(138,75,240,.32)}
+  .btn-p.sm{padding:8px 16px;font-size:12px;margin-top:12px}
+  /* loading / error */
+  .loading,.error{text-align:center;padding:30px 16px;background:var(--card);border:1px solid var(--line);border-radius:16px}
+  .spinner{width:30px;height:30px;border:3px solid #ecdfff;border-top-color:var(--p);border-radius:50%;margin:0 auto 12px;animation:spin .8s linear infinite}
+  @keyframes spin{to{transform:rotate(360deg)}}
+  .err-ic{font-size:26px}
+  .error p{font-size:12.5px;font-weight:700;margin:8px 0 12px;color:var(--red)}
+  .retry{background:none;border:1.5px solid var(--p);color:var(--p);border-radius:999px;padding:7px 18px;font-weight:800;font-size:12px;cursor:pointer}
+  .skel-cards{display:flex;flex-direction:column;gap:10px}
+  .skel{height:74px;border-radius:16px;background:linear-gradient(90deg,#f1ebf8 25%,#e7def4 37%,#f1ebf8 63%);background-size:400% 100%;animation:sk 1.2s infinite}
+  @keyframes sk{0%{background-position:100% 0}100%{background-position:-100% 0}}
+  /* ===== sheets ===== */
+  .mask{position:absolute;inset:0;background:rgba(40,20,70,.45);opacity:0;pointer-events:none;transition:.25s;z-index:20}
+  .mask.show{opacity:1;pointer-events:auto}
+  .sheet{position:absolute;left:0;right:0;bottom:0;background:#fff;border-radius:22px 22px 0 0;padding:10px 16px 24px;transform:translateY(100%);transition:.3s cubic-bezier(.2,.8,.2,1);z-index:30;max-height:88%}
+  .sheet.open{transform:translateY(0)}
+  .grab{width:38px;height:4px;border-radius:3px;background:#e2d8ee;margin:6px auto 12px}
+  .sheet-t{font-size:16px;font-weight:900;text-align:center;margin-bottom:14px}
+  .slot{display:flex;align-items:center;gap:11px;background:#faf7fd;border:1px solid var(--line);border-radius:14px;padding:11px;margin-bottom:9px}
+  .slot-ic{width:42px;height:42px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:21px;background:linear-gradient(135deg,#f3e8ff,#e9d9fb);flex-shrink:0}
+  .slot-info{flex:1}
+  .slot-info b{font-size:13.5px}
+  .slot-acts{display:flex;gap:6px}
+  .slot-acts button{border:1px solid var(--line);background:#fff;color:var(--sub);border-radius:9px;padding:6px 10px;font-size:10.5px;font-weight:800;cursor:pointer}
+  .slot-acts button:hover{border-color:var(--p2);color:var(--p)}
+  .reorder{color:#cfc4dd;font-size:18px;cursor:grab}
+  .slot.empty{justify-content:center;border-style:dashed}
+  .slot.empty button{border:none;background:none;color:var(--p);font-weight:800;font-size:13px;cursor:pointer}
+  .sheet-done{width:100%;background:var(--grad);color:#fff;border:none;border-radius:14px;padding:13px;font-size:14px;font-weight:800;margin-top:8px;cursor:pointer;box-shadow:0 6px 16px rgba(138,75,240,.3)}
+  /* gift select */
+  .search{display:flex;align-items:center;gap:8px;background:#f3edfa;border-radius:12px;padding:10px 12px;margin-bottom:12px}
+  .search input{border:none;background:none;outline:none;flex:1;font-size:13px;color:var(--ink)}
+  .cats{display:flex;gap:7px;overflow-x:auto;margin-bottom:12px;padding-bottom:2px}
+  .cats span{flex-shrink:0;font-size:11px;font-weight:700;color:var(--sub);background:#f3edfa;border-radius:999px;padding:6px 13px;cursor:pointer}
+  .cats span.on{background:var(--grad);color:#fff}
+  .pool{display:grid;grid-template-columns:repeat(3,1fr);gap:9px;margin-bottom:14px}
+  .pcell{border:1.5px solid var(--line);border-radius:14px;padding:10px 6px;text-align:center;background:#fff;cursor:pointer;transition:.15s}
+  .pcell.sel{border-color:var(--p2);background:#faf5ff;box-shadow:0 4px 14px rgba(168,139,250,.18)}
+  .pc-ic{width:40px;height:40px;border-radius:11px;margin:0 auto 5px;display:flex;align-items:center;justify-content:center;font-size:20px;background:linear-gradient(135deg,#f3e8ff,#e9d9fb)}
+  .pc-n{font-size:11px;font-weight:800;color:#3a2450}
+  .pc-p{font-size:10px;font-weight:800;color:var(--p);margin-top:1px}
+  .pc-over{font-size:8.5px;color:var(--sub2);font-weight:700;margin-top:2px}
+  .special-block{border:1.5px solid #f3d9a6;border-radius:14px;padding:11px;margin-bottom:14px;background:linear-gradient(180deg,#fffdf7,#fff7e8)}
+  .sb-h{font-size:11px;font-weight:900;color:var(--gold);margin-bottom:9px;display:flex;align-items:center;gap:5px}
+  .qty-row{display:flex;justify-content:space-between;align-items:center;background:#faf7fd;border:1px solid var(--line);border-radius:14px;padding:11px 13px;margin-bottom:10px}
+  .qty-row .qt{font-size:13px;font-weight:800}
+  .qchips{display:flex;gap:7px}
+  .qchips span{border:1.5px solid var(--line);border-radius:9px;padding:6px 11px;font-size:12px;font-weight:800;color:var(--sub);cursor:pointer}
+  .qchips span.on{border-color:var(--p2);background:#faf5ff;color:var(--p)}
+  .est{text-align:center;font-size:12px;font-weight:700;color:var(--sub);margin-bottom:12px}
+  .est b{color:var(--ink);font-size:14px}
+  /* toast */
+  .toast{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%) scale(.9);background:rgba(30,18,46,.92);color:#fff;font-size:13px;font-weight:800;padding:14px 22px;border-radius:14px;z-index:50;opacity:0;pointer-events:none;transition:.2s;text-align:center}
+  .toast.show{opacity:1;transform:translate(-50%,-50%) scale(1)}
+  .toast.ok{box-shadow:0 8px 24px rgba(39,192,138,.4)}
+  .toast.bad{box-shadow:0 8px 24px rgba(239,74,74,.4)}
+  /* ===== test panel ===== */
+  .panel{width:300px;background:#fff;border-radius:18px;padding:18px;box-shadow:0 18px 44px rgba(80,40,140,.16);align-self:flex-start}
+  .panel h3{font-size:13px;font-weight:900;margin:0 0 4px;color:var(--ink)}
+  .panel .grp{margin-bottom:16px;padding-bottom:14px;border-bottom:1px solid #f0eaf6}
+  .panel .grp:last-child{border-bottom:none;margin-bottom:0;padding-bottom:0}
+  .gl{font-size:10.5px;font-weight:800;color:var(--sub);text-transform:uppercase;letter-spacing:.5px;margin-bottom:8px}
+  .tbtns{display:flex;flex-wrap:wrap;gap:7px}
+  .tb{border:1.5px solid var(--line);background:#faf7fd;color:var(--sub);border-radius:9px;padding:7px 11px;font-size:11.5px;font-weight:800;cursor:pointer;transition:.15s}
+  .tb:hover{border-color:var(--p2)}
+  .tb.on{background:var(--grad);color:#fff;border-color:transparent;box-shadow:0 3px 10px rgba(138,75,240,.3)}
+  .tb.g.on{background:linear-gradient(135deg,#34d39a,#27c08a);box-shadow:0 3px 10px rgba(39,192,138,.3)}
+  .tb.r.on{background:linear-gradient(135deg,#ff7a7a,#ef4a4a);box-shadow:0 3px 10px rgba(239,74,74,.3)}
+  .tb.y.on{background:linear-gradient(135deg,#ffd27a,#f0a93a);box-shadow:0 3px 10px rgba(240,169,58,.3)}
+  .note{font-size:10px;color:var(--sub2);font-weight:600;margin-top:6px;line-height:1.4}
+</style>
+</head>
+<body>
+
+<!-- ================= PHONE ================= -->
+<div class="phone">
+  <div class="sb"><span>15:58</span><span class="sig"><b></b><b></b><b></b><b></b></span><span>82%</span></div>
+  <div class="topnav">
+    <button class="nav-btn" title="Back">‹</button>
+    <div class="nav-title">My Wish Gifts</div>
+    <span class="sample">SAMPLE DATA</span>
+    <button class="nav-btn" title="Help" style="font-size:15px">?</button>
+  </div>
+  <div class="scroll">
+    <!-- Wish performance -->
+    <section>
+      <h2 class="sec">Wish performance <span class="sec-sub">today's config</span></h2>
+      <div class="seg" id="seg">
+        <button data-d="today" class="on">Today</button>
+        <button data-d="yesterday">Yesterday</button>
+        <button data-d="last7">Last 7 days</button>
+      </div>
+      <div id="perfBody"></div>
+    </section>
+    <!-- Today's wishes -->
+    <section class="wishes">
+      <div class="wh">
+        <h2 class="sec">Today's wishes</h2>
+        <div style="display:flex;align-items:center">
+          <span class="slots" id="slots">3/3 slots</span>
+          <button class="edit-btn" id="editBtn">Edit wishes</button>
+        </div>
+      </div>
+      <div id="wishList"></div>
+    </section>
+  </div>
+
+  <!-- sheets -->
+  <div class="mask" id="mask"></div>
+
+  <!-- Edit wishes sheet -->
+  <div class="sheet" id="editSheet">
+    <div class="grab"></div>
+    <div class="sheet-t">Edit wishes</div>
+    <div id="editSlots"></div>
+    <button class="sheet-done" onclick="closeSheets()">Done</button>
+  </div>
+
+  <!-- Gift select sheet -->
+  <div class="sheet" id="giftSheet">
+    <div class="grab"></div>
+    <div class="sheet-t">Add wish gift</div>
+    <div class="search">🔍<input placeholder="Search gifts"></div>
+    <div class="cats">
+      <span class="on">All</span><span>Romance</span><span>Luxury</span><span>Daily</span><span>Seasonal</span>
+    </div>
+    <div class="pool" id="pool"></div>
+    <div class="qty-row">
+      <span class="qt">Target quantity</span>
+      <div class="qchips" id="qchips">
+        <span data-q="3">3</span><span data-q="5" class="on">5</span><span data-q="10">10</span><span data-q="20">20</span>
+      </div>
+    </div>
+    <div class="est" id="est"></div>
+    <button class="sheet-done" id="confirmGift">Confirm</button>
+  </div>
+
+  <div class="toast" id="toast"></div>
+</div>
+
+<!-- ================= TEST PANEL ================= -->
+<div class="panel">
+  <h3>State Test Panel</h3>
+  <div class="grp">
+    <div class="gl">Date range</div>
+    <div class="tbtns" id="tp-date">
+      <button class="tb on" data-v="today">Today</button>
+      <button class="tb" data-v="yesterday">Yesterday</button>
+      <button class="tb" data-v="last7">Last 7 days</button>
+    </div>
+  </div>
+  <div class="grp">
+    <div class="gl">Wish count</div>
+    <div class="tbtns" id="tp-count">
+      <button class="tb" data-v="0">0</button>
+      <button class="tb" data-v="1">1</button>
+      <button class="tb" data-v="2">2</button>
+      <button class="tb on" data-v="3">3</button>
+    </div>
+  </div>
+  <div class="grp">
+    <div class="gl">Performance data</div>
+    <div class="tbtns" id="tp-perf">
+      <button class="tb g on" data-v="normal">Normal</button>
+      <button class="tb" data-v="no_activity">No activity</button>
+      <button class="tb" data-v="loading">Loading</button>
+      <button class="tb r" data-v="error">Error</button>
+    </div>
+  </div>
+  <div class="grp">
+    <div class="gl">Special gift</div>
+    <div class="tbtns" id="tp-special">
+      <button class="tb y on" data-v="not_unlocked">Not unlocked</button>
+      <button class="tb y" data-v="empty">Unlocked but empty</button>
+      <button class="tb y" data-v="available">Unlocked &amp; available</button>
+    </div>
+    <div class="note">Special gifts only appear inside the gift-selection flow when Unlocked &amp; available — never as a fixed tab.</div>
+  </div>
+  <div class="grp">
+    <div class="gl">Save result</div>
+    <div class="tbtns" id="tp-save">
+      <button class="tb g" data-v="success">Success</button>
+      <button class="tb r" data-v="failed">Failed</button>
+    </div>
+    <div class="note">Click to simulate the save toast immediately.</div>
+  </div>
+</div>
+
+<script>
+/* ============ data (all sample) ============ */
+const PERF = {
+  today:{ metrics:[{l:'Wish payers',v:'12'},{l:'Users completed',v:'8'},{l:'Wish earnings',v:'💎 3.1k'}], foot:'Updated in real time · 15:58', sub:'Compared with yesterday at the same time' },
+  yesterday:{ metrics:[{l:'Wish payers',v:'18'},{l:'Users completed',v:'11'},{l:'Wish earnings',v:'💎 4.6k'}], foot:'Full day · Aug 2', sub:'' },
+  last7:{ metrics:[{l:'Avg. daily payers',v:'14.2'},{l:'Completion rate',v:'36%'},{l:'Avg. daily earnings',v:'💎 3.8k'}], foot:'Jul 27 – Aug 2', sub:'D-7 to D-1, excludes today' }
+};
+const GIFTS = {
+  today:[
+    {icon:'🩷',name:'Crystal Heart',price:'💎 199',goal:'Each user: 0/5',status:'Active',agg:'12 payers · 4 users completed · 💎 1.2k earned'},
+    {icon:'🌷',name:'Lily',price:'💎 99',goal:'Each user: 0/10',status:'Active',agg:'21 payers · 7 users completed · 💎 1.8k earned'},
+    {icon:'🌹',name:'Rose',price:'💎 44',goal:'Each user: 0/20',status:'No activity',agg:'No activity yet'}
+  ],
+  yesterday:[
+    {icon:'🩷',name:'Crystal Heart',price:'💎 199',goal:'Each user: 11/5',status:'Completed by users',agg:'18 payers · 11 users completed · 💎 2.1k earned'},
+    {icon:'🌷',name:'Lily',price:'💎 99',goal:'Each user: 9/10',status:'Active',agg:'26 payers · 9 users completed · 💎 2.4k earned'},
+    {icon:'🌹',name:'Rose',price:'💎 44',goal:'Each user: 3/20',status:'Active',agg:'9 payers · 3 users completed · 💎 0.4k earned'}
+  ],
+  last7:[
+    {icon:'🩷',name:'Crystal Heart',price:'💎 199',goal:'Each user: 78/5',status:'Active',agg:'124 payers · 78 users completed · 💎 14.5k earned (7d)'},
+    {icon:'🌷',name:'Lily',price:'💎 99',goal:'Each user: 61/10',status:'Active',agg:'156 payers · 61 users completed · 💎 12.1k earned (7d)'},
+    {icon:'🌹',name:'Rose',price:'💎 44',goal:'Each user: 33/20',status:'Active',agg:'88 payers · 33 users completed · 💎 3.9k earned (7d)'}
+  ]
+};
+const POOL = [
+  {icon:'🌹',name:'Rose',price:44},{icon:'🌷',name:'Lily',price:99},{icon:'🩷',name:'Crystal Heart',price:199},
+  {icon:'📿',name:'Necklace',price:999},{icon:'💍',name:'Diamond Ring',price:1314},{icon:'👑',name:'Royal Crown',price:1999}
+];
+const CAP = 1999;
+const SPECIAL = {icon:'🌟',name:'Golden Heart',price:520,note:'Exclusive wish gift · Not available in the regular gift panel'};
+const GIFT_MAP = {}; POOL.concat([SPECIAL]).forEach(g=>GIFT_MAP[g.name]={icon:g.icon,price:g.price});
+
+/* ============ state ============ */
+const state = {
+  dateRange:'today', wishCount:3, perfState:'normal',
+  specialGift:'not_unlocked', saveResult:'success',
+  configured:['Crystal Heart','Lily','Rose'],
+  pending:null, pendingQty:5, editMode:'add', editIdx:-1
+};
+
+/* ============ render ============ */
+function render(){
+  // segmented
+  document.querySelectorAll('#seg button').forEach(b=>b.classList.toggle('on', b.dataset.d===state.dateRange));
+  renderPerf(); renderWishes();
+  document.getElementById('slots').textContent = state.wishCount+'/3 slots';
+}
+function renderPerf(){
+  const body=document.getElementById('perfBody');
+  if(state.perfState==='loading'){ body.innerHTML='<div class="loading"><div class="spinner"></div><p style="font-size:12px;font-weight:700;color:var(--sub)">Loading performance…</p></div>'; return; }
+  if(state.perfState==='error'){ body.innerHTML='<div class="error"><div class="err-ic">⚠️</div><p>Failed to load data</p><button class="retry" onclick="state.perfState=\'normal\';render()">Retry</button></div>'; return; }
+  const p=PERF[state.dateRange];
+  let m = p.metrics.map(x=>`<div class="metric"><div class="mv">${x.v}</div><div class="ml">${x.l}</div></div>`).join('');
+  if(state.perfState==='no_activity'){ m = p.metrics.map(x=>`<div class="metric"><div class="mv">0</div><div class="ml">${x.l}</div></div>`).join(''); }
+  let sub = p.sub?`<div class="perf-sub">${p.sub}</div>`:'';
+  if(state.perfState==='no_activity') sub='<div class="perf-sub">No activity yet for this period</div>';
+  body.innerHTML=`<div class="metrics">${m}</div><div class="perf-foot">${p.foot}</div>${sub}`;
+}
+function renderWishes(){
+  const list=document.getElementById('wishList');
+  if(state.perfState==='loading'){ list.innerHTML='<div class="skel-cards"><div class="skel"></div><div class="skel"></div><div class="skel"></div></div>'; return; }
+  if(state.perfState==='error'){ list.innerHTML=''; return; }
+  if(state.wishCount===0){
+    list.innerHTML='<div class="empty"><div class="empty-ic">🎁</div><p>No wishes configured</p><span class="muted">Add up to 3 wish gifts for today</span><button class="btn-p sm" onclick="openGiftSelect(\'add\',-1)">+ Add wish gift</button></div>';
+    return;
+  }
+  let gifts = GIFTS[state.dateRange].slice(0,state.wishCount);
+  if(state.perfState==='no_activity') gifts = gifts.map(g=>({...g,status:'No activity',agg:'No activity yet'}));
+  list.innerHTML = gifts.map(g=>`
+    <div class="gcard">
+      <div class="g-ic">${g.icon}</div>
+      <div class="g-info">
+        <div class="g-name">${g.name}</div>
+        <div class="g-price">${g.price}</div>
+        <div class="g-goal">${g.goal}</div>
+        <div class="g-status s-${g.status.replace(/\s+/g,'').toLowerCase()}">${g.status}</div>
+        <div class="g-agg">${g.agg}</div>
+      </div>
+    </div>`).join('');
+}
+
+/* ============ edit sheet ============ */
+function openEdit(){
+  renderEdit(); document.getElementById('mask').classList.add('show'); document.getElementById('editSheet').classList.add('open');
+}
+function renderEdit(){
+  const wrap=document.getElementById('editSlots'); let h='';
+  state.configured.forEach((name,i)=>{
+    const g=GIFT_MAP[name];
+    h+=`<div class="slot">
+      <div class="slot-ic">${g.icon}</div>
+      <div class="slot-info"><b>${name}</b><div class="muted">${g.price} · Each user: 0/5</div></div>
+      <div class="slot-acts"><button onclick="openGiftSelect('replace',${i})">Replace</button><button onclick="removeAt(${i})">Remove</button></div>
+      <div class="reorder">⠿</div>
+    </div>`;
+  });
+  for(let i=state.configured.length;i<3;i++){
+    h+=`<div class="slot empty"><button onclick="openGiftSelect('add',-1)">+ Add wish gift</button></div>`;
+  }
+  wrap.innerHTML=h;
+}
+function removeAt(i){ state.configured.splice(i,1); state.wishCount=state.configured.length; renderEdit(); renderWishes(); document.getElementById('slots').textContent=state.wishCount+'/3 slots'; }
+
+/* ============ gift select sheet ============ */
+function openGiftSelect(mode,idx){
+  state.editMode=mode; state.editIdx=idx; state.pending=null;
+  document.getElementById('giftSheet').querySelector('.sheet-t').textContent = mode==='replace'?'Replace wish gift':'Add wish gift';
+  renderPool(); updateEst();
+  document.getElementById('mask').classList.add('show');
+  document.getElementById('giftSheet').classList.add('open');
+}
+function renderPool(){
+  let h = POOL.map(g=>{
+    const over = g.price>CAP ? `<div class="pc-over">Over cap</div>` : '';
+    const dim = g.price>CAP ? 'style="opacity:.45"' : '';
+    return `<div class="pcell" ${dim} data-name="${g.name}" data-price="${g.price}" onclick="pickGift('${g.name}',${g.price})">
+      <div class="pc-ic">${g.icon}</div><div class="pc-n">${g.name}</div><div class="pc-p">💎 ${g.price}</div>${over}</div>`;
+  }).join('');
+  // special block only when unlocked & available
+  if(state.specialGift==='available'){
+    h = `<div class="special-block"><div class="sb-h">✨ Special gifts available</div>${h}
+      <div class="pcell" data-name="${SPECIAL.name}" data-price="${SPECIAL.price}" onclick="pickGift('${SPECIAL.name}',${SPECIAL.price})" style="border-color:var(--gold);background:linear-gradient(180deg,#fffdf7,#fff7e8)">
+        <div class="pc-ic" style="background:var(--goldg)">${SPECIAL.icon}</div><div class="pc-n">${SPECIAL.name}</div><div class="pc-p">💎 ${SPECIAL.price}</div>
+        <div class="pc-over" style="color:var(--gold)">${SPECIAL.note}</div></div></div>`;
+  }
+  document.getElementById('pool').innerHTML=h;
+}
+function pickGift(name,price){
+  state.pending={name,price};
+  document.querySelectorAll('#pool .pcell').forEach(c=>c.classList.toggle('sel', c.dataset.name===name));
+  updateEst();
+}
+function updateEst(){
+  const e=document.getElementById('est');
+  if(!state.pending){ e.innerHTML='Select a gift'; return; }
+  const total = state.pending.price * state.pendingQty;
+  e.innerHTML=`Est. total value · <b>💎 ${total.toLocaleString()}</b> <span class="muted">(💎 ${state.pending.price} × ${state.pendingQty})</span>`;
+}
+document.getElementById('qchips').addEventListener('click',e=>{
+  if(e.target.dataset.q){ document.querySelectorAll('#qchips span').forEach(s=>s.classList.remove('on')); e.target.classList.add('on'); state.pendingQty=+e.target.dataset.q; updateEst(); }
+});
+document.getElementById('confirmGift').addEventListener('click',()=>{
+  if(!state.pending){ showToast('Please select a gift','bad'); return; }
+  if(state.editMode==='add' && state.configured.length>=3){ showToast('Max 3 wishes','bad'); return; }
+  if(state.editMode==='add') state.configured.push(state.pending.name);
+  else if(state.editMode==='replace') state.configured[state.editIdx]=state.pending.name;
+  state.wishCount=state.configured.length;
+  closeSheets(); renderWishes(); renderEdit();
+  document.getElementById('slots').textContent=state.wishCount+'/3 slots';
+  showToast(state.saveResult==='failed'?'Save failed — try again':'Wishes saved ✓', state.saveResult==='failed'?'bad':'ok');
+});
+
+/* ============ misc ============ */
+function closeSheets(){ document.getElementById('mask').classList.remove('show'); document.getElementById('editSheet').classList.remove('open'); document.getElementById('giftSheet').classList.remove('open'); }
+function retry(){ state.perfState='normal'; render(); }
+let toastT;
+function showToast(msg,type){
+  const t=document.getElementById('toast'); t.textContent=msg; t.className='toast show '+(type||'ok');
+  clearTimeout(toastT); toastT=setTimeout(()=>t.className='toast',1800);
+}
+document.getElementById('mask').addEventListener('click',closeSheets);
+document.getElementById('editBtn').addEventListener('click',openEdit);
+document.getElementById('seg').addEventListener('click',e=>{
+  if(e.target.dataset.d){ state.dateRange=e.target.dataset.d; render(); }
+});
+
+/* ============ test panel ============ */
+function bind(id,key){
+  document.getElementById(id).addEventListener('click',e=>{
+    if(!e.target.dataset.v) return;
+    document.querySelectorAll('#'+id+' .tb').forEach(b=>b.classList.remove('on')); e.target.classList.add('on');
+    const v=e.target.dataset.v;
+    if(key==='date'){ state.dateRange=v; render(); }
+    else if(key==='count'){ state.wishCount=+v; render(); }
+    else if(key==='perf'){ state.perfState=v; render(); }
+    else if(key==='special'){ state.specialGift=v; if(document.getElementById('giftSheet').classList.contains('open')) renderPool(); }
+    else if(key==='save'){ state.saveResult=v; showToast(v==='failed'?'Save failed — try again':'Wishes saved ✓', v==='failed'?'bad':'ok'); }
+  });
+}
+bind('tp-date','date'); bind('tp-count','count'); bind('tp-perf','perf'); bind('tp-special','special'); bind('tp-save','save');
+
+render();
+</script>
+</body>
+</html>

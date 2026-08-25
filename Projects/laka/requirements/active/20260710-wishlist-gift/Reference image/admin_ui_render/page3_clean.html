@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<title>心愿礼物数据</title>
+<link rel="stylesheet" href="base.css">
+</head>
+<body>
+<div class="app">
+  <aside class="sidebar">
+    <div class="logo">Laka</div>
+    <nav class="nav">
+      <div class="nav-group"><div class="nav-item">首页</div></div>
+      <div class="nav-group"><div class="nav-item">用户管理</div></div>
+      <div class="nav-group"><div class="nav-item">主播管理</div></div>
+      <div class="nav-group">
+        <div class="nav-title">礼物中心</div>
+        <div class="nav-item nav-sub">礼物管理</div>
+        <div class="nav-item nav-sub">心愿礼物面板</div>
+      </div>
+      <div class="nav-group">
+        <div class="nav-title">数据中心</div>
+        <div class="nav-item nav-sub">主播心愿数据</div>
+        <div class="nav-item nav-sub active">心愿礼物数据</div>
+      </div>
+      <div class="nav-group"><div class="nav-item">风控管理</div></div>
+      <div class="nav-group"><div class="nav-item">系统设置</div></div>
+    </nav>
+  </aside>
+
+  <main class="main">
+    <header class="header">
+      <div class="header-left">
+        <div class="breadcrumb">数据中心 / 心愿礼物数据</div>
+        <div class="page-title">心愿礼物数据 <span class="en">Wish Gift Performance</span></div>
+        <div class="page-desc">用于查看不同礼物在心愿场景中的配置、参与、完成和收入表现，帮助运营判断哪些礼物适合继续保留在心愿礼物面板。</div>
+      </div>
+      <div class="header-right">
+        <svg class="icon-bell" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path><path d="M13.73 21a2 2 0 0 1-3.46 0"></path></svg>
+        <div class="account"><div class="avatar">A</div><span>admin.z</span></div>
+      </div>
+    </header>
+
+    <section class="content">
+      <div class="summary-row">
+        <div class="summary-card"><div class="summary-label"><span class="icon-dot dot-purple"></span>心愿面板礼物数</div><div class="summary-value">6</div></div>
+        <div class="summary-card"><div class="summary-label"><span class="icon-dot dot-purple"></span>被配置主播数</div><div class="summary-value">1,286</div></div>
+        <div class="summary-card"><div class="summary-label"><span class="icon-dot dot-purple"></span>心愿付费用户数</div><div class="summary-value">8,420</div></div>
+        <div class="summary-card"><div class="summary-label"><span class="icon-dot dot-gold"></span>心愿消费金币</div><div class="summary-value">3.26M</div><div class="summary-sublabel">用户消费 · 金币</div></div>
+      </div>
+
+      <div class="card filter-card">
+        <div class="filter-row">
+          <div class="filter-item"><label>日期范围</label>
+            <div class="segmented"><button>今日</button><button>昨日</button><button class="active">最近7日</button><button>最近30日</button><button>自定义</button></div>
+          </div>
+          <div class="filter-item"><label>礼物 ID</label><input type="text" placeholder="请输入"></div>
+          <div class="filter-item"><label>礼物名称</label><input type="text" placeholder="请输入"></div>
+          <div class="filter-item"><label>礼物价格区间</label><div style="display:flex;gap:6px;"><input type="number" placeholder="最小" style="min-width:70px;"><input type="number" placeholder="最大" style="min-width:70px;"></div></div>
+          <div class="filter-item"><label>心愿面板状态</label><select><option>全部</option><option>启用</option><option>停用</option></select></div>
+          <div class="filter-item"><label>礼物中心状态</label><select><option>全部</option><option>上架</option><option>下架</option><option>停用</option></select></div>
+          <div class="filter-item"><label>国家/地区</label><select><option>全部</option><option>沙特</option><option>阿联酋</option><option>埃及</option></select></div>
+          <div class="filter-actions"><button class="btn btn-primary">查询</button><button class="btn btn-outline">重置</button><button class="btn btn-outline">导出</button></div>
+        </div>
+      </div>
+
+      <div class="card table-card">
+        <div class="table-wrap">
+          <table class="compact">
+            <thead>
+              <tr>
+                <th>礼物图标</th><th>礼物 ID</th><th>礼物名称</th><th>当前金币价格</th><th>心愿面板状态</th>
+                <th>配置主播数</th><th>配置天数</th><th>礼物曝光用户数</th><th>礼物点击用户数</th>
+                <th>礼物付费用户数</th><th>礼物完成人数</th><th>赠送数量</th><th>消费金币</th><th>主播收益钻石</th><th>心愿礼物收入占比</th><th>礼物完成率</th><th>操作</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><div class="gift-icon gift-rose">🌹</div></td><td>G1001</td><td>Rose</td><td><span class="coin">199</span> 金币</td>
+                <td><span class="tag tag-green">启用</span></td><td>420</td><td>38</td><td>12.4K</td><td>6.8K</td><td>3.2K</td><td>1.98K</td><td>5.6K</td>
+                <td><span class="coin">1.12M</span></td><td><span class="diamond">1.12M</span></td><td>21.3%</td><td>61.9%</td>
+                <td><div class="action-links"><a>查看趋势</a><a>查看主播明细</a><a>查看每日数据</a><a>跳转面板配置</a></div></td>
+              </tr>
+              <tr>
+                <td><div class="gift-icon gift-lily">🤍</div></td><td>G1002</td><td>Lily</td><td><span class="coin">299</span> 金币</td>
+                <td><span class="tag tag-green">启用</span></td><td>380</td><td>36</td><td>10.1K</td><td>5.5K</td><td>2.6K</td><td>1.52K</td><td>4.3K</td>
+                <td><span class="coin">0.94M</span></td><td><span class="diamond">0.94M</span></td><td>19.8%</td><td>58.5%</td>
+                <td><div class="action-links"><a>查看趋势</a><a>查看主播明细</a><a>查看每日数据</a><a>跳转面板配置</a></div></td>
+              </tr>
+              <tr>
+                <td><div class="gift-icon gift-heart">💎</div></td><td>G1003</td><td>Crystal Heart</td><td><span class="coin">520</span> 金币</td>
+                <td><span class="tag tag-green">启用</span></td><td>210</td><td>30</td><td>6.2K</td><td>3.1K</td><td>1.4K</td><td>820</td><td>2.1K</td>
+                <td><span class="coin">0.71M</span></td><td><span class="diamond">0.71M</span></td><td>17.5%</td><td>58.6%</td>
+                <td><div class="action-links"><a>查看趋势</a><a>查看主播明细</a><a>查看每日数据</a><a>跳转面板配置</a></div></td>
+              </tr>
+              <tr>
+                <td><div class="gift-icon gift-box">🎁</div></td><td>G1004</td><td>Love Box</td><td><span class="coin">99</span> 金币</td>
+                <td><span class="tag tag-green">启用</span></td><td>520</td><td>40</td><td>14.0K</td><td>7.2K</td><td>3.8K</td><td>2.10K</td><td>6.9K</td>
+                <td><span class="coin">0.68M</span></td><td><span class="diamond">0.68M</span></td><td>23.1%</td><td>55.3%</td>
+                <td><div class="action-links"><a>查看趋势</a><a>查看主播明细</a><a>查看每日数据</a><a>跳转面板配置</a></div></td>
+              </tr>
+              <tr>
+                <td><div class="gift-icon gift-crown">👑</div></td><td>G1005</td><td>Crown</td><td><span class="coin">888</span> 金币</td>
+                <td><span class="tag tag-gray">停用</span></td><td>95</td><td>22</td><td>2.4K</td><td>1.1K</td><td>480</td><td>260</td><td>0.7K</td>
+                <td><span class="coin">0.21M</span></td><td><span class="diamond">0.21M</span></td><td>8.4%</td><td>54.2%</td>
+                <td><div class="action-links"><a>查看趋势</a><a>查看主播明细</a><a>查看每日数据</a><a>跳转面板配置</a></div></td>
+              </tr>
+              <tr>
+                <td><div class="gift-icon gift-car">🚗</div></td><td>G1006</td><td>Golden Car</td><td><span class="coin">1314</span> 金币</td>
+                <td><span class="tag tag-red">已失效</span></td><td>60</td><td>15</td><td>1.6K</td><td>720</td><td>300</td><td>150</td><td>0.4K</td>
+                <td><span class="coin">0.12M</span></td><td><span class="diamond">0.12M</span></td><td>5.0%</td><td>50.0%</td>
+                <td><div class="action-links"><a>查看趋势</a><a>查看主播明细</a><a>查看每日数据</a><a>跳转面板配置</a></div></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="pagination">
+          <span class="sample-label">示例数据 · Sample Data</span>
+          <div style="display:flex;align-items:center;gap:16px;"><span>共 6 条</span>
+            <div class="pager"><button>&lt;</button><button class="active">1</button><button>&gt;</button></div>
+            <span>1 / 1 页</span>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+</div>
+
+</body>
+</html>

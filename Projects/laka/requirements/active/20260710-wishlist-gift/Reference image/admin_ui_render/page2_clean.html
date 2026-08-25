@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<title>主播心愿数据</title>
+<link rel="stylesheet" href="base.css">
+</head>
+<body>
+<div class="app">
+  <aside class="sidebar">
+    <div class="logo">Laka</div>
+    <nav class="nav">
+      <div class="nav-group"><div class="nav-item">首页</div></div>
+      <div class="nav-group"><div class="nav-item">用户管理</div></div>
+      <div class="nav-group"><div class="nav-item">主播管理</div></div>
+      <div class="nav-group">
+        <div class="nav-title">礼物中心</div>
+        <div class="nav-item nav-sub">礼物管理</div>
+        <div class="nav-item nav-sub">心愿礼物面板</div>
+      </div>
+      <div class="nav-group">
+        <div class="nav-title">数据中心</div>
+        <div class="nav-item nav-sub active">主播心愿数据</div>
+        <div class="nav-item nav-sub">心愿礼物数据</div>
+      </div>
+      <div class="nav-group"><div class="nav-item">风控管理</div></div>
+      <div class="nav-group"><div class="nav-item">系统设置</div></div>
+    </nav>
+  </aside>
+
+  <main class="main">
+    <header class="header">
+      <div class="header-left">
+        <div class="breadcrumb">数据中心 / 主播心愿数据</div>
+        <div class="page-title">主播心愿数据 <span class="en">Host Wish Performance</span></div>
+        <div class="page-desc">用于查看不同主播对心愿礼物功能的使用情况、用户参与情况和收益表现。</div>
+      </div>
+      <div class="header-right">
+        <svg class="icon-bell" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path><path d="M13.73 21a2 2 0 0 1-3.46 0"></path></svg>
+        <div class="account"><div class="avatar">A</div><span>admin.z</span></div>
+      </div>
+    </header>
+
+    <section class="content">
+      <div class="summary-row">
+        <div class="summary-card">
+          <div class="summary-label"><span class="icon-dot dot-purple"></span>配置心愿主播数</div>
+          <div class="summary-value">1,286</div>
+        </div>
+        <div class="summary-card">
+          <div class="summary-label"><span class="icon-dot dot-purple"></span>心愿付费用户数</div>
+          <div class="summary-value">8,420</div>
+        </div>
+        <div class="summary-card">
+          <div class="summary-label"><span class="icon-dot dot-gold"></span>心愿消费金币</div>
+          <div class="summary-value">3.26M</div>
+          <div class="summary-sublabel">用户消费 · 金币</div>
+        </div>
+        <div class="summary-card">
+          <div class="summary-label"><span class="icon-dot dot-diamond"></span>主播心愿收益钻石</div>
+          <div class="summary-value">3.26M</div>
+          <div class="summary-sublabel">主播收益 · 钻石</div>
+        </div>
+      </div>
+
+      <div class="card filter-card">
+        <div class="filter-row">
+          <div class="filter-item"><label>日期范围</label>
+            <div class="segmented"><button>今日</button><button>昨日</button><button class="active">最近7日</button><button>最近30日</button><button>自定义</button></div>
+          </div>
+          <div class="filter-item"><label>主播 ID</label><input type="text" placeholder="请输入"></div>
+          <div class="filter-item"><label>主播昵称</label><input type="text" placeholder="请输入"></div>
+          <div class="filter-item"><label>国家/地区</label>
+            <select><option>全部</option><option>沙特</option><option>阿联酋</option><option>埃及</option></select>
+          </div>
+          <div class="filter-item"><label>是否配置过心愿</label>
+            <select><option>全部</option><option>是</option><option>否</option></select>
+          </div>
+          <div class="filter-item"><label>是否产生心愿收入</label>
+            <select><option>全部</option><option>是</option><option>否</option></select>
+          </div>
+          <div class="filter-item"><label>心愿收益区间</label><div style="display:flex;gap:6px;"><input type="number" placeholder="最小" style="min-width:70px;"><input type="number" placeholder="最大" style="min-width:70px;"></div></div>
+          <div class="filter-actions">
+            <button class="btn btn-primary">查询</button>
+            <button class="btn btn-outline">重置</button>
+            <button class="btn btn-outline">导出</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="card table-card">
+        <div class="table-wrap">
+          <table class="compact">
+            <thead>
+              <tr>
+                <th>主播头像</th>
+                <th>主播 ID</th>
+                <th>主播昵称</th>
+                <th>国家/地区</th>
+                <th>收礼资格</th>
+                <th>当前有效心愿数</th>
+                <th>心愿付费用户数</th>
+                <th>心愿完成人数</th>
+                <th>心愿消费金币</th>
+                <th>付费礼物收益钻石</th>
+                <th>主播收益钻石</th>
+                <th>心愿完成率</th>
+                <th>心愿礼物收入占比</th>
+                <th>操作</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><div class="host-avatar" style="width:32px;height:32px;font-size:13px;">L</div></td>
+                <td>H2001</td><td>Layla</td><td>沙特</td>
+                <td><span class="tag tag-green">正常</span></td>
+                <td>3</td><td>320</td><td>198</td>
+                <td><span class="coin">63.2K</span></td><td><span class="diamond">63.2K</span></td><td><span class="diamond">71.0K</span></td><td>61.9%</td><td>18.5%</td>
+                <td><div class="action-links"><a>查看详情</a><a>查看配置记录</a><a>查看礼物明细</a></div></td>
+              </tr>
+              <tr>
+                <td><div class="host-avatar" style="width:32px;height:32px;font-size:13px;background:linear-gradient(135deg,#FCA5A5,#F87171);">O</div></td>
+                <td>H2002</td><td>Omar</td><td>阿联酋</td>
+                <td><span class="tag tag-green">正常</span></td>
+                <td>2</td><td>0</td><td>0</td>
+                <td><span class="coin">0</span></td><td><span class="diamond">0</span></td><td><span class="diamond">5.4K</span></td><td>0%</td><td>0%</td>
+                <td><div class="action-links"><a>查看详情</a><a>查看配置记录</a><a>查看礼物明细</a></div></td>
+              </tr>
+              <tr>
+                <td><div class="host-avatar" style="width:32px;height:32px;font-size:13px;background:linear-gradient(135deg,#86EFAC,#4ADE80);">N</div></td>
+                <td>H2003</td><td>Noor</td><td>埃及</td>
+                <td><span class="tag tag-green">正常</span></td>
+                <td>0</td><td>0</td><td>0</td>
+                <td><span class="coin">0</span></td><td><span class="diamond">0</span></td><td><span class="diamond">2.1K</span></td><td>0%</td><td>0%</td>
+                <td><div class="action-links"><a>查看详情</a><a>查看配置记录</a><a>查看礼物明细</a></div></td>
+              </tr>
+              <tr>
+                <td><div class="host-avatar" style="width:32px;height:32px;font-size:13px;background:linear-gradient(135deg,#FDBA74,#FB923C);">Y</div></td>
+                <td>H2004</td><td>Yara</td><td>沙特</td>
+                <td><span class="tag tag-red">暂停</span></td>
+                <td>1</td><td>50</td><td>20</td>
+                <td><span class="coin">12.4K</span></td><td><span class="diamond">12.4K</span></td><td><span class="diamond">15.0K</span></td><td>40%</td><td>6.2%</td>
+                <td><div class="action-links"><a>查看详情</a><a>查看配置记录</a><a>查看礼物明细</a></div></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="pagination">
+          <span class="sample-label">示例数据 · Sample Data</span>
+          <div style="display:flex;align-items:center;gap:16px;">
+            <span>共 1,286 条</span>
+            <div class="pager">
+              <button>&lt;</button><button class="active">1</button><button>2</button><button>3</button><button>&gt;</button>
+            </div>
+            <span>1 / 129 页</span>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+</div>
+
+</body>
+</html>

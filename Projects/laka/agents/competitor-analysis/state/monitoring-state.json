@@ -1,0 +1,27 @@
+{
+  "schema_version": 1,
+  "project": "laka",
+  "last_run_at": "2026-07-22T15:24:42+08:00",
+  "data_cutoff": "2026-07-22",
+  "default_markets": ["SA", "IQ", "JO", "LB", "EG"],
+  "products": {
+    "sugo": {"last_checked": "2026-07-22", "android_package": "com.voicemaker.android", "download_band": "50M+", "rating": 3.1, "review_band": "148K", "latest_observed_update": "2026-07-08", "status": "core"},
+    "timo": {"last_checked": "2026-07-22", "android_package": "com.hwsj.chat", "download_band": "10M+", "rating": 4.0, "review_band": "25.5K", "latest_observed_update": "2026-07-02", "status": "core"},
+    "timo-club": {"last_checked": "2026-07-22", "android_package": "com.hwsj.club", "download_band": "10M+", "rating": 4.2, "review_band": "119K", "latest_observed_update": "2026-07-02", "status": "core-family"},
+    "chamet": {"last_checked": "2026-07-22", "android_package": "com.hkfuliao.chamet", "download_band": "50M+", "rating": 4.0, "review_band": "510K", "latest_observed_update": "2026-04-16", "status": "core"},
+    "mico": {"last_checked": "2026-07-22", "android_package": "com.mico", "download_band": "50M+", "rating": 4.2, "review_band": "760K", "latest_observed_update": null, "status": "dynamic"},
+    "soulchill": {"last_checked": "2026-07-22", "android_package": "com.live.soulchill", "download_band": "10M+", "rating": 4.2, "review_band": "193K", "latest_observed_update": "2026-06-30", "status": "dynamic"},
+    "yalla": {"last_checked": "2026-07-22", "android_package": "com.weieyu.yalla", "download_band": "100M+", "rating": 4.1, "review_band": "251K", "latest_observed_update": null, "status": "regional"},
+    "azar": {"last_checked": "2026-07-22", "android_package": "com.azarlive.android", "download_band": "100M+", "rating": 3.8, "review_band": "1.95M", "latest_observed_update": "2026-06-15", "status": "benchmark"},
+    "litmatch": {"last_checked": "2026-07-22", "android_package": "com.litatom.app", "download_band": "100M+", "rating": 3.9, "review_band": "1.26M", "latest_observed_update": "2026-07-09", "status": "benchmark"},
+    "4party": {"last_checked": "2026-07-22", "ios_id": "6739232341", "rating": 3.7, "review_band": "7", "latest_observed_version": "1.0.48", "status": "radar"},
+    "pookie": {"last_checked": "2026-07-22", "android_package": "com.pookk", "download_band": "1M+", "rating": 3.1, "review_band": "2.44K", "latest_observed_update": "2026-07-07", "status": "radar"},
+    "chaitalk": {"last_checked": "2026-07-22", "launch_status": "announced-summer-2026", "status": "radar"}
+  },
+  "next_priority": ["CA-001", "CA-002", "CA-003", "CA-004", "CA-014"],
+  "limitations": [
+    "Current baseline mainly uses public Google Play and official website data.",
+    "iOS versions, country rankings, precise revenue and MAU are not yet included.",
+    "Store metrics vary by locale and crawl time and must be rechecked before comparison."
+  ]
+}

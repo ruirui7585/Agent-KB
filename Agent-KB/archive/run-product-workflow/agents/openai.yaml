@@ -1,0 +1,6 @@
+interface:
+  display_name: "Product Workflow Router"
+  short_description: "Route product work through the shortest reliable workflow"
+  default_prompt: "Use $run-product-workflow to route this product task through the smallest reliable workflow."
+policy:
+  allow_implicit_invocation: false

@@ -1,0 +1,10 @@
+{
+  "workflow": "pre-existing fixed product-feature flow",
+  "route": ["pm", "prd", "prototype", "review"],
+  "routingBehavior": "Run every enabled stage in fixed order",
+  "agreementGate": "No explicit workflow-level gate; each agent preserves unknowns as open questions or TBD",
+  "ticketModel": "No vertical ticket decomposition",
+  "reviewModel": "One combined review artifact",
+  "compatibility": "Existing direct and selected-agent modes remain available",
+  "expectedRisk": "A wrong early product direction may propagate into later artifacts before review"
+}

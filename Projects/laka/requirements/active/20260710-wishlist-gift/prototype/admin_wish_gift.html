@@ -1,0 +1,1041 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=1440">
+<title>Laka 后台 · 1v1 心愿礼物配置（原型）</title>
+<style>
+:root{
+  --p:#7c5cf6; --p-d:#6a48e0; --p-l:#f1edfe; --p-l2:#f7f5fe;
+  --bg:#f4f5f7; --card:#fff; --bd:#e8e8ee; --bd2:#f0f0f4;
+  --tx:#1f2430; --tx2:#5b6270; --tx3:#939aa8;
+  --grn:#16a34a; --grn-l:#e7f7ee; --red:#ef4444; --red-l:#fdeaea;
+  --amb:#f59e0b; --amb-l:#fef6e7; --blu:#3b82f6;
+  --sh:0 1px 3px rgba(20,20,40,.06);
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:-apple-system,"PingFang SC","Microsoft YaHei",Segoe UI,Roboto,sans-serif;background:var(--bg);color:var(--tx);font-size:13px;-webkit-font-smoothing:antialiased}
+.app{display:flex;min-height:100vh}
+/* ===== left nav ===== */
+.nav{width:210px;background:#21263a;color:#c7ccd9;flex-shrink:0;padding:16px 0;position:sticky;top:0;height:100vh;overflow:auto}
+.nav .logo{display:flex;align-items:center;gap:9px;padding:4px 18px 18px;font-size:16px;font-weight:800;color:#fff}
+.nav .logo i{width:26px;height:26px;border-radius:7px;background:linear-gradient(135deg,var(--p),#a78bfa);display:flex;align-items:center;justify-content:center;font-size:14px}
+.nav .grp{font-size:11px;color:#6b7088;padding:12px 18px 6px;letter-spacing:.5px}
+.nav .it{display:flex;align-items:center;gap:10px;padding:9px 18px;font-size:13px;cursor:pointer;border-left:3px solid transparent;color:#c7ccd9}
+.nav .it:hover{background:#2a3048;color:#fff}
+.nav .it .ic{width:18px;text-align:center;opacity:.85}
+.nav .it.sub{padding-left:46px;font-size:12.5px}
+.nav .it.active{background:#2f2447;border-left-color:var(--p);color:#fff;font-weight:600}
+.nav .it.active .ic{color:#c4b5fd}
+/* ===== main ===== */
+.main{flex:1;min-width:0;display:flex;flex-direction:column}
+.topbar{height:54px;background:#fff;border-bottom:1px solid var(--bd);display:flex;align-items:center;justify-content:space-between;padding:0 22px;position:sticky;top:0;z-index:20}
+.crumbs{font-size:12.5px;color:var(--tx3)}
+.crumbs b{color:var(--tx);font-weight:600}
+.crumbs .cur{color:var(--p);font-weight:600}
+.topbar .right{display:flex;align-items:center;gap:14px}
+.topbar .who{display:flex;align-items:center;gap:8px;font-size:12.5px}
+.topbar .av{width:28px;height:28px;border-radius:50%;background:var(--p-l);color:var(--p-d);display:flex;align-items:center;justify-content:center;font-weight:700}
+.badge-env{font-size:10.5px;background:var(--amb-l);color:#b5780a;border:1px solid #f5e3bd;border-radius:5px;padding:3px 8px;font-weight:700}
+.content{padding:20px 22px 40px;min-height:calc(100vh - 54px)}
+/* ===== panel (state test) ===== */
+.panel{width:286px;background:#fff;border-left:1px solid var(--bd);flex-shrink:0;padding:14px 14px 30px;position:sticky;top:0;height:100vh;overflow:auto;font-size:12px}
+.panel h4{font-size:12px;color:var(--tx2);margin:14px 0 8px;padding-bottom:6px;border-bottom:1px solid var(--bd2);display:flex;align-items:center;gap:6px}
+.panel h4:first-child{margin-top:0}
+.pbtns{display:flex;flex-wrap:wrap;gap:6px}
+.pbtn{border:1px solid var(--bd);background:#fafafc;border-radius:6px;padding:5px 9px;cursor:pointer;font-size:11.5px;color:var(--tx2);user-select:none}
+.pbtn:hover{border-color:var(--p);color:var(--p)}
+.pbtn.on{background:var(--p);border-color:var(--p);color:#fff;font-weight:600}
+.ptip{font-size:10.5px;color:var(--tx3);margin-top:5px;line-height:1.5}
+/* ===== generic ===== */
+.page-title{font-size:19px;font-weight:800;margin-bottom:4px}
+.page-sub{font-size:12.5px;color:var(--tx3);margin-bottom:16px;line-height:1.6}
+.card{background:var(--card);border:1px solid var(--bd);border-radius:10px;box-shadow:var(--sh);margin-bottom:16px}
+.card-h{display:flex;align-items:center;justify-content:space-between;padding:14px 16px;border-bottom:1px solid var(--bd2)}
+.card-h .t{font-size:14.5px;font-weight:700}
+.card-h .t small{font-size:11px;color:var(--tx3);font-weight:500;margin-left:8px}
+.card-b{padding:16px}
+/* filters */
+.filters{display:flex;flex-wrap:wrap;gap:10px;align-items:flex-end;padding:14px 16px}
+.fld{display:flex;flex-direction:column;gap:4px}
+.fld label{font-size:11px;color:var(--tx3);font-weight:600}
+.fld input,.fld select{height:32px;border:1px solid var(--bd);border-radius:7px;padding:0 9px;font-size:12.5px;background:#fff;color:var(--tx);min-width:120px;outline:none}
+.fld input:focus,.fld select:focus{border-color:var(--p)}
+.actions{display:flex;gap:8px;margin-left:auto}
+.btn{border:1px solid var(--bd);background:#fff;border-radius:7px;padding:0 14px;height:32px;font-size:12.5px;cursor:pointer;color:var(--tx2);font-weight:600;display:inline-flex;align-items:center;gap:5px}
+.btn:hover{border-color:var(--p);color:var(--p)}
+.btn.p{background:var(--p);border-color:var(--p);color:#fff}
+.btn.p:hover{background:var(--p-d)}
+.btn.ghost{background:var(--p-l);border-color:var(--p-l);color:var(--p-d)}
+.btn.danger{border-color:#f3c2c2;color:var(--red);background:#fff}
+.btn.danger:hover{background:var(--red-l)}
+.btn.sm{height:28px;padding:0 11px;font-size:12px}
+.btn:disabled{opacity:.45;cursor:not-allowed;border-color:var(--bd);color:var(--tx3);background:#f6f6f8}
+.btn.lg{height:38px;padding:0 22px;font-size:13.5px}
+/* table */
+table{width:100%;border-collapse:collapse;font-size:12.5px}
+th,td{text-align:left;padding:11px 14px;border-bottom:1px solid var(--bd2)}
+th{font-size:11.5px;color:var(--tx3);font-weight:700;background:#fafafc;white-space:nowrap}
+td{color:var(--tx)}
+tr:last-child td{border-bottom:none}
+.st{display:inline-flex;align-items:center;gap:5px;font-size:12px;font-weight:600;padding:3px 9px;border-radius:20px}
+.st.on{background:var(--grn-l);color:var(--grn)}
+.st.off{background:#f1f2f4;color:var(--tx3)}
+.st.warn{background:var(--amb-l);color:#b5780a}
+.st.red{background:var(--red-l);color:var(--red)}
+.st.info{background:var(--p-l);color:var(--p-d)}
+.dot{width:7px;height:7px;border-radius:50%}
+.link{color:var(--p);cursor:pointer;font-weight:600}
+.link:hover{text-decoration:underline}
+.tlink{color:var(--p);cursor:pointer}
+.op{display:flex;gap:8px;flex-wrap:wrap}
+.op a{color:var(--p);cursor:pointer;font-size:12px;white-space:nowrap}
+.op a:hover{text-decoration:underline}
+.op a.d{color:var(--red)}
+.op a.g{color:var(--tx3)}
+/* tags */
+.tag-lock{display:inline-flex;align-items:center;gap:4px;font-size:11px;background:#f1f2f4;color:var(--tx2);border:1px solid var(--bd);border-radius:6px;padding:3px 8px;font-weight:600}
+.tag-confirm{display:inline-flex;align-items:center;gap:4px;font-size:11px;background:var(--amb-l);color:#b5780a;border:1px solid #f5e3bd;border-radius:6px;padding:3px 8px;font-weight:600;margin:2px 4px 2px 0;display:inline-block}
+.tag-readonly{font-size:10.5px;background:#eef0f4;color:var(--tx3);border-radius:5px;padding:2px 7px;font-weight:600;margin-left:6px}
+.gicon{width:34px;height:34px;border-radius:9px;display:inline-flex;align-items:center;justify-content:center;font-size:18px;background:var(--p-l2);border:1px solid var(--bd2)}
+.kv{font-family:"SF Mono",Consolas,monospace;font-size:11px;color:var(--p-d);background:var(--p-l);border-radius:4px;padding:1px 6px}
+.lockic{color:var(--tx3)}
+/* form */
+.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px 22px}
+.fitem{display:flex;flex-direction:column;gap:6px}
+.fitem.full{grid-column:1/-1}
+.fitem > label{font-size:12.5px;font-weight:600;color:var(--tx)}
+.fitem .hint{font-size:11px;color:var(--tx3);line-height:1.5}
+.fitem .err{font-size:11px;color:var(--red);display:none}
+.fitem.invalid .err{display:block}
+.fitem.invalid input,.fitem.invalid select{border-color:var(--red)}
+.finput,.fsel{height:34px;border:1px solid var(--bd);border-radius:7px;padding:0 10px;font-size:12.5px;background:#fff;outline:none}
+.finput:focus,.fsel:focus{border-color:var(--p)}
+.finput[readonly]{background:#f6f6f8;color:var(--tx3);cursor:not-allowed}
+.seg{display:inline-flex;background:#eee;border-radius:8px;padding:3px}
+.seg span{padding:6px 14px;border-radius:6px;cursor:pointer;font-size:12.5px;font-weight:600;color:var(--tx2);white-space:nowrap}
+.seg span.on{background:#fff;color:var(--p);box-shadow:var(--sh)}
+.switch{position:relative;width:42px;height:23px;background:#cfd3dc;border-radius:20px;cursor:pointer;transition:.2s;flex-shrink:0}
+.switch.on{background:var(--p)}
+.switch i{position:absolute;top:2px;left:2px;width:19px;height:19px;background:#fff;border-radius:50%;transition:.2s}
+.switch.on i{left:21px}
+/* summary bar */
+.sumbar{display:flex;flex-wrap:wrap;gap:26px;padding:14px 16px;background:linear-gradient(135deg,#faf8ff,#fff);border:1px solid var(--bd);border-radius:10px;margin-bottom:16px}
+.sumbar .si .k{font-size:11px;color:var(--tx3);font-weight:600}
+.sumbar .si .v{font-size:14px;font-weight:800;margin-top:3px}
+/* module nav */
+.modnav{display:flex;gap:4px;background:#fff;border:1px solid var(--bd);border-radius:9px;padding:5px;margin-bottom:16px;position:sticky;top:54px;z-index:10;overflow:auto}
+.modnav a{padding:8px 14px;font-size:12.5px;color:var(--tx2);border-radius:6px;cursor:pointer;white-space:nowrap;font-weight:600}
+.modnav a:hover{background:var(--p-l)}
+.modnav a.on{background:var(--p);color:#fff}
+/* special module folded */
+.fold{border:1px solid var(--bd);border-radius:10px;overflow:hidden;margin-bottom:16px;background:#fff}
+.fold-h{display:flex;align-items:center;justify-content:space-between;padding:14px 16px;cursor:pointer;background:#fafafc}
+.fold-h .l{display:flex;align-items:center;gap:10px;font-size:14.5px;font-weight:700}
+.fold-b{padding:16px;border-top:1px solid var(--bd2);display:none}
+.fold.open .fold-b{display:block}
+.empty{text-align:center;padding:34px 10px;color:var(--tx3)}
+.empty .e-ic{font-size:34px;opacity:.4}
+.empty .e-t{margin-top:8px;font-size:13px}
+.loading{text-align:center;padding:34px;color:var(--tx3)}
+.loading .spin{width:24px;height:24px;border:3px solid var(--bd);border-top-color:var(--p);border-radius:50%;animation:sp 1s linear infinite;margin:0 auto 10px}
+@keyframes sp{to{transform:rotate(360deg)}}
+.errbox{text-align:center;padding:30px;color:var(--red)}
+.errbox .e-ic{font-size:34px}
+/* overlay / drawer / modal */
+.ov{position:fixed;inset:0;background:rgba(20,22,34,.45);z-index:100;display:none;align-items:center;justify-content:center}
+.ov.show{display:flex}
+.drawer{position:fixed;top:0;right:0;height:100vh;width:560px;max-width:92vw;background:#fff;z-index:101;box-shadow:-6px 0 24px rgba(0,0,0,.15);transform:translateX(100%);transition:.26s;display:flex;flex-direction:column}
+.drawer.show{transform:none}
+.drawer .dh{display:flex;align-items:center;justify-content:space-between;padding:16px 20px;border-bottom:1px solid var(--bd);font-size:15px;font-weight:700}
+.drawer .db{padding:20px;overflow:auto;flex:1}
+.modal{background:#fff;border-radius:12px;width:560px;max-width:94vw;max-height:90vh;overflow:auto;box-shadow:0 20px 60px rgba(0,0,0,.25)}
+.modal .mh{display:flex;align-items:center;justify-content:space-between;padding:16px 20px;border-bottom:1px solid var(--bd);font-size:15px;font-weight:700}
+.modal .mb{padding:18px 20px}
+.modal .mf{display:flex;gap:10px;justify-content:flex-end;padding:14px 20px;border-top:1px solid var(--bd)}
+.x{cursor:pointer;color:var(--tx3);font-size:18px;width:26px;height:26px;display:flex;align-items:center;justify-content:center;border-radius:6px}
+.x:hover{background:#f0f0f4}
+/* toast */
+.toasts{position:fixed;top:70px;left:50%;transform:translateX(-50%);z-index:200;display:flex;flex-direction:column;gap:8px;align-items:center}
+.toast{background:#fff;border:1px solid var(--bd);border-left:4px solid var(--p);border-radius:9px;padding:11px 18px;font-size:13px;box-shadow:0 8px 24px rgba(0,0,0,.12);display:flex;align-items:center;gap:9px;animation:tin .25s ease}
+.toast.ok{border-left-color:var(--grn)}
+.toast.err{border-left-color:var(--red)}
+.toast .ti{font-size:16px}
+@keyframes tin{from{opacity:0;transform:translateY(-10px)}}
+/* sample flag */
+.sample-flag{position:fixed;bottom:14px;right:302px;background:#fff;border:1px dashed var(--amb);color:#b5780a;border-radius:8px;padding:7px 12px;font-size:11.5px;font-weight:700;z-index:30;box-shadow:var(--sh)}
+.anchor-info{display:flex;align-items:center;gap:12px;padding:14px;background:var(--p-l2);border-radius:9px;margin-bottom:14px}
+.anchor-info .aa{width:46px;height:46px;border-radius:50%;background:var(--p-l);color:var(--p-d);display:flex;align-items:center;justify-content:center;font-size:20px;font-weight:800}
+.row2{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.ro{display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px dashed var(--bd2);font-size:12.5px}
+.ro .k{color:var(--tx3)}
+.ro .v{font-weight:600}
+.sec-div{font-size:12px;font-weight:700;color:var(--tx2);margin:18px 0 8px;padding-left:9px;border-left:3px solid var(--p)}
+.exprt{font-family:"SF Mono",Consolas,monospace;font-size:11.5px;background:#1f2430;color:#cbd5e1;padding:14px;border-radius:9px;white-space:pre-wrap;line-height:1.8}
+.exprt .kw{color:#c4b5fd}
+.exprt .ok{color:#6ee7a8}
+.exprt .no{color:#fca5a5}
+.exprt .cm{color:#7c8196}
+.pill-tab{display:inline-flex;background:var(--bd2);border-radius:8px;padding:3px}
+.pill-tab span{padding:5px 13px;border-radius:6px;font-size:12px;font-weight:600;color:var(--tx2);cursor:pointer}
+.pill-tab span.on{background:#fff;color:var(--p);box-shadow:var(--sh)}
+</style>
+</head>
+<body>
+<div class="app">
+  <!-- LEFT NAV -->
+  <aside class="nav">
+    <div class="logo"><i>L</i> Laka 运营后台</div>
+    <div class="grp">主菜单</div>
+    <div class="it"><span class="ic">🏠</span>首页</div>
+    <div class="it"><span class="ic">👤</span>用户管理</div>
+    <div class="it"><span class="ic">🎤</span>主播管理
+      <div style="margin-left:auto;font-size:10px;color:var(--tx3)">›</div>
+    </div>
+    <div class="it sub" onclick="goAnchor()">心愿礼物资格</div>
+    <div class="grp">礼物中心</div>
+    <div class="it sub"><span class="ic">🎁</span>礼物管理</div>
+    <div class="it sub active"><span class="ic">🎮</span>礼物玩法</div>
+    <div class="grp">运营与风控</div>
+    <div class="it"><span class="ic">⚙️</span>运营配置</div>
+    <div class="it"><span class="ic">🛡️</span>风控管理</div>
+  </aside>
+
+  <!-- MAIN -->
+  <main class="main">
+    <div class="topbar">
+      <div class="crumbs" id="crumbs"></div>
+      <div class="right">
+        <span class="badge-env">示例数据 SAMPLE DATA</span>
+        <div class="who"><span class="av" id="whoAv">A</span><span id="whoName">Admin（超级管理员）</span></div>
+      </div>
+    </div>
+    <div class="content" id="page"></div>
+  </main>
+
+  <!-- STATE TEST PANEL -->
+  <aside class="panel">
+    <h4>🧪 状态测试面板</h4>
+    <div class="ptip">点击任意项，后台页面实时切换对应状态。所有数据均为示例。</div>
+
+    <h4>页面 Page</h4>
+    <div class="pbtns" id="pgPage"></div>
+
+    <h4>功能状态 Feature</h4>
+    <div class="pbtns" id="pgFeature"></div>
+
+    <h4>基础礼物池 Gift Pool</h4>
+    <div class="pbtns" id="pgPool"></div>
+
+    <h4>特殊礼物 Special Gift</h4>
+    <div class="pbtns" id="pgSpecial"></div>
+
+    <h4>表单状态 Form</h4>
+    <div class="pbtns" id="pgForm"></div>
+
+    <h4>权限角色 Role</h4>
+    <div class="pbtns" id="pgRole"></div>
+  </aside>
+</div>
+
+<div class="sample-flag">⚠ 本原型全部为示例数据 SAMPLE DATA，非真实后台</div>
+<div class="toasts" id="toasts"></div>
+
+<script>
+/* ===================== STATE ===================== */
+const S = {
+  page:'list',            // list | config | anchor | log
+  feature:true,           // 心愿功能启用
+  pool:'normal',          // normal | empty | loading | error
+  special:'off',          // off | empty | on-empty | on-gifts | rule-off | rule-on
+  form:'normal',          // normal | dirty | invalid | saving | success | fail
+  role:'super',           // super | op | risk | read
+  // config-page transient UI
+  targetMode:'unified',   // unified | per-item
+  specialOn:false,
+  specialRuleOn:false,
+  qtyMode:'auto',         // auto | manual
+  outOfRange:'hide',      // hide | forbid | prompt
+};
+
+/* ===================== DATA (sample) ===================== */
+const GIFTS = [
+  {id:'G1021',name:'Rose',ic:'🌹',price:44,qty:[1,2,5,10,20],total:880,sort:1,on:true},
+  {id:'G1033',name:'Lily',ic:'🌷',price:99,qty:[1,2,5,10],total:990,sort:2,on:true},
+  {id:'G1009',name:'Crystal Heart',ic:'💗',price:199,qty:[1,2,5],total:995,sort:3,on:true},
+  {id:'G1055',name:'Royal Crown',ic:'👑',price:520,qty:[1,2],total:1040,sort:4,on:false},
+];
+const SPECIAL = [
+  {id:'G2001',name:'Golden Rose',ic:'🌹',price:999,qty:1,anim:'anim_sp_001',thanks:'Thank you for making my wish come true! 💖',inti:20,on:true},
+  {id:'G2002',name:'Star Diamond',ic:'💎',price:1314,qty:1,anim:'anim_sp_002',thanks:'You are my shining star ✨',inti:50,on:true},
+];
+const ANCHORS = [
+  {id:'A88231',name:'Layla',region:'🇸🇦 沙特',gift:true,earn:3120,payers:14,days:7,sp:'已解锁',ver:'v2',unlock:'2026-07-28 09:12',risk:'正常'},
+  {id:'A77420',name:'Noor',region:'🇦🇪 阿联酋',gift:true,earn:2860,payers:11,days:6,sp:'未解锁',ver:'-',unlock:'-',risk:'正常'},
+  {id:'A90155',name:'Yara',region:'🇪🇬 埃及',gift:false,earn:0,payers:0,days:0,sp:'未解锁',ver:'-',unlock:'-',risk:'暂停收礼'},
+];
+const LOGS = [
+  {time:'2026-08-03 10:30',user:'Admin',mod:'心愿礼物配置',obj:'GP1008',type:'发布配置',before:'v2',after:'v3',effect:'立即生效',reason:'调整目标价值区间 800-1200',res:'成功',ver:'v3'},
+  {time:'2026-08-02 16:45',user:'Ops_Lina',mod:'基础礼物池',obj:'G1021',type:'编辑规则',before:'qty 1/2/5',after:'qty 1/2/5/10/20',effect:'2026-08-03 00:00',reason:'放开 Rose 目标数量',res:'成功',ver:'v2'},
+  {time:'2026-08-01 11:20',user:'Risk_Kai',mod:'主播特殊资格',obj:'A90155',type:'暂停资格',before:'正常',after:'暂停收礼',effect:'立即生效',reason:'风控命中异常收礼',res:'成功',ver:'-'},
+  {time:'2026-07-31 14:08',user:'Ops_Lina',mod:'特殊礼物解锁规则',obj:'GP1008',type:'创建规则版本',before:'-',after:'v2',effect:'2026-08-01 00:00',reason:'首批解锁阈值配置',res:'成功',ver:'v2'},
+  {time:'2026-07-30 09:50',user:'Admin',mod:'心愿礼物配置',obj:'GP1008',type:'发布配置',before:'v1',after:'v2',effect:'立即生效',reason:'首次上线',res:'成功',ver:'v2'},
+];
+
+/* ===================== ROLE PERMISSIONS ===================== */
+const ROLE = {
+  super:{name:'Admin（超级管理员）',perm:{view:1,edit:1,publish:1,stop:1,manageAnchor:1,log:1,risk:1}},
+  op:{name:'Ops_Lina（运营管理员）',perm:{view:1,edit:1,publish:0,stop:1,manageAnchor:0,log:1,risk:0}},
+  risk:{name:'Risk_Kai（风控管理员）',perm:{view:1,edit:0,publish:0,stop:0,manageAnchor:1,log:1,risk:1}},
+  read:{name:'Viewer（只读账号）',perm:{view:1,edit:0,publish:0,stop:0,manageAnchor:0,log:1,risk:0}},
+};
+function can(k){return !!ROLE[S.role].perm[k];}
+
+/* ===================== HELPERS ===================== */
+const $=s=>document.querySelector(s);
+const esc=s=>(s==null?'':(''+s)).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+function toast(msg,type){
+  const t=document.createElement('div');
+  t.className='toast '+(type||'');
+  t.innerHTML='<span class="ti">'+(type==='ok'?'✅':type==='err'?'⚠️':'ℹ️')+'</span>'+esc(msg);
+  $('#toasts').appendChild(t);
+  setTimeout(()=>{t.style.opacity='0';t.style.transition='.3s';setTimeout(()=>t.remove(),300);},2600);
+}
+function statusTag(on,onTxt,offTxt){
+  return on?'<span class="st on"><span class="dot" style="background:var(--grn)"></span>'+(onTxt||'启用')+'</span>'
+          :'<span class="st off"><span class="dot" style="background:#c0c4cc"></span>'+(offTxt||'停用')+'</span>';
+}
+
+/* ===================== PANEL BUILD ===================== */
+const PG = {
+  page:[['list','礼物玩法列表'],['config','心愿礼物配置'],['anchor','主播资格管理'],['log','操作日志']],
+  feature:[['true','功能启用'],['false','功能停用']],
+  pool:[['normal','正常数据'],['empty','空数据'],['loading','加载中'],['error','加载失败']],
+  special:[['off','未启用'],['on-empty','已启用·池空'],['on-gifts','已启用·有礼物'],['rule-off','解锁规则未配'],['rule-on','解锁规则已配']],
+  form:[['normal','正常'],['dirty','未保存修改'],['invalid','校验失败'],['saving','保存中'],['success','保存成功'],['fail','保存失败']],
+  role:[['super','超级管理员'],['op','运营管理员'],['risk','风控管理员'],['read','只读账号']],
+};
+function buildPanel(){
+  const map={page:'pgPage',feature:'pgFeature',pool:'pgPool',special:'pgSpecial',form:'pgForm',role:'pgRole'};
+  for(const k in map){
+    const box=$('#'+map[k]); box.innerHTML='';
+    PG[k].forEach(([v,lbl])=>{
+      const b=document.createElement('div');
+      b.className='pbtn';
+      let on=false;
+      if(k==='page')on=S.page===v;
+      else if(k==='feature')on=(S.feature===true)+''===v;
+      else if(k==='pool')on=S.pool===v;
+      else if(k==='special')on=S.special===v;
+      else if(k==='form')on=S.form===v;
+      else if(k==='role')on=S.role===v;
+      if(on)b.classList.add('on');
+      b.textContent=lbl;
+      b.onclick=()=>setState(k,v);
+      box.appendChild(b);
+    });
+  }
+}
+function setState(k,v){
+  if(k==='page')S.page=v;
+  else if(k==='feature')S.feature=v==='true';
+  else if(k==='pool')S.pool=v;
+  else if(k==='special'){S.special=v; if(v==='off'){S.specialOn=false;S.specialRuleOn=false;} else {S.specialOn=true; S.specialRuleOn=(v==='rule-on');}}
+  else if(k==='form')S.form=v;
+  else if(k==='role')S.role=v;
+  render();
+}
+
+/* ===================== RENDER SWITCH ===================== */
+function render(){
+  buildPanel();
+  $('#whoName').textContent=ROLE[S.role].name;
+  $('#whoAv').textContent=ROLE[S.role].name.charAt(0);
+  if(S.page==='list')renderList();
+  else if(S.page==='config')renderConfig();
+  else if(S.page==='anchor')renderAnchor();
+  else if(S.page==='log')renderLog();
+}
+
+/* ===================== PAGE 1: 玩法列表 ===================== */
+function renderList(){
+  $('#crumbs').innerHTML='礼物中心 <span style="margin:0 6px;color:#bbb">/</span> <span class="cur">礼物玩法</span>';
+  const rows=`
+  <tr>
+    <td><span class="kv">GP1008</span></td>
+    <td>1v1 心愿礼物</td>
+    <td><span class="kv">WISH_GIFT</span></td>
+    <td>${statusTag(true)}</td>
+    <td>全部地区</td>
+    <td>长期有效</td>
+    <td>18</td>
+    <td>Admin</td>
+    <td>2026-08-03 10:30</td>
+    <td><div class="op">
+      <a onclick="setState('page','config')">配置规则</a>
+      <a class="d" ${can('stop')?'':'style="opacity:.4;pointer-events:none"'}>停用</a>
+      <a class="g" onclick="setState('page','log')">操作记录</a>
+    </div></td>
+  </tr>`;
+  const sampleRows=`
+  <tr><td><span class="kv">GP1001</span></td><td>周星礼物</td><td><span class="kv">WEEKLY_STAR</span></td><td>${statusTag(true)}</td><td>全部地区</td><td>长期有效</td><td>6</td><td>Admin</td><td>2026-05-12 09:00</td><td><div class="op"><a>配置规则</a><a class="d">停用</a><a class="g">操作记录</a></div></td></tr>
+  <tr><td><span class="kv">GP1002</span></td><td>幸运礼物</td><td><span class="kv">LUCKY</span></td><td>${statusTag(true)}</td><td>全部地区</td><td>长期有效</td><td>9</td><td>Ops_Lina</td><td>2026-06-01 14:20</td><td><div class="op"><a>配置规则</a><a class="d">停用</a><a class="g">操作记录</a></div></td></tr>
+  <tr><td><span class="kv">GP1003</span></td><td>榜单礼物</td><td><span class="kv">RANK</span></td><td>${statusTag(false)}</td><td>全部地区</td><td>已结束</td><td>4</td><td>Admin</td><td>2026-04-18 11:00</td><td><div class="op"><a>配置规则</a><a>启用</a><a class="g">操作记录</a></div></td></tr>`;
+  $('#page').innerHTML=`
+  <div class="page-title">礼物玩法配置</div>
+  <div class="page-sub">统一管理参与不同礼物玩法的礼物范围、生效状态和基础规则。心愿礼物作为 <span class="kv">WISH_GIFT</span> 类型归属现有"礼物玩法"体系，不单独建系统。</div>
+  <div class="card">
+    <div class="card-h"><div class="t">筛选</div></div>
+    <div class="filters">
+      <div class="fld"><label>玩法 ID</label><input placeholder="如 GP1008"></div>
+      <div class="fld"><label>玩法名称</label><input placeholder="如 心愿礼物"></div>
+      <div class="fld"><label>玩法类型</label><select><option>全部</option><option>周星礼物</option><option>幸运礼物</option><option>榜单礼物</option><option>活动礼物</option><option>WISH_GIFT 心愿礼物</option></select></div>
+      <div class="fld"><label>状态</label><select><option>全部</option><option>启用</option><option>停用</option></select></div>
+      <div class="fld"><label>生效地区</label><select><option>全部</option><option>全部地区</option><option>指定国家</option><option>灰度用户组</option></select></div>
+      <div class="fld"><label>创建时间</label><input type="date"></div>
+      <div class="actions">
+        <button class="btn p">查询</button>
+        <button class="btn">重置</button>
+        <button class="btn ghost" ${can('edit')?'':'disabled'}>＋ 新增玩法</button>
+      </div>
+    </div>
+  </div>
+  <div class="card">
+    <div class="card-h"><div class="t">玩法列表 <small>共 4 条（示例）</small></div></div>
+    <table>
+      <thead><tr><th>玩法 ID</th><th>玩法名称</th><th>玩法类型</th><th>状态</th><th>生效地区</th><th>生效时间</th><th>关联礼物数</th><th>创建人</th><th>更新时间</th><th>操作</th></tr></thead>
+      <tbody>${rows}${sampleRows}</tbody>
+    </table>
+  </div>`;
+}
+
+/* ===================== PAGE 2: 心愿配置 ===================== */
+function renderConfig(){
+  $('#crumbs').innerHTML='礼物中心 <span style="margin:0 6px;color:#bbb">/</span> 礼物玩法 <span style="margin:0 6px;color:#bbb">/</span> <span class="cur">1v1 心愿礼物配置</span>';
+  const pubBtn=can('publish')?'<button class="btn p" onclick="publish()">发布配置</button>':'<button class="btn p" disabled>发布配置</button>';
+  const draftBtn=can('edit')?'<button class="btn" onclick="saveDraft()">保存草稿</button>':'<button class="btn" disabled>保存草稿</button>';
+  $('#page').innerHTML=`
+  <div style="display:flex;align-items:center;justify-content:space-between">
+    <div class="page-title">1v1 心愿礼物配置</div>
+    <div style="display:flex;gap:10px">
+      <button class="btn" onclick="setState('page','list')">← 返回</button>
+      ${draftBtn}${pubBtn}
+      <button class="btn ghost" onclick="setState('page','log')">查看操作记录</button>
+    </div>
+  </div>
+  <div class="page-sub">玩法类型 <span class="kv">WISH_GIFT</span> · 本页仅配置心愿玩法参数，礼物价格/图标/基础动画均从礼物中心读取。</div>
+  ${formBanner()}
+
+  <div class="sumbar">
+    <div class="si"><div class="k">玩法 ID</div><div class="v"><span class="kv">GP1008</span></div></div>
+    <div class="si"><div class="k">玩法名称</div><div class="v">1v1 心愿礼物</div></div>
+    <div class="si"><div class="k">当前状态</div><div class="v">${S.feature?statusTag(true):statusTag(false)}</div></div>
+    <div class="si"><div class="k">生效地区</div><div class="v">全部地区</div></div>
+    <div class="si"><div class="k">生效时间</div><div class="v">长期有效</div></div>
+    <div class="si"><div class="k">最近发布人</div><div class="v">${S.form==='success'?'Ops_Lina':'Admin'}</div></div>
+    <div class="si"><div class="k">最近发布时间</div><div class="v">2026-08-03 10:30</div></div>
+  </div>
+
+  <div class="modnav" id="modnav">
+    <a class="on" data-m="m1" onclick="jump('m1')">基础设置</a>
+    <a data-m="m2" onclick="jump('m2')">基础心愿礼物池</a>
+    <a data-m="m3" onclick="jump('m3')">心愿目标规则</a>
+    <a data-m="m4" onclick="jump('m4')">特殊礼物模块</a>
+    <a data-m="m5" onclick="jump('m5')">发布与版本信息</a>
+  </div>
+
+  ${module1()}
+  ${module2()}
+  ${module3()}
+  ${module4()}
+  ${module5()}
+  `;
+}
+function jump(m){
+  document.querySelectorAll('#modnav a').forEach(a=>a.classList.toggle('on',a.dataset.m===m));
+  const el=document.getElementById(m); if(el)el.scrollIntoView({behavior:'smooth',block:'start'});
+}
+function formBanner(){
+  if(S.form==='invalid')return `<div style="background:var(--red-l);border:1px solid #f3c2c2;color:#b91c1c;border-radius:9px;padding:11px 14px;font-size:12.5px;margin-bottom:14px">⚠️ <b>表单校验未通过</b>：存在必填缺失或目标总价值越界，请修正后重试。</div>`;
+  if(S.form==='fail')return `<div style="background:var(--red-l);border:1px solid #f3c2c2;color:#b91c1c;border-radius:9px;padding:11px 14px;font-size:12.5px;margin-bottom:14px">⚠️ <b>保存失败</b>：网络异常或服务端拒绝，请稍后重试。</div>`;
+  if(S.form==='saving')return `<div style="background:var(--p-l);border:1px solid #d9ccfb;color:var(--p-d);border-radius:9px;padding:11px 14px;font-size:12.5px;margin-bottom:14px">⏳ 正在保存 / 发布配置…</div>`;
+  return '';
+}
+
+/* --- module 1: 基础设置 --- */
+function module1(){
+  const disabled=!can('edit')?'disabled':'';
+  return `<div class="card" id="m1">
+    <div class="card-h"><div class="t">① 基础设置 <small>玩法级开关与全局规则</small></div></div>
+    <div class="card-b">
+      <div class="form-grid">
+        <div class="fitem">
+          <label>心愿礼物功能状态 <span class="kv">feature_enabled</span></label>
+          <div style="display:flex;align-items:center;gap:12px">
+            <div class="switch ${S.feature?'on':''}" id="swFeat" onclick="toggleFeat()"><i></i></div>
+            <span>${S.feature?'启用':'停用'}</span>
+          </div>
+          <div class="hint">停用时需二次确认：停用后主播无法新增或修改心愿礼物；已完成订单和历史数据不受影响。</div>
+        </div>
+        <div class="fitem">
+          <label>生效地区 <span class="kv">region_scope</span></label>
+          <select class="fsel" ${disabled}><option>全部地区</option><option>指定国家或地区</option><option>灰度用户组</option></select>
+          <div class="hint">选择"指定国家"或"灰度用户组"后展示明细配置。</div>
+        </div>
+        <div class="fitem">
+          <label>iOS 最低版本 <span class="kv">minimum_client_version.ios</span></label>
+          <input class="finput" value="8.12.0" ${disabled}>
+        </div>
+        <div class="fitem">
+          <label>Android 最低版本 <span class="kv">minimum_client_version.android</span></label>
+          <input class="finput" value="8.12.0" ${disabled}>
+        </div>
+        <div class="fitem">
+          <label>每日重置时区 <span class="kv">daily_reset_timezone</span></label>
+          <input class="finput" value="UTC+3 Riyadh Time" ${disabled}>
+          <div class="hint">主播当日心愿清单按该时区进行自然日重置。</div>
+        </div>
+        <div class="fitem">
+          <label>每日最大有效心愿数量 <span class="kv">max_active_wishes</span></label>
+          <input class="finput" value="3" readonly>
+          <div class="hint"><span class="tag-readonly">🔒 固定产品规则，不支持运营修改</span></div>
+        </div>
+        <div class="fitem full">
+          <label>心愿进度统计方式 <span class="kv">progress_scope</span></label>
+          <input class="finput" value='按"主播 + 赠送用户 + 心愿配置版本"独立统计' readonly>
+          <div class="hint"><span class="tag-readonly">🔒 只读</span> 不同用户之间不共享同一个心愿进度。</div>
+        </div>
+        <div class="fitem full">
+          <label>收益结算规则</label>
+          <input class="finput" value="复用现有礼物钻石结算规则" readonly>
+          <div class="hint"><span class="tag-readonly">🔒 只读</span> 不允许单独配置额外钻石奖励（固定产品规则 #7/#8）。</div>
+        </div>
+      </div>
+    </div>
+  </div>`;
+}
+function toggleFeat(){
+  if(!can('edit'))return;
+  if(S.feature){
+    openModal('<div class="mh">停用确认<div class="x" onclick="closeModal()">✕</div></div>'+
+      '<div class="mb"><p style="line-height:1.7;color:#444">确认停用 <b>1v1 心愿礼物</b>（GP1008）？</p>'+
+      '<div style="background:var(--red-l);border:1px solid #f3c2c2;color:#b91c1c;border-radius:8px;padding:11px;font-size:12.5px;line-height:1.6">停用后，主播无法新增或修改心愿礼物；已完成订单和历史数据不受影响。</div></div>'+
+      '<div class="mf"><button class="btn" onclick="closeModal()">取消</button><button class="btn danger" onclick="doToggleFeat(false)">确认停用</button></div>');
+  } else { doToggleFeat(true); }
+}
+function doToggleFeat(v){
+  S.feature=v; closeModal(); S.form='dirty'; render();
+  toast(v?'已启用心愿礼物功能':'已停用心愿礼物功能');
+}
+
+/* --- module 2: 基础心愿礼物池 --- */
+function module2(){
+  const disabled=!can('edit');
+  let body='';
+  if(S.pool==='loading'){
+    body=`<div class="loading"><div class="spin"></div>基础心愿礼物池加载中…</div>`;
+  } else if(S.pool==='error'){
+    body=`<div class="errbox"><div class="e-ic">⚠️</div><div class="e-t">数据加载失败</div><button class="btn sm" style="margin-top:12px" onclick="setState('pool','normal')">重试</button></div>`;
+  } else if(S.pool==='empty'){
+    body=`<div class="empty"><div class="e-ic">🎁</div><div class="e-t">基础心愿礼物池为空，请添加礼物</div></div>`;
+  } else {
+    const rows=GIFTS.map(g=>`
+      <tr>
+        <td><span class="gicon">${g.ic}</span></td>
+        <td><span class="kv">${g.id}</span></td>
+        <td>${g.name}</td>
+        <td>💎 ${g.price.toLocaleString()}</td>
+        <td>${g.qty.join(' / ')}</td>
+        <td>💎 ${g.total.toLocaleString()}</td>
+        <td>${g.sort}</td>
+        <td>${g.on?statusTag(true):statusTag(false)}</td>
+        <td><div class="op">
+          <a onclick="editGift('${g.id}')">编辑规则</a>
+          ${g.on?`<a class="d" ${disabled?'style="opacity:.4;pointer-events:none"':''} onclick="toggleGift('${g.id}',false)">停用</a>`:`<a ${disabled?'style="opacity:.4;pointer-events:none"':''} onclick="toggleGift('${g.id}',true)">启用</a>`}
+          <a class="d" ${disabled?'style="opacity:.4;pointer-events:none"':''} onclick="delGift('${g.id}')">删除</a>
+        </div></td>
+      </tr>`).join('');
+    body=`<table><thead><tr><th>图标</th><th>礼物 ID</th><th>名称</th><th>当前金币价格</th><th>允许目标数量</th><th>目标总价值</th><th>排序</th><th>启用状态</th><th>操作</th></tr></thead><tbody>${rows}</tbody></table>
+    <div class="ptip" style="padding:10px 14px">💡 礼物名称/图标/价格/基础动画均为<b>只读引用</b>，来自礼物中心，本页不重复配置。</div>`;
+  }
+  const addBtn=disabled?'<button class="btn p" disabled>＋ 添加礼物</button>':'<button class="btn p" onclick="addGift()">＋ 添加礼物</button>';
+  const batch=disabled?'<button class="btn" disabled>批量启用</button><button class="btn" disabled>批量停用</button>':'<button class="btn" onclick="toast(\'已批量启用（示例）\')">批量启用</button><button class="btn" onclick="toast(\'已批量停用（示例）\')">批量停用</button>';
+  return `<div class="card" id="m2">
+    <div class="card-h"><div class="t">② 基础心愿礼物池 <small>主播仅可从此池选择心愿礼物</small></div>
+      <div style="display:flex;gap:8px">${batch}${addBtn}</div></div>
+    <div class="filters">
+      <div class="fld"><label>礼物 ID</label><input placeholder="如 G1021"></div>
+      <div class="fld"><label>礼物名称</label><input placeholder="如 Rose"></div>
+      <div class="fld"><label>价格范围</label><select><option>全部</option><option>0-100</option><option>100-500</option><option>500+</option></select></div>
+      <div class="fld"><label>启用状态</label><select><option>全部</option><option>启用</option><option>停用</option></select></div>
+      <div class="fld"><label>生效状态</label><select><option>全部</option><option>生效中</option><option>已结束</option></select></div>
+      <div class="actions"><button class="btn p">查询</button><button class="btn">重置</button></div>
+    </div>
+    ${body}
+  </div>`;
+}
+function toggleGift(id,v){
+  const g=GIFTS.find(x=>x.id===id); if(g){g.on=v; S.form='dirty'; render(); toast(v?('已启用 '+g.name):('已停用 '+g.name));}
+}
+function delGift(id){
+  const g=GIFTS.find(x=>x.id===id); if(!g)return;
+  openModal('<div class="mh">删除确认<div class="x" onclick="closeModal()">✕</div></div>'+
+    '<div class="mb"><p>确认从基础心愿礼物池删除 <b>'+g.name+'</b>（'+g.id+'）？</p>'+
+    '<div style="background:var(--red-l);border:1px solid #f3c2c2;color:#b91c1c;border-radius:8px;padding:11px;font-size:12.5px">删除后该礼物不再出现在主播心愿选择列表中，已在进行中的心愿不受影响。</div></div>'+
+    '<div class="mf"><button class="btn" onclick="closeModal()">取消</button><button class="btn danger" onclick="doDelGift(\''+id+'\')">确认删除</button></div>');
+}
+function doDelGift(id){
+  const i=GIFTS.findIndex(x=>x.id===id); if(i>=0)GIFTS.splice(i,1);
+  closeModal(); S.form='dirty'; render(); toast('已删除礼物');
+}
+function editGift(id){
+  const g=GIFTS.find(x=>x.id===id); if(!g)return;
+  const qopts=[1,2,5,10,20].map(q=>`<label style="display:inline-flex;align-items:center;gap:4px;margin-right:12px"><input type="checkbox" ${g.qty.includes(q)?'checked':''} value="${q}"> ${q}</label>`).join('');
+  openModal(`<div class="mh">编辑规则 · ${g.name}<div class="x" onclick="closeModal()">✕</div></div>
+  <div class="mb">
+    <div style="display:flex;gap:12px;align-items:center;margin-bottom:14px"><span class="gicon">${g.ic}</span>
+      <div><div style="font-weight:700">${g.name}</div><div style="font-size:11px;color:#939aa8">${g.id} · 当前金币价格 💎 ${g.price}（来自礼物中心，只读）</div></div></div>
+    <div class="fitem"><label>允许的目标数量 <span class="kv">allowed_target_quantities</span></label><div>${qopts}</div>
+      <div class="hint">礼物单价 × 目标数量须落在"心愿目标规则"价值区间内。示例：44 × 20 = 880。</div></div>
+    <div class="fitem" style="margin-top:14px"><label>排序值 <span class="kv">sort_order</span></label><input class="finput" id="egSort" value="${g.sort}"></div>
+    <div class="fitem" style="margin-top:14px"><label>生效时间</label>
+      <div class="seg"><span class="on">长期有效</span><span>指定时间范围</span></div></div>
+    <div class="fitem" style="margin-top:14px"><label>状态</label>
+      <div class="seg"><span class="${g.on?'on':''}">启用</span><span class="${g.on?'':'on'}">停用</span></div></div>
+  </div>
+  <div class="mf"><button class="btn" onclick="closeModal()">取消</button><button class="btn p" onclick="saveGiftEdit('${id}')">保存</button></div>`,true);
+}
+function saveGiftEdit(id){
+  const g=GIFTS.find(x=>x.id===id); if(g){const s=document.getElementById('egSort'); if(s)g.sort=+s.value||g.sort;}
+  closeModal(); S.form='dirty'; render(); toast('已保存礼物规则（示例）');
+}
+function addGift(){
+  // candidate list from gift center (read-only)
+  const cand=[{id:'G1066',name:'Sunflower',ic:'🌻',price:66,st:'启用'},{id:'G1071',name:'Bluebell',ic:'🔔',price:88,st:'启用'},{id:'G1044',name:'Old Rose',ic:'🥀',price:30,st:'停用'}];
+  const rows=cand.map(c=>`<tr><td><span class="gicon">${c.ic}</span></td><td><span class="kv">${c.id}</span></td><td>${c.name}</td><td>💎 ${c.price}</td><td>${statusTag(c.st==='启用')}</td><td><button class="btn sm" onclick="selCand('${c.id}')">选择</button></td></tr>`).join('');
+  openModal(`<div class="mh">添加礼物 · 从礼物中心选择<div class="x" onclick="closeModal()">✕</div></div>
+  <div class="mb">
+    <div class="fitem"><label>搜索礼物</label><input class="finput" placeholder="礼物 ID / 名称"></div>
+    <div style="margin:12px 0 6px;font-size:12px;font-weight:600">从现有礼物中心选择（名称/价格/图标不可手动输入）</div>
+    <table><thead><tr><th>图标</th><th>ID</th><th>名称</th><th>价格</th><th>状态</th><th></th></tr></thead><tbody>${rows}</tbody></table>
+    <div id="addForm" style="display:none;margin-top:14px;border-top:1px solid #eee;padding-top:14px">
+      <div id="addChosen" style="font-weight:700;margin-bottom:12px"></div>
+      <div class="fitem"><label>允许的目标数量 <span class="kv">allowed_target_quantities</span> <span class="err" id="errQty">请至少选择一个目标数量</span></label>
+        <div>${[1,2,5,10,20].map(q=>`<label style="display:inline-flex;align-items:center;gap:4px;margin-right:12px"><input type="checkbox" class="addq" value="${q}"> ${q}</label>`).join('')}</div></div>
+      <div class="fitem" style="margin-top:12px"><label>目标总价值预览</label><div id="addPreview" style="font-weight:700;color:var(--p-d)">—</div>
+        <div class="hint">单价 × 目标数量，须落在统一目标价值区间（默认 800–1200）。</div></div>
+      <div class="fitem" style="margin-top:12px"><label>排序值 <span class="kv">sort_order</span></label><input class="finput" id="addSort" value="${GIFTS.length+1}"></div>
+      <div class="fitem" style="margin-top:12px"><label>生效时间</label><div class="seg"><span class="on">长期有效</span><span>指定时间范围</span></div></div>
+      <div class="fitem" style="margin-top:12px"><label>状态</label><div class="seg"><span class="on">启用</span><span>停用</span></div></div>
+    </div>
+  </div>
+  <div class="mf"><button class="btn" onclick="closeModal()">取消</button><button class="btn p" id="addConfirm" style="display:none" onclick="confirmAdd()">确认添加</button></div>`,true);
+  window._cand=null;
+}
+function selCand(id){
+  const c={G1066:{name:'Sunflower',ic:'🌻',price:66},G1071:{name:'Bluebell',ic:'🔔',price:88},G1044:{name:'Old Rose',ic:'🥀',price:30,disabled:true}}[id];
+  if(c.disabled){toast('该礼物在礼物中心已停用，无法加入心愿池','err');return;}
+  window._cand={id,...c};
+  $('#addChosen').textContent='已选：'+c.ic+' '+c.name+'（'+id+' · 💎'+c.price+'）';
+  $('#addForm').style.display='block';
+  $('#addConfirm').style.display='inline-flex';
+  // recompute preview live
+  document.querySelectorAll('.addq').forEach(ch=>ch.onchange=updPrev);
+}
+function updPrev(){
+  if(!window._cand)return;
+  const qs=[...document.querySelectorAll('.addq')].filter(c=>c.checked).map(c=>+c.value);
+  if(!qs.length){$('#addPreview').textContent='—';return;}
+  const vals=qs.map(q=>window._cand.price*q);
+  $('#addPreview').textContent='💎 '+vals.join(' / ')+' （'+window._cand.price+' × 目标数量）';
+}
+function confirmAdd(){
+  if(!window._cand){toast('请先选择礼物','err');return;}
+  const qs=[...document.querySelectorAll('.addq')].filter(c=>c.checked).map(c=>+c.value);
+  if(!qs.length){toast('请至少选择一个目标数量','err');return;}
+  // value-range check (sample rule 800-1200)
+  const ok=qs.some(q=>{const t=window._cand.price*q;return t>=800&&t<=1200;});
+  if(!ok){toast('目标总价值不满足规则（须 800–1200），示例数据','err');return;}
+  const sort=document.getElementById('addSort').value;
+  GIFTS.push({id:window._cand.id,name:window._cand.name,ic:window._cand.ic,price:window._cand.price,qty:qs,total:window._cand.price*qs[qs.length-1],sort:+sort||GIFTS.length+1,on:true});
+  closeModal(); S.form='dirty'; S.pool='normal'; render(); toast('已添加礼物到心愿池（示例）');
+}
+
+/* --- module 3: 心愿目标规则 --- */
+function module3(){
+  const disabled=!can('edit');
+  const rmode=S.targetMode==='unified'?'unified':'per-item';
+  const preview=`<table><thead><tr><th>礼物</th><th>单价</th><th>可选数量</th><th>目标总价值</th><th>是否有效</th></tr></thead><tbody>
+    <tr><td>🌹 Rose</td><td>💎 44</td><td>20</td><td>💎 880</td><td><span class="st on"><span class="dot" style="background:var(--grn)"></span>有效</span></td></tr>
+    <tr><td>🌷 Lily</td><td>💎 99</td><td>10</td><td>💎 990</td><td><span class="st on"><span class="dot" style="background:var(--grn)"></span>有效</span></td></tr>
+    <tr><td>💗 Crystal Heart</td><td>💎 199</td><td>5</td><td>💎 995</td><td><span class="st on"><span class="dot" style="background:var(--grn)"></span>有效</span></td></tr>
+    <tr><td>Example Gift</td><td>💎 500</td><td>1</td><td>💎 500</td><td><span class="st off"><span class="dot" style="background:#c0c4cc"></span>无效</span></td></tr>
+  </tbody></table><div class="ptip" style="padding:8px 2px">⚠ 上述数值仅为示例数据（SAMPLE DATA）。</div>`;
+  return `<div class="card" id="m3">
+    <div class="card-h"><div class="t">③ 心愿目标规则 <small>控制低价礼物/极低目标数量降低难度</small></div></div>
+    <div class="card-b">
+      <div class="form-grid">
+        <div class="fitem">
+          <label>目标规则模式 <span class="kv">target_rule_mode</span></label>
+          <div class="seg" id="segMode">
+            <span class="${rmode==='unified'?'on':''}" onclick="setMode('unified')">统一目标价值区间</span>
+            <span class="${rmode==='per-item'?'on':''}" onclick="setMode('per-item')">按礼物单独配置</span>
+          </div>
+          <div class="hint">推荐默认：统一目标价值区间。</div>
+        </div>
+        <div class="fitem">
+          <label>数量生成方式 <span class="kv">quantity_generation_mode</span></label>
+          <div class="seg" id="segQty">
+            <span class="${S.qtyMode==='auto'?'on':''}" onclick="setQty('auto')">系统自动推荐</span>
+            <span class="${S.qtyMode==='manual'?'on':''}" onclick="setQty('manual')">运营逐礼物配置</span>
+          </div>
+        </div>
+      </div>
+      <div id="unifiedBox" style="display:${rmode==='unified'?'block':'none'}">
+        <div class="row2" style="margin-top:6px">
+          <div class="fitem"><label>最低目标总价值 <span class="kv">minimum_target_value</span></label>
+            <div style="display:flex;align-items:center;gap:6px"><input class="finput" value="800" ${disabled} style="width:120px"><span>金币</span></div></div>
+          <div class="fitem"><label>最高目标总价值 <span class="kv">maximum_target_value</span></label>
+            <div style="display:flex;align-items:center;gap:6px"><input class="finput" value="1200" ${disabled} style="width:120px"><span>金币</span></div></div>
+        </div>
+        <div class="fitem" style="margin-top:14px"><label>超出范围处理 <span class="kv">out_of_range_action</span></label>
+          <div class="seg" id="segOOR">
+            <span class="${S.outOfRange==='hide'?'on':''}" onclick="setOOR('hide')">隐藏不符合的数量</span>
+            <span class="${S.outOfRange==='forbid'?'on':''}" onclick="setOOR('forbid')">禁止主播选择</span>
+            <span class="${S.outOfRange==='prompt'?'on':''}" onclick="setOOR('prompt')">提示更换数量</span>
+          </div>
+          <div class="hint">推荐默认：隐藏不符合规则的目标数量。</div></div>
+      </div>
+      <div class="sec-div">规则预览（示例数据 SAMPLE DATA）</div>
+      ${preview}
+    </div>
+  </div>`;
+}
+function setMode(m){S.targetMode=m;S.form='dirty';render();}
+function setQty(m){S.qtyMode=m;S.form='dirty';render();}
+function setOOR(m){S.outOfRange=m;S.form='dirty';render();}
+
+/* --- module 4: 特殊礼物模块 --- */
+function module4(){
+  const disabled=!can('edit');
+  const on=S.specialOn;
+  let inner='';
+  if(!on){
+    inner=`<div class="empty"><div class="e-ic">🎁</div><div class="e-t">当前未启用特殊心愿礼物。开启后展开特殊礼物池与解锁规则配置。</div></div>`;
+  } else {
+    // pool
+    let poolHtml='';
+    if(S.special==='on-empty'){
+      poolHtml=`<div class="empty"><div class="e-ic">✨</div><div class="e-t">特殊礼物池为空，请添加特殊礼物</div></div>`;
+    } else {
+      const rows=SPECIAL.map(s=>`
+        <tr><td><span class="gicon">${s.ic}</span></td><td><span class="kv">${s.id}</span></td><td>${s.name}</td><td>💎 ${s.price}</td><td>${s.qty}</td>
+          <td><span class="kv">${s.anim}</span></td><td style="max-width:160px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${s.thanks}</td>
+          <td>亲密值 +${s.inti}</td><td>长期有效</td><td>${s.on?statusTag(true):statusTag(false)}</td>
+          <td><div class="op"><a onclick="editSpecial('${s.id}')">编辑</a><a class="d" ${disabled?'style="opacity:.4;pointer-events:none"':''} onclick="delSpecial('${s.id}')">删除</a></div></td></tr>`).join('');
+      poolHtml=`<table><thead><tr><th>图标</th><th>ID</th><th>名称</th><th>价格</th><th>目标数量</th><th>专属动画</th><th>感谢消息模板</th><th>亲密值</th><th>生效时间</th><th>状态</th><th>操作</th></tr></thead><tbody>${rows}</tbody></table>`;
+    }
+    const addSp=disabled?'<button class="btn p" disabled>＋ 添加特殊礼物</button>':'<button class="btn p" onclick="addSpecial()">＋ 添加特殊礼物</button>';
+    // unlock rule
+    let ruleHtml='';
+    if(S.special==='rule-off'||S.special==='on-empty'){
+      ruleHtml=`<div class="empty"><div class="e-ic">🔓</div><div class="e-t">解锁规则未配置，请配置后主播方可解锁特殊礼物资格</div></div>`;
+    } else {
+      ruleHtml=`
+      <div class="row2">
+        <div class="fitem"><label>统计周期 <span class="kv">statistical_period_days</span></label><input class="finput" value="最近 7 个完整自然日" readonly><div class="hint">统计周期<b>不包含</b>当前尚未结束的自然日。</div></div>
+        <div class="fitem"><label>资格有效期 <span class="kv">unlock_validity_type</span></label>
+          <div class="seg"><span class="on">永久解锁</span><span>有效 N 天</span></div>
+          <div class="hint"><span class="tag-confirm">Sample configuration</span> 第一版默认"永久解锁"，不代表最终确认规则。</div></div>
+      </div>
+      <div class="sec-div">解锁条件（阈值均为示例数据，待结合上线数据确认）</div>
+      <div class="form-grid">
+        <div class="fitem"><label>有效心愿收益 <span class="kv">valid_wish_earnings</span></label><input class="finput" value="≥ 💎 3,000" ${disabled}></div>
+        <div class="fitem"><label>独立心愿付费用户数 <span class="kv">unique_wish_payers</span></label><input class="finput" value="≥ 12" ${disabled}><div class="hint">去重维度：主播 ID + 赠送用户 ID。</div></div>
+        <div class="fitem"><label>有效经营天数 <span class="kv">valid_operation_days</span></label><input class="finput" value="≥ 5" ${disabled}></div>
+        <div class="fitem"><label>独立心愿完成用户数 <span class="kv">unique_wish_completers</span></label>
+          <div style="display:flex;align-items:center;gap:10px"><div class="switch on" ${disabled?'style="opacity:.5;pointer-events:none"':''}><i></i></div><span>启用</span></div>
+          <input class="finput" value="≥ 4" ${disabled} style="margin-top:8px"></div>
+      </div>
+      <div class="fitem full" style="margin-top:6px">
+        <label>固定要求（只读，不允许关闭）</label>
+        <div><span class="tag-lock">🔒 主播当前具备正常收礼资格</span> <span class="tag-lock">🔒 主播及相关订单风控状态正常</span></div>
+      </div>
+      <div class="sec-div">解锁逻辑预览</div>
+      <div class="exprt"><span class="kw">近 N 个完整自然日</span> 有效心愿收益 ≥ <span class="ok">G</span>  <span class="cm">AND</span>
+<span class="kw">独立心愿付费用户数</span> ≥ <span class="ok">U</span>  <span class="cm">AND</span>
+<span class="kw">有效经营天数</span> ≥ <span class="ok">D</span>  <span class="cm">AND</span>
+<span class="cm">[可选]</span> <span class="kw">独立心愿完成用户数</span> ≥ <span class="ok">C</span>  <span class="cm">AND</span>
+<span class="kw">主播收礼资格</span> 正常 <span class="cm">AND</span>
+<span class="kw">风控状态</span> 正常
+
+<span class="cm">// G / U / D / C 为示例阈值，具体待结合上线数据确认</span></div>
+      <div class="sec-div">规则版本</div>
+      <table><thead><tr><th>版本号</th><th>生效时间</th><th>失效时间</th><th>创建人</th><th>状态</th><th>说明</th></tr></thead><tbody>
+        <tr><td><span class="kv">v3</span></td><td>2026-08-03 00:00</td><td>长期有效</td><td>Admin</td><td>${statusTag(true)}</td><td>调整解锁阈值（示例）</td></tr>
+        <tr><td><span class="kv">v2</span></td><td>2026-08-01 00:00</td><td>2026-08-02 23:59</td><td>Ops_Lina</td><td>${statusTag(false)}</td><td>首批配置</td></tr>
+      </tbody></table>
+      <div class="ptip" style="padding:6px 2px">每次修改解锁规则创建新版本，不直接覆盖历史规则（固定产品规则）。</div>`;
+    }
+    inner=`<div class="card-h" style="border:none;padding:0 0 10px"><div class="t" style="font-size:13.5px">特殊礼物池</div>${addSp}</div>
+      ${poolHtml}
+      <div class="sec-div">特殊礼物解锁规则</div>
+      ${ruleHtml}`;
+  }
+  return `<div class="fold ${on?'open':''}" id="m4">
+    <div class="fold-h" onclick="toggleFold()">
+      <div class="l"><span>✨ 特殊心愿礼物 <span class="kv">special_gift_enabled</span></span>
+        ${on?'<span class="st info">已启用</span>':'<span class="st off">未启用</span>'}</div>
+      <div style="display:flex;align-items:center;gap:10px">
+        <div class="switch ${on?'on':''}" ${disabled?'':'onclick="toggleSpecial()"'}><i></i></div>
+        <span>${on?'▾':'▸'}</span>
+      </div>
+    </div>
+    <div class="fold-b">
+      <div class="hint" style="margin-bottom:12px">特殊礼物为可选进阶子集：不展示在普通礼物面板、仅通过心愿入口赠送、复用现有结算、不额外增加主播钻石奖励。固定规则以只读标签展示。</div>
+      ${inner}
+    </div>
+  </div>`;
+}
+function toggleFold(){document.getElementById('m4').classList.toggle('open');}
+function toggleSpecial(){
+  if(!can('edit'))return;
+  // sync panel special state
+  if(S.specialOn){S.specialOn=false;S.special='off';S.specialRuleOn=false;}
+  else{S.specialOn=true;S.special='on-gifts';S.specialRuleOn=true;}
+  S.form='dirty'; render();
+  buildPanel();
+}
+function editSpecial(id){toast('编辑特殊礼物（示例）');}
+function delSpecial(id){const i=SPECIAL.findIndex(x=>x.id===id);if(i>=0)SPECIAL.splice(i,1);S.form='dirty';render();toast('已删除特殊礼物');}
+function addSpecial(){
+  openModal(`<div class="mh">添加特殊礼物<div class="x" onclick="closeModal()">✕</div></div>
+  <div class="mb">
+    <div class="fitem"><label>礼物 ID</label><input class="finput" id="spId" placeholder="如 G2003"></div>
+    <div class="fitem" style="margin-top:12px"><label>礼物名称</label><input class="finput" id="spName" placeholder="只读引用礼物中心" readonly value="From 礼物中心"></div>
+    <div class="fitem" style="margin-top:12px"><label>当前价格（只读）</label><input class="finput" id="spPrice" value="💎 999" readonly></div>
+    <div class="fitem" style="margin-top:12px"><label>目标数量</label><input class="finput" id="spQty" value="1"></div>
+    <div class="fitem" style="margin-top:12px"><label>专属动画 ID <span class="kv">anim_id</span></label><input class="finput" id="spAnim" value="anim_sp_003"><div class="hint">动画资源不存在时将报错（示例状态）。</div></div>
+    <div class="fitem" style="margin-top:12px"><label>感谢消息模板</label><input class="finput" id="spTpl" value="You made my wish come true! 💖"><div class="hint">未配置模板将报错（示例状态）。</div></div>
+    <div class="fitem" style="margin-top:12px"><label>亲密值</label><input class="finput" id="spInti" value="30"></div>
+    <div class="fitem" style="margin-top:12px"><label>生效时间</label><div class="seg"><span class="on">长期有效</span><span>指定时间范围</span></div></div>
+    <div class="fitem" style="margin-top:12px"><label>状态</label><div class="seg"><span class="on">启用</span><span>停用</span></div></div>
+    <div class="err" id="spErr" style="display:none;color:var(--red);margin-top:10px"></div>
+  </div>
+  <div class="mf"><button class="btn" onclick="closeModal()">取消</button><button class="btn p" onclick="confirmSpecial()">确认添加</button></div>`,true);
+}
+function confirmSpecial(){
+  const id=document.getElementById('spId').value.trim();
+  const err=document.getElementById('spErr');
+  if(!id){err.style.display='block';err.textContent='礼物 ID 不存在，请从礼物中心有效礼物中选择';return;}
+  SPECIAL.push({id,name:'New Special',ic:'✨',price:999,qty:1,anim:'anim_sp_003',thanks:'You made my wish come true! 💖',inti:30,on:true});
+  closeModal(); S.form='dirty'; S.special='on-gifts'; render(); toast('已添加特殊礼物（示例）');
+}
+
+/* --- module 5: 发布与版本 --- */
+function module5(){
+  const pub=can('publish');
+  const draft=can('edit');
+  return `<div class="card" id="m5">
+    <div class="card-h"><div class="t">⑤ 发布与版本信息</div></div>
+    <div class="card-b">
+      <div class="form-grid">
+        <div class="fitem"><label>当前配置版本</label><input class="finput" value="v3（草稿）" readonly></div>
+        <div class="fitem"><label>最近发布版本</label><input class="finput" value="v2（2026-08-03 10:30 发布）" readonly></div>
+      </div>
+      <div class="sec-div">待确认 / 示例配置项</div>
+      <div style="margin:4px 0 14px">
+        <span class="tag-confirm">特殊礼物解锁阈值待产品确认</span>
+        <span class="tag-confirm">特殊礼物资格是否永久待确认</span>
+        <span class="tag-confirm">跨日未完成心愿处理待确认</span>
+        <span class="tag-confirm">每日允许修改心愿次数待确认</span>
+        <span class="tag-confirm">修改礼物后旧心愿实例处理待确认</span>
+      </div>
+      <div style="display:flex;gap:10px">
+        <button class="btn lg" ${draft?'':'disabled'} onclick="saveDraft()">保存草稿</button>
+        <button class="btn lg p" ${pub?'':'disabled'} onclick="publish()">发布配置</button>
+        <span style="align-self:center;font-size:11.5px;color:#939aa8">${S.form==='dirty'?'● 有未保存修改':S.form==='success'?'✓ 发布成功':'当前为最新已发布版本'}</span>
+      </div>
+    </div>
+  </div>`;
+}
+function saveDraft(){
+  if(!can('edit')){toast('当前角色无编辑权限','err');return;}
+  S.form='saving'; render();
+  setTimeout(()=>{S.form='dirty';render();toast('草稿已保存（示例）');},700);
+}
+function publish(){
+  if(!can('publish')){toast('当前角色无发布权限（仅超级管理员可发布）','err');return;}
+  if(S.form==='invalid'){toast('表单校验未通过，无法发布','err');return;}
+  if(S.form==='dirty'){
+    openModal('<div class="mh">未保存修改<div class="x" onclick="closeModal()">✕</div></div>'+
+      '<div class="mb"><p>当前有未保存的修改，发布将一并提交。确认发布配置 v3？</p></div>'+
+      '<div class="mf"><button class="btn" onclick="closeModal()">取消</button><button class="btn p" onclick="doPublish()">确认发布</button></div>');
+    return;
+  }
+  doPublish();
+}
+function doPublish(){
+  closeModal(); S.form='saving'; render();
+  setTimeout(()=>{
+    // simulate success/fail based on panel state
+    if(S.form==='fail'){S.form='fail';render();toast('发布失败：网络异常，请重试','err');return;}
+    S.form='success'; render(); toast('✅ 配置发布成功 · 版本 v3 已生效','ok');
+  },800);
+}
+
+/* ===================== PAGE 3: 主播资格 ===================== */
+function renderAnchor(){
+  $('#crumbs').innerHTML='主播管理 <span style="margin:0 6px;color:#bbb">/</span> <span class="cur">心愿礼物资格</span>';
+  const rows=ANCHORS.map(a=>`
+    <tr>
+      <td><span class="gicon">${a.name.charAt(0)}</span></td>
+      <td><span class="kv">${a.id}</span></td>
+      <td>${a.name}</td>
+      <td>${a.region}</td>
+      <td>${a.gift?statusTag(true,'具备'):statusTag(false,'不具备')}</td>
+      <td>💎 ${a.earn.toLocaleString()}</td>
+      <td>${a.payers}</td>
+      <td>${a.days}</td>
+      <td>${a.sp==='已解锁'?'<span class="st info">已解锁</span>':'<span class="st off">未解锁</span>'}</td>
+      <td>${a.ver}</td>
+      <td>${a.unlock}</td>
+      <td>${a.risk==='正常'?statusTag(true):statusTag(false,'异常')}</td>
+      <td><div class="op">
+        <a onclick="anchorDetail('${a.id}')">查看详情</a>
+        ${a.sp==='已解锁'?`<a class="d" ${can('manageAnchor')?'':'style="opacity:.4;pointer-events:none"'} onclick="pauseSp('${a.id}')">暂停资格</a>`:`<a ${can('manageAnchor')?'':'style="opacity:.4;pointer-events:none"'} onclick="resumeSp('${a.id}')">恢复资格</a>`}
+        ${can('manageAnchor')?'<a onclick="wl(\''+a.id+'\',1)">加入白名单</a><a onclick="wl(\''+a.id+'\',0)">移出白名单</a>':'<a class="g" style="opacity:.4;pointer-events:none">白名单</a>'}
+        <a class="g" onclick="setState('page','log')">操作日志</a>
+      </div></td>
+    </tr>`).join('');
+  $('#page').innerHTML=`
+  <div class="page-title">主播心愿礼物资格管理</div>
+  <div class="page-sub">用于运营查询与异常处理。<b>严禁</b>人工修改真实订单、心愿收入、用户赠送进度或伪造订单（固定产品规则）。</div>
+  <div class="card">
+    <div class="card-h"><div class="t">筛选</div></div>
+    <div class="filters">
+      <div class="fld"><label>主播 ID</label><input placeholder="如 A88231"></div>
+      <div class="fld"><label>主播昵称</label><input placeholder="如 Layla"></div>
+      <div class="fld"><label>国家或地区</label><select><option>全部</option><option>沙特</option><option>阿联酋</option><option>埃及</option></select></div>
+      <div class="fld"><label>收礼资格</label><select><option>全部</option><option>具备</option><option>不具备</option></select></div>
+      <div class="fld"><label>特殊礼物资格</label><select><option>全部</option><option>已解锁</option><option>未解锁</option></select></div>
+      <div class="fld"><label>风控状态</label><select><option>全部</option><option>正常</option><option>异常</option></select></div>
+      <div class="fld"><label>解锁时间</label><input type="date"></div>
+      <div class="actions"><button class="btn p">查询</button><button class="btn">重置</button></div>
+    </div>
+  </div>
+  <div class="card">
+    <div class="card-h"><div class="t">主播列表 <small>共 3 条（示例）</small></div></div>
+    <table><thead><tr><th>头像</th><th>主播 ID</th><th>昵称</th><th>国家/地区</th><th>收礼资格</th><th>近7日收益</th><th>近7日付费用户</th><th>近7日经营天数</th><th>特殊资格</th><th>解锁版本</th><th>解锁时间</th><th>风控</th><th>操作</th></tr></thead><tbody>${rows}</tbody></table>
+  </div>`;
+}
+function anchorDetail(id){
+  const a=ANCHORS.find(x=>x.id===id); if(!a)return;
+  const html=`
+  <div class="anchor-info"><div class="aa">${a.name.charAt(0)}</div>
+    <div><div style="font-size:16px;font-weight:800">${a.name}</div><div style="font-size:12px;color:#939aa8">${a.id} · ${a.region}</div></div></div>
+  <div class="sec-div">基础信息</div>
+  <div class="ro"><span class="k">当前收礼资格</span><span>${a.gift?statusTag(true,'具备'):statusTag(false,'不具备')}</span></div>
+  <div class="ro"><span class="k">风控状态</span><span>${a.risk==='正常'?statusTag(true):statusTag(false,'异常')}</span></div>
+  <div class="sec-div">当前配置的今日心愿（示例）</div>
+  <table><thead><tr><th>礼物</th><th>目标数量</th><th>当前完成</th><th>状态</th></tr></thead><tbody>
+    <tr><td>💗 Crystal Heart</td><td>5</td><td>4</td><td>${statusTag(false,'进行中')}</td></tr>
+    <tr><td>🌷 Lily</td><td>10</td><td>5</td><td>${statusTag(false,'进行中')}</td></tr>
+    <tr><td>🌹 Rose</td><td>20</td><td>12</td><td>${statusTag(false,'进行中')}</td></tr>
+  </tbody></table>
+  <div class="sec-div">最近 7 个完整自然日（D-7 ~ D-1，不含今天）</div>
+  <div class="ro"><span class="k">近 7 日心愿收益</span><span>💎 ${a.earn.toLocaleString()}</span></div>
+  <div class="ro"><span class="k">近 7 日独立付费用户</span><span>${a.payers}</span></div>
+  <div class="ro"><span class="k">近 7 日有效经营天数</span><span>${a.days}</span></div>
+  <div class="sec-div">特殊礼物资格</div>
+  <div class="ro"><span class="k">资格状态</span><span>${a.sp==='已解锁'?'<span class="st info">已解锁</span>':'<span class="st off">未解锁</span>'}</span></div>
+  <div class="ro"><span class="k">命中解锁规则版本</span><span>${a.ver}</span></div>
+  <div class="ro"><span class="k">解锁时间</span><span>${a.unlock}</span></div>
+  <div class="ro"><span class="k">暂停原因</span><span>${a.risk!=='正常'?'风控命中异常收礼':'—'}</span></div>
+  <div class="sec-div">禁止操作</div>
+  <div style="font-size:12px;color:#b91c1c;background:var(--red-l);border:1px solid #f3c2c2;border-radius:8px;padding:11px;line-height:1.7">
+    ⛔ 本页不可：人工增加心愿收入 / 完成次数 / 付费用户数，人工修改用户心愿进度，人工伪造订单。
+  </div>
+  <div style="margin-top:14px"><a class="link" onclick="setState('page','log')">查看该主播操作记录 →</a></div>`;
+  openDrawer('主播详情 · '+a.name, html);
+}
+function pauseSp(id){if(!can('manageAnchor'))return;const a=ANCHORS.find(x=>x.id===id);if(a){a.sp='未解锁';S.form='dirty';render();toast('已暂停 '+a.name+' 的特殊礼物资格');}}
+function resumeSp(id){if(!can('manageAnchor'))return;const a=ANCHORS.find(x=>x.id===id);if(a){a.sp='已解锁';S.form='dirty';render();toast('已恢复 '+a.name+' 的特殊礼物资格');}}
+function wl(id,v){if(!can('manageAnchor'))return;toast(v?'已加入测试白名单（示例）':'已移出测试白名单（示例）');}
+
+/* ===================== PAGE 4: 操作日志 ===================== */
+function renderLog(){
+  $('#crumbs').innerHTML='礼物中心 / 礼物玩法 / <span class="cur">操作日志</span>';
+  const rows=LOGS.map(l=>`
+    <tr>
+      <td>${l.time}</td><td>${l.user}</td><td>${l.mod}</td><td><span class="kv">${l.obj}</span></td><td>${l.type}</td>
+      <td style="max-width:130px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${l.before} → ${l.after}</td>
+      <td>${l.effect}</td><td>${l.reason}</td><td>${l.res==='成功'?statusTag(true):statusTag(false,'失败')}</td>
+      <td>${l.ver}</td>
+      <td><a class="link" onclick="logDetail('${l.time}')">详情</a></td>
+    </tr>`).join('');
+  $('#page').innerHTML=`
+  <div class="page-title">操作日志</div>
+  <div class="page-sub">记录心愿礼物配置、礼物池、特殊资格等所有变更，支持多维筛选与审计。</div>
+  <div class="card">
+    <div class="card-h"><div class="t">筛选</div></div>
+    <div class="filters">
+      <div class="fld"><label>操作人</label><select><option>全部</option><option>Admin</option><option>Ops_Lina</option><option>Risk_Kai</option></select></div>
+      <div class="fld"><label>操作时间</label><input type="date"></div>
+      <div class="fld"><label>操作类型</label><select><option>全部</option><option>发布配置</option><option>编辑规则</option><option>创建规则版本</option><option>暂停资格</option></select></div>
+      <div class="fld"><label>礼物 ID</label><input placeholder="如 G1021"></div>
+      <div class="fld"><label>主播 ID</label><input placeholder="如 A88231"></div>
+      <div class="fld"><label>规则版本</label><input placeholder="如 v3"></div>
+      <div class="fld"><label>结果</label><select><option>全部</option><option>成功</option><option>失败</option></select></div>
+      <div class="actions"><button class="btn p">查询</button><button class="btn">重置</button></div>
+    </div>
+  </div>
+  <div class="card">
+    <div class="card-h"><div class="t">日志列表 <small>共 5 条（示例）</small></div></div>
+    <table><thead><tr><th>操作时间</th><th>操作人</th><th>操作模块</th><th>操作对象</th><th>操作类型</th><th>修改前→后</th><th>生效时间</th><th>操作原因</th><th>结果</th><th>规则版本</th><th>操作</th></tr></thead><tbody>${rows}</tbody></table>
+  </div>`;
+}
+function logDetail(time){
+  const l=LOGS.find(x=>x.time===time); if(!l)return;
+  const html=`<div class="ro"><span class="k">操作时间</span><span>${l.time}</span></div>
+  <div class="ro"><span class="k">操作人</span><span>${l.user}</span></div>
+  <div class="ro"><span class="k">操作模块</span><span>${l.mod}</span></div>
+  <div class="ro"><span class="k">操作对象</span><span>${l.obj}</span></div>
+  <div class="ro"><span class="k">操作类型</span><span>${l.type}</span></div>
+  <div class="ro"><span class="k">修改前</span><span>${l.before}</span></div>
+  <div class="ro"><span class="k">修改后</span><span>${l.after}</span></div>
+  <div class="ro"><span class="k">生效时间</span><span>${l.effect}</span></div>
+  <div class="ro"><span class="k">操作原因</span><span>${l.reason}</span></div>
+  <div class="ro"><span class="k">操作结果</span><span>${l.res==='成功'?statusTag(true):statusTag(false,'失败')}</span></div>
+  <div class="ro"><span class="k">规则版本</span><span>${l.ver}</span></div>`;
+  openDrawer('操作日志详情', html);
+}
+
+/* ===================== OVERLAY / DRAWER / MODAL ===================== */
+function openModal(html,scroll){
+  let ov=document.getElementById('ovModal');
+  if(!ov){ov=document.createElement('div');ov.className='ov';ov.id='ovModal';document.body.appendChild(ov);}
+  ov.innerHTML=`<div class="modal">${html}</div>`;
+  if(scroll)ov.querySelector('.modal').style.overflow='auto';
+  ov.classList.add('show');
+  ov.onclick=e=>{if(e.target===ov)closeModal();};
+}
+function closeModal(){const ov=document.getElementById('ovModal');if(ov){ov.classList.remove('show');ov.innerHTML='';}}
+function openDrawer(title,html){
+  let dr=document.getElementById('dr');
+  if(!dr){dr=document.createElement('div');dr.className='drawer';dr.id='dr';document.body.appendChild(dr);
+    const bg=document.createElement('div');bg.className='ov';bg.id='drBg';bg.style.alignItems='flex-end';bg.style.justifyContent='flex-end';
+    bg.onclick=closeDrawer;document.body.appendChild(bg);}
+  dr.innerHTML=`<div class="dh">${title}<div class="x" onclick="closeDrawer()">✕</div></div><div class="db">${html}</div>`;
+  document.getElementById('drBg').classList.add('show');
+  requestAnimationFrame(()=>dr.classList.add('show'));
+}
+function closeDrawer(){const dr=document.getElementById('dr');if(dr)dr.classList.remove('show');const bg=document.getElementById('drBg');if(bg)bg.classList.remove('show');}
+
+/* ===================== INIT ===================== */
+function goAnchor(){setState('page','anchor');}
+buildPanel();
+render();
+</script>
+</body>
+</html>

@@ -1,0 +1,931 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>1v1 Gift Wish List Prototype</title>
+  <style>
+    :root {
+      --bg: #f4f6f8;
+      --surface: #ffffff;
+      --surface-soft: #f8fafc;
+      --ink: #17202a;
+      --muted: #667085;
+      --line: #d9e1ea;
+      --line-strong: #b9c6d4;
+      --accent: #db3f58;
+      --accent-dark: #b92d45;
+      --accent-soft: #ffe8ec;
+      --teal: #0b7f78;
+      --teal-soft: #ddf7f4;
+      --gold: #b7791f;
+      --gold-soft: #fff4d6;
+      --danger: #c43131;
+      --danger-soft: #ffe7e7;
+      --success: #16855b;
+      --success-soft: #e6f6ef;
+      --disabled: #a6b0bd;
+      --shadow: 0 20px 50px rgba(20, 30, 45, .16);
+      --radius: 8px;
+      --phone-w: 390px;
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    }
+
+    * { box-sizing: border-box; }
+    html, body { margin: 0; min-height: 100%; background: var(--bg); color: var(--ink); }
+    body {
+      display: grid;
+      place-items: center;
+      padding: 24px 14px;
+    }
+    button, input { font: inherit; }
+    button {
+      border: 0;
+      cursor: pointer;
+      transition: transform .12s ease, background .12s ease, border-color .12s ease, opacity .12s ease;
+    }
+    button:active:not(:disabled) { transform: scale(.98); }
+    button:disabled { cursor: not-allowed; opacity: .62; }
+
+    .stage {
+      width: min(100%, 1060px);
+      display: grid;
+      grid-template-columns: minmax(0, var(--phone-w)) minmax(280px, 1fr);
+      gap: 22px;
+      align-items: start;
+    }
+
+    .phone {
+      width: min(100%, var(--phone-w));
+      min-height: 820px;
+      border: 1px solid #c7d2df;
+      border-radius: 28px;
+      background: #0f1720;
+      padding: 10px;
+      box-shadow: var(--shadow);
+    }
+
+    .screen {
+      min-height: 798px;
+      border-radius: 22px;
+      background: var(--surface);
+      overflow: hidden;
+      position: relative;
+    }
+
+    .status-bar {
+      height: 34px;
+      padding: 10px 18px 0;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      color: #203040;
+      font-size: 12px;
+      font-weight: 700;
+    }
+
+    .status-icons { display: flex; gap: 5px; align-items: center; }
+    .signal { width: 17px; height: 10px; display: grid; grid-template-columns: repeat(4, 1fr); gap: 2px; align-items: end; }
+    .signal span { display: block; width: 3px; background: #203040; border-radius: 2px; }
+    .signal span:nth-child(1) { height: 4px; }
+    .signal span:nth-child(2) { height: 6px; }
+    .signal span:nth-child(3) { height: 8px; }
+    .signal span:nth-child(4) { height: 10px; }
+    .battery { width: 19px; height: 10px; border: 1.6px solid #203040; border-radius: 3px; position: relative; }
+    .battery:after { content: ""; position: absolute; right: -4px; top: 2px; width: 2px; height: 4px; background: #203040; border-radius: 1px; }
+    .battery:before { content: ""; position: absolute; left: 2px; top: 2px; width: 11px; height: 4px; background: #203040; border-radius: 1px; }
+
+    .app {
+      height: 764px;
+      display: flex;
+      flex-direction: column;
+      background: linear-gradient(180deg, #fff7f1 0, #fff 150px, #f8fafc 100%);
+    }
+
+    .top {
+      padding: 10px 18px 14px;
+      border-bottom: 1px solid rgba(217, 225, 234, .7);
+    }
+    .kicker {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      color: var(--muted);
+      font-size: 12px;
+      font-weight: 700;
+      margin-bottom: 7px;
+    }
+    .draft-pill {
+      color: var(--gold);
+      background: var(--gold-soft);
+      padding: 5px 8px;
+      border-radius: 999px;
+      border: 1px solid #f4d88b;
+      font-size: 11px;
+    }
+    h1 {
+      margin: 0;
+      font-size: 24px;
+      line-height: 1.08;
+      letter-spacing: 0;
+    }
+    .subhead {
+      margin: 7px 0 0;
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.35;
+    }
+
+    .tabs {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 6px;
+      padding: 12px 18px 4px;
+    }
+    .tab {
+      height: 38px;
+      border-radius: var(--radius);
+      color: var(--muted);
+      background: #eef2f6;
+      font-size: 13px;
+      font-weight: 800;
+    }
+    .tab.active {
+      color: white;
+      background: var(--ink);
+    }
+
+    .content {
+      flex: 1;
+      overflow: auto;
+      padding: 12px 18px 88px;
+    }
+    .surface-title {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      margin-bottom: 12px;
+    }
+    .surface-title h2 {
+      margin: 0;
+      font-size: 18px;
+      line-height: 1.2;
+    }
+    .context-pill {
+      min-width: max-content;
+      color: var(--teal);
+      background: var(--teal-soft);
+      border: 1px solid #a8e6df;
+      padding: 6px 8px;
+      border-radius: 999px;
+      font-size: 11px;
+      font-weight: 800;
+    }
+
+    .notice {
+      display: flex;
+      gap: 9px;
+      padding: 10px;
+      border-radius: var(--radius);
+      background: #eef4ff;
+      border: 1px solid #cfddf3;
+      color: #375276;
+      font-size: 12px;
+      line-height: 1.35;
+      margin-bottom: 12px;
+    }
+    .notice strong { color: #243b58; }
+    .info-icon {
+      width: 18px;
+      height: 18px;
+      border-radius: 50%;
+      display: grid;
+      place-items: center;
+      background: #dbe8fb;
+      color: #36577f;
+      flex: 0 0 auto;
+      font-size: 12px;
+      font-weight: 900;
+    }
+
+    .toolbar {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+      margin: 10px 0 14px;
+    }
+    .mini-btn {
+      min-height: 34px;
+      border-radius: var(--radius);
+      border: 1px solid var(--line);
+      color: #344054;
+      background: #fff;
+      font-size: 12px;
+      font-weight: 800;
+      padding: 8px 9px;
+    }
+    .mini-btn.active {
+      background: var(--ink);
+      color: white;
+      border-color: var(--ink);
+    }
+
+    .gift-grid {
+      display: grid;
+      gap: 10px;
+    }
+    .gift-card {
+      display: grid;
+      grid-template-columns: 58px 1fr auto;
+      gap: 10px;
+      align-items: center;
+      min-height: 82px;
+      padding: 10px;
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      background: var(--surface);
+    }
+    .gift-card.selected {
+      border-color: #ffb8c4;
+      background: #fff7f8;
+    }
+    .gift-card.disabled {
+      background: #f2f4f7;
+      color: var(--disabled);
+    }
+    .gift-art {
+      width: 58px;
+      height: 58px;
+      border-radius: var(--radius);
+      background: var(--accent-soft);
+      position: relative;
+      display: grid;
+      place-items: center;
+      overflow: hidden;
+    }
+    .gift-art:before {
+      content: "";
+      width: 33px;
+      height: 33px;
+      border-radius: 6px;
+      background: currentColor;
+      color: var(--accent);
+      box-shadow: inset 13px 0 rgba(255,255,255,.42), inset 0 13px rgba(255,255,255,.42);
+    }
+    .gift-art:after {
+      content: "";
+      position: absolute;
+      top: 12px;
+      width: 28px;
+      height: 13px;
+      border: 3px solid currentColor;
+      color: var(--accent);
+      border-bottom: 0;
+      border-radius: 16px 16px 0 0;
+    }
+    .gift-card:nth-child(2n) .gift-art { background: var(--teal-soft); }
+    .gift-card:nth-child(2n) .gift-art:before,
+    .gift-card:nth-child(2n) .gift-art:after { color: var(--teal); }
+    .gift-card:nth-child(3n) .gift-art { background: var(--gold-soft); }
+    .gift-card:nth-child(3n) .gift-art:before,
+    .gift-card:nth-child(3n) .gift-art:after { color: var(--gold); }
+    .gift-card.disabled .gift-art { filter: grayscale(1); opacity: .68; }
+    .gift-meta { min-width: 0; }
+    .gift-name {
+      font-size: 14px;
+      font-weight: 850;
+      line-height: 1.2;
+      margin-bottom: 5px;
+    }
+    .gift-desc {
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 1.28;
+    }
+    .gift-tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 5px;
+      margin-top: 7px;
+    }
+    .tag {
+      border-radius: 999px;
+      background: #eef2f6;
+      color: #52606f;
+      padding: 4px 7px;
+      font-size: 10.5px;
+      font-weight: 800;
+    }
+    .tag.tbd { background: #fff2cc; color: #8a5a00; }
+    .tag.off { background: #eceff3; color: #7d8997; }
+    .action {
+      min-width: 70px;
+      min-height: 34px;
+      border-radius: var(--radius);
+      padding: 8px 10px;
+      color: white;
+      background: var(--accent);
+      font-size: 12px;
+      font-weight: 900;
+    }
+    .action.secondary {
+      color: var(--accent-dark);
+      background: white;
+      border: 1px solid #ffc1cb;
+    }
+    .action.ghost {
+      color: #435263;
+      background: #eef2f6;
+      border: 1px solid var(--line);
+    }
+    .action.send {
+      width: 100%;
+      margin-top: 12px;
+      min-height: 44px;
+      font-size: 14px;
+    }
+
+    .wishlist-strip {
+      margin: 10px 0 14px;
+      padding: 10px;
+      border: 1px dashed var(--line-strong);
+      border-radius: var(--radius);
+      background: rgba(255,255,255,.72);
+    }
+    .strip-title {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      color: var(--muted);
+      font-size: 12px;
+      font-weight: 850;
+      margin-bottom: 8px;
+    }
+    .chip-row { display: flex; flex-wrap: wrap; gap: 6px; }
+    .wish-chip {
+      border-radius: 999px;
+      background: var(--accent-soft);
+      color: var(--accent-dark);
+      padding: 6px 8px;
+      font-size: 11px;
+      font-weight: 850;
+    }
+
+    .state-panel {
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      background: white;
+      padding: 16px 12px;
+      text-align: center;
+      margin: 12px 0;
+    }
+    .state-panel h3 { margin: 8px 0 5px; font-size: 16px; }
+    .state-panel p { margin: 0 auto 12px; max-width: 260px; color: var(--muted); font-size: 13px; line-height: 1.4; }
+    .loader {
+      width: 36px;
+      height: 36px;
+      margin: 0 auto;
+      border: 4px solid #e4e9f0;
+      border-top-color: var(--accent);
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+    .empty-symbol,
+    .error-symbol,
+    .success-symbol,
+    .disabled-symbol {
+      width: 42px;
+      height: 42px;
+      margin: 0 auto;
+      border-radius: 50%;
+      display: grid;
+      place-items: center;
+      font-weight: 950;
+    }
+    .empty-symbol { background: #eef2f6; color: #6b7785; }
+    .error-symbol { background: var(--danger-soft); color: var(--danger); }
+    .success-symbol { background: var(--success-soft); color: var(--success); }
+    .disabled-symbol { background: #eef1f4; color: #7d8792; }
+
+    .bottom-bar {
+      position: absolute;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      padding: 10px 18px 18px;
+      background: rgba(255,255,255,.96);
+      border-top: 1px solid var(--line);
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+    }
+    .nav-btn {
+      height: 42px;
+      border-radius: var(--radius);
+      border: 1px solid var(--line);
+      background: white;
+      color: #344054;
+      font-size: 12px;
+      font-weight: 900;
+    }
+    .nav-btn.primary {
+      background: var(--ink);
+      color: white;
+      border-color: var(--ink);
+    }
+
+    .review {
+      border: 1px solid #d7dee7;
+      border-radius: 12px;
+      background: rgba(255,255,255,.9);
+      box-shadow: 0 16px 38px rgba(24, 39, 75, .08);
+      padding: 18px;
+    }
+    .review h2 { margin: 0 0 8px; font-size: 20px; }
+    .review p { margin: 0 0 14px; color: var(--muted); line-height: 1.45; font-size: 14px; }
+    .review-section { border-top: 1px solid var(--line); padding-top: 14px; margin-top: 14px; }
+    .review-section h3 { margin: 0 0 10px; font-size: 14px; }
+    .state-buttons {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 8px;
+    }
+    .control {
+      min-height: 38px;
+      border-radius: var(--radius);
+      background: #f8fafc;
+      border: 1px solid var(--line);
+      color: #344054;
+      font-size: 12px;
+      font-weight: 850;
+      padding: 8px;
+    }
+    .control.active { background: var(--teal); color: white; border-color: var(--teal); }
+    .tbd-list {
+      display: grid;
+      gap: 7px;
+      margin: 0;
+      padding: 0;
+      list-style: none;
+    }
+    .tbd-list li {
+      display: flex;
+      gap: 8px;
+      align-items: start;
+      padding: 8px;
+      background: var(--surface-soft);
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      color: #465568;
+      font-size: 12px;
+      line-height: 1.32;
+    }
+    .dot {
+      width: 7px;
+      height: 7px;
+      margin-top: 5px;
+      border-radius: 50%;
+      background: var(--gold);
+      flex: 0 0 auto;
+    }
+
+    .toast {
+      position: absolute;
+      left: 18px;
+      right: 18px;
+      bottom: 78px;
+      min-height: 42px;
+      display: none;
+      align-items: center;
+      gap: 9px;
+      padding: 11px 12px;
+      color: white;
+      background: #17202a;
+      border-radius: var(--radius);
+      box-shadow: 0 10px 28px rgba(15, 23, 32, .28);
+      font-size: 12px;
+      font-weight: 800;
+      z-index: 4;
+    }
+    .toast.show { display: flex; animation: rise .18s ease-out; }
+    @keyframes rise { from { transform: translateY(8px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+
+    .modal-backdrop {
+      position: absolute;
+      inset: 0;
+      display: none;
+      align-items: end;
+      background: rgba(15, 23, 32, .38);
+      z-index: 5;
+    }
+    .modal-backdrop.show { display: flex; }
+    .sheet {
+      width: 100%;
+      padding: 18px;
+      border-radius: 18px 18px 0 0;
+      background: white;
+      animation: sheet .18s ease-out;
+    }
+    @keyframes sheet { from { transform: translateY(22px); } to { transform: translateY(0); } }
+    .sheet h3 { margin: 0 0 6px; font-size: 18px; }
+    .sheet p { margin: 0 0 14px; color: var(--muted); font-size: 13px; line-height: 1.4; }
+    .sheet-actions { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+
+    @media (max-width: 820px) {
+      body { padding: 0; place-items: start center; }
+      .stage { display: block; width: 100%; }
+      .phone {
+        width: 100%;
+        min-height: 100vh;
+        padding: 0;
+        border: 0;
+        border-radius: 0;
+        box-shadow: none;
+      }
+      .screen { min-height: 100vh; border-radius: 0; }
+      .app { min-height: calc(100vh - 34px); height: auto; }
+      .review { border-radius: 0; box-shadow: none; border-left: 0; border-right: 0; }
+    }
+  </style>
+</head>
+<body>
+  <main class="stage">
+    <section class="phone" aria-label="Mobile prototype">
+      <div class="screen">
+        <div class="status-bar" aria-hidden="true">
+          <span>9:41</span>
+          <div class="status-icons">
+            <div class="signal"><span></span><span></span><span></span><span></span></div>
+            <div class="battery"></div>
+          </div>
+        </div>
+
+        <div class="app">
+          <header class="top">
+            <div class="kicker">
+              <span>1v1 Gift Test</span>
+              <span class="draft-pill">Draft only</span>
+            </div>
+            <h1>Gift Wish List</h1>
+            <p class="subhead">Recipient preferences shown inside a 1v1 relationship context.</p>
+          </header>
+
+          <nav class="tabs" aria-label="Prototype role switcher">
+            <button class="tab active" type="button" data-tab="recipient">Recipient</button>
+            <button class="tab" type="button" data-tab="sender">Sender</button>
+          </nav>
+
+          <section id="content" class="content" aria-live="polite"></section>
+
+          <div class="bottom-bar">
+            <button id="simulate-primary" class="nav-btn primary" type="button">Simulate main path</button>
+            <button id="reset-btn" class="nav-btn" type="button">Reset draft</button>
+          </div>
+        </div>
+
+        <div id="toast" class="toast" role="status"></div>
+        <div id="sheet" class="modal-backdrop" role="dialog" aria-modal="true" aria-labelledby="sheet-title">
+          <div class="sheet">
+            <h3 id="sheet-title">Send initiation started</h3>
+            <p id="sheet-copy">This prototype stops at send initiation. Payment, balance, refund, cancellation, delivery, and post-send item behavior remain TBD.</p>
+            <div class="sheet-actions">
+              <button id="sheet-close" class="action ghost" type="button">Close</button>
+              <button id="sheet-success" class="action" type="button">Show success</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <aside class="review" aria-label="Prototype review controls">
+      <h2>Prototype Controls</h2>
+      <p>This single-file draft supports the required main path plus loading, empty, error, disabled, and success states. All TBD items are visible as assumptions, not resolved product decisions.</p>
+
+      <div class="review-section">
+        <h3>Surface State</h3>
+        <div class="state-buttons">
+          <button class="control active" type="button" data-mode="normal">Normal</button>
+          <button class="control" type="button" data-mode="loading">Loading</button>
+          <button class="control" type="button" data-mode="empty">Empty</button>
+          <button class="control" type="button" data-mode="error">Error</button>
+          <button class="control" type="button" data-mode="disabled">Disabled</button>
+          <button class="control" type="button" data-mode="success">Success</button>
+        </div>
+      </div>
+
+      <div class="review-section">
+        <h3>TBD Decisions Preserved</h3>
+        <ul class="tbd-list">
+          <li><span class="dot"></span><span>Gift prices and currency are not displayed because pricing is TBD.</span></li>
+          <li><span class="dot"></span><span>Eligibility and who can create or view a list remain TBD.</span></li>
+          <li><span class="dot"></span><span>Wish-list item limits and ordering are treated as neutral defaults.</span></li>
+          <li><span class="dot"></span><span>Payment, refund, cancellation, delivery, and post-send item state stop at send initiation.</span></li>
+          <li><span class="dot"></span><span>Regional, age, safety, privacy, compliance, notifications, and migration remain TBD.</span></li>
+        </ul>
+      </div>
+    </aside>
+  </main>
+
+  <script>
+    const gifts = [
+      { id: "rose", name: "Rose Bouquet", desc: "A warm, classic signal for a close 1v1 moment.", available: true },
+      { id: "music", name: "Music Star", desc: "A playful gift for voice or video conversations.", available: true },
+      { id: "crown", name: "Tiny Crown", desc: "A high-attention gift. Price and currency TBD.", available: true },
+      { id: "spark", name: "Spark Pack", desc: "Unavailable sample to show disabled handling.", available: false }
+    ];
+
+    const state = {
+      tab: "recipient",
+      mode: "normal",
+      wishList: ["rose", "music"],
+      selectedGift: null,
+      pendingGift: null
+    };
+
+    const content = document.getElementById("content");
+    const toast = document.getElementById("toast");
+    const sheet = document.getElementById("sheet");
+
+    function giftById(id) {
+      return gifts.find(gift => gift.id === id);
+    }
+
+    function showToast(message, tone = "dark") {
+      toast.textContent = message;
+      toast.style.background = tone === "success" ? "#16855b" : tone === "error" ? "#c43131" : "#17202a";
+      toast.classList.add("show");
+      window.clearTimeout(showToast.timer);
+      showToast.timer = window.setTimeout(() => toast.classList.remove("show"), 1900);
+    }
+
+    function setMode(mode) {
+      state.mode = mode;
+      document.querySelectorAll("[data-mode]").forEach(btn => btn.classList.toggle("active", btn.dataset.mode === mode));
+      render();
+    }
+
+    function setTab(tab) {
+      state.tab = tab;
+      state.selectedGift = null;
+      state.pendingGift = null;
+      document.querySelectorAll("[data-tab]").forEach(btn => btn.classList.toggle("active", btn.dataset.tab === tab));
+      render();
+    }
+
+    function setPending(id, next) {
+      state.pendingGift = id;
+      render();
+      window.setTimeout(() => {
+        next();
+        state.pendingGift = null;
+        setMode("success");
+        window.setTimeout(() => setMode("normal"), 900);
+      }, 650);
+    }
+
+    function addGift(id) {
+      if (state.wishList.includes(id)) return;
+      setPending(id, () => {
+        state.wishList.push(id);
+        showToast("Gift added to wish list.", "success");
+      });
+    }
+
+    function removeGift(id) {
+      setPending(id, () => {
+        state.wishList = state.wishList.filter(item => item !== id);
+        if (state.selectedGift === id) state.selectedGift = null;
+        showToast("Gift removed from wish list.", "success");
+      });
+    }
+
+    function selectGift(id) {
+      const gift = giftById(id);
+      if (!gift || !gift.available) {
+        showToast("This gift is currently disabled. Availability policy is TBD.", "error");
+        return;
+      }
+      state.selectedGift = id;
+      render();
+    }
+
+    function startSend() {
+      if (!state.selectedGift) {
+        showToast("Select a wish-list gift first.", "error");
+        return;
+      }
+      state.pendingGift = state.selectedGift;
+      render();
+      window.setTimeout(() => {
+        state.pendingGift = null;
+        render();
+        sheet.classList.add("show");
+      }, 650);
+    }
+
+    function statePanel(type) {
+      const copy = {
+        loading: ["Loading wish-list data", "Actions are disabled while catalog, list, or send-initiation requests are pending.", "loader", ""],
+        empty: state.tab === "recipient"
+          ? ["No available gifts", "The recipient cannot add gifts until the catalog returns items.", "empty-symbol", "0"]
+          : ["No wish-list gifts yet", "The sender can view the 1v1 context, but send-from-wish-list is unavailable.", "empty-symbol", "0"],
+        error: ["Something did not load", "Prior confirmed state is kept. Retry is available; retry limits and timeout rules are TBD.", "error-symbol", "!"],
+        disabled: ["Gift action disabled", "Unavailable gifts cannot be added, selected, or sent. The source of availability remains TBD.", "disabled-symbol", "-"],
+        success: ["Action confirmed", state.tab === "recipient" ? "The selected state has been updated." : "Send initiation succeeded; downstream payment and delivery remain TBD.", "success-symbol", "OK"]
+      }[type];
+      const icon = copy[2] === "loader" ? '<div class="loader"></div>' : `<div class="${copy[2]}">${copy[3]}</div>`;
+      return `
+        <div class="state-panel">
+          ${icon}
+          <h3>${copy[0]}</h3>
+          <p>${copy[1]}</p>
+          <button class="mini-btn" type="button" data-action="retry">Retry</button>
+        </div>
+      `;
+    }
+
+    function assumptionNotice() {
+      return `
+        <div class="notice">
+          <span class="info-icon">i</span>
+          <span><strong>TBD guardrails:</strong> prices, currency, eligibility, item limits, ordering, payment, delivery, notifications, migration, and compliance are intentionally unresolved.</span>
+        </div>
+      `;
+    }
+
+    function wishlistStrip() {
+      const names = state.wishList.map(id => giftById(id)?.name).filter(Boolean);
+      return `
+        <div class="wishlist-strip">
+          <div class="strip-title">
+            <span>Current wish list</span>
+            <span>${names.length} selected</span>
+          </div>
+          <div class="chip-row">
+            ${names.length ? names.map(name => `<span class="wish-chip">${name}</span>`).join("") : '<span class="tag off">Empty state</span>'}
+          </div>
+        </div>
+      `;
+    }
+
+    function recipientGiftCard(gift) {
+      const selected = state.wishList.includes(gift.id);
+      const pending = state.pendingGift === gift.id;
+      const disabled = !gift.available || state.mode === "disabled" || Boolean(state.pendingGift);
+      const actionText = pending ? "Saving" : selected ? "Remove" : "Add";
+      const action = selected ? "remove" : "add";
+      return `
+        <article class="gift-card ${selected ? "selected" : ""} ${!gift.available ? "disabled" : ""}">
+          <div class="gift-art" aria-hidden="true"></div>
+          <div class="gift-meta">
+            <div class="gift-name">${gift.name}</div>
+            <div class="gift-desc">${gift.desc}</div>
+            <div class="gift-tags">
+              <span class="tag tbd">Price TBD</span>
+              ${gift.available ? '<span class="tag">Available</span>' : '<span class="tag off">Disabled</span>'}
+            </div>
+          </div>
+          <button class="action ${selected ? "secondary" : ""}" type="button" data-action="${action}" data-id="${gift.id}" ${disabled ? "disabled" : ""}>${actionText}</button>
+        </article>
+      `;
+    }
+
+    function senderGiftCard(gift) {
+      const selected = state.selectedGift === gift.id;
+      const pending = state.pendingGift === gift.id;
+      const disabled = !gift.available || state.mode === "disabled" || Boolean(state.pendingGift);
+      return `
+        <article class="gift-card ${selected ? "selected" : ""} ${!gift.available ? "disabled" : ""}">
+          <div class="gift-art" aria-hidden="true"></div>
+          <div class="gift-meta">
+            <div class="gift-name">${gift.name}</div>
+            <div class="gift-desc">${gift.available ? "Selected by recipient for this 1v1 context." : "Unavailable sample. Availability policy TBD."}</div>
+            <div class="gift-tags">
+              <span class="tag tbd">Price TBD</span>
+              <span class="tag tbd">Post-send TBD</span>
+            </div>
+          </div>
+          <button class="action ${selected ? "secondary" : ""}" type="button" data-action="select" data-id="${gift.id}" ${disabled ? "disabled" : ""}>${pending ? "Starting" : selected ? "Selected" : "Pick"}</button>
+        </article>
+      `;
+    }
+
+    function recipientView() {
+      const stateMarkup = state.mode === "normal" ? "" : statePanel(state.mode);
+      const listMarkup = state.mode === "empty" ? "" : gifts.map(recipientGiftCard).join("");
+      return `
+        <div class="surface-title">
+          <h2>Manage my wishes</h2>
+          <span class="context-pill">Recipient view</span>
+        </div>
+        ${assumptionNotice()}
+        ${wishlistStrip()}
+        <div class="toolbar">
+          <button class="mini-btn" type="button" data-action="show-empty-wishlist">Clear selected</button>
+          <button class="mini-btn" type="button" data-action="restore">Restore sample</button>
+        </div>
+        ${stateMarkup}
+        <div class="gift-grid">${listMarkup}</div>
+      `;
+    }
+
+    function senderView() {
+      const selected = state.selectedGift ? giftById(state.selectedGift) : null;
+      const visibleGifts = state.mode === "empty" ? [] : state.wishList.map(giftById).filter(Boolean);
+      const stateMarkup = state.mode === "normal" ? "" : statePanel(state.mode);
+      return `
+        <div class="surface-title">
+          <h2>Maya's wish list</h2>
+          <span class="context-pill">1v1 context</span>
+        </div>
+        ${assumptionNotice()}
+        <div class="notice">
+          <span class="info-icon">1:1</span>
+          <span>You are viewing recipient-selected gifts only. Viewer permissions and relationship eligibility are TBD.</span>
+        </div>
+        ${stateMarkup}
+        <div class="gift-grid">${visibleGifts.map(senderGiftCard).join("")}</div>
+        <button class="action send" type="button" data-action="send" ${!selected || state.mode !== "normal" || Boolean(state.pendingGift) ? "disabled" : ""}>${state.pendingGift ? "Starting send..." : selected ? "Initiate send for " + selected.name : "Select a gift to send"}</button>
+      `;
+    }
+
+    function render() {
+      content.innerHTML = state.tab === "recipient" ? recipientView() : senderView();
+      bindContent();
+    }
+
+    function bindContent() {
+      content.querySelectorAll("[data-action]").forEach(btn => {
+        btn.addEventListener("click", () => {
+          const action = btn.dataset.action;
+          const id = btn.dataset.id;
+          if (action === "add") addGift(id);
+          if (action === "remove") removeGift(id);
+          if (action === "select") selectGift(id);
+          if (action === "send") startSend();
+          if (action === "retry") {
+            setMode("loading");
+            window.setTimeout(() => {
+              setMode("normal");
+              showToast("Retry loaded the last confirmed draft state.", "success");
+            }, 700);
+          }
+          if (action === "show-empty-wishlist") {
+            state.wishList = [];
+            state.selectedGift = null;
+            render();
+            showToast("Recipient wish list cleared for empty-state review.");
+          }
+          if (action === "restore") {
+            state.wishList = ["rose", "music"];
+            state.selectedGift = null;
+            setMode("normal");
+            showToast("Sample wish list restored.", "success");
+          }
+        });
+      });
+    }
+
+    document.querySelectorAll("[data-tab]").forEach(btn => btn.addEventListener("click", () => setTab(btn.dataset.tab)));
+    document.querySelectorAll("[data-mode]").forEach(btn => btn.addEventListener("click", () => setMode(btn.dataset.mode)));
+    document.getElementById("reset-btn").addEventListener("click", () => {
+      state.tab = "recipient";
+      state.mode = "normal";
+      state.wishList = ["rose", "music"];
+      state.selectedGift = null;
+      state.pendingGift = null;
+      document.querySelectorAll("[data-tab]").forEach(btn => btn.classList.toggle("active", btn.dataset.tab === "recipient"));
+      document.querySelectorAll("[data-mode]").forEach(btn => btn.classList.toggle("active", btn.dataset.mode === "normal"));
+      sheet.classList.remove("show");
+      render();
+      showToast("Prototype reset to draft sample state.");
+    });
+    document.getElementById("simulate-primary").addEventListener("click", () => {
+      if (state.tab === "recipient") {
+        const nextGift = gifts.find(gift => gift.available && !state.wishList.includes(gift.id));
+        if (nextGift) addGift(nextGift.id);
+        else {
+          setTab("sender");
+          showToast("Switched to sender view for send initiation.");
+        }
+      } else {
+        if (!state.selectedGift && state.wishList.length) selectGift(state.wishList[0]);
+        else startSend();
+      }
+    });
+    document.getElementById("sheet-close").addEventListener("click", () => sheet.classList.remove("show"));
+    document.getElementById("sheet-success").addEventListener("click", () => {
+      sheet.classList.remove("show");
+      setMode("success");
+      showToast("Send initiation succeeded. Downstream behavior remains TBD.", "success");
+    });
+    sheet.addEventListener("click", event => {
+      if (event.target === sheet) sheet.classList.remove("show");
+    });
+
+    render();
+  </script>
+</body>
+</html>

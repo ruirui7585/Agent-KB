@@ -1,0 +1,1584 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>心愿礼物 · 高保真静态原型</title>
+    <style>
+      :root {
+        --ink: #252437;
+        --ink-soft: #4d4b60;
+        --muted: #858398;
+        --line: #eceaf3;
+        --surface: #ffffff;
+        --canvas: #f6f5fa;
+        --lavender: #7665ee;
+        --lavender-deep: #5846d6;
+        --lavender-soft: #f0edff;
+        --peach: #fff0e8;
+        --mint: #e8f8f1;
+        --sky: #eaf3ff;
+        --gold: #f4bd64;
+        --danger-soft: #fff1f4;
+        --shadow: 0 18px 45px rgb(38 30 85 / 11%);
+        --phone-shadow: 0 22px 52px rgb(38 30 85 / 16%);
+      }
+
+      * { box-sizing: border-box; }
+      html { scroll-behavior: smooth; }
+      body {
+        margin: 0;
+        padding-left: 250px;
+        background: var(--canvas);
+        color: var(--ink);
+        font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "PingFang SC", "Helvetica Neue", Arial, sans-serif;
+        font-size: 14px;
+        line-height: 22px;
+        transition: padding-left .2s ease;
+      }
+      h1, h2, h3, h4, p { margin: 0; }
+      h1 { font-size: 27px; line-height: 34px; letter-spacing: -0.02em; }
+      h2 { font-size: 20px; line-height: 28px; letter-spacing: -0.01em; }
+      h3 { font-size: 16px; line-height: 23px; }
+      button { font: inherit; }
+      svg { display: block; }
+      .icon {
+        width: 20px;
+        height: 20px;
+        fill: none;
+        stroke: currentColor;
+        stroke-width: 1.8;
+        stroke-linecap: round;
+        stroke-linejoin: round;
+      }
+      .icon.icon-fill { fill: currentColor; stroke: none; }
+      .shell {
+        width: min(1360px, calc(100% - 48px));
+        margin: 0 auto;
+        padding: 72px 0 92px;
+      }
+      .intro {
+        display: grid;
+        grid-template-columns: 1fr auto;
+        gap: 10px 24px;
+        align-items: end;
+        margin-bottom: 28px;
+      }
+      .intro-copy { display: grid; gap: 8px; }
+      .intro-copy p { max-width: 620px; color: var(--muted); }
+      .requirement-background {
+        display: grid;
+        max-width: 720px;
+        gap: 10px;
+        margin-top: 4px;
+        padding: 14px 16px;
+        border: 1px solid #e3e0ed;
+        border-radius: 15px;
+        background: rgb(255 255 255 / 78%);
+        box-shadow: 0 8px 22px rgb(38 30 85 / 6%);
+      }
+      .requirement-background-header { display: flex; align-items: flex-start; justify-content: space-between; gap: 14px; }
+      .requirement-background-heading { display: grid; gap: 1px; }
+      .requirement-background-kicker { color: var(--lavender-deep); font-size: 10px; font-weight: 800; letter-spacing: .1em; text-transform: uppercase; }
+      .requirement-background-title { font-size: 15px; line-height: 22px; }
+      .requirement-background-actions { display: flex; flex-wrap: wrap; justify-content: flex-end; gap: 6px; }
+      .background-button {
+        min-height: 30px;
+        padding: 5px 9px;
+        border: 1px solid #dedbe8;
+        border-radius: 8px;
+        background: #fff;
+        color: var(--ink-soft);
+        cursor: pointer;
+        font-size: 11px;
+        font-weight: 700;
+      }
+      .background-button:hover { border-color: var(--lavender); color: var(--lavender-deep); }
+      .background-button.is-primary { border-color: var(--lavender); background: var(--lavender); color: #fff; }
+      .background-button:disabled { cursor: not-allowed; opacity: .48; }
+      .requirement-background-content { max-width: none !important; color: var(--ink-soft) !important; }
+      .background-editor { display: grid; gap: 10px; padding-top: 10px; border-top: 1px solid var(--line); }
+      .background-editor[hidden] { display: none; }
+      .background-editor-title { font-size: 13px; }
+      .background-editor-label { display: grid; gap: 4px; color: var(--muted); font-size: 11px; font-weight: 700; }
+      .background-editor textarea {
+        width: 100%;
+        min-height: 76px;
+        padding: 9px 10px;
+        resize: vertical;
+        border: 1px solid #dcd8e8;
+        border-radius: 9px;
+        background: #fff;
+        color: var(--ink);
+        font: inherit;
+        font-size: 12px;
+        line-height: 1.55;
+      }
+      .background-editor-actions { display: flex; flex-wrap: wrap; gap: 7px; }
+      .background-agent-context { display: grid; grid-template-columns: 76px 1fr; gap: 5px 8px; margin: 0; font-size: 11px; }
+      .background-agent-context dt { color: var(--muted); font-weight: 700; }
+      .background-agent-context dd { margin: 0; color: var(--ink-soft); }
+      .background-agent-preview { display: grid; gap: 8px; padding: 10px; border: 1px dashed #e5a34a; border-radius: 10px; background: #fffaf1; }
+      .background-agent-demo { color: #a15c17; font-size: 10px; font-weight: 800; }
+      .background-agent-preview p { max-width: none !important; color: var(--ink-soft) !important; font-size: 11px; }
+      .intro-stamp {
+        display: grid;
+        justify-items: end;
+        gap: 2px;
+        color: var(--muted);
+        font-size: 12px;
+        line-height: 18px;
+        text-align: right;
+      }
+      .intro-stamp strong { color: var(--ink-soft); font-size: 13px; }
+      .directory-index {
+        display: grid;
+        width: 22px;
+        height: 22px;
+        place-items: center;
+        border-radius: 50%;
+        background: var(--lavender-soft);
+        color: var(--lavender-deep);
+        font-size: 11px;
+        font-weight: 700;
+      }
+
+      /* Review tools live outside the fixed 393 × 852 phone canvases. */
+      .prototype-directory {
+        position: fixed;
+        z-index: 100;
+        inset: 0 auto 0 0;
+        display: flex;
+        width: 250px;
+        flex-direction: column;
+        border-right: 1px solid #e2e0eb;
+        background: rgb(255 255 255 / 96%);
+        box-shadow: 10px 0 28px rgb(38 30 85 / 7%);
+        color: var(--ink);
+        transition: width .2s ease;
+      }
+      .prototype-directory-header {
+        display: flex;
+        min-height: 72px;
+        align-items: center;
+        justify-content: space-between;
+        gap: 12px;
+        padding: 14px 14px 12px 18px;
+        border-bottom: 1px solid var(--line);
+      }
+      .prototype-directory-heading { display: grid; gap: 1px; min-width: 0; }
+      .prototype-directory-kicker {
+        color: var(--muted);
+        font-size: 10px;
+        font-weight: 800;
+        letter-spacing: .12em;
+        line-height: 15px;
+        text-transform: uppercase;
+      }
+      .prototype-directory-title { font-size: 16px; line-height: 22px; white-space: nowrap; }
+      .prototype-directory-toggle {
+        display: grid;
+        width: 34px;
+        height: 34px;
+        flex: 0 0 34px;
+        place-items: center;
+        border: 1px solid #dedbe8;
+        border-radius: 10px;
+        background: #fff;
+        color: var(--ink-soft);
+        cursor: pointer;
+      }
+      .prototype-directory-toggle .icon { width: 17px; height: 17px; }
+      .prototype-directory-body { min-height: 0; flex: 1; overflow: auto; padding: 14px 10px 18px; }
+      .prototype-directory-page { margin: 0 0 12px; }
+      .prototype-directory-page:last-child { margin-bottom: 0; }
+      .prototype-directory-page-row { display: flex; align-items: center; gap: 4px; }
+      .prototype-directory-page-link,
+      .prototype-directory-board-link {
+        display: flex;
+        align-items: center;
+        gap: 9px;
+        min-width: 0;
+        color: var(--ink-soft);
+        text-decoration: none;
+      }
+      .prototype-directory-page-link {
+        min-width: 0;
+        min-height: 40px;
+        flex: 1;
+        padding: 7px 9px;
+        border-radius: 10px;
+        font-weight: 700;
+      }
+      .prototype-directory-page-toggle {
+        display: grid;
+        width: 30px;
+        height: 30px;
+        flex: 0 0 30px;
+        place-items: center;
+        border: 0;
+        border-radius: 8px;
+        background: transparent;
+        color: var(--muted);
+        cursor: pointer;
+      }
+      .prototype-directory-page-toggle:hover { background: var(--lavender-soft); color: var(--lavender-deep); }
+      .prototype-directory-page-toggle .icon { width: 15px; height: 15px; transition: transform .16s ease; }
+      .prototype-directory-page.is-collapsed .prototype-directory-page-toggle .icon { transform: rotate(-90deg); }
+      .prototype-directory-page.is-collapsed .prototype-directory-boards { display: none; }
+      .prototype-directory-page-link:hover,
+      .prototype-directory-page-link.is-active { background: var(--lavender-soft); color: var(--lavender-deep); }
+      .prototype-directory-page-link.is-active .directory-index { background: var(--lavender); color: #fff; }
+      .prototype-directory-page-link .directory-index { flex: 0 0 22px; }
+      .prototype-directory-page-label,
+      .prototype-directory-board-label { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+      .prototype-directory-boards { display: grid; gap: 2px; margin: 2px 0 0 18px; padding-left: 13px; border-left: 1px solid #e7e4ef; }
+      .prototype-directory-board-link {
+        min-height: 32px;
+        padding: 5px 7px;
+        border-radius: 8px;
+        font-size: 12px;
+      }
+      .prototype-directory-board-link:hover,
+      .prototype-directory-board-link.is-active { background: #f5f3ff; color: var(--lavender-deep); }
+      .prototype-directory-board-index {
+        display: grid;
+        width: 20px;
+        height: 20px;
+        flex: 0 0 20px;
+        place-items: center;
+        border-radius: 6px;
+        background: #f0eef8;
+        color: var(--muted);
+        font-size: 10px;
+        font-weight: 800;
+      }
+      .prototype-directory-board-link.is-active .prototype-directory-board-index { background: var(--lavender); color: #fff; }
+      .prototype-directory-footer { padding: 13px 16px 15px; border-top: 1px solid var(--line); color: var(--muted); font-size: 11px; line-height: 17px; }
+      .prototype-view-switch { display: grid; grid-template-columns: 1fr 1fr; gap: 5px; padding: 10px; border-bottom: 1px solid var(--line); }
+      .prototype-view-switch button { min-height: 34px; padding: 6px 8px; border: 1px solid #dedbe8; border-radius: 9px; background: #fff; color: var(--muted); cursor: pointer; font-size: 11px; font-weight: 700; }
+      .prototype-view-switch button.is-active { border-color: var(--lavender); background: var(--lavender-soft); color: var(--lavender-deep); }
+      .prototype-directory.is-collapsed { width: 56px; }
+      .prototype-directory.is-collapsed .prototype-directory-header { justify-content: center; padding: 14px 10px; }
+      .prototype-directory.is-collapsed .prototype-directory-heading,
+      .prototype-directory.is-collapsed .prototype-directory-body,
+      .prototype-directory.is-collapsed .prototype-directory-footer { display: none; }
+      .prototype-directory.is-collapsed .prototype-directory-toggle { transform: rotate(180deg); }
+      .language-switcher {
+        position: fixed;
+        z-index: 101;
+        top: 14px;
+        left: 268px;
+        display: inline-flex;
+        gap: 2px;
+        padding: 3px;
+        border: 1px solid #dedbe8;
+        border-radius: 999px;
+        background: rgb(255 255 255 / 94%);
+        box-shadow: 0 8px 20px rgb(38 30 85 / 8%);
+      }
+      .language-switcher button {
+        min-height: 28px;
+        padding: 4px 10px;
+        border: 0;
+        border-radius: 999px;
+        background: transparent;
+        color: var(--muted);
+        cursor: pointer;
+        font-size: 11px;
+        font-weight: 700;
+      }
+      .language-switcher button.is-active { background: var(--ink); color: #fff; }
+      body.directory-collapsed { padding-left: 64px; }
+      body.directory-collapsed .language-switcher { left: 76px; }
+      .section {
+        padding-top: 48px;
+        padding-bottom: 12px;
+        overflow-x: auto;
+        scroll-margin-top: 74px;
+      }
+      .board { scroll-margin-top: 74px; }
+      .section-head {
+        display: grid;
+        grid-template-columns: auto 1fr auto;
+        gap: 14px;
+        align-items: center;
+        margin-bottom: 20px;
+      }
+      .section-number {
+        display: grid;
+        width: 42px;
+        height: 42px;
+        place-items: center;
+        border-radius: 14px;
+        background: var(--ink);
+        color: white;
+        font-size: 13px;
+        font-weight: 700;
+        letter-spacing: .04em;
+      }
+      .section-title { display: grid; gap: 3px; }
+      .section-title p { color: var(--muted); font-size: 13px; }
+      .section-rule {
+        justify-self: end;
+        padding: 7px 11px;
+        border: 1px solid #dedbf0;
+        border-radius: 999px;
+        background: rgb(255 255 255 / 74%);
+        color: var(--lavender-deep);
+        font-size: 11px;
+        font-weight: 700;
+        letter-spacing: .04em;
+        white-space: nowrap;
+      }
+      .boards {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 34px 26px;
+        align-items: flex-start;
+        width: max-content;
+        min-width: 100%;
+      }
+      .board {
+        display: grid;
+        flex: 0 0 393px;
+        width: 393px;
+        min-width: 393px;
+        gap: 13px;
+        align-content: start;
+      }
+      .board-meta {
+        display: grid;
+        gap: 2px;
+        min-height: 56px;
+        padding: 0 3px 10px;
+        border-bottom: 1px solid var(--line);
+      }
+      .board-meta strong { color: var(--ink); font-size: 14px; }
+      .board-meta span { color: var(--muted); font-size: 12px; line-height: 18px; }
+      .flow-note {
+        display: grid;
+        grid-template-columns: auto 1fr;
+        gap: 4px 10px;
+        padding: 12px 14px;
+        border: 1px solid #e4e1f0;
+        border-radius: 14px;
+        background: rgb(255 255 255 / 72%);
+        color: var(--ink-soft);
+        font-size: 12px;
+        line-height: 18px;
+      }
+      .flow-note strong { color: var(--lavender-deep); font-size: 11px; letter-spacing: .05em; }
+
+      /* Every phone is a fixed iPhone 16 review canvas. */
+      .phone {
+        position: relative;
+        flex: 0 0 393px;
+        width: 393px;
+        min-width: 393px;
+        max-width: 393px;
+        height: 852px;
+        min-height: 852px;
+        max-height: 852px;
+        overflow: hidden;
+        border: 7px solid #1d1c28;
+        border-radius: 34px;
+        background: var(--surface);
+        box-shadow: var(--phone-shadow);
+      }
+      .phone::before {
+        position: absolute;
+        z-index: 8;
+        top: 8px;
+        left: 50%;
+        width: 102px;
+        height: 25px;
+        border-radius: 0 0 16px 16px;
+        background: #1d1c28;
+        content: "";
+        transform: translateX(-50%);
+      }
+      .phone-screen {
+        position: relative;
+        display: flex;
+        width: 100%;
+        height: 100%;
+        flex-direction: column;
+        overflow: hidden;
+        border-radius: 27px;
+        background: #fbfbfd;
+      }
+      .status {
+        display: flex;
+        height: 39px;
+        flex: 0 0 39px;
+        align-items: end;
+        justify-content: space-between;
+        padding: 0 19px 7px;
+        color: var(--ink);
+        font-size: 11px;
+        font-weight: 700;
+        letter-spacing: .01em;
+      }
+      .status-icons { display: inline-flex; align-items: center; gap: 5px; color: var(--ink-soft); }
+      .status-icons .icon { width: 13px; height: 13px; stroke-width: 2; }
+      .topbar {
+        display: flex;
+        min-height: 54px;
+        flex: 0 0 54px;
+        align-items: center;
+        justify-content: space-between;
+        padding: 0 14px;
+        border-bottom: 1px solid var(--line);
+        background: rgb(255 255 255 / 88%);
+      }
+      .topbar h3 { font-size: 16px; font-weight: 700; }
+      .topbar-side { display: grid; width: 38px; height: 38px; place-items: center; color: var(--ink-soft); }
+      .icon-button {
+        display: grid;
+        width: 38px;
+        height: 38px;
+        place-items: center;
+        border: 0;
+        border-radius: 50%;
+        background: transparent;
+        color: var(--ink-soft);
+      }
+      .icon-button .icon { width: 20px; height: 20px; }
+      .screen-content {
+        display: grid;
+        gap: 16px;
+        padding: 18px 18px 26px;
+        overflow: hidden;
+      }
+      .screen-content.scroll-content { overflow: hidden auto; }
+      .eyebrow {
+        color: var(--lavender-deep);
+        font-size: 11px;
+        font-weight: 800;
+        letter-spacing: .09em;
+        text-transform: uppercase;
+      }
+      .muted { color: var(--muted); }
+      .small { color: var(--muted); font-size: 12px; line-height: 18px; }
+      .micro { color: var(--muted); font-size: 11px; line-height: 16px; }
+      .profile {
+        display: grid;
+        justify-items: center;
+        gap: 7px;
+        padding: 10px 0 4px;
+        text-align: center;
+      }
+      .avatar {
+        display: grid;
+        width: 76px;
+        height: 76px;
+        place-items: center;
+        border: 4px solid white;
+        border-radius: 50%;
+        background: linear-gradient(135deg, #ffd3c9 5%, #ff9fba 48%, #7567eb 100%);
+        box-shadow: 0 7px 18px rgb(100 75 160 / 18%);
+        color: white;
+        font-size: 20px;
+        font-weight: 800;
+        letter-spacing: .04em;
+      }
+      .profile h3 { font-size: 18px; }
+      .profile p { max-width: 230px; }
+      .tabs {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        min-height: 43px;
+        border-bottom: 1px solid var(--line);
+      }
+      .tab {
+        position: relative;
+        display: grid;
+        min-height: 43px;
+        place-items: center;
+        color: var(--muted);
+        font-size: 13px;
+      }
+      .tab.active { color: var(--ink); font-weight: 700; }
+      .tab.active::after {
+        position: absolute;
+        right: 20px;
+        bottom: -1px;
+        left: 20px;
+        height: 2px;
+        border-radius: 999px;
+        background: var(--lavender);
+        content: "";
+      }
+      .wish-card {
+        display: grid;
+        gap: 14px;
+        padding: 16px;
+        border: 1px solid #e9e6f1;
+        border-radius: 21px;
+        background: white;
+        box-shadow: 0 9px 22px rgb(39 33 87 / 7%);
+      }
+      .card-topline { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
+      .status-pill {
+        display: inline-flex;
+        width: max-content;
+        min-height: 26px;
+        align-items: center;
+        gap: 6px;
+        padding: 4px 9px;
+        border-radius: 999px;
+        background: var(--lavender-soft);
+        color: var(--lavender-deep);
+        font-size: 11px;
+        font-weight: 700;
+      }
+      .status-pill.success { background: var(--mint); color: #23845a; }
+      .status-pill.dot::before { width: 6px; height: 6px; border-radius: 50%; background: currentColor; content: ""; }
+      .gift-row { display: grid; grid-template-columns: 70px 1fr; gap: 12px; align-items: center; }
+      .gift-art {
+        display: grid;
+        width: 70px;
+        height: 70px;
+        place-items: center;
+        border-radius: 19px;
+      }
+      .gift-art .icon { width: 31px; height: 31px; }
+      .gift-art.starlight { background: linear-gradient(140deg, #e6e1ff, #b9afff); color: var(--lavender-deep); }
+      .gift-art.bouquet { background: linear-gradient(140deg, #ffe8e8, #ffbfd1); color: #d95779; }
+      .gift-art.aurora { background: linear-gradient(140deg, #ddf5f0, #b8dbff); color: #3576a8; }
+      .gift-copy { display: grid; gap: 3px; }
+      .gift-copy strong { font-size: 15px; }
+      .price-line { display: inline-flex; align-items: center; gap: 5px; color: var(--ink-soft); font-size: 12px; }
+      .coin {
+        display: inline-grid;
+        width: 15px;
+        height: 15px;
+        place-items: center;
+        border: 1px solid #d89f3f;
+        border-radius: 50%;
+        background: #ffd985;
+        color: #9b6719;
+        font-size: 9px;
+        font-weight: 800;
+      }
+      .primary-button, .secondary-button {
+        display: grid;
+        width: 100%;
+        min-height: 46px;
+        place-items: center;
+        padding: 11px 16px;
+        border: 1px solid transparent;
+        border-radius: 14px;
+        font-size: 14px;
+        font-weight: 700;
+        text-align: center;
+      }
+      .primary-button { background: var(--lavender); color: white; box-shadow: 0 8px 16px rgb(118 101 238 / 21%); }
+      .secondary-button { border-color: #e5e1f1; background: white; color: var(--ink); }
+      .secondary-button.soft { border-color: transparent; background: var(--lavender-soft); color: var(--lavender-deep); }
+      .button-icon { display: inline-flex; align-items: center; gap: 8px; }
+      .button-icon .icon { width: 16px; height: 16px; }
+      .helper-row { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+      .helper-row .icon { width: 15px; height: 15px; color: var(--muted); }
+      .catalog-intro { display: grid; gap: 4px; }
+      .catalog-intro h2 { font-size: 22px; }
+      .catalog { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }
+      .gift-option {
+        display: grid;
+        gap: 9px;
+        align-content: start;
+        padding: 9px;
+        border: 1px solid #e9e6f1;
+        border-radius: 18px;
+        background: white;
+      }
+      .gift-option.selected { border: 2px solid var(--lavender); padding: 8px; box-shadow: 0 7px 18px rgb(118 101 238 / 12%); }
+      .gift-option .gift-art { width: 100%; height: 104px; border-radius: 14px; }
+      .gift-option strong { font-size: 13px; }
+      .option-price { color: var(--muted); font-size: 11px; line-height: 16px; }
+      .selected-tag { display: inline-flex; width: max-content; align-items: center; gap: 4px; color: var(--lavender-deep); font-size: 11px; font-weight: 700; }
+      .selected-tag .icon { width: 13px; height: 13px; }
+      .catalog-footnote { display: flex; align-items: center; gap: 7px; color: var(--muted); font-size: 11px; line-height: 16px; }
+      .catalog-footnote .icon { width: 15px; height: 15px; color: var(--lavender); }
+      .empty-state { display: grid; gap: 14px; padding-top: 16px; text-align: center; }
+      .empty-art {
+        display: grid;
+        width: 104px;
+        height: 104px;
+        margin: 0 auto;
+        place-items: center;
+        border-radius: 32px;
+        background: linear-gradient(145deg, #f0edff, #fff3e9);
+        color: var(--lavender);
+      }
+      .empty-art .icon { width: 43px; height: 43px; }
+      .empty-state h2 { font-size: 20px; }
+      .empty-state p { max-width: 252px; margin: 0 auto; color: var(--muted); }
+      .bottom-nav {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        min-height: 64px;
+        margin-top: auto;
+        padding: 8px 8px 11px;
+        border-top: 1px solid var(--line);
+        background: rgb(255 255 255 / 94%);
+      }
+      .nav-item { display: grid; justify-items: center; gap: 1px; color: #a19eb1; font-size: 10px; line-height: 15px; }
+      .nav-item .icon { width: 19px; height: 19px; }
+      .nav-item.active { color: var(--lavender-deep); font-weight: 700; }
+      .sheet-backdrop { position: absolute; z-index: 12; inset: 0; display: flex; align-items: end; background: rgb(33 30 50 / 44%); }
+      .sheet {
+        display: grid;
+        width: 100%;
+        gap: 14px;
+        padding: 14px 17px 23px;
+        border-radius: 25px 25px 27px 27px;
+        background: white;
+        box-shadow: 0 -10px 30px rgb(33 30 50 / 14%);
+      }
+      .sheet-handle { width: 38px; height: 4px; margin: 0 auto 2px; border-radius: 999px; background: #dedbe8; }
+      .sheet-title { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+      .sheet-title h3 { font-size: 18px; }
+      .sheet-close { color: var(--muted); }
+      .recipient-row { display: flex; align-items: center; gap: 10px; padding: 11px 12px; border-radius: 15px; background: #faf9fd; }
+      .recipient-avatar { display: grid; width: 36px; height: 36px; place-items: center; border-radius: 50%; background: linear-gradient(135deg, #ffd3c9, #806ef2); color: white; font-size: 11px; font-weight: 800; }
+      .recipient-copy { display: grid; gap: 1px; }
+      .recipient-copy strong { font-size: 13px; }
+      .summary { display: grid; gap: 10px; padding: 13px 0; border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); }
+      .summary-row { display: flex; justify-content: space-between; gap: 16px; color: var(--ink-soft); font-size: 13px; }
+      .summary-row strong { color: var(--ink); }
+      .summary-row.total { color: var(--ink); font-size: 14px; font-weight: 700; }
+      .summary-row.total strong { color: var(--lavender-deep); }
+      .sheet-actions { display: grid; gap: 8px; }
+      .result {
+        display: grid;
+        min-height: 628px;
+        place-items: center;
+        padding: 28px 24px 22px;
+        text-align: center;
+      }
+      .result-inner { display: grid; justify-items: center; gap: 13px; }
+      .result-orbit { position: relative; display: grid; width: 132px; height: 132px; place-items: center; }
+      .result-orbit::before, .result-orbit::after { position: absolute; border-radius: 50%; content: ""; }
+      .result-orbit::before { inset: 7px; border: 1px solid #dcd5ff; }
+      .result-orbit::after { inset: 20px; border: 1px dashed #f0c58c; }
+      .result-icon { display: grid; z-index: 1; width: 70px; height: 70px; place-items: center; border-radius: 50%; background: var(--lavender); color: white; box-shadow: 0 12px 24px rgb(118 101 238 / 24%); }
+      .result-icon .icon { width: 34px; height: 34px; stroke-width: 2.4; }
+      .result h1 { font-size: 25px; }
+      .result p { max-width: 240px; color: var(--muted); }
+      .result .status-pill { margin-top: 2px; }
+      .result .primary-button { margin-top: 7px; }
+      .fulfillment-callout { display: flex; align-items: flex-start; gap: 9px; padding: 11px 12px; border-radius: 14px; background: var(--mint); color: #277c59; font-size: 11px; line-height: 17px; }
+      .fulfillment-callout .icon { flex: 0 0 auto; width: 16px; height: 16px; }
+      .disabled-button { display: grid; min-height: 46px; place-items: center; padding: 11px 16px; border-radius: 14px; background: #f0eff4; color: #a09daa; font-size: 13px; font-weight: 700; text-align: center; }
+      .page-footnote { display: flex; align-items: center; gap: 6px; color: var(--muted); font-size: 11px; line-height: 16px; }
+      .page-footnote .icon { width: 14px; height: 14px; }
+
+      .admin-shell { width: min(1440px, calc(100% - 48px)); margin: 0 auto; padding: 72px 0 92px; }
+      .admin-shell[hidden] { display: none; }
+      body.admin-mode .paa-toggle { display: none !important; }
+      .admin-header { display: flex; align-items: end; justify-content: space-between; gap: 20px; margin-bottom: 22px; }
+      .admin-header-copy { display: grid; gap: 6px; }
+      .admin-header-copy p { color: var(--muted); }
+      .admin-readonly-badge { padding: 6px 10px; border: 1px solid #d9d6e5; border-radius: 999px; background: #fff; color: var(--ink-soft); font-size: 11px; font-weight: 700; }
+      .admin-grid { display: grid; grid-template-columns: minmax(0, 1.55fr) minmax(320px, .85fr); gap: 18px; align-items: start; }
+      .admin-card { overflow: hidden; border: 1px solid #e0ddea; border-radius: 16px; background: #fff; box-shadow: 0 12px 30px rgb(38 30 85 / 7%); }
+      .admin-card-header { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 15px 17px; border-bottom: 1px solid var(--line); }
+      .admin-card-header h2 { font-size: 16px; }
+      .admin-toolbar { display: grid; grid-template-columns: minmax(220px, 1fr) 180px; gap: 10px; padding: 13px 17px; border-bottom: 1px solid var(--line); background: #faf9fd; }
+      .admin-input { width: 100%; min-height: 38px; padding: 7px 10px; border: 1px solid #dcd8e8; border-radius: 9px; background: #fff; color: var(--ink); font: inherit; }
+      .admin-table-wrap { overflow: auto; }
+      .admin-table { width: 100%; border-collapse: collapse; font-size: 12px; }
+      .admin-table th, .admin-table td { padding: 11px 13px; border-bottom: 1px solid var(--line); text-align: left; white-space: nowrap; }
+      .admin-table th { background: #faf9fd; color: var(--muted); font-size: 11px; font-weight: 700; }
+      .admin-table tbody tr { cursor: pointer; }
+      .admin-table tbody tr:hover, .admin-table tbody tr.is-selected { background: var(--lavender-soft); }
+      .admin-user { display: grid; gap: 1px; }
+      .admin-user strong { font-size: 12px; }
+      .admin-user span { color: var(--muted); font-size: 10px; }
+      .admin-status { display: inline-flex; min-height: 24px; align-items: center; padding: 3px 8px; border-radius: 999px; font-size: 10px; font-weight: 800; }
+      .admin-status.active { background: #eef4ff; color: #2563eb; }
+      .admin-status.fulfilled { background: var(--mint); color: #23845a; }
+      .admin-status.unset { background: #f0eff4; color: #777386; }
+      .admin-empty-row { padding: 28px !important; color: var(--muted); text-align: center !important; }
+      .admin-detail { display: grid; gap: 14px; padding: 16px 17px 18px; }
+      .admin-detail-title { display: grid; gap: 2px; }
+      .admin-detail-title span { color: var(--muted); font-size: 11px; }
+      .admin-detail-grid { display: grid; grid-template-columns: 108px 1fr; gap: 8px 12px; margin: 0; }
+      .admin-detail-grid dt { color: var(--muted); font-size: 11px; font-weight: 700; }
+      .admin-detail-grid dd { margin: 0; color: var(--ink-soft); font-size: 12px; }
+      .admin-proposed { margin-left: 6px; color: #a15c17; font-size: 9px; font-weight: 800; }
+      .admin-no-write { padding: 10px 12px; border-radius: 10px; background: #f5f4f8; color: var(--muted); font-size: 11px; }
+      .admin-field-guide { margin-top: 18px; }
+      .admin-field-list { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px; padding: 15px 17px 18px; }
+      .admin-field-item { padding: 11px 12px; border: 1px solid var(--line); border-radius: 11px; background: #faf9fd; }
+      .admin-field-item strong { display: block; font-size: 12px; }
+      .admin-field-item span { color: var(--muted); font-size: 10px; line-height: 15px; }
+
+      @media (max-width: 640px) {
+        body { padding-left: 64px; }
+        .shell { width: calc(100% - 24px); padding-top: 28px; }
+        .intro { grid-template-columns: 1fr; }
+        .intro-stamp { justify-items: start; text-align: left; }
+        .boards { flex-wrap: nowrap; }
+        .section-head { grid-template-columns: auto 1fr; }
+        .section-rule { grid-column: 2; justify-self: start; }
+        .prototype-directory { width: 56px; }
+        .prototype-directory-header { justify-content: center; padding: 14px 10px; }
+        .prototype-directory-heading,
+        .prototype-directory-body,
+        .prototype-directory-footer { display: none; }
+        .prototype-directory-toggle { transform: rotate(180deg); }
+        .language-switcher { left: 76px; }
+      }
+      @media (max-width: 1080px) {
+        .admin-grid { grid-template-columns: 1fr; }
+        .admin-field-list { grid-template-columns: 1fr; }
+      }
+    </style>
+  <!-- prototype-annotation runtime -->
+<link rel="stylesheet" href=".prototype-annotations/annotation-runtime.css">
+<script>window.PrototypeAnnotationConfig = Object.assign({}, window.PrototypeAnnotationConfig || {}, { annotationsUrl: "./annotations.json", saveUrl: "/__prototype_annotations/save" });</script>
+<script src=".prototype-annotations/annotation-runtime.js" defer></script>
+<!-- /prototype-annotation runtime -->
+  </head>
+  <body>
+    <aside class="prototype-directory" id="prototype-directory" aria-label="原型目录" data-no-translate>
+      <div class="prototype-directory-header">
+        <div class="prototype-directory-heading">
+          <p class="prototype-directory-kicker">Prototype</p>
+          <h2 class="prototype-directory-title">原型目录</h2>
+        </div>
+        <button class="prototype-directory-toggle" type="button" aria-label="折叠原型目录" aria-expanded="true">
+          <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="m15 6-6 6 6 6"/></svg>
+        </button>
+      </div>
+      <div class="prototype-view-switch" role="tablist" aria-label="原型视图">
+        <button type="button" role="tab" data-prototype-view="frontend" class="is-active" aria-selected="true">前台原型</button>
+        <button type="button" role="tab" data-prototype-view="admin" aria-selected="false">运营后台</button>
+      </div>
+      <div class="prototype-directory-body" id="prototype-directory-body"></div>
+      <p class="prototype-directory-footer">目录来自 HTML 页面和画板，可定位，不参与标注。</p>
+    </aside>
+    <div class="language-switcher" role="group" aria-label="语言">
+      <button type="button" data-language="zh" class="is-active">中文</button>
+      <button type="button" data-language="en">English</button>
+    </div>
+    <main class="shell" aria-label="前台原型">
+      <header class="intro">
+        <div class="intro-copy">
+          <p class="eyebrow">Lina · Wish Gifts</p>
+          <h1>心愿礼物 · 高保真静态原型</h1>
+          <section class="requirement-background" aria-labelledby="requirement-background-title">
+            <div class="requirement-background-header">
+              <div class="requirement-background-heading">
+                <span class="requirement-background-kicker">Product Context</span>
+                <h2 class="requirement-background-title" id="requirement-background-title">需求背景</h2>
+              </div>
+              <div class="requirement-background-actions">
+                <button class="background-button" type="button" data-background-agent>Agent 修改</button>
+                <button class="background-button" type="button" data-background-manual>手动修改</button>
+              </div>
+            </div>
+            <p class="requirement-background-content" data-background-content>以一个礼物心愿串起主人设置、访客赠送和完成反馈。页面与关键状态全部展开，按钮仅作产品表达，不接入真实账户或支付。</p>
+            <div class="background-editor" data-background-editor hidden></div>
+          </section>
+        </div>
+        <div class="intro-stamp"><strong>iPhone 16 / 393 × 852</strong><span>静态评审包 · 8 个画板</span></div>
+      </header>
+
+      <section class="section" id="page-wish-setting" data-page-id="wish-setting" data-page-name="心愿设置页" data-page-name-en="Wish setup page">
+        <div class="section-head">
+          <span class="section-number">01</span>
+          <div class="section-title"><h2>心愿设置页</h2><p>心愿主人 · 从礼物目录选出此刻最想收到的一件礼物</p></div>
+          <span class="section-rule">FR-001 · 单个当前心愿</span>
+        </div>
+        <div class="boards">
+          <article class="board" id="board-wish-setting-selection">
+            <div class="board-meta"><strong>礼物选择状态</strong><span>角色：心愿主人 · 进入：点击“添加心愿礼物”或“更换心愿”</span></div>
+            <div class="phone" data-state="gift-selection">
+              <div class="phone-screen">
+                <div class="status"><span>9:41</span><span class="status-icons"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 18h2M8 15h2M12 12h2M16 9h2"/></svg><span>5G</span><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="7" width="17" height="10" rx="2"/><path d="M21 10v4"/></svg></span></div>
+                <div class="topbar"><button class="icon-button" type="button" aria-label="返回"><svg class="icon" viewBox="0 0 24 24"><path d="m15 18-6-6 6-6"/></svg></button><h3>选择心愿礼物</h3><span class="topbar-side" aria-hidden="true"></span></div>
+                <div class="screen-content scroll-content">
+                  <div class="catalog-intro"><p class="eyebrow">Make it yours</p><h2>选一件想收到的礼物</h2><p class="small">同一时间只保留一个当前心愿</p></div>
+                  <div class="catalog" data-annotation-id="wish-setting-selection" data-contract-rule="FR-001" data-state="gift-selection">
+                    <div class="gift-option selected"><div class="gift-art starlight"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 12v8H4v-8M2 7h20v5H2zM12 7v13M12 7H7.5A2.5 2.5 0 1 1 10 4.5C10 6 12 7 12 7Zm0 0h4.5A2.5 2.5 0 1 0 14 4.5C14 6 12 7 12 7Z"/></svg></div><strong>星光礼盒</strong><span class="option-price">目录价格 · 100 金币</span><span class="selected-tag"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="m5 12 4 4L19 6"/></svg>已选择</span></div>
+                    <div class="gift-option"><div class="gift-art bouquet"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 21s-7-4.5-7-10a4 4 0 0 1 7-2.7A4 4 0 0 1 19 11c0 5.5-7 10-7 10Z"/></svg></div><strong>心动花束</strong><span class="option-price">目录价格 · 80 金币</span><span class="micro">轻盈表达心意</span></div>
+                    <div class="gift-option"><div class="gift-art aurora"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="m12 3 2.2 5.8L20 11l-5.8 2.2L12 19l-2.2-5.8L4 11l5.8-2.2L12 3Z"/></svg></div><strong>极光星球</strong><span class="option-price">目录价格 · 120 金币</span><span class="micro">把浪漫留给今晚</span></div>
+                    <div class="gift-option"><div class="gift-art starlight"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3v18M3 12h18M5.6 5.6l12.8 12.8M18.4 5.6 5.6 18.4"/></svg></div><strong>彩虹糖盒</strong><span class="option-price">目录价格 · 60 金币</span><span class="micro">分享一点甜</span></div>
+                  </div>
+                  <div class="catalog-footnote"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 10v6M12 7h.01"/></svg><span>目录价格仅用于界面展示，不代表真实扣费。</span></div>
+                  <button class="primary-button" type="button" data-annotation-id="wish-setting-submit" data-contract-rule="FR-001" data-state="gift-selection">设为我的心愿</button>
+                </div>
+              </div>
+            </div>
+            <div class="flow-note"><strong>触发</strong><span>主人在目录中选择一个礼物并提交</span><strong>结果</strong><span>当前心愿更新为所选礼物，且同时只展示这一件</span></div>
+          </article>
+        </div>
+      </section>
+
+      <section class="section" id="page-profile-wish" data-page-id="profile-wish" data-page-name="主人主页心愿" data-page-name-en="Wish on owner profile">
+        <div class="section-head">
+          <span class="section-number">02</span>
+          <div class="section-title"><h2>主人主页心愿</h2><p>同一份心愿在访客、主人和未设置状态下呈现不同操作</p></div>
+          <span class="section-rule">FR-002 · FR-003 · FR-007</span>
+        </div>
+        <div class="boards">
+          <article class="board" id="board-profile-wish-visitor">
+            <div class="board-meta"><strong>访客查看 · 当前心愿</strong><span>角色：访客 · 进入：打开 Lina 的主页并查看心愿礼物</span></div>
+            <div class="phone" data-state="visitor-view">
+              <div class="phone-screen">
+                <div class="status"><span>9:41</span><span class="status-icons"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 18h2M8 15h2M12 12h2M16 9h2"/></svg><span>5G</span><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="7" width="17" height="10" rx="2"/><path d="M21 10v4"/></svg></span></div>
+                <div class="topbar"><button class="icon-button" type="button" aria-label="返回"><svg class="icon" viewBox="0 0 24 24"><path d="m15 18-6-6 6-6"/></svg></button><h3>Lina 的主页</h3><button class="icon-button" type="button" aria-label="更多操作"><svg class="icon" viewBox="0 0 24 24"><circle cx="5" cy="12" r="1"/><circle cx="12" cy="12" r="1"/><circle cx="19" cy="12" r="1"/></svg></button></div>
+                <div class="screen-content">
+                  <div class="profile"><div class="avatar">LN</div><h3>Lina</h3><p class="small">愿每一个普通日子，都有一点小惊喜</p></div>
+                  <div class="tabs"><div class="tab">动态</div><div class="tab active">心愿礼物</div></div>
+                  <div class="wish-card" data-annotation-id="wish-visitor-card" data-contract-rule="FR-002" data-state="visitor-view">
+                    <div class="card-topline"><span class="status-pill dot">当前心愿</span><span class="micro">刚刚更新</span></div>
+                    <div class="gift-row"><div class="gift-art starlight"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 12v8H4v-8M2 7h20v5H2zM12 7v13M12 7H7.5A2.5 2.5 0 1 1 10 4.5C10 6 12 7 12 7Zm0 0h4.5A2.5 2.5 0 1 0 14 4.5C14 6 12 7 12 7Z"/></svg></div><div class="gift-copy"><strong>星光礼盒</strong><span class="small">把今晚的光送给她</span><span class="price-line"><span class="coin" role="img" aria-label="金币">✦</span>目录价格 100 金币</span></div></div>
+                    <button class="primary-button button-icon" type="button"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 12v8H4v-8M2 7h20v5H2zM12 7v13M12 7H7.5A2.5 2.5 0 1 1 10 4.5C10 6 12 7 12 7Zm0 0h4.5A2.5 2.5 0 1 0 14 4.5C14 6 12 7 12 7Z"/></svg>赠送心愿</button>
+                  </div>
+                  <div class="page-footnote"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3v18M3 12h18"/></svg><span>访客可以发起赠送，确认信息会在下一步展开。</span></div>
+                </div>
+                <div class="bottom-nav"><div class="nav-item"><svg class="icon" viewBox="0 0 24 24"><path d="m3 11 9-8 9 8v9H3z"/></svg><span>首页</span></div><div class="nav-item"><svg class="icon" viewBox="0 0 24 24"><path d="M4 5h16v12H7l-3 3z"/></svg><span>消息</span></div><div class="nav-item active"><svg class="icon" viewBox="0 0 24 24"><circle cx="12" cy="8" r="3"/><path d="M5 20c.8-3.2 3.1-5 7-5s6.2 1.8 7 5"/></svg><span>我的</span></div><div class="nav-item"><svg class="icon" viewBox="0 0 24 24"><path d="M12 3 4 7v5c0 4.5 3.2 7.5 8 9 4.8-1.5 8-4.5 8-9V7z"/></svg><span>设置</span></div></div>
+              </div>
+            </div>
+          </article>
+
+          <article class="board" id="board-profile-wish-owner">
+            <div class="board-meta"><strong>主人查看 · 当前心愿</strong><span>角色：心愿主人 · 进入：查看自己的主页心愿礼物</span></div>
+            <div class="phone" data-state="owner-view">
+              <div class="phone-screen">
+                <div class="status"><span>9:41</span><span class="status-icons"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 18h2M8 15h2M12 12h2M16 9h2"/></svg><span>5G</span><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="7" width="17" height="10" rx="2"/><path d="M21 10v4"/></svg></span></div>
+                <div class="topbar"><button class="icon-button" type="button" aria-label="返回"><svg class="icon" viewBox="0 0 24 24"><path d="m15 18-6-6 6-6"/></svg></button><h3>我的主页</h3><span class="topbar-side" aria-hidden="true"></span></div>
+                <div class="screen-content">
+                  <div class="profile"><div class="avatar">LN</div><h3>Lina</h3><p class="small">愿每一个普通日子，都有一点小惊喜</p></div>
+                  <div class="tabs"><div class="tab">动态</div><div class="tab active">心愿礼物</div></div>
+                  <div class="wish-card" data-annotation-id="wish-owner-card" data-contract-rule="FR-003" data-state="owner-view">
+                    <div class="card-topline"><span class="status-pill">我的当前心愿</span><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="m12 3 2.2 5.8L20 11l-5.8 2.2L12 19l-2.2-5.8L4 11l5.8-2.2L12 3Z"/></svg></div>
+                    <div class="gift-row"><div class="gift-art starlight"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 12v8H4v-8M2 7h20v5H2zM12 7v13M12 7H7.5A2.5 2.5 0 1 1 10 4.5C10 6 12 7 12 7Zm0 0h4.5A2.5 2.5 0 1 0 14 4.5C14 6 12 7 12 7Z"/></svg></div><div class="gift-copy"><strong>星光礼盒</strong><span class="small">心愿正在等待一份心意</span><span class="price-line"><span class="coin" role="img" aria-label="金币">✦</span>目录价格 100 金币</span></div></div>
+                    <button class="secondary-button button-icon" type="button"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 7v5h-5M4 17v-5h5M5.5 9A7 7 0 0 1 17 6.5L20 9M4 15l3 2.5A7 7 0 0 0 18.5 15"/></svg>更换心愿</button>
+                  </div>
+                  <div class="page-footnote"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3v18M3 12h18"/></svg><span>只有主人可以更换当前心愿，访客侧不展示此入口。</span></div>
+                </div>
+                <div class="bottom-nav"><div class="nav-item"><svg class="icon" viewBox="0 0 24 24"><path d="m3 11 9-8 9 8v9H3z"/></svg><span>首页</span></div><div class="nav-item"><svg class="icon" viewBox="0 0 24 24"><path d="M4 5h16v12H7l-3 3z"/></svg><span>消息</span></div><div class="nav-item active"><svg class="icon" viewBox="0 0 24 24"><circle cx="12" cy="8" r="3"/><path d="M5 20c.8-3.2 3.1-5 7-5s6.2 1.8 7 5"/></svg><span>我的</span></div><div class="nav-item"><svg class="icon" viewBox="0 0 24 24"><path d="M12 3 4 7v5c0 4.5 3.2 7.5 8 9 4.8-1.5 8-4.5 8-9V7z"/></svg><span>设置</span></div></div>
+              </div>
+            </div>
+          </article>
+
+          <article class="board" id="board-profile-wish-owner-empty">
+            <div class="board-meta"><strong>未设置空状态 · 主人查看</strong><span>角色：心愿主人 · 进入：心愿礼物尚未设置</span></div>
+            <div class="phone" data-state="empty-owner-view">
+              <div class="phone-screen">
+                <div class="status"><span>9:41</span><span class="status-icons"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 18h2M8 15h2M12 12h2M16 9h2"/></svg><span>5G</span><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="7" width="17" height="10" rx="2"/><path d="M21 10v4"/></svg></span></div>
+                <div class="topbar"><button class="icon-button" type="button" aria-label="返回"><svg class="icon" viewBox="0 0 24 24"><path d="m15 18-6-6 6-6"/></svg></button><h3>我的主页</h3><span class="topbar-side" aria-hidden="true"></span></div>
+                <div class="screen-content">
+                  <div class="profile"><div class="avatar">LN</div><h3>Lina</h3><p class="small">愿每一个普通日子，都有一点小惊喜</p></div>
+                  <div class="tabs"><div class="tab">动态</div><div class="tab active">心愿礼物</div></div>
+                  <div class="empty-state" data-annotation-id="wish-empty-state" data-contract-rule="FR-007" data-state="empty-owner-view">
+                    <div class="empty-art"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 12v8H4v-8M2 7h20v5H2zM12 7v13M12 7H7.5A2.5 2.5 0 1 1 10 4.5C10 6 12 7 12 7Zm0 0h4.5A2.5 2.5 0 1 0 14 4.5C14 6 12 7 12 7Z"/></svg></div>
+                    <div><h2>还没有心愿礼物</h2><p>从礼物目录选一件想收到的礼物，让朋友更懂你的心意。</p></div>
+                    <button class="primary-button button-icon" type="button"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg>添加心愿礼物</button>
+                  </div>
+                </div>
+                <div class="bottom-nav"><div class="nav-item"><svg class="icon" viewBox="0 0 24 24"><path d="m3 11 9-8 9 8v9H3z"/></svg><span>首页</span></div><div class="nav-item"><svg class="icon" viewBox="0 0 24 24"><path d="M4 5h16v12H7l-3 3z"/></svg><span>消息</span></div><div class="nav-item active"><svg class="icon" viewBox="0 0 24 24"><circle cx="12" cy="8" r="3"/><path d="M5 20c.8-3.2 3.1-5 7-5s6.2 1.8 7 5"/></svg><span>我的</span></div><div class="nav-item"><svg class="icon" viewBox="0 0 24 24"><path d="M12 3 4 7v5c0 4.5 3.2 7.5 8 9 4.8-1.5 8-4.5 8-9V7z"/></svg><span>设置</span></div></div>
+              </div>
+            </div>
+            <div class="flow-note"><strong>规则</strong><span>主人尚未设置心愿时显示空状态与“添加心愿礼物”入口。</span></div>
+          </article>
+
+          <article class="board" id="board-profile-wish-visitor-empty">
+            <div class="board-meta"><strong>未设置空状态 · 访客查看</strong><span>角色：访客 · 进入：打开 Lina 的主页且心愿礼物尚未设置</span></div>
+            <div class="phone" data-state="empty-visitor-view">
+              <div class="phone-screen">
+                <div class="status"><span>9:41</span><span class="status-icons"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 18h2M8 15h2M12 12h2M16 9h2"/></svg><span>5G</span><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="7" width="17" height="10" rx="2"/><path d="M21 10v4"/></svg></span></div>
+                <div class="topbar"><button class="icon-button" type="button" aria-label="返回"><svg class="icon" viewBox="0 0 24 24"><path d="m15 18-6-6 6-6"/></svg></button><h3>Lina 的主页</h3><button class="icon-button" type="button" aria-label="更多操作"><svg class="icon" viewBox="0 0 24 24"><circle cx="5" cy="12" r="1"/><circle cx="12" cy="12" r="1"/><circle cx="19" cy="12" r="1"/></svg></button></div>
+                <div class="screen-content">
+                  <div class="profile"><div class="avatar">LN</div><h3>Lina</h3><p class="small">愿每一个普通日子，都有一点小惊喜</p></div>
+                  <div class="tabs"><div class="tab">动态</div><div class="tab active">心愿礼物</div></div>
+                  <div class="empty-state" data-annotation-id="wish-empty-visitor-state" data-contract-rule="FR-007" data-state="empty-visitor-view">
+                    <div class="empty-art"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 12v8H4v-8M2 7h20v5H2zM12 7v13M12 7H7.5A2.5 2.5 0 1 1 10 4.5C10 6 12 7 12 7Zm0 0h4.5A2.5 2.5 0 1 0 14 4.5C14 6 12 7 12 7Z"/></svg></div>
+                    <div><h2>还没有心愿礼物</h2><p>主人还没有设置心愿礼物，先看看 Lina 的其他动态吧。</p></div>
+                  </div>
+                </div>
+                <div class="bottom-nav"><div class="nav-item"><svg class="icon" viewBox="0 0 24 24"><path d="m3 11 9-8 9 8v9H3z"/></svg><span>首页</span></div><div class="nav-item"><svg class="icon" viewBox="0 0 24 24"><path d="M4 5h16v12H7l-3 3z"/></svg><span>消息</span></div><div class="nav-item active"><svg class="icon" viewBox="0 0 24 24"><circle cx="12" cy="8" r="3"/><path d="M5 20c.8-3.2 3.1-5 7-5s6.2 1.8 7 5"/></svg><span>我的</span></div><div class="nav-item"><svg class="icon" viewBox="0 0 24 24"><path d="M12 3 4 7v5c0 4.5 3.2 7.5 8 9 4.8-1.5 8-4.5 8-9V7z"/></svg><span>设置</span></div></div>
+              </div>
+            </div>
+            <div class="flow-note"><strong>规则</strong><span>访客查看未设置心愿时仅展示空状态，不显示操作按钮。</span></div>
+          </article>
+        </div>
+      </section>
+
+      <section class="section" id="page-gift-confirm" data-page-id="gift-confirm" data-page-name="赠送确认 Sheet" data-page-name-en="Gift confirmation Sheet">
+        <div class="section-head">
+          <span class="section-number">03</span>
+          <div class="section-title"><h2>赠送确认 Sheet</h2><p>访客确认接收人、礼物、数量与目录价格，再提交赠送</p></div>
+          <span class="section-rule">FR-004 · 静态展开</span>
+        </div>
+        <div class="boards">
+          <article class="board" id="board-gift-confirm-sheet">
+            <div class="board-meta"><strong>确认赠送 · Sheet 展开</strong><span>角色：访客 · 进入：点击“赠送心愿”主按钮</span></div>
+            <div class="phone" data-state="confirm-sheet">
+              <div class="phone-screen">
+                <div class="status"><span>9:41</span><span class="status-icons"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 18h2M8 15h2M12 12h2M16 9h2"/></svg><span>5G</span><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="7" width="17" height="10" rx="2"/><path d="M21 10v4"/></svg></span></div>
+                <div class="topbar"><button class="icon-button" type="button" aria-label="返回"><svg class="icon" viewBox="0 0 24 24"><path d="m15 18-6-6 6-6"/></svg></button><h3>Lina 的主页</h3><span class="topbar-side" aria-hidden="true"></span></div>
+                <div class="screen-content"><div class="profile"><div class="avatar">LN</div><h3>Lina</h3><p class="small">愿每一个普通日子，都有一点小惊喜</p></div><div class="tabs"><div class="tab">动态</div><div class="tab active">心愿礼物</div></div><div class="wish-card"><span class="status-pill dot">当前心愿</span><div class="gift-row"><div class="gift-art starlight"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 12v8H4v-8M2 7h20v5H2zM12 7v13M12 7H7.5A2.5 2.5 0 1 1 10 4.5C10 6 12 7 12 7Zm0 0h4.5A2.5 2.5 0 1 0 14 4.5C14 6 12 7 12 7Z"/></svg></div><div class="gift-copy"><strong>星光礼盒</strong><span class="small">目录价格 · 100 金币</span></div></div><button class="primary-button" type="button">赠送心愿</button></div></div>
+                <div class="sheet-backdrop">
+                  <div class="sheet" data-annotation-id="gift-confirm-sheet" data-contract-rule="FR-004" data-state="confirm-sheet">
+                    <div class="sheet-handle" aria-hidden="true"></div>
+                    <div class="sheet-title"><h3>确认赠送心愿</h3><button class="icon-button sheet-close" type="button" aria-label="关闭"><svg class="icon" viewBox="0 0 24 24"><path d="m6 6 12 12M18 6 6 18"/></svg></button></div>
+                    <div class="recipient-row"><div class="recipient-avatar">LN</div><div class="recipient-copy"><strong>送给 Lina</strong><span class="small">心愿礼物将标记为已实现</span></div></div>
+                    <div class="gift-row"><div class="gift-art starlight"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 12v8H4v-8M2 7h20v5H2zM12 7v13M12 7H7.5A2.5 2.5 0 1 1 10 4.5C10 6 12 7 12 7Zm0 0h4.5A2.5 2.5 0 1 0 14 4.5C14 6 12 7 12 7Z"/></svg></div><div class="gift-copy"><strong>星光礼盒</strong><span class="small">当前心愿 · 数量 1</span></div></div>
+                    <div class="summary"><div class="summary-row"><span>接收人</span><strong>Lina</strong></div><div class="summary-row"><span>礼物数量</span><strong>1</strong></div><div class="summary-row total"><span>目录价格</span><strong>100 金币</strong></div></div>
+                    <div class="sheet-actions"><button class="primary-button" type="button">确认赠送</button><button class="secondary-button" type="button">暂不赠送</button></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="flow-note"><strong>触发</strong><span>访客点击“赠送心愿”</span><strong>确认</strong><span>Sheet 明确显示接收人 Lina、星光礼盒、数量 1、目录价格 100 金币</span></div>
+          </article>
+        </div>
+      </section>
+
+      <section class="section" id="page-gift-result" data-page-id="gift-result" data-page-name="赠送结果" data-page-name-en="Gift result">
+        <div class="section-head">
+          <span class="section-number">04</span>
+          <div class="section-title"><h2>赠送结果</h2><p>完成后的成功反馈与再次查看时的不可重复赠送状态</p></div>
+          <span class="section-rule">FR-005 · FR-006</span>
+        </div>
+        <div class="boards">
+          <article class="board" id="board-gift-result-success">
+            <div class="board-meta"><strong>赠送成功</strong><span>角色：访客 · 进入：确认赠送完成后</span></div>
+            <div class="phone" data-state="gift-success">
+              <div class="phone-screen">
+                <div class="status"><span>9:41</span><span class="status-icons"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 18h2M8 15h2M12 12h2M16 9h2"/></svg><span>5G</span><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="7" width="17" height="10" rx="2"/><path d="M21 10v4"/></svg></span></div>
+                <div class="topbar"><span class="topbar-side" aria-hidden="true"></span><h3>赠送结果</h3><span class="topbar-side" aria-hidden="true"></span></div>
+                <div class="result" data-annotation-id="gift-success-result" data-contract-rule="FR-005" data-state="gift-success">
+                  <div class="result-inner"><div class="result-orbit"><div class="result-icon"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="m5 12 4 4L19 6"/></svg></div></div><p class="eyebrow">Gift delivered</p><h1>心愿已送达</h1><p>你已向 Lina 送出“星光礼盒”，这份心意已经抵达她的心愿清单。</p><span class="status-pill success dot">心愿已实现</span><button class="primary-button" type="button">返回 Lina 的主页</button><span class="micro">本原型不接入真实余额、支付或库存</span></div>
+                </div>
+              </div>
+            </div>
+          </article>
+
+          <article class="board" id="board-gift-result-fulfilled">
+            <div class="board-meta"><strong>已实现状态 · 不可重复赠送</strong><span>角色：任意查看者 · 进入：再次打开已完成的心愿</span></div>
+            <div class="phone" data-state="wish-fulfilled">
+              <div class="phone-screen">
+                <div class="status"><span>9:41</span><span class="status-icons"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 18h2M8 15h2M12 12h2M16 9h2"/></svg><span>5G</span><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="7" width="17" height="10" rx="2"/><path d="M21 10v4"/></svg></span></div>
+                <div class="topbar"><button class="icon-button" type="button" aria-label="返回"><svg class="icon" viewBox="0 0 24 24"><path d="m15 18-6-6 6-6"/></svg></button><h3>Lina 的主页</h3><span class="topbar-side" aria-hidden="true"></span></div>
+                <div class="screen-content">
+                  <div class="profile"><div class="avatar">LN</div><h3>Lina</h3><p class="small">愿每一个普通日子，都有一点小惊喜</p></div>
+                  <div class="tabs"><div class="tab">动态</div><div class="tab active">心愿礼物</div></div>
+                  <div class="wish-card" data-annotation-id="wish-fulfilled-card" data-contract-rule="FR-006" data-state="wish-fulfilled">
+                    <div class="card-topline"><span class="status-pill success dot">心愿已实现</span><span class="micro">已完成</span></div>
+                    <div class="gift-row"><div class="gift-art starlight"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 12v8H4v-8M2 7h20v5H2zM12 7v13M12 7H7.5A2.5 2.5 0 1 1 10 4.5C10 6 12 7 12 7Zm0 0h4.5A2.5 2.5 0 1 0 14 4.5C14 6 12 7 12 7Z"/></svg></div><div class="gift-copy"><strong>星光礼盒</strong><span class="small">已由访客送达 Lina</span><span class="price-line"><span class="coin" role="img" aria-label="金币">✦</span>目录价格 100 金币</span></div></div>
+                    <div class="fulfillment-callout"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="m5 12 4 4L19 6"/></svg><span>这份心愿已经完成，状态会保留展示给再次查看的人。</span></div>
+                    <div class="disabled-button" aria-disabled="true"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M7 10V8a5 5 0 0 1 10 0v2M5 10h14v10H5z"/></svg>已实现，不可重复赠送</div>
+                  </div>
+                  <div class="page-footnote"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3v18M3 12h18"/></svg><span>再次查看时保留完成状态，不再展示“赠送心愿”主按钮。</span></div>
+                </div>
+                <div class="bottom-nav"><div class="nav-item"><svg class="icon" viewBox="0 0 24 24"><path d="m3 11 9-8 9 8v9H3z"/></svg><span>首页</span></div><div class="nav-item"><svg class="icon" viewBox="0 0 24 24"><path d="M4 5h16v12H7l-3 3z"/></svg><span>消息</span></div><div class="nav-item active"><svg class="icon" viewBox="0 0 24 24"><circle cx="12" cy="8" r="3"/><path d="M5 20c.8-3.2 3.1-5 7-5s6.2 1.8 7 5"/></svg><span>我的</span></div><div class="nav-item"><svg class="icon" viewBox="0 0 24 24"><path d="M12 3 4 7v5c0 4.5 3.2 7.5 8 9 4.8-1.5 8-4.5 8-9V7z"/></svg><span>设置</span></div></div>
+              </div>
+            </div>
+          </article>
+        </div>
+      </section>
+    </main>
+    <main class="admin-shell" data-admin-shell hidden aria-label="运营后台">
+      <header class="admin-header">
+        <div class="admin-header-copy"><p class="eyebrow" data-admin-eyebrow>Operations Console</p><h1 data-admin-title>心愿礼物运营后台</h1><p data-admin-subtitle>根据已确认前台流程派生的只读后台视图。</p></div>
+        <span class="admin-readonly-badge" data-admin-readonly>只读演示</span>
+      </header>
+      <section class="admin-grid" id="admin-wish-records" aria-label="心愿记录与详情">
+        <article class="admin-card">
+          <div class="admin-card-header"><h2 data-admin-list-title>心愿记录</h2><span class="micro" data-admin-count></span></div>
+          <div class="admin-toolbar">
+            <input class="admin-input" type="search" data-admin-search>
+            <select class="admin-input" data-admin-status></select>
+          </div>
+          <div class="admin-table-wrap"><table class="admin-table"><thead data-admin-table-head></thead><tbody data-admin-table-body></tbody></table></div>
+        </article>
+        <aside class="admin-card" id="admin-record-detail" aria-label="记录详情">
+          <div class="admin-card-header"><h2 data-admin-detail-heading>记录详情</h2><span class="admin-readonly-badge" data-admin-detail-badge>只读演示</span></div>
+          <div class="admin-detail" data-admin-detail></div>
+        </aside>
+      </section>
+      <section class="admin-card admin-field-guide" id="admin-field-guide" aria-label="字段说明">
+        <div class="admin-card-header"><h2 data-admin-field-title>字段说明</h2><span class="micro" data-admin-field-note></span></div>
+        <div class="admin-field-list" data-admin-field-list></div>
+      </section>
+    </main>
+    <script>
+      (() => {
+        const translations = {
+          '心愿礼物 · 高保真静态原型': 'Wish Gift · High-Fidelity Static Prototype',
+          '以一个礼物心愿串起主人设置、访客赠送和完成反馈。页面与关键状态全部展开，按钮仅作产品表达，不接入真实账户或支付。': 'A single gift wish connects owner setup, visitor gifting, and completion feedback. Every key page and state is shown for review; buttons do not connect to real accounts or payments.',
+          '静态评审包 · 8 个画板': 'Static review package · 8 canvases',
+          '心愿设置页': 'Wish Setup',
+          '心愿主人 · 从礼物目录选出此刻最想收到的一件礼物': 'Wish owner · Choose the one gift they want most from the catalog',
+          'FR-001 · 单个当前心愿': 'FR-001 · One active wish',
+          '礼物选择状态': 'Gift Selection',
+          '角色：心愿主人 · 进入：点击“添加心愿礼物”或“更换心愿”': 'Role: Wish owner · Entry: Tap “Add Wish Gift” or “Change Wish”',
+          '选择心愿礼物': 'Choose a Wish Gift',
+          '选一件想收到的礼物': 'Choose a gift you would love to receive',
+          '同一时间只保留一个当前心愿': 'Only one wish can be active at a time',
+          '星光礼盒': 'Starlight Gift Box',
+          '目录价格 · 100 金币': 'Catalog price · 100 coins',
+          '已选择': 'Selected',
+          '心动花束': 'Heartfelt Bouquet',
+          '目录价格 · 80 金币': 'Catalog price · 80 coins',
+          '轻盈表达心意': 'A light way to show you care',
+          '极光星球': 'Aurora Planet',
+          '目录价格 · 120 金币': 'Catalog price · 120 coins',
+          '把浪漫留给今晚': 'Save a little romance for tonight',
+          '彩虹糖盒': 'Rainbow Candy Box',
+          '目录价格 · 60 金币': 'Catalog price · 60 coins',
+          '分享一点甜': 'Share a little sweetness',
+          '目录价格仅用于界面展示，不代表真实扣费。': 'Catalog prices are for interface display only and do not represent real charges.',
+          '设为我的心愿': 'Set as My Wish',
+          '触发': 'Trigger',
+          '主人在目录中选择一个礼物并提交': 'The owner selects a gift from the catalog and submits',
+          '结果': 'Result',
+          '当前心愿更新为所选礼物，且同时只展示这一件': 'The active wish updates to the selected gift and only this gift is shown',
+          '主人主页心愿': 'Wish on Owner Profile',
+          '同一份心愿在访客、主人和未设置状态下呈现不同操作': 'The same wish shows different actions for visitors, owners, and empty states',
+          '访客查看 · 当前心愿': 'Visitor View · Active Wish',
+          '角色：访客 · 进入：打开 Lina 的主页并查看心愿礼物': 'Role: Visitor · Entry: Open Lina’s profile and view her wish gift',
+          'Lina 的主页': 'Lina’s Profile',
+          '愿每一个普通日子，都有一点小惊喜': 'May every ordinary day hold a little surprise',
+          '动态': 'Posts',
+          '心愿礼物': 'Wish Gift',
+          '当前心愿': 'Active Wish',
+          '刚刚更新': 'Just updated',
+          '把今晚的光送给她': 'Send her a little light tonight',
+          '目录价格 100 金币': 'Catalog price · 100 coins',
+          '赠送心愿': 'Send Wish Gift',
+          '访客可以发起赠送，确认信息会在下一步展开。': 'Visitors can start gifting; confirmation details appear in the next step.',
+          '首页': 'Home',
+          '消息': 'Messages',
+          '我的': 'Me',
+          '设置': 'Settings',
+          '主人查看 · 当前心愿': 'Owner View · Active Wish',
+          '角色：心愿主人 · 进入：查看自己的主页心愿礼物': 'Role: Wish owner · Entry: View the wish gift on your own profile',
+          '我的主页': 'My Profile',
+          '我的当前心愿': 'My Active Wish',
+          '心愿正在等待一份心意': 'This wish is waiting for a thoughtful gift',
+          '更换心愿': 'Change Wish',
+          '只有主人可以更换当前心愿，访客侧不展示此入口。': 'Only the owner can change the active wish; visitors do not see this action.',
+          '未设置空状态 · 主人查看': 'Empty State · Owner View',
+          '角色：心愿主人 · 进入：心愿礼物尚未设置': 'Role: Wish owner · Entry: No wish gift has been set',
+          '还没有心愿礼物': 'No Wish Gift Yet',
+          '从礼物目录选一件想收到的礼物，让朋友更懂你的心意。': 'Choose a gift from the catalog so friends know what would make you happy.',
+          '添加心愿礼物': 'Add Wish Gift',
+          '规则': 'Rule',
+          '主人尚未设置心愿时显示空状态与“添加心愿礼物”入口。': 'When the owner has no wish, show the empty state and the “Add Wish Gift” action.',
+          '未设置空状态 · 访客查看': 'Empty State · Visitor View',
+          '角色：访客 · 进入：打开 Lina 的主页且心愿礼物尚未设置': 'Role: Visitor · Entry: Open Lina’s profile when no wish gift is set',
+          '主人还没有设置心愿礼物，先看看 Lina 的其他动态吧。': 'The owner has not set a wish gift yet. Explore Lina’s other posts for now.',
+          '访客查看未设置心愿时仅展示空状态，不显示操作按钮。': 'Visitors only see the empty state when no wish is set; no action button is shown.',
+          '赠送确认 Sheet': 'Gift Confirmation Sheet',
+          '访客确认接收人、礼物、数量与目录价格，再提交赠送': 'The visitor reviews the recipient, gift, quantity, and catalog price before sending',
+          'FR-004 · 静态展开': 'FR-004 · Expanded static state',
+          '确认赠送 · Sheet 展开': 'Confirm Gift · Sheet Expanded',
+          '角色：访客 · 进入：点击“赠送心愿”主按钮': 'Role: Visitor · Entry: Tap the primary “Send Wish Gift” button',
+          '确认赠送心愿': 'Confirm Wish Gift',
+          '送给 Lina': 'To Lina',
+          '心愿礼物将标记为已实现': 'The wish gift will be marked fulfilled',
+          '当前心愿 · 数量 1': 'Active wish · Quantity 1',
+          '接收人': 'Recipient',
+          '礼物数量': 'Gift quantity',
+          '目录价格': 'Catalog price',
+          '100 金币': '100 coins',
+          '确认赠送': 'Confirm Gift',
+          '暂不赠送': 'Not Now',
+          '访客点击“赠送心愿”': 'The visitor taps “Send Wish Gift”',
+          '确认': 'Confirmation',
+          'Sheet 明确显示接收人 Lina、星光礼盒、数量 1、目录价格 100 金币': 'The Sheet clearly shows recipient Lina, Starlight Gift Box, quantity 1, and catalog price 100 coins',
+          '赠送结果': 'Gift Result',
+          '完成后的成功反馈与再次查看时的不可重复赠送状态': 'Success feedback after gifting and the non-repeatable state on later visits',
+          '赠送成功': 'Gift Sent Successfully',
+          '角色：访客 · 进入：确认赠送完成后': 'Role: Visitor · Entry: After gift confirmation completes',
+          '心愿已送达': 'Wish Gift Delivered',
+          '你已向 Lina 送出“星光礼盒”，这份心意已经抵达她的心愿清单。': 'You sent Lina the “Starlight Gift Box.” Your gift has reached her wish list.',
+          '心愿已实现': 'Wish Fulfilled',
+          '返回 Lina 的主页': 'Back to Lina’s Profile',
+          '本原型不接入真实余额、支付或库存': 'This prototype does not use real balances, payments, or inventory',
+          '已实现状态 · 不可重复赠送': 'Fulfilled State · Cannot Gift Again',
+          '角色：任意查看者 · 进入：再次打开已完成的心愿': 'Role: Any viewer · Entry: Reopen a completed wish',
+          '已完成': 'Completed',
+          '已由访客送达 Lina': 'Delivered to Lina by a visitor',
+          '这份心愿已经完成，状态会保留展示给再次查看的人。': 'This wish is complete, and the fulfilled state remains visible on later visits.',
+          '已实现，不可重复赠送': 'Fulfilled · Cannot Gift Again',
+          '再次查看时保留完成状态，不再展示“赠送心愿”主按钮。': 'On later visits, keep the completed state and hide the primary “Send Wish Gift” button.',
+          '返回': 'Back',
+          '更多操作': 'More actions',
+          '关闭': 'Close',
+          '金币': 'Coins'
+        };
+
+        const shell = document.querySelector('.shell');
+        const directory = document.querySelector('.prototype-directory');
+        const directoryBody = document.querySelector('#prototype-directory-body');
+        const directoryTitle = document.querySelector('.prototype-directory-title');
+        const directoryFooter = document.querySelector('.prototype-directory-footer');
+        const directoryToggle = document.querySelector('.prototype-directory-toggle');
+        const languageSwitcher = document.querySelector('.language-switcher');
+        const viewButtons = Array.from(document.querySelectorAll('[data-prototype-view]'));
+        const adminShell = document.querySelector('[data-admin-shell]');
+        const backgroundCard = document.querySelector('.requirement-background');
+        const backgroundTitle = document.querySelector('.requirement-background-title');
+        const backgroundKicker = document.querySelector('.requirement-background-kicker');
+        const backgroundContent = document.querySelector('[data-background-content]');
+        const backgroundEditor = document.querySelector('[data-background-editor]');
+        const backgroundAgentButton = document.querySelector('[data-background-agent]');
+        const backgroundManualButton = document.querySelector('[data-background-manual]');
+        const pages = Array.from(shell.querySelectorAll('.section[data-page-id]'));
+        const boards = Array.from(shell.querySelectorAll('.board[id]'));
+        const textRecords = [];
+        const walker = document.createTreeWalker(shell, NodeFilter.SHOW_TEXT);
+        let textNode;
+        while ((textNode = walker.nextNode())) {
+          const raw = textNode.nodeValue || '';
+          const value = raw.trim();
+          if (textNode.parentElement?.closest('[data-background-content], [data-background-editor]')) continue;
+          if (!value || !translations[value]) continue;
+          textRecords.push({ node: textNode, zh: value, leading: raw.match(/^\s*/)[0], trailing: raw.match(/\s*$/)[0] });
+        }
+        const attributeRecords = Array.from(shell.querySelectorAll('[aria-label]')).map((element) => ({
+          element,
+          zh: element.getAttribute('aria-label') || ''
+        })).filter((record) => translations[record.zh]);
+
+        function stored(key, fallback) {
+          try { return window.localStorage.getItem(key) || fallback; } catch (error) { return fallback; }
+        }
+
+        function storedList(key) {
+          try {
+            const value = JSON.parse(window.localStorage.getItem(key) || '[]');
+            return Array.isArray(value) ? value : [];
+          } catch (error) {
+            return [];
+          }
+        }
+
+        function storedObject(key) {
+          try {
+            const value = JSON.parse(window.localStorage.getItem(key) || 'null');
+            return value && typeof value === 'object' && !Array.isArray(value) ? value : null;
+          } catch (error) {
+            return null;
+          }
+        }
+
+        function remember(key, value) {
+          try { window.localStorage.setItem(key, value); } catch (error) { /* UI preference only. */ }
+        }
+
+        function pageForBoard(board) {
+          return board.closest('.section[data-page-id]');
+        }
+
+        function translated(value, language) {
+          return language === 'en' ? (translations[value] || value) : value;
+        }
+
+        function escapeUi(value) {
+          return String(value == null ? '' : value)
+            .replaceAll('&', '&amp;')
+            .replaceAll('<', '&lt;')
+            .replaceAll('>', '&gt;')
+            .replaceAll('"', '&quot;');
+        }
+
+        let activeBoardId = boards[0]?.id || '';
+        let currentLanguage = stored('prototype-language', 'zh') === 'en' ? 'en' : 'zh';
+        let currentView = stored('prototype-view-mode', 'frontend') === 'admin' ? 'admin' : 'frontend';
+        const collapsedPages = new Set(storedList('prototype-directory-collapsed-pages'));
+        const defaultBackground = {
+          zh: '以一个礼物心愿串起主人设置、访客赠送和完成反馈。页面与关键状态全部展开，按钮仅作产品表达，不接入真实账户或支付。',
+          en: 'A single gift wish connects owner setup, visitor gifting, and completion feedback. Every key page and state is shown for review; buttons do not connect to real accounts or payments.'
+        };
+        const savedBackground = storedObject('prototype-background-content');
+        let backgroundValues = {
+          zh: String(savedBackground?.zh || defaultBackground.zh),
+          en: String(savedBackground?.en || defaultBackground.en)
+        };
+        let backgroundMode = '';
+        let backgroundAgentPrompt = '';
+        let backgroundAgentSuggestion = false;
+        const adminRecords = [
+          { id: 'U10001', name: 'Lina', giftZh: '星光礼盒', giftEn: 'Starlight Gift Box', price: 100, status: 'active', updated: '2026-08-20 10:30', sender: '—', quantity: '—', completed: '—' },
+          { id: 'U10002', name: 'Noor', giftZh: '未设置', giftEn: 'Not set', price: null, status: 'unset', updated: '2026-08-19 18:20', sender: '—', quantity: '—', completed: '—' },
+          { id: 'U10003', name: 'Maya', giftZh: '心动花束', giftEn: 'Heartfelt Bouquet', price: 80, status: 'fulfilled', updated: '2026-08-18 21:10', sender: 'Omar', quantity: 1, completed: '2026-08-18 21:10' }
+        ];
+        let adminQuery = '';
+        let adminStatus = 'all';
+        let selectedAdminId = 'U10001';
+
+        function renderBackgroundEditor() {
+          const english = currentLanguage === 'en';
+          backgroundTitle.textContent = english ? 'Requirement Background' : '需求背景';
+          backgroundKicker.textContent = 'Product Context';
+          backgroundContent.textContent = backgroundValues[currentLanguage];
+          backgroundAgentButton.textContent = english ? 'Agent Edit' : 'Agent 修改';
+          backgroundManualButton.textContent = english ? 'Manual Edit' : '手动修改';
+          backgroundEditor.hidden = !backgroundMode;
+          if (!backgroundMode) {
+            backgroundEditor.replaceChildren();
+            return;
+          }
+          if (backgroundMode === 'manual') {
+            backgroundEditor.innerHTML = `<form data-background-manual-form>
+              <h3 class="background-editor-title">${english ? 'Edit Requirement Background' : '手动修改需求背景'}</h3>
+              <label class="background-editor-label">中文需求背景<textarea name="zh" required>${escapeUi(backgroundValues.zh)}</textarea></label>
+              <label class="background-editor-label">English Background<textarea name="en" required>${escapeUi(backgroundValues.en)}</textarea></label>
+              <div class="background-editor-actions"><button class="background-button is-primary" type="submit">${english ? 'Save Draft' : '保存草稿'}</button><button class="background-button" type="button" data-background-cancel>${english ? 'Cancel' : '取消'}</button></div>
+            </form>`;
+            backgroundEditor.querySelector('[data-background-manual-form]')?.addEventListener('submit', (event) => {
+              event.preventDefault();
+              const data = new FormData(event.currentTarget);
+              const zh = String(data.get('zh') || '').trim();
+              const en = String(data.get('en') || '').trim();
+              if (!zh || !en) return;
+              backgroundValues = { zh, en };
+              remember('prototype-background-content', JSON.stringify(backgroundValues));
+              backgroundMode = '';
+              renderBackgroundEditor();
+            });
+          } else {
+            const preview = backgroundAgentSuggestion && backgroundAgentPrompt
+              ? `<section class="background-agent-preview"><span class="background-agent-demo">${english ? 'Interaction demo · Real Agent not connected' : '交互演示 · 尚未调用真实 Agent'}</span><p><strong>${english ? 'Your request' : '用户要求'}：</strong>${escapeUi(backgroundAgentPrompt)}</p><p>${english ? 'Suggested impact: Chinese background, English background, and review status.' : '建议影响：中文需求背景、英文需求背景与评审状态。'}</p><p>${english ? 'Status will become Pending confirmation.' : '状态将变为“待确认”。'}</p><div class="background-editor-actions"><button class="background-button" type="button" data-background-agent-retry>${english ? 'Describe Again' : '重新描述'}</button><button class="background-button" type="button" disabled aria-disabled="true">${english ? 'Apply (Not Connected)' : '应用修改（待接入）'}</button></div></section>`
+              : '';
+            backgroundEditor.innerHTML = `<form data-background-agent-form>
+              <h3 class="background-editor-title">${english ? 'Tell Agent how to revise the background' : '告诉 Agent 你想怎么修改需求背景'}</h3>
+              <dl class="background-agent-context"><dt>${english ? 'Current scope' : '当前范围'}</dt><dd>${english ? 'Requirement background · Chinese and English' : '需求背景 · 中文与英文'}</dd><dt>${english ? 'Write target' : '写入目标'}</dt><dd>${english ? 'Local interaction demo only' : '仅当前交互演示'}</dd></dl>
+              <label class="background-editor-label">${english ? 'Revision request' : '修改要求'}<textarea name="agentPrompt" required placeholder="${english ? 'Example: Explain the user problem and expected product value.' : '例如：补充用户问题、使用场景和预期产品价值'}">${escapeUi(backgroundAgentPrompt)}</textarea></label>
+              <div class="background-editor-actions"><button class="background-button is-primary" type="submit">${english ? 'Generate Suggestion' : '生成修改建议'}</button><button class="background-button" type="button" data-background-cancel>${english ? 'Cancel' : '取消'}</button></div>
+            </form>${preview}`;
+            backgroundEditor.querySelector('[data-background-agent-form]')?.addEventListener('submit', (event) => {
+              event.preventDefault();
+              const prompt = String(new FormData(event.currentTarget).get('agentPrompt') || '').trim();
+              if (!prompt) return;
+              backgroundAgentPrompt = prompt;
+              backgroundAgentSuggestion = true;
+              renderBackgroundEditor();
+            });
+            backgroundEditor.querySelector('[data-background-agent-retry]')?.addEventListener('click', () => {
+              backgroundAgentSuggestion = false;
+              renderBackgroundEditor();
+              backgroundEditor.querySelector('textarea[name=agentPrompt]')?.focus();
+            });
+          }
+          backgroundEditor.querySelector('[data-background-cancel]')?.addEventListener('click', () => {
+            backgroundMode = '';
+            backgroundAgentPrompt = '';
+            backgroundAgentSuggestion = false;
+            renderBackgroundEditor();
+          });
+        }
+
+        function adminCopy() {
+          const en = currentLanguage === 'en';
+          return {
+            title: en ? 'Wish Gift Operations' : '心愿礼物运营后台',
+            subtitle: en ? 'A read-only admin view derived from the confirmed frontend flow.' : '根据已确认前台流程派生的只读后台视图。',
+            readonly: en ? 'Read-only demo' : '只读演示',
+            list: en ? 'Wish Records' : '心愿记录',
+            detail: en ? 'Record Details' : '记录详情',
+            fields: en ? 'Field Guide' : '字段说明',
+            fieldNote: en ? 'Confirmed frontend facts and proposed operational fields are labeled separately.' : '前台已确认事实与后台建议字段分开标识。',
+            search: en ? 'Search name or user ID' : '搜索用户名或用户 ID',
+            all: en ? 'All statuses' : '全部状态',
+            unset: en ? 'Not set' : '未设置',
+            active: en ? 'Active' : '生效中',
+            fulfilled: en ? 'Fulfilled' : '已实现',
+            user: en ? 'User' : '用户',
+            gift: en ? 'Current gift' : '当前心愿礼物',
+            price: en ? 'Catalog price' : '目录价格',
+            status: en ? 'Status' : '心愿状态',
+            updated: en ? 'Updated at' : '更新时间',
+            noRecords: en ? 'No matching records' : '暂无匹配记录',
+            quantity: en ? 'Gift quantity' : '礼物数量',
+            sender: en ? 'Sender' : '赠送人',
+            completed: en ? 'Completed at' : '完成时间',
+            proposed: en ? 'Proposed' : '建议字段',
+            noWrite: en ? 'No write permissions are included. This page cannot force-change a user wish or reverse fulfillment.' : '当前不包含写权限，不能强制修改用户心愿或撤销已实现状态。'
+          };
+        }
+
+        function statusLabel(status, copy) {
+          return copy[status] || status;
+        }
+
+        function renderAdminDetail() {
+          const copy = adminCopy();
+          const record = adminRecords.find((item) => item.id === selectedAdminId) || adminRecords[0];
+          document.querySelector('[data-admin-detail-heading]').textContent = copy.detail;
+          document.querySelector('[data-admin-detail-badge]').textContent = copy.readonly;
+          const gift = currentLanguage === 'en' ? record.giftEn : record.giftZh;
+          const price = record.price == null ? '—' : `${record.price} ${currentLanguage === 'en' ? 'coins' : '金币'}`;
+          document.querySelector('[data-admin-detail]').innerHTML = `<div class="admin-detail-title"><strong>${escapeUi(record.name)}</strong><span>${escapeUi(record.id)}</span></div><dl class="admin-detail-grid">
+            <dt>${copy.gift}</dt><dd>${escapeUi(gift)}</dd>
+            <dt>${copy.price}</dt><dd>${escapeUi(price)}</dd>
+            <dt>${copy.status}</dt><dd><span class="admin-status ${record.status}">${copy[record.status]}</span></dd>
+            <dt>${copy.updated}<span class="admin-proposed">${copy.proposed}</span></dt><dd>${escapeUi(record.updated)}</dd>
+            <dt>${copy.sender}<span class="admin-proposed">${copy.proposed}</span></dt><dd>${escapeUi(record.sender)}</dd>
+            <dt>${copy.quantity}</dt><dd>${escapeUi(String(record.quantity))}</dd>
+            <dt>${copy.completed}<span class="admin-proposed">${copy.proposed}</span></dt><dd>${escapeUi(record.completed)}</dd>
+          </dl><p class="admin-no-write">${copy.noWrite}</p>`;
+        }
+
+        function renderAdminRows() {
+          const copy = adminCopy();
+          const query = adminQuery.toLowerCase();
+          const filtered = adminRecords.filter((record) => {
+            const matchesQuery = !query || record.name.toLowerCase().includes(query) || record.id.toLowerCase().includes(query);
+            return matchesQuery && (adminStatus === 'all' || record.status === adminStatus);
+          });
+          document.querySelector('[data-admin-count]').textContent = `${filtered.length} / ${adminRecords.length}`;
+          const body = document.querySelector('[data-admin-table-body]');
+          body.innerHTML = filtered.length ? filtered.map((record) => {
+            const gift = currentLanguage === 'en' ? record.giftEn : record.giftZh;
+            const price = record.price == null ? '—' : `${record.price} ${currentLanguage === 'en' ? 'coins' : '金币'}`;
+            return `<tr data-admin-record="${escapeUi(record.id)}" tabindex="0" class="${record.id === selectedAdminId ? 'is-selected' : ''}"><td><span class="admin-user"><strong>${escapeUi(record.name)}</strong><span>${escapeUi(record.id)}</span></span></td><td>${escapeUi(gift)}</td><td>${escapeUi(price)}</td><td><span class="admin-status ${record.status}">${statusLabel(record.status, copy)}</span></td><td>${escapeUi(record.updated)} <span class="admin-proposed">${copy.proposed}</span></td></tr>`;
+          }).join('') : `<tr><td class="admin-empty-row" colspan="5">${copy.noRecords}</td></tr>`;
+          body.querySelectorAll('[data-admin-record]').forEach((row) => {
+            const select = () => { selectedAdminId = row.dataset.adminRecord; renderAdminRows(); renderAdminDetail(); };
+            row.addEventListener('click', select);
+            row.addEventListener('keydown', (event) => { if (event.key === 'Enter' || event.key === ' ') { event.preventDefault(); select(); } });
+          });
+        }
+
+        function renderAdmin() {
+          const copy = adminCopy();
+          document.querySelector('[data-admin-title]').textContent = copy.title;
+          document.querySelector('[data-admin-subtitle]').textContent = copy.subtitle;
+          document.querySelector('[data-admin-readonly]').textContent = copy.readonly;
+          document.querySelector('[data-admin-list-title]').textContent = copy.list;
+          document.querySelector('[data-admin-search]').placeholder = copy.search;
+          document.querySelector('[data-admin-search]').value = adminQuery;
+          const statusSelect = document.querySelector('[data-admin-status]');
+          statusSelect.innerHTML = `<option value="all">${copy.all}</option><option value="unset">${copy.unset}</option><option value="active">${copy.active}</option><option value="fulfilled">${copy.fulfilled}</option>`;
+          statusSelect.value = adminStatus;
+          document.querySelector('[data-admin-table-head]').innerHTML = `<tr><th>${copy.user}</th><th>${copy.gift}</th><th>${copy.price}</th><th>${copy.status}</th><th>${copy.updated} <span class="admin-proposed">${copy.proposed}</span></th></tr>`;
+          document.querySelector('[data-admin-field-title]').textContent = copy.fields;
+          document.querySelector('[data-admin-field-note]').textContent = copy.fieldNote;
+          const fieldItems = [
+            [copy.user, currentLanguage === 'en' ? 'Wish owner identity shown on the frontend profile.' : '前台主页展示的心愿主人身份。'],
+            [copy.gift, currentLanguage === 'en' ? 'FR-001–003: the one current gift selected from the catalog.' : 'FR-001～003：从目录选择的唯一当前心愿礼物。'],
+            [copy.price, currentLanguage === 'en' ? 'FR-002/004: display-only catalog price; not a billing rule.' : 'FR-002/004：仅展示目录价格，不构成计费规则。'],
+            [copy.status, currentLanguage === 'en' ? 'FR-005–007: not set, active, or fulfilled.' : 'FR-005～007：未设置、生效中或已实现。'],
+            [copy.quantity, currentLanguage === 'en' ? 'FR-004: confirmation quantity is fixed at 1.' : 'FR-004：确认赠送数量固定为 1。'],
+            [`${copy.updated} / ${copy.sender} / ${copy.completed}`, currentLanguage === 'en' ? 'Proposed operational fields; not defined by the current Contract.' : '后台建议字段，当前 Contract 尚未定义。']
+          ];
+          document.querySelector('[data-admin-field-list]').innerHTML = fieldItems.map(([name, note]) => `<article class="admin-field-item"><strong>${escapeUi(name)}</strong><span>${escapeUi(note)}</span></article>`).join('');
+          renderAdminRows();
+          renderAdminDetail();
+        }
+
+        let annotationVisibleBeforeAdmin = true;
+        function setPrototypeView(view) {
+          const next = view === 'admin' ? 'admin' : 'frontend';
+          if (next === 'admin' && currentView !== 'admin') annotationVisibleBeforeAdmin = !document.querySelector('.paa-panel')?.classList.contains('is-hidden');
+          currentView = next;
+          shell.hidden = currentView === 'admin';
+          adminShell.hidden = currentView !== 'admin';
+          document.body.classList.toggle('admin-mode', currentView === 'admin');
+          viewButtons.forEach((button) => {
+            const active = button.dataset.prototypeView === currentView;
+            button.classList.toggle('is-active', active);
+            button.setAttribute('aria-selected', String(active));
+          });
+          remember('prototype-view-mode', currentView);
+          renderDirectory();
+          if (currentView === 'admin') {
+            renderAdmin();
+            window.setTimeout(() => window.PrototypeAnnotationRuntime?.hide(), 0);
+          } else if (annotationVisibleBeforeAdmin) {
+            window.setTimeout(() => window.PrototypeAnnotationRuntime?.show(), 0);
+          }
+        }
+
+        function setActiveBoard(boardId) {
+          activeBoardId = boardId || activeBoardId;
+          directoryBody.querySelectorAll('a').forEach((link) => link.classList.remove('is-active'));
+          const boardLink = directoryBody.querySelector(`[href="#${CSS.escape(activeBoardId)}"]`);
+          boardLink?.classList.add('is-active');
+          const page = pageForBoard(document.getElementById(activeBoardId));
+          if (page) directoryBody.querySelector(`[href="#${CSS.escape(page.id)}"]`)?.classList.add('is-active');
+          boardLink?.scrollIntoView({ block: 'nearest' });
+        }
+
+        function renderDirectory() {
+          directoryBody.replaceChildren();
+          if (currentView === 'admin') {
+            const items = currentLanguage === 'en'
+              ? [['01', 'Wish records', '#admin-wish-records'], ['02', 'Field guide', '#admin-field-guide']]
+              : [['01', '心愿记录', '#admin-wish-records'], ['02', '字段说明', '#admin-field-guide']];
+            items.forEach(([number, label, href]) => {
+              const link = document.createElement('a');
+              link.className = 'prototype-directory-page-link';
+              link.href = href;
+              link.innerHTML = `<span class="directory-index">${number}</span><span class="prototype-directory-page-label">${label}</span>`;
+              directoryBody.appendChild(link);
+            });
+            directoryFooter.textContent = currentLanguage === 'en' ? 'Admin fields are derived from the frontend flow. No write permissions are included.' : '后台字段由前台流程派生，当前不包含写权限。';
+            return;
+          }
+          directoryFooter.textContent = currentLanguage === 'en'
+            ? 'Built from HTML pages and canvases for navigation only; independent of annotations.'
+            : '目录来自 HTML 页面和画板，可定位，不参与标注。';
+          let boardNumber = 1;
+          pages.forEach((page, pageIndex) => {
+            const group = document.createElement('section');
+            group.className = 'prototype-directory-page';
+            group.classList.toggle('is-collapsed', collapsedPages.has(page.dataset.pageId));
+            const pageRow = document.createElement('div');
+            pageRow.className = 'prototype-directory-page-row';
+            const pageLink = document.createElement('a');
+            pageLink.className = 'prototype-directory-page-link';
+            pageLink.href = `#${page.id}`;
+            pageLink.setAttribute('aria-expanded', String(!collapsedPages.has(page.dataset.pageId)));
+            pageLink.setAttribute('aria-controls', `prototype-directory-boards-${page.dataset.pageId}`);
+            pageLink.innerHTML = `<span class="directory-index">${String(pageIndex + 1).padStart(2, '0')}</span><span class="prototype-directory-page-label"></span>`;
+            const pageName = currentLanguage === 'en' ? (page.dataset.pageNameEn || page.dataset.pageName) : page.dataset.pageName;
+            pageLink.querySelector('.prototype-directory-page-label').textContent = pageName;
+            pageRow.appendChild(pageLink);
+            const pageToggle = document.createElement('button');
+            pageToggle.className = 'prototype-directory-page-toggle';
+            pageToggle.type = 'button';
+            pageToggle.setAttribute('aria-expanded', String(!collapsedPages.has(page.dataset.pageId)));
+            pageToggle.setAttribute('aria-controls', `prototype-directory-boards-${page.dataset.pageId}`);
+            pageToggle.setAttribute('aria-label', currentLanguage === 'en' ? `Toggle ${pageName} canvases` : `展开或收起${pageName}画板`);
+            pageToggle.innerHTML = '<svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg>';
+            pageRow.appendChild(pageToggle);
+            group.appendChild(pageRow);
+            const boardList = document.createElement('div');
+            boardList.className = 'prototype-directory-boards';
+            boardList.id = `prototype-directory-boards-${page.dataset.pageId}`;
+            page.querySelectorAll('.board[id]').forEach((board) => {
+              const label = board.querySelector('.board-meta strong')?.textContent?.trim() || board.id;
+              const link = document.createElement('a');
+              link.className = 'prototype-directory-board-link';
+              link.href = `#${board.id}`;
+              link.innerHTML = `<span class="prototype-directory-board-index">${boardNumber}</span><span class="prototype-directory-board-label"></span>`;
+              link.querySelector('.prototype-directory-board-label').textContent = translated(label, currentLanguage);
+              link.addEventListener('click', () => setActiveBoard(board.id));
+              boardList.appendChild(link);
+              boardNumber += 1;
+            });
+            const setPageCollapsed = (collapsed) => {
+              group.classList.toggle('is-collapsed', collapsed);
+              pageLink.setAttribute('aria-expanded', String(!collapsed));
+              pageToggle.setAttribute('aria-expanded', String(!collapsed));
+              if (collapsed) collapsedPages.add(page.dataset.pageId);
+              else collapsedPages.delete(page.dataset.pageId);
+              remember('prototype-directory-collapsed-pages', JSON.stringify(Array.from(collapsedPages)));
+            };
+            pageLink.addEventListener('click', () => setPageCollapsed(!group.classList.contains('is-collapsed')));
+            pageToggle.addEventListener('click', () => setPageCollapsed(!group.classList.contains('is-collapsed')));
+            group.appendChild(boardList);
+            directoryBody.appendChild(group);
+          });
+          setActiveBoard(activeBoardId);
+        }
+
+        function applyLanguage(language) {
+          currentLanguage = language === 'en' ? 'en' : 'zh';
+          document.documentElement.lang = currentLanguage === 'en' ? 'en' : 'zh-CN';
+          document.title = translated('心愿礼物 · 高保真静态原型', currentLanguage);
+          textRecords.forEach((record) => {
+            record.node.nodeValue = `${record.leading}${translated(record.zh, currentLanguage)}${record.trailing}`;
+          });
+          attributeRecords.forEach((record) => record.element.setAttribute('aria-label', translated(record.zh, currentLanguage)));
+          directoryTitle.textContent = currentLanguage === 'en' ? 'Prototype Directory' : '原型目录';
+          directoryFooter.textContent = currentLanguage === 'en'
+            ? 'Built from HTML pages and canvases for navigation only; independent of annotations.'
+            : '目录来自 HTML 页面和画板，可定位，不参与标注。';
+          directory.setAttribute('aria-label', currentLanguage === 'en' ? 'Prototype directory' : '原型目录');
+          document.querySelector('.prototype-view-switch').setAttribute('aria-label', currentLanguage === 'en' ? 'Prototype view' : '原型视图');
+          viewButtons.forEach((button) => {
+            button.textContent = button.dataset.prototypeView === 'admin'
+              ? (currentLanguage === 'en' ? 'Admin' : '运营后台')
+              : (currentLanguage === 'en' ? 'Frontend' : '前台原型');
+          });
+          languageSwitcher.setAttribute('aria-label', currentLanguage === 'en' ? 'Language' : '语言');
+          directoryToggle.setAttribute('aria-label', directory.classList.contains('is-collapsed')
+            ? (currentLanguage === 'en' ? 'Expand prototype directory' : '展开原型目录')
+            : (currentLanguage === 'en' ? 'Collapse prototype directory' : '折叠原型目录'));
+          languageSwitcher.querySelectorAll('[data-language]').forEach((button) => {
+            const active = button.dataset.language === currentLanguage;
+            button.classList.toggle('is-active', active);
+            button.setAttribute('aria-pressed', String(active));
+          });
+          remember('prototype-language', currentLanguage);
+          renderDirectory();
+          renderBackgroundEditor();
+          if (currentView === 'admin') renderAdmin();
+        }
+
+        function setDirectoryCollapsed(collapsed) {
+          directory.classList.toggle('is-collapsed', collapsed);
+          document.body.classList.toggle('directory-collapsed', collapsed);
+          directoryToggle.setAttribute('aria-expanded', String(!collapsed));
+          directoryToggle.setAttribute('aria-label', collapsed
+            ? (currentLanguage === 'en' ? 'Expand prototype directory' : '展开原型目录')
+            : (currentLanguage === 'en' ? 'Collapse prototype directory' : '折叠原型目录'));
+          remember('prototype-directory-collapsed', collapsed ? '1' : '0');
+        }
+
+        let scrollFrame = null;
+        function updateDirectoryFromScroll() {
+          if (currentView === 'admin') return;
+          if (scrollFrame) cancelAnimationFrame(scrollFrame);
+          scrollFrame = requestAnimationFrame(() => {
+            const centerX = (directory.getBoundingClientRect().right + (document.querySelector('.paa-panel:not(.is-hidden)')?.getBoundingClientRect().left || window.innerWidth)) / 2;
+            const focusY = window.innerHeight * .36;
+            let best = null;
+            boards.forEach((board) => {
+              const rect = board.getBoundingClientRect();
+              const distance = Math.abs(rect.top - focusY) + Math.abs((rect.left + rect.width / 2) - centerX) * .18;
+              if (!best || distance < best.distance) best = { id: board.id, distance };
+            });
+            if (best) setActiveBoard(best.id);
+          });
+        }
+
+        backgroundManualButton.addEventListener('click', () => {
+          backgroundMode = 'manual';
+          backgroundAgentPrompt = '';
+          backgroundAgentSuggestion = false;
+          renderBackgroundEditor();
+          backgroundEditor.querySelector('textarea[name=zh]')?.focus();
+        });
+        backgroundAgentButton.addEventListener('click', () => {
+          backgroundMode = 'agent';
+          backgroundAgentPrompt = '';
+          backgroundAgentSuggestion = false;
+          renderBackgroundEditor();
+          backgroundEditor.querySelector('textarea[name=agentPrompt]')?.focus();
+        });
+        viewButtons.forEach((button) => button.addEventListener('click', () => setPrototypeView(button.dataset.prototypeView)));
+        document.querySelector('[data-admin-search]').addEventListener('input', (event) => {
+          adminQuery = event.currentTarget.value.trim();
+          renderAdminRows();
+        });
+        document.querySelector('[data-admin-status]').addEventListener('change', (event) => {
+          adminStatus = event.currentTarget.value;
+          renderAdminRows();
+        });
+        directoryToggle.addEventListener('click', () => setDirectoryCollapsed(!directory.classList.contains('is-collapsed')));
+        languageSwitcher.querySelectorAll('[data-language]').forEach((button) => button.addEventListener('click', () => applyLanguage(button.dataset.language)));
+        window.addEventListener('scroll', updateDirectoryFromScroll, { passive: true });
+        window.addEventListener('resize', updateDirectoryFromScroll);
+        setDirectoryCollapsed(stored('prototype-directory-collapsed', '0') === '1');
+        applyLanguage(currentLanguage);
+        setPrototypeView(currentView);
+        updateDirectoryFromScroll();
+      })();
+    </script>
+  </body>
+</html>

@@ -553,4 +553,4 @@ When this Skill or a produced prototype is incomplete, ambiguous, weak, conflict
 4. Keep the repair focused and preserve useful rules.
 5. Remove duplicate or conflicting rules.
 6. Re-run the self-test.
-7. Report result, score/pass summary, executed test cases, Critical Fail checks, repairs applied, re-test result, files changed, preview/download path, known limitations, and whether it is ready for real Codex use.
+7. Report result, score/pass summary, executed test cases, Critical Fail checks, repairs applied, re-test result, files changed, preview/download path, known limitations, and whether it is ready for real-world use by an Agent.

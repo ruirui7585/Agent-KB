@@ -1,0 +1,44 @@
+{
+  "version": "0.1.0",
+  "runId": "2026-07-29T02-46-32-585Z-gift-system-baseline",
+  "workflow": "product-feature",
+  "mode": "workflow",
+  "executor": "codex",
+  "status": "completed",
+  "createdAt": "2026-07-29T02:46:32.589Z",
+  "completedAt": "2026-07-29T03:05:19.513Z",
+  "steps": [
+    {
+      "id": "pm",
+      "agent": "pm-agent",
+      "output": "pm-analysis.md",
+      "status": "completed",
+      "startedAt": "2026-07-29T02:46:32.589Z",
+      "completedAt": "2026-07-29T02:49:46.378Z"
+    },
+    {
+      "id": "prd",
+      "agent": "prd-agent",
+      "output": "PRD.md",
+      "status": "completed",
+      "startedAt": "2026-07-29T02:49:46.379Z",
+      "completedAt": "2026-07-29T02:55:02.445Z"
+    },
+    {
+      "id": "prototype",
+      "agent": "prototype-agent",
+      "output": "prototype/index.html",
+      "status": "completed",
+      "startedAt": "2026-07-29T02:55:02.446Z",
+      "completedAt": "2026-07-29T03:02:36.699Z"
+    },
+    {
+      "id": "review",
+      "agent": "review-agent",
+      "output": "review.md",
+      "status": "completed",
+      "startedAt": "2026-07-29T03:02:36.700Z",
+      "completedAt": "2026-07-29T03:05:19.512Z"
+    }
+  ]
+}

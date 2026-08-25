@@ -1,0 +1,412 @@
+{
+  "version": "0.1",
+  "task": {
+    "summary": "Produce a Sandbox-only delivery-quality draft plan for Laka gift-system configuration optimization comparison",
+    "size": "L",
+    "rationale": "The requested outcome spans product analysis, PRD/specification, backend prototype, frontend announcement prototype, review report, migration, rollout, cache, rollback, analytics, and multiple unresolved product decisions."
+  },
+  "route": [
+    "discover",
+    "align",
+    "spec",
+    "tickets",
+    "execute",
+    "review"
+  ],
+  "gate": {
+    "status": "clear",
+    "items": [
+      {
+        "decision": "Current deliverable is production or Sandbox-only",
+        "classification": "resolved",
+        "handling": "Use ../common/input.md: all generated artifacts are non-production drafts for Sandbox comparison only."
+      },
+      {
+        "decision": "Whether to read ../baseline",
+        "classification": "resolved",
+        "handling": "Do not read ../baseline, per user instruction."
+      },
+      {
+        "decision": "Whether existing README.md and PRD.md should be reused",
+        "classification": "resolved",
+        "handling": "Reuse as read-only facts for the Sandbox comparison; do not modify source requirement files."
+      },
+      {
+        "decision": "Whether existing prototype.html and announcement-prototype.html should be reused",
+        "classification": "resolved",
+        "handling": "Use them as read-only facts and snapshot candidates; later execution may generate Sandbox copies rather than editing source prototypes."
+      },
+      {
+        "decision": "Whether current requirement screenshots can be reused",
+        "classification": "resolved",
+        "handling": "Use screenshots only as visual evidence; do not extract or reuse user imagery."
+      },
+      {
+        "decision": "Whether to generate a standalone global-announcement backend",
+        "classification": "resolved",
+        "handling": "Do not generate a standalone global-announcement backend; gift and Lucky win announcements stay inside gift play configuration."
+      },
+      {
+        "decision": "CP/Friend gift behavior when no relationship exists",
+        "classification": "draft-safe",
+        "handling": "Keep TBD in draft artifacts; do not encode a production failure policy."
+      },
+      {
+        "decision": "Guardian gift behavior when no Guardian relationship exists",
+        "classification": "draft-safe",
+        "handling": "Keep TBD in draft artifacts; do not encode a production failure policy."
+      },
+      {
+        "decision": "Music gift priority versus room background music, host audio, and user mute settings",
+        "classification": "draft-safe",
+        "handling": "Keep priority and interruption rules as TBD; prototypes may show fields without asserting final precedence."
+      },
+      {
+        "decision": "Template Banner text limits and Arabic adaptation",
+        "classification": "draft-safe",
+        "handling": "Keep limits as TBD; require validation states without inventing final limits."
+      },
+      {
+        "decision": "Custom Banner dimensions, file size, and animated format support",
+        "classification": "draft-safe",
+        "handling": "Keep final asset constraints as TBD; use placeholder upload requirements only in Sandbox drafts."
+      },
+      {
+        "decision": "Gift detail media support",
+        "classification": "draft-safe",
+        "handling": "Keep video versus image/text support as TBD; do not require production media behavior."
+      }
+    ]
+  },
+  "confirmedFacts": [
+    "Input status: non-production workflow comparison; every generated artifact is a draft.",
+    "Read-only project root: /Users/shilv/Agent-Workspace/Projects/laka.",
+    "Read-only active requirement: /Users/shilv/Agent-Workspace/Projects/laka/requirements/active/20260720-gift-system-optimization.",
+    "Laka project documents use Chinese for product background, business rules, PRD, decision reasons, and acceptance criteria.",
+    "App-facing UI copy defaults to English unless an existing backend prototype uses Chinese operational labels.",
+    "Laka is an adult stranger-social product for overseas markets, centered on MENA, with 1v1 chat, voice rooms, gifts, coins, and diamonds.",
+    "Requirement version is v0.6, Draft, Proposed, last updated 2026-07-21.",
+    "Existing requirement files include README.md, PRD.md, prototype.html, announcement-prototype.html, Axhub files, 8 screenshots, and 3 announcement wireframe assets.",
+    "PRD.md has 307 lines; prototype.html has 155 lines; announcement-prototype.html has 70 lines.",
+    "v0.6 preserves the existing gift resource library and separates gift tabs, gift placement, badge assets, play configuration, and gift-information banners.",
+    "The backend must not include an independent all-server announcement configuration page.",
+    "Gift play configuration supports one primary play type per gift: normal, lucky, global, music, cp, or guardian.",
+    "Global gift announcements use single successful send amount threshold; Lucky announcements use final win amount threshold.",
+    "Badges are reusable assets selected as multi-select labels in gift play configuration; one gift can have multiple badges.",
+    "Gift-information Banner supports template and custom types; Banner click opens the bound gift detail page.",
+    "Announcement UI must cover gift sent and Lucky win cases in the voice-room top safe area.",
+    "Migration must map old group names to stable Tabs, migrate old gift types to play configuration, dedupe badges into a badge library, migrate announcement thresholds into play fields, and preserve fallback to old read logic during gray release.",
+    "DECISIONS.md was read and is empty.",
+    "No exact CLI token usage was available."
+  ],
+  "specialistCapabilities": [
+    "product PRD/spec writing",
+    "HTML prototype generation",
+    "frontend announcement prototype generation",
+    "product and UX review",
+    "workflow evidence validation"
+  ],
+  "reuseDecisions": [
+    {
+      "artifact": "README.md",
+      "classification": "reuse-read-only-fact",
+      "reason": "Contains current v0.6 scope, source limitations, prototype entry points, and unresolved questions."
+    },
+    {
+      "artifact": "PRD.md",
+      "classification": "reuse-read-only-fact",
+      "reason": "Contains current draft product rules, non-goals, data fields, events, migration, and acceptance criteria."
+    },
+    {
+      "artifact": "prototype.html",
+      "classification": "snapshot-candidate",
+      "reason": "Existing runnable backend wireframe covers the five target backend pages and interactions; Sandbox execution should copy or regenerate rather than edit the source."
+    },
+    {
+      "artifact": "announcement-prototype.html",
+      "classification": "snapshot-candidate",
+      "reason": "Existing runnable frontend wireframe covers gift-sent and Lucky-win announcement cases; Sandbox execution should copy or regenerate rather than edit the source."
+    },
+    {
+      "artifact": "requirement screenshots",
+      "classification": "visual-evidence-only",
+      "reason": "Input permits screenshots as visual evidence and forbids extracting or reusing user imagery."
+    },
+    {
+      "artifact": "Axhub files",
+      "classification": "portable-support-if-snapshotting-prototype",
+      "reason": "README states Axhub runtime, annotation data, and bridge must remain with prototype.html when publishing or sharing."
+    }
+  ],
+  "generationGaps": [
+    "A Sandbox product analysis artifact is not present and must be generated.",
+    "A Sandbox PRD/spec artifact may reuse PRD.md facts but must explicitly mark unresolved decisions as TBD for this comparison.",
+    "Sandbox prototype copies or regenerated HTML drafts are needed if execution proceeds; source prototypes must remain unchanged.",
+    "A review report artifact is not present and must be generated from actual validation evidence.",
+    "Final production asset rules for Banner limits/assets and gift-detail media are unresolved and must remain TBD."
+  ],
+  "tickets": [
+    {
+      "id": "T01",
+      "outcome": "Reviewer can see the confirmed scope, source map, reuse decisions, and TBD decisions for the Sandbox comparison",
+      "scope": [
+        "source inventory",
+        "read-only reuse map",
+        "Sandbox-only classification",
+        "resolved and draft-safe gate items"
+      ],
+      "nonGoals": [
+        "editing Laka source files",
+        "reading ../baseline",
+        "resolving production-only decisions"
+      ],
+      "acceptance": [
+        "Lists all required source files read from ../common/input.md",
+        "Classifies README.md and PRD.md as read-only facts",
+        "Classifies prototype.html and announcement-prototype.html as snapshot candidates",
+        "Classifies screenshots as visual evidence only",
+        "Marks CP/Friend, Guardian, music priority, Banner limits/assets, and gift-detail media decisions as TBD"
+      ],
+      "evidence": [
+        "source inspection",
+        "file inventory",
+        "route.json validation"
+      ],
+      "blockedBy": [],
+      "capability": "workflow evidence validation",
+      "openDecisions": []
+    },
+    {
+      "id": "T02",
+      "outcome": "Reviewer can evaluate the gift-system optimization rationale and product boundaries",
+      "scope": [
+        "product analysis",
+        "current problems",
+        "target information architecture",
+        "non-goals",
+        "risk and dependency summary"
+      ],
+      "nonGoals": [
+        "inventing prices",
+        "inventing settlement behavior",
+        "inventing public platform rules"
+      ],
+      "acceptance": [
+        "Explains why gift resource library remains separate",
+        "Explains why Tab, placement, badge, play, and Banner configuration are separated",
+        "States that global gift and Lucky announcements belong to gift play configuration",
+        "Covers migration, rollout, cache, rollback, analytics, and error-state implications at analysis level"
+      ],
+      "evidence": [
+        "README.md and PRD.md source trace",
+        "review against source non-goals",
+        "TBD list preserved"
+      ],
+      "blockedBy": [
+        "T01"
+      ],
+      "capability": "product PRD/spec writing",
+      "openDecisions": [
+        "CP/Friend no-relationship behavior",
+        "Guardian no-relationship behavior",
+        "music priority",
+        "Banner limits/assets",
+        "gift-detail media support"
+      ]
+    },
+    {
+      "id": "T03",
+      "outcome": "Reviewer can use a delivery-quality draft PRD/specification for v0.6 gift-system configuration",
+      "scope": [
+        "backend configuration pages",
+        "gift play data fields",
+        "announcement event fields",
+        "frontend announcement behavior",
+        "migration",
+        "rollout",
+        "cache",
+        "rollback",
+        "analytics",
+        "error states",
+        "acceptance criteria"
+      ],
+      "nonGoals": [
+        "production API contract finalization",
+        "Lucky probability algorithm changes",
+        "gift pricing or settlement changes",
+        "standalone announcement backend"
+      ],
+      "acceptance": [
+        "Spec preserves existing gift resource configuration as the source for name, price, icon, and animation",
+        "Spec defines gift Tab configuration, gift placement, reusable badge library, one primary play type, play-specific conditions, and Banner configuration",
+        "Spec excludes announcement style, copy, scope, queue, frequency control, validity, privacy/fraud, and fallback fields from backend configuration",
+        "Spec includes analytics events and denominator/numerator for announcement exposure",
+        "Spec keeps unresolved decisions explicitly marked TBD"
+      ],
+      "evidence": [
+        "source trace to PRD.md sections",
+        "acceptance checklist",
+        "manual consistency review"
+      ],
+      "blockedBy": [
+        "T01",
+        "T02"
+      ],
+      "capability": "product PRD/spec writing",
+      "openDecisions": [
+        "CP/Friend no-relationship behavior",
+        "Guardian no-relationship behavior",
+        "music priority",
+        "Banner limits/assets",
+        "gift-detail media support"
+      ]
+    },
+    {
+      "id": "T04",
+      "outcome": "Reviewer can run a Sandbox backend prototype that demonstrates gift Tab, placement, badge, play, and Banner configuration",
+      "scope": [
+        "portable HTML backend prototype",
+        "left navigation",
+        "list pages",
+        "modal forms",
+        "play-condition field switching",
+        "badge multi-select",
+        "Banner association behavior",
+        "save and publish toasts"
+      ],
+      "nonGoals": [
+        "editing the active source prototype",
+        "connecting to production backend",
+        "uploading real assets"
+      ],
+      "acceptance": [
+        "No standalone global-announcement backend page is present",
+        "Gift resource page is shown as existing and unchanged",
+        "Gift placement page references existing gifts and shows play data read-only",
+        "Gift play page allows exactly one primary play type and multiple badge selections",
+        "Global and Lucky play types show only their relevant amount thresholds",
+        "Banner page separates template and custom Banner behavior"
+      ],
+      "evidence": [
+        "HTML syntax/static inspection",
+        "page-load check",
+        "console check",
+        "main click-path check for navigation, modals, play type switching, Banner association, and toasts"
+      ],
+      "blockedBy": [
+        "T03"
+      ],
+      "capability": "HTML prototype generation",
+      "openDecisions": [
+        "Banner limits/assets"
+      ]
+    },
+    {
+      "id": "T05",
+      "outcome": "Reviewer can run a Sandbox frontend announcement prototype for gift-sent and Lucky-win events",
+      "scope": [
+        "portable HTML mobile announcement prototype",
+        "gift-sent announcement",
+        "Lucky-win announcement",
+        "voice-room placement",
+        "view switcher",
+        "click feedback",
+        "English and Arabic-ready layout checks"
+      ],
+      "nonGoals": [
+        "extracting user imagery from screenshots",
+        "implementing production queue/frequency-control code",
+        "final visual asset production"
+      ],
+      "acceptance": [
+        "Gift-sent announcement includes sender, gift, count, receiver, room context, and gift visual placeholder",
+        "Lucky-win announcement includes winner, gift, win amount, win multiple when available, and room context",
+        "Announcement stays in the voice-room top safe area and does not obscure core room controls",
+        "Click behavior is represented as room jump feedback without asserting production permission outcomes",
+        "Expired, duplicate, failed image, and long-text states are listed for validation or represented in draft"
+      ],
+      "evidence": [
+        "HTML syntax/static inspection",
+        "page-load check",
+        "console check",
+        "interaction check for view switcher and click feedback",
+        "visual comparison against screenshot evidence without reusing imagery"
+      ],
+      "blockedBy": [
+        "T03"
+      ],
+      "capability": "frontend announcement prototype generation",
+      "openDecisions": [
+        "music priority",
+        "gift-detail media support"
+      ]
+    },
+    {
+      "id": "T06",
+      "outcome": "Reviewer can see a review report with requirement, product-UI, engineering, and evidence findings",
+      "scope": [
+        "requirement coverage review",
+        "product and UI coherence review",
+        "engineering feasibility review",
+        "evidence ledger",
+        "unverified items"
+      ],
+      "nonGoals": [
+        "claiming behavior not tested",
+        "production sign-off",
+        "source file modification"
+      ],
+      "acceptance": [
+        "Review maps findings to executed evidence",
+        "Review marks unexecuted build, browser, console, and interaction checks as not-run unless actually executed",
+        "Review confirms no source files, Skills, or baseline files were modified",
+        "Review preserves all production-only TBD decisions"
+      ],
+      "evidence": [
+        "route.json validation",
+        "artifact file inspection",
+        "git or filesystem change check",
+        "browser/runtime checks when execution tickets generate runnable artifacts"
+      ],
+      "blockedBy": [
+        "T04",
+        "T05"
+      ],
+      "capability": "product and UX review",
+      "openDecisions": []
+    }
+  ],
+  "review": {
+    "requirement": {
+      "status": "not-run",
+      "evidence": []
+    },
+    "product-ui": {
+      "status": "not-run",
+      "evidence": []
+    },
+    "engineering": {
+      "status": "not-run",
+      "evidence": []
+    },
+    "evidence": {
+      "status": "not-run",
+      "evidence": []
+    }
+  },
+  "metrics": {
+    "questionsAsked": 0,
+    "unconfirmedAssumptions": 0,
+    "correctionOrRepairRounds": 0,
+    "generatedArtifacts": [
+      "route.json",
+      "tickets.md"
+    ],
+    "validationActuallyExecuted": [
+      "node /Users/shilv/Agent-Workspace/Agent-KB/skills/run-product-workflow/scripts/validate-workflow-state.mjs route.json"
+    ],
+    "cliReportedTokenUsage": "unavailable",
+    "startTimestamp": "2026-07-29T11:06:59+0800",
+    "completionTimestamp": "2026-07-29T11:09:35+0800"
+  }
+}

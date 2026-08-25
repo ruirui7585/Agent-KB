@@ -1,6 +1,6 @@
 # Test Cases for HTML / UI Prototype Skill
 
-Codex must use these test cases when testing a target HTML / UI prototype Skill.
+The Agent must use these test cases when testing a target HTML / UI prototype Skill.
 
 The goal is to simulate real usage, not only inspect the document.
 
@@ -26,7 +26,7 @@ Requirements:
 
 ### Expected Result
 
-The target Skill should guide Codex to produce:
+The target Skill should guide an Agent to produce:
 
 - A visual subscription page.
 - Clean mobile App layout.
@@ -63,7 +63,7 @@ Do not change any other UI, logic, copy, image, state, or interaction.
 
 ### Expected Result
 
-The target Skill should guide Codex to:
+The target Skill should guide an Agent to:
 
 - Read the existing files first.
 - Modify only the requested tab labels.
@@ -77,7 +77,7 @@ The target Skill should guide Codex to:
 - Any existing interaction is removed.
 - Layout changes unexpectedly.
 - Images or assets break.
-- Codex rewrites the whole file unnecessarily.
+- The Agent rewrites the whole file unnecessarily.
 - The final result is not previewable.
 
 ---
@@ -107,7 +107,7 @@ Rules:
 
 ### Expected Result
 
-The target Skill should guide Codex to produce:
+The target Skill should guide an Agent to produce:
 
 - A visual mobile prototype.
 - Working tab switch.
@@ -144,7 +144,7 @@ Requirements:
 
 ### Expected Result
 
-The target Skill should guide Codex to produce:
+The target Skill should guide an Agent to produce:
 
 - Editable annotation.
 - Save behavior.

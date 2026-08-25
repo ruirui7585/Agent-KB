@@ -1,0 +1,70 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>全服公告｜前端线框原型</title>
+  <style>
+    :root{--ink:#171717;--line:#8b8b8b;--muted:#737373;--paper:#fff;--soft:#f1f1f1;--page:#e9e9e9}
+    *{box-sizing:border-box}body{margin:0;background:var(--page);color:var(--ink);font:14px/1.4 -apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC",sans-serif}button{font:inherit;color:inherit}
+    .review-head{height:58px;background:#222;color:#fff;display:flex;align-items:center;padding:0 24px;gap:18px;position:sticky;top:0;z-index:10}.review-head strong{font-size:17px}.review-head span{color:#ccc;font-size:12px}.switcher{margin-left:auto;display:flex;gap:8px}.switcher button{border:1px solid #777;background:#222;color:#fff;padding:7px 12px}.switcher button.active{background:#fff;color:#111}
+    .review-note{max-width:1080px;margin:18px auto 0;border:1px dashed #777;background:#fff;padding:10px 14px;color:#555}.canvas{max-width:1080px;margin:18px auto 48px;display:grid;grid-template-columns:repeat(2,393px);justify-content:center;gap:48px}.case h2{font-size:18px;margin:0 0 10px}.case.hidden{display:none}
+    .phone{width:393px;height:852px;background:#fff;border:2px solid var(--ink);border-radius:42px;overflow:hidden;position:relative;box-shadow:0 15px 35px rgba(0,0,0,.13)}.statusbar{height:44px;display:flex;align-items:center;justify-content:space-between;padding:0 24px;font-weight:700}.room-header{height:74px;display:grid;grid-template-columns:50px 1fr 50px;align-items:center;padding:0 18px;border-bottom:1px solid #ddd}.room-header .back{font-size:29px}.room-header .more{text-align:right;font-size:22px;letter-spacing:2px}.room-title{text-align:center}.room-title b{display:block;font-size:20px}.room-title small{color:#888;font-size:12px}
+    .announcement-slot{height:72px;position:relative;z-index:4}.gift-announcement{position:absolute;left:3px;right:3px;top:8px;height:64px;background:#3d3d3d;color:#fff;clip-path:polygon(0 23%,8% 23%,12% 0,19% 14%,82% 14%,88% 0,92% 23%,100% 23%,95% 50%,100% 77%,91% 77%,87% 100%,80% 86%,19% 86%,12% 100%,8% 77%,0 77%,5% 50%);display:grid;grid-template-columns:62px 1fr 72px;align-items:center;padding:4px 23px 4px 19px;border:1px solid #111}.gift-announcement:before,.gift-announcement:after{content:"";position:absolute;top:20px;width:28px;height:23px;border-top:2px solid #fff;border-bottom:2px solid #fff}.gift-announcement:before{left:0;transform:skewX(-24deg)}.gift-announcement:after{right:0;transform:skewX(24deg)}
+    .avatar{width:48px;height:48px;border:2px solid #fff;border-radius:50%;background:repeating-linear-gradient(135deg,#fff,#fff 6px,#bdbdbd 6px,#bdbdbd 12px);display:grid;place-items:center;color:#111;font-weight:800}.gift-copy{min-width:0;padding-left:2px}.gift-copy .event-row{display:block;font-size:11px;line-height:1.35}.gift-asset{height:57px;display:grid;place-items:center;font-size:36px;filter:grayscale(1)}
+    .lucky-announcement{position:absolute;left:14px;right:14px;top:11px;height:54px;border:2px solid #222;border-radius:27px;background:#4a4a4a;color:#fff;display:grid;grid-template-columns:52px 1fr;align-items:center;padding:0 18px 0 4px;box-shadow:inset 0 0 0 1px #fff}.lucky-announcement .avatar{width:46px;height:46px}.lucky-copy{font-size:12px;line-height:1.38;min-width:0;padding:0 7px}.lucky-copy b{font-weight:800}.bubble{position:absolute;width:12px;height:12px;border:1px solid #777;border-radius:50%;background:#fff8}.b1{left:12px;top:-4px}.b2{left:106px;bottom:-5px}.b3{right:93px;top:-6px}.b4{right:22px;bottom:-7px}
+    .seats{display:grid;grid-template-columns:repeat(4,1fr);gap:22px 9px;padding:18px 19px 0;height:230px}.seat{text-align:center;font-size:12px}.seat .pic{width:56px;height:56px;margin:0 auto 5px;border:1px solid #777;border-radius:50%;background:repeating-linear-gradient(135deg,#fff,#fff 7px,#e0e0e0 7px,#e0e0e0 14px)}.chat{position:absolute;left:20px;right:20px;top:394px;border-top:1px solid #ddd;padding-top:24px;color:#555}.message{display:grid;grid-template-columns:48px 1fr;gap:8px;margin:16px 0}.composer{position:absolute;left:18px;right:18px;bottom:18px;height:52px;border:1px solid #999;border-radius:27px;padding:0 16px;display:flex;align-items:center;color:#888}
+    .field-card{margin-top:12px;border:1px solid #999;background:#fff;padding:14px}.field-card h3{font-size:14px;margin:0 0 8px}.field-card ul{margin:0;padding-left:18px;color:#555}.field-card li{margin:5px 0}.toast{position:fixed;left:50%;bottom:25px;transform:translateX(-50%);background:#222;color:#fff;padding:10px 16px;display:none;z-index:30}.toast.show{display:block}
+    @media(max-width:900px){.canvas{grid-template-columns:393px}.review-head span{display:none}}
+  </style>
+</head>
+<body>
+  <header class="review-head"><strong>全服公告 · 前端线框原型</strong><span>393 × 852 · 参考图结构1:1还原</span><div class="switcher"><button class="active" data-view="both">并排</button><button data-view="gift">礼物赠送</button><button data-view="lucky">幸运中奖</button></div></header>
+  <div class="review-note">仅将参考图转为黑白线框：保留原公告的轮廓、比例、头像位置、信息排布、右侧礼物/倍率视觉和装饰结构；不代表最终颜色与正式素材。</div>
+  <main class="canvas" data-annotation-id="announcement-mobile-prototype">
+    <section class="case" data-case="gift">
+      <h2>A. 礼物赠送全服公告</h2>
+      <div class="phone">
+        <div class="statusbar"><span>9:41</span><span>●●●　Wi-Fi　▰</span></div>
+        <div class="room-header"><span class="back">‹</span><div class="room-title"><b>Lucky Room</b><small>128 online</small></div><span class="more">•••</span></div>
+        <div class="announcement-slot">
+          <button class="gift-announcement" data-room-jump>
+            <span class="avatar">O</span>
+            <span class="gift-copy"><span class="event-row"><b>Omar</b> sent <b>Golden Helicopter</b> ×5 to <b>Lina</b></span></span>
+            <span class="gift-asset">🎁</span>
+          </button>
+        </div>
+        <div class="seats"><div class="seat"><div class="pic"></div>Lina</div><div class="seat"><div class="pic"></div>Omar</div><div class="seat"><div class="pic"></div>Alex</div><div class="seat"><div class="pic"></div>Mia</div><div class="seat"><div class="pic"></div>Jack</div><div class="seat"><div class="pic"></div>Kitty</div><div class="seat"><div class="pic"></div>Tim</div><div class="seat"><div class="pic"></div>Nina</div></div>
+        <div class="chat"><div class="message"><span>Lina</span><span>Welcome everyone!</span></div><div class="message"><span>Omar</span><span>Let’s have fun together.</span></div><div class="message"><span>Alex</span><span>Nice to meet you all.</span></div></div>
+        <div class="composer">Say something…</div>
+      </div>
+      <div class="field-card"><h3>动态字段</h3><ul><li><code>{sender}</code>：发送人昵称</li><li><code>{gift}</code>：礼物名称；<code>{count}</code>：实际成功赠送数量</li><li><code>{receiver}</code>：接收人昵称；右侧展示礼物视觉素材</li></ul></div>
+    </section>
+
+    <section class="case" data-case="lucky">
+      <h2>B. 幸运礼物中奖全服公告</h2>
+      <div class="phone">
+        <div class="statusbar"><span>9:41</span><span>●●●　Wi-Fi　▰</span></div>
+        <div class="room-header"><span class="back">‹</span><div class="room-title"><b>Lucky Room</b><small>128 online</small></div><span class="more">•••</span></div>
+        <div class="announcement-slot">
+          <button class="lucky-announcement" data-room-jump>
+            <span class="avatar">S</span>
+            <span class="lucky-copy"><b>Sara</b> sent Lucky Gift <b>Celebrity Fireworks</b> win <b>10 times</b> back <b>50 Coins</b></span>
+            <i class="bubble b1"></i><i class="bubble b2"></i><i class="bubble b3"></i><i class="bubble b4"></i>
+          </button>
+        </div>
+        <div class="seats"><div class="seat"><div class="pic"></div>Lina</div><div class="seat"><div class="pic"></div>Sara</div><div class="seat"><div class="pic"></div>Alex</div><div class="seat"><div class="pic"></div>Mia</div><div class="seat"><div class="pic"></div>Jack</div><div class="seat"><div class="pic"></div>Kitty</div><div class="seat"><div class="pic"></div>Tim</div><div class="seat"><div class="pic"></div>Nina</div></div>
+        <div class="chat"><div class="message"><span>Lina</span><span>Welcome everyone!</span></div><div class="message"><span>Sara</span><span>Lucky Gift!</span></div><div class="message"><span>System</span><span>Congratulations!</span></div></div>
+        <div class="composer">Say something…</div>
+      </div>
+      <div class="field-card"><h3>动态字段</h3><ul><li>中奖用户头像与昵称</li><li>幸运礼物名称、中奖倍数、中奖金币金额</li><li>事件房间 room_id</li></ul></div>
+    </section>
+  </main>
+  <div class="toast" id="toast">进入事件房间（原型演示）</div>
+  <script>
+    const buttons=[...document.querySelectorAll('[data-view]')],cases=[...document.querySelectorAll('[data-case]')],toast=document.getElementById('toast');
+    buttons.forEach(button=>button.addEventListener('click',()=>{buttons.forEach(item=>item.classList.toggle('active',item===button));cases.forEach(item=>item.classList.toggle('hidden',button.dataset.view!=='both'&&item.dataset.case!==button.dataset.view));document.querySelector('.canvas').style.gridTemplateColumns=button.dataset.view==='both'?'repeat(2,393px)':'393px'}));
+    document.querySelectorAll('[data-room-jump]').forEach(item=>item.addEventListener('click',()=>{toast.classList.add('show');setTimeout(()=>toast.classList.remove('show'),1600)}));
+  </script>
+</body>
+</html>

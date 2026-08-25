@@ -1,0 +1,162 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://agent-workspace.local/schemas/prototype-annotation/annotations.schema.json",
+  "title": "Prototype Annotations",
+  "type": "object",
+  "required": ["version", "annotations"],
+  "additionalProperties": false,
+  "properties": {
+    "version": {
+      "type": "string",
+      "minLength": 1
+    },
+    "updatedAt": {
+      "type": "string",
+      "minLength": 1
+    },
+    "annotations": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "id",
+          "pageId",
+          "page",
+          "category",
+          "title",
+          "description",
+          "rules",
+          "target",
+          "context",
+          "status",
+          "createdAt",
+          "updatedAt"
+        ],
+        "additionalProperties": false,
+        "properties": {
+          "id": {
+            "type": "string",
+            "minLength": 1
+          },
+          "pageId": {
+            "type": "string",
+            "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$"
+          },
+          "page": {
+            "type": "string",
+            "minLength": 1
+          },
+          "category": {
+            "type": "string",
+            "enum": ["background", "scenario", "page-flow", "state", "permission", "edge", "acceptance"]
+          },
+          "title": {
+            "type": "string",
+            "minLength": 1
+          },
+          "description": {
+            "type": "string"
+          },
+          "rules": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "minLength": 1
+            }
+          },
+          "target": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "annotationId": {
+                "type": "string",
+                "minLength": 1
+              },
+              "selector": {
+                "type": "string",
+                "minLength": 1
+              }
+            },
+            "anyOf": [
+              {
+                "required": ["annotationId"]
+              },
+              {
+                "required": ["selector"]
+              }
+            ]
+          },
+          "images": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": ["src", "alt"],
+              "additionalProperties": false,
+              "properties": {
+                "src": {
+                  "type": "string",
+                  "minLength": 1,
+                  "maxLength": 2048,
+                  "pattern": "^(?!/)(?!\\\\)(?!//)(?![A-Za-z][A-Za-z0-9+.-]*:)(?!.*(?:^|/)\\.\\.(?:/|$))(?!.*[?#%\\s]).+$"
+                },
+                "alt": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "caption": {
+                  "type": "string",
+                  "minLength": 1
+                }
+              }
+            }
+          },
+          "context": {
+            "type": "object",
+            "required": ["ruleId", "triggerCondition", "expectedOutcome", "acceptanceCriteria"],
+            "additionalProperties": false,
+            "properties": {
+              "ruleId": { "type": "string", "minLength": 1 },
+              "contractSection": { "type": "string", "minLength": 1 },
+              "triggerCondition": { "type": "string", "minLength": 1 },
+              "judgmentLogic": { "type": "string", "minLength": 1 },
+              "expectedOutcome": { "type": "string", "minLength": 1 },
+              "dataSource": { "type": "string", "minLength": 1 },
+              "valueConstraint": { "type": "string", "minLength": 1 },
+              "permissionCondition": { "type": "string", "minLength": 1 },
+              "exceptionBehavior": { "type": "string", "minLength": 1 },
+              "acceptanceCriteria": { "type": "string", "minLength": 1 },
+              "ruleVersion": { "type": "string", "minLength": 1 },
+              "decisionRef": { "type": "string", "minLength": 1 },
+              "userRole": { "type": "string", "minLength": 1 },
+              "userLevel": { "type": "string", "minLength": 1 },
+              "userState": { "type": "string", "minLength": 1 },
+              "conversationStatus": { "type": "string", "minLength": 1 },
+              "pageState": { "type": "string", "minLength": 1 },
+              "componentState": { "type": "string", "minLength": 1 },
+              "route": { "type": "string", "minLength": 1 },
+              "container": { "type": "string", "minLength": 1 },
+              "state": { "type": "string", "minLength": 1 },
+              "visibleWhen": { "type": "string", "minLength": 1 },
+              "modal": { "type": "string", "minLength": 1 },
+              "tab": { "type": "string", "minLength": 1 },
+              "device": { "type": "string", "minLength": 1 },
+              "viewport": { "type": "string", "minLength": 1 }
+            }
+          },
+          "status": {
+            "type": "string",
+            "enum": ["active", "needs-review", "orphaned", "deprecated"]
+          },
+          "createdAt": {
+            "type": "string",
+            "minLength": 1
+          },
+          "updatedAt": {
+            "type": "string",
+            "minLength": 1
+          }
+        }
+      }
+    }
+  }
+}

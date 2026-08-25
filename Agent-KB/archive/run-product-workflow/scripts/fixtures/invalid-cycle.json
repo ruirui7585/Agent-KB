@@ -1,0 +1,78 @@
+{
+  "version": "0.2",
+  "task": {
+    "summary": "Build a multi-stage product feature",
+    "size": "L",
+    "rationale": "Multiple independently testable outcomes",
+    "riskLevel": "medium",
+    "impactScope": "cross-module"
+  },
+  "route": ["discover", "align", "spec", "tickets", "execute", "review"],
+  "activeSource": {
+    "status": "confirmed",
+    "sources": ["/project/PRD.md"]
+  },
+  "reading": {
+    "required": ["/project/PRD.md"],
+    "triggered": ["/project/api.md"],
+    "deferred": [],
+    "forbidden": [],
+    "sensitive": [],
+    "receipts": [
+      {
+        "source": "/project/PRD.md",
+        "tier": "L1",
+        "reason": "active requirement",
+        "mode": "full",
+        "status": "read",
+        "fingerprint": "prd-v1"
+      },
+      {
+        "source": "/project/api.md",
+        "tier": "L2",
+        "reason": "cross-module dependency",
+        "mode": "targeted",
+        "status": "read",
+        "fingerprint": "api-v1"
+      }
+    ],
+    "counterexampleCheck": {
+      "status": "pass",
+      "candidates": [],
+      "resolution": []
+    }
+  },
+  "evidenceGate": ["static", "runtime"],
+  "budget": {
+    "status": "within",
+    "note": "Fixture"
+  },
+  "unresolvedHighRiskItems": [],
+  "gate": {
+    "status": "clear",
+    "items": []
+  },
+  "confirmedFacts": [],
+  "tickets": [
+    {
+      "id": "T01",
+      "outcome": "User sees the first capability",
+      "acceptance": ["Capability is visible"],
+      "evidence": ["browser check"],
+      "blockedBy": ["T02"]
+    },
+    {
+      "id": "T02",
+      "outcome": "User sees the second capability",
+      "acceptance": ["Capability is visible"],
+      "evidence": ["browser check"],
+      "blockedBy": ["T01"]
+    }
+  ],
+  "review": {
+    "requirement": {"status": "not-run", "evidence": []},
+    "product-ui": {"status": "not-run", "evidence": []},
+    "engineering": {"status": "not-run", "evidence": []},
+    "evidence": {"status": "not-run", "evidence": []}
+  }
+}

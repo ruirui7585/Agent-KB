@@ -1,0 +1,63 @@
+{
+  "comparison": "gift-system-optimization",
+  "date": "2026-07-29",
+  "model": "gpt-5.5",
+  "baseline": {
+    "workflow": "pm -> prd -> prototype -> review",
+    "status": "completed",
+    "wall_time_seconds": 1126.924,
+    "tokens": {
+      "pm": 111253,
+      "prd": 114670,
+      "prototype": 126891,
+      "review": 74416,
+      "total": 427230
+    },
+    "generated_core_artifact_bytes": 127193,
+    "browser": {
+      "page_load": "pass",
+      "console_errors_or_warnings": 0,
+      "tested": [
+        "refresh config state",
+        "open gift panel after clean reload"
+      ],
+      "note": "Opening the gift panel immediately after refresh was blocked by the temporary loading state; it passed after a clean reload."
+    }
+  },
+  "new_workflow": {
+    "workflow": "discover -> align -> spec -> tickets -> execute -> review",
+    "status": "completed",
+    "tokens": {
+      "route_and_tickets": 107025,
+      "analysis_and_review": 74084,
+      "total": 181109
+    },
+    "reuse": {
+      "spec_snapshot_sha256_matches_source": true,
+      "backend_prototype_snapshot_sha256_matches_source": true,
+      "announcement_prototype_snapshot_sha256_matches_source": true
+    },
+    "generated_new_artifact_bytes_excluding_snapshots_and_axhub": 40287,
+    "browser": {
+      "page_load": "pass",
+      "console_errors_or_warnings": 0,
+      "tested": [
+        "backend navigation to play config",
+        "open play config modal",
+        "announcement switch to Lucky",
+        "room jump toast"
+      ]
+    }
+  },
+  "delta": {
+    "tokens_saved": 246121,
+    "token_reduction_percent": 57.61,
+    "interpretation": "The saving comes mainly from reusing the existing PRD and runnable prototypes instead of regenerating them."
+  },
+  "limitations": [
+    "Single run, not a statistical benchmark.",
+    "The new workflow reused mature existing artifacts, while the baseline was forced through four generative stages.",
+    "Only representative browser paths were tested; this is not a full regression suite.",
+    "Production-only TBD decisions remain unresolved."
+  ]
+}

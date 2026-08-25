@@ -1,0 +1,259 @@
+{
+  "version": "1.0",
+  "updatedAt": "2026-08-12T11:26:03.980Z",
+  "annotations": [
+    {
+      "id": "ann-fr-001-wish-selection",
+      "pageId": "wish-setting",
+      "page": "心愿设置页",
+      "category": "page-flow",
+      "title": "选择一个当前心愿",
+      "description": "心愿主人可以从现有礼物目录选择一个礼物加入心愿；同一时间仅展示一个当前心愿。",
+      "rules": [
+        "FR-001：心愿主人可以从现有礼物目录选择一个礼物加入心愿；同一时间仅展示一个当前心愿。"
+      ],
+      "target": {
+        "annotationId": "wish-setting-selection"
+      },
+      "context": {
+        "ruleId": "FR-001",
+        "contractSection": "功能规则",
+        "triggerCondition": "心愿主人从现有礼物目录选择一个礼物并提交",
+        "expectedOutcome": "所选礼物加入心愿并成为当前心愿",
+        "acceptanceCriteria": "同一时间仅展示一个当前心愿",
+        "userRole": "心愿主人",
+        "pageState": "礼物目录选择状态",
+        "device": "移动端",
+        "viewport": "393 × 852px"
+      },
+      "status": "active",
+      "createdAt": "2026-08-12T11:00:00.000Z",
+      "updatedAt": "2026-08-12T11:26:03.978Z"
+    },
+    {
+      "id": "ann-fr-002-visitor-wish-card",
+      "pageId": "profile-wish",
+      "page": "主人主页心愿",
+      "category": "scenario",
+      "title": "访客看到当前心愿",
+      "description": "主人主页展示当前心愿的礼物图、名称、目录价格和“赠送心愿”主按钮。",
+      "rules": [
+        "FR-002：主人主页展示当前心愿的礼物图、名称、目录价格和“赠送心愿”主按钮。"
+      ],
+      "target": {
+        "annotationId": "wish-visitor-card"
+      },
+      "context": {
+        "ruleId": "FR-002",
+        "contractSection": "功能规则",
+        "triggerCondition": "访客查看主人主页且主人已有当前心愿",
+        "expectedOutcome": "展示当前心愿及“赠送心愿”主按钮",
+        "acceptanceCriteria": "礼物图、名称、目录价格和“赠送心愿”主按钮均可见",
+        "userRole": "访客",
+        "pageState": "访客查看默认状态",
+        "device": "移动端",
+        "viewport": "393 × 852px"
+      },
+      "status": "active",
+      "createdAt": "2026-08-12T11:00:00.000Z",
+      "updatedAt": "2026-08-12T11:00:00.000Z"
+    },
+    {
+      "id": "ann-fr-003-owner-wish-card",
+      "pageId": "profile-wish",
+      "page": "主人主页心愿",
+      "category": "permission",
+      "title": "主人查看时更换心愿",
+      "description": "主人自己查看时不展示“赠送心愿”，展示“更换心愿”入口。",
+      "rules": [
+        "FR-003：主人自己查看时不展示“赠送心愿”，展示“更换心愿”入口。"
+      ],
+      "target": {
+        "annotationId": "wish-owner-card"
+      },
+      "context": {
+        "ruleId": "FR-003",
+        "contractSection": "功能规则",
+        "triggerCondition": "心愿主人查看自己的主页且已有当前心愿",
+        "expectedOutcome": "展示“更换心愿”入口，不展示“赠送心愿”",
+        "acceptanceCriteria": "主人查看状态有“更换心愿”入口且没有“赠送心愿”主按钮",
+        "userRole": "心愿主人",
+        "pageState": "主人查看状态",
+        "device": "移动端",
+        "viewport": "393 × 852px"
+      },
+      "status": "active",
+      "createdAt": "2026-08-12T11:00:00.000Z",
+      "updatedAt": "2026-08-12T11:00:00.000Z"
+    },
+    {
+      "id": "ann-fr-004-gift-confirm-sheet",
+      "pageId": "gift-confirm",
+      "page": "赠送确认 Sheet",
+      "category": "state",
+      "title": "赠送前确认信息",
+      "description": "访客点击“赠送心愿”后，展示确认 Sheet，包含接收人、礼物、数量 1 和目录价格。",
+      "rules": [
+        "FR-004：访客点击“赠送心愿”后，展示确认 Sheet，包含接收人、礼物、数量 1 和目录价格。"
+      ],
+      "target": {
+        "annotationId": "gift-confirm-sheet"
+      },
+      "context": {
+        "ruleId": "FR-004",
+        "contractSection": "功能规则",
+        "triggerCondition": "访客点击“赠送心愿”",
+        "expectedOutcome": "展示赠送确认 Sheet",
+        "acceptanceCriteria": "确认 Sheet 明确展示接收人、礼物、数量 1 和目录价格",
+        "userRole": "访客",
+        "pageState": "赠送确认 Sheet 静态展开状态",
+        "device": "移动端",
+        "viewport": "393 × 852px"
+      },
+      "status": "active",
+      "createdAt": "2026-08-12T11:00:00.000Z",
+      "updatedAt": "2026-08-12T11:00:00.000Z"
+    },
+    {
+      "id": "ann-fr-005-gift-success-result",
+      "pageId": "gift-result",
+      "page": "赠送结果",
+      "category": "state",
+      "title": "赠送成功并标记完成",
+      "description": "访客确认赠送成功后，展示成功结果，并将该心愿标记为“已实现”。",
+      "rules": [
+        "FR-005：访客确认赠送成功后，展示成功结果，并将该心愿标记为“已实现”。"
+      ],
+      "target": {
+        "annotationId": "gift-success-result"
+      },
+      "context": {
+        "ruleId": "FR-005",
+        "contractSection": "功能规则",
+        "triggerCondition": "访客确认赠送成功",
+        "expectedOutcome": "展示赠送成功结果并将该心愿标记为“已实现”",
+        "acceptanceCriteria": "成功结果可见，且心愿显示“已实现”",
+        "userRole": "访客",
+        "pageState": "赠送结果成功状态",
+        "device": "移动端",
+        "viewport": "393 × 852px"
+      },
+      "status": "active",
+      "createdAt": "2026-08-12T11:00:00.000Z",
+      "updatedAt": "2026-08-12T11:00:00.000Z"
+    },
+    {
+      "id": "ann-fr-006-wish-fulfilled",
+      "pageId": "gift-result",
+      "page": "赠送结果",
+      "category": "edge",
+      "title": "已实现心愿不可重复赠送",
+      "description": "已实现的心愿保留展示完成状态，不再允许重复赠送。",
+      "rules": [
+        "FR-006：已实现的心愿保留展示完成状态，不再允许重复赠送。"
+      ],
+      "target": {
+        "annotationId": "wish-fulfilled-card"
+      },
+      "context": {
+        "ruleId": "FR-006",
+        "contractSection": "功能规则",
+        "triggerCondition": "任意用户再次查看已实现的心愿",
+        "expectedOutcome": "保留心愿已实现状态并禁止重复赠送",
+        "acceptanceCriteria": "完成状态持续可见，且不出现可再次赠送的主按钮",
+        "userRole": "任意用户",
+        "pageState": "已实现状态",
+        "device": "移动端",
+        "viewport": "393 × 852px"
+      },
+      "status": "active",
+      "createdAt": "2026-08-12T11:00:00.000Z",
+      "updatedAt": "2026-08-12T11:00:00.000Z"
+    },
+    {
+      "id": "ann-fr-007-empty-wish",
+      "pageId": "profile-wish",
+      "page": "主人主页心愿",
+      "category": "permission",
+      "title": "主人未设置心愿时的空状态",
+      "description": "主人尚未设置心愿时，展示空状态和“添加心愿礼物”入口。",
+      "rules": [
+        "FR-007：主人尚未设置心愿时，展示空状态和“添加心愿礼物”入口；访客查看空状态时不展示操作按钮。"
+      ],
+      "target": {
+        "annotationId": "wish-empty-state"
+      },
+      "context": {
+        "ruleId": "FR-007",
+        "contractSection": "功能规则",
+        "triggerCondition": "心愿主人查看自己的心愿礼物页且尚未设置心愿",
+        "expectedOutcome": "展示空状态和“添加心愿礼物”入口",
+        "acceptanceCriteria": "主人空状态展示“添加心愿礼物”入口",
+        "userRole": "心愿主人",
+        "pageState": "主人未设置空状态",
+        "device": "移动端",
+        "viewport": "393 × 852px"
+      },
+      "status": "active",
+      "createdAt": "2026-08-12T11:00:00.000Z",
+      "updatedAt": "2026-08-12T11:00:00.000Z"
+    },
+    {
+      "id": "ann-fr-007-empty-wish-visitor",
+      "pageId": "profile-wish",
+      "page": "主人主页心愿",
+      "category": "permission",
+      "title": "访客查看未设置心愿",
+      "description": "访客查看主人尚未设置心愿的主页时，展示空状态且不显示操作按钮。",
+      "rules": [
+        "FR-007：主人尚未设置心愿时，展示空状态和“添加心愿礼物”入口；访客查看空状态时不展示操作按钮。"
+      ],
+      "target": {
+        "annotationId": "wish-empty-visitor-state"
+      },
+      "context": {
+        "ruleId": "FR-007",
+        "contractSection": "功能规则",
+        "triggerCondition": "访客查看主人主页且主人尚未设置心愿",
+        "expectedOutcome": "展示空状态且不显示操作按钮",
+        "acceptanceCriteria": "访客空状态不出现“添加心愿礼物”或其他操作按钮",
+        "userRole": "访客",
+        "pageState": "访客未设置空状态",
+        "device": "移动端",
+        "viewport": "393 × 852px"
+      },
+      "status": "active",
+      "createdAt": "2026-08-12T11:00:00.000Z",
+      "updatedAt": "2026-08-12T11:00:00.000Z"
+    },
+    {
+      "id": "ann-content-gift-result",
+      "pageId": "gift-result",
+      "page": "赠送结果",
+      "category": "background",
+      "title": "赠送结果内容说明",
+      "description": "访客确认赠送成功后，展示成功结果，并将该心愿标记为 **已实现**。\n\n- 已实现的心愿保留展示完成状态\n- 不再允许重复赠送",
+      "rules": [
+        "FR-005：访客确认赠送成功后，展示成功结果，并将该心愿标记为“已实现”。",
+        "FR-006：已实现的心愿保留展示完成状态，不再允许重复赠送。"
+      ],
+      "target": {
+        "annotationId": "gift-success-result"
+      },
+      "context": {
+        "ruleId": "FR-005 / FR-006",
+        "contractSection": "功能规则",
+        "triggerCondition": "访客确认赠送成功，或任意用户再次查看已实现的心愿",
+        "expectedOutcome": "展示成功结果并将该心愿标记为“已实现”；已实现的心愿保留展示完成状态且不再允许重复赠送",
+        "acceptanceCriteria": "成功结果可见，心愿显示“已实现”，完成状态持续可见且不出现可再次赠送的主按钮",
+        "userRole": "访客或任意用户",
+        "pageState": "赠送结果成功状态或已实现状态",
+        "device": "移动端",
+        "viewport": "393 × 852px"
+      },
+      "status": "active",
+      "createdAt": "2026-08-14T00:00:00.000Z",
+      "updatedAt": "2026-08-14T00:00:00.000Z"
+    }
+  ]
+}

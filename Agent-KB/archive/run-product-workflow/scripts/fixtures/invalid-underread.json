@@ -1,0 +1,55 @@
+{
+  "version": "0.2",
+  "task": {
+    "summary": "Publish a permission migration",
+    "size": "S",
+    "rationale": "One visible change",
+    "riskLevel": "high",
+    "impactScope": "cross-system"
+  },
+  "route": ["discover", "execute", "review"],
+  "activeSource": {
+    "status": "ambiguous",
+    "sources": ["/project/PRD.md", "/project/PRD-new.md"]
+  },
+  "reading": {
+    "required": ["/project/PRD.md"],
+    "triggered": [],
+    "deferred": [],
+    "forbidden": [],
+    "sensitive": ["/project/.env"],
+    "receipts": [
+      {
+        "source": "/project/.env",
+        "tier": "L3",
+        "reason": "production configuration",
+        "mode": "full",
+        "status": "read",
+        "fingerprint": "secret-v1"
+      }
+    ],
+    "counterexampleCheck": {
+      "status": "not-run",
+      "candidates": ["/project/PRD-new.md"],
+      "resolution": []
+    }
+  },
+  "evidenceGate": [],
+  "budget": {
+    "status": "exceeded",
+    "note": "Required sources were skipped to save tokens"
+  },
+  "unresolvedHighRiskItems": ["Permission migration behavior is unresolved"],
+  "gate": {
+    "status": "clear",
+    "items": []
+  },
+  "confirmedFacts": [],
+  "tickets": [],
+  "review": {
+    "requirement": {"status": "not-run", "evidence": []},
+    "product-ui": {"status": "not-applicable", "evidence": []},
+    "engineering": {"status": "not-run", "evidence": []},
+    "evidence": {"status": "not-run", "evidence": []}
+  }
+}

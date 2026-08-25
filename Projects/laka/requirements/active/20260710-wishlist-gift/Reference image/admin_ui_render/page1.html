@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<title>心愿礼物面板</title>
+<link rel="stylesheet" href="base.css">
+</head>
+<body>
+<div class="app">
+  <aside class="sidebar">
+    <div class="logo">Laka</div>
+    <nav class="nav">
+      <div class="nav-group"><div class="nav-item">首页</div></div>
+      <div class="nav-group"><div class="nav-item">用户管理</div></div>
+      <div class="nav-group"><div class="nav-item">主播管理</div></div>
+      <div class="nav-group">
+        <div class="nav-title">礼物中心</div>
+        <div class="nav-item nav-sub">礼物管理</div>
+        <div class="nav-item nav-sub active">心愿礼物面板</div>
+      </div>
+      <div class="nav-group">
+        <div class="nav-title">数据中心</div>
+        <div class="nav-item nav-sub">主播心愿数据</div>
+        <div class="nav-item nav-sub">心愿礼物数据</div>
+      </div>
+      <div class="nav-group"><div class="nav-item">风控管理</div></div>
+      <div class="nav-group"><div class="nav-item">系统设置</div></div>
+    </nav>
+  </aside>
+
+  <main class="main">
+    <header class="header">
+      <div class="header-left">
+        <div class="breadcrumb">礼物中心 / 心愿礼物面板</div>
+        <div class="page-title">心愿礼物面板 <span class="en">Wish Gift Panel</span></div>
+        <div class="page-desc">配置哪些现有基础礼物允许主播选择为心愿礼物。该页面仅管理礼物关联关系，不重新编辑礼物价格、图标、动画和结算规则。</div>
+      </div>
+      <div class="header-right">
+        <svg class="icon-bell" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path><path d="M13.73 21a2 2 0 0 1-3.46 0"></path></svg>
+        <div class="account"><div class="avatar">A</div><span>admin.z</span></div>
+      </div>
+    </header>
+
+    <section class="content">
+      <div class="page-actions">
+        <button class="btn btn-primary">新增关联</button>
+        <button class="btn btn-outline">批量启用</button>
+        <button class="btn btn-outline">批量停用</button>
+        <button class="btn btn-outline">导出</button>
+      </div>
+
+      <div class="card filter-card">
+        <div class="filter-row">
+          <div class="filter-item"><label>礼物 ID</label><input type="text" placeholder="请输入"></div>
+          <div class="filter-item"><label>礼物名称</label><input type="text" placeholder="请输入"></div>
+          <div class="filter-item"><label>礼物中心状态</label>
+            <select><option>全部</option><option>上架</option><option>下架</option><option>停用</option></select>
+          </div>
+          <div class="filter-item"><label>心愿面板状态</label>
+            <select><option>全部</option><option>启用</option><option>停用</option></select>
+          </div>
+          <div class="filter-item"><label>生效状态</label>
+            <select><option>全部</option><option>未生效</option><option>生效中</option><option>已失效</option></select>
+          </div>
+          <div class="filter-item"><label>更新时间</label><input type="date" value="2026-07-20"></div>
+          <div class="filter-actions">
+            <button class="btn btn-primary">查询</button>
+            <button class="btn btn-outline">重置</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="card table-card">
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th class="col-check"><input type="checkbox"></th>
+                <th>礼物图标</th>
+                <th>礼物 ID</th>
+                <th>礼物名称</th>
+                <th>当前金币价格</th>
+                <th>礼物中心状态</th>
+                <th>心愿面板状态</th>
+                <th>展示排序</th>
+                <th>生效时间</th>
+                <th>创建人</th>
+                <th>更新时间</th>
+                <th>操作</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td class="col-check"><input type="checkbox"></td>
+                <td><div class="gift-icon gift-rose">🌹</div></td>
+                <td>G1001</td><td>Rose</td>
+                <td><span class="coin">199</span> 金币</td>
+                <td><span class="tag tag-green">上架</span></td>
+                <td><span class="tag tag-green">启用</span></td>
+                <td>1</td><td>2026-01-01 ~ 长期</td><td>admin.z</td><td>2026-07-20 14:30</td>
+                <td><div class="action-links"><a>编辑</a><a>启用</a><a>停用</a><a class="danger">移除</a></div></td>
+              </tr>
+              <tr>
+                <td class="col-check"><input type="checkbox"></td>
+                <td><div class="gift-icon gift-lily">🤍</div></td>
+                <td>G1002</td><td>Lily</td>
+                <td><span class="coin">299</span> 金币</td>
+                <td><span class="tag tag-green">上架</span></td>
+                <td><span class="tag tag-green">启用</span></td>
+                <td>2</td><td>2026-01-01 ~ 长期</td><td>admin.z</td><td>2026-07-19 11:20</td>
+                <td><div class="action-links"><a>编辑</a><a>启用</a><a>停用</a><a class="danger">移除</a></div></td>
+              </tr>
+              <tr>
+                <td class="col-check"><input type="checkbox"></td>
+                <td><div class="gift-icon gift-heart">💎</div></td>
+                <td>G1003</td><td>Crystal Heart</td>
+                <td><span class="coin">520</span> 金币</td>
+                <td><span class="tag tag-green">上架</span></td>
+                <td><span class="tag tag-gray">停用</span></td>
+                <td>3</td><td>2026-01-01 ~ 长期</td><td>admin.z</td><td>2026-07-18 09:15</td>
+                <td><div class="action-links"><a>编辑</a><a>启用</a><a>停用</a><a class="danger">移除</a></div></td>
+              </tr>
+              <tr>
+                <td class="col-check"><input type="checkbox"></td>
+                <td><div class="gift-icon gift-box">🎁</div></td>
+                <td>G1004</td><td>Love Box</td>
+                <td><span class="coin">99</span> 金币</td>
+                <td><span class="tag tag-red">下架</span></td>
+                <td><span class="tag tag-green">启用</span></td>
+                <td>4</td><td>2026-01-01 ~ 长期</td><td>admin.z</td><td>2026-07-17 16:45</td>
+                <td><div class="action-links"><a>编辑</a><a>启用</a><a>停用</a><a class="danger">移除</a></div></td>
+              </tr>
+              <tr>
+                <td class="col-check"><input type="checkbox"></td>
+                <td><div class="gift-icon gift-crown">👑</div></td>
+                <td>G1005</td><td>Crown</td>
+                <td><span class="coin">888</span> 金币</td>
+                <td><span class="tag tag-green">上架</span></td>
+                <td><span class="tag tag-gray">未生效</span></td>
+                <td>5</td><td>2026-09-01 ~ 2026-12-31</td><td>admin.z</td><td>2026-07-16 10:00</td>
+                <td><div class="action-links"><a>编辑</a><a>启用</a><a>停用</a><a class="danger">移除</a></div></td>
+              </tr>
+              <tr>
+                <td class="col-check"><input type="checkbox"></td>
+                <td><div class="gift-icon gift-car">🚗</div></td>
+                <td>G1006</td><td>Golden Car</td>
+                <td><span class="coin">1314</span> 金币</td>
+                <td><span class="tag tag-red">停用</span></td>
+                <td><span class="tag tag-red">已失效</span></td>
+                <td>6</td><td>2026-01-01 ~ 2026-06-30</td><td>admin.z</td><td>2026-07-15 18:20</td>
+                <td><div class="action-links"><a>编辑</a><a>启用</a><a>停用</a><a class="danger">移除</a></div></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="pagination">
+          <span class="sample-label">示例数据 · Sample Data</span>
+          <div style="display:flex;align-items:center;gap:16px;">
+            <span>共 6 条</span>
+            <div class="pager">
+              <button>&lt;</button><button class="active">1</button><button>&gt;</button>
+            </div>
+            <span>1 / 1 页</span>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+</div>
+
+<div class="overlay">
+  <div class="modal">
+    <div class="modal-header">新增关联</div>
+    <div class="modal-body">
+      <div class="form-item"><label>礼物 ID 搜索</label><input type="text" value="G1001" placeholder="请输入礼物 ID"></div>
+      <div class="form-row">
+        <div class="form-item"><label>礼物图标</label><div style="height:36px;display:flex;align-items:center;"><div class="gift-icon gift-rose">🌹</div></div></div>
+        <div class="form-item"><label>礼物名称</label><input type="text" value="Rose" readonly></div>
+      </div>
+      <div class="form-row">
+        <div class="form-item"><label>当前金币价格</label><input type="text" value="199 金币" readonly></div>
+        <div class="form-item"><label>礼物中心状态</label><input type="text" value="上架" readonly></div>
+      </div>
+      <div class="form-item"><label>展示排序</label><input type="number" value="7"></div>
+      <div class="form-item">
+        <label>生效方式</label>
+        <div class="radio-group">
+          <label><input type="radio" name="valid" checked> 长期有效</label>
+          <label><input type="radio" name="valid"> 指定时间</label>
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-item"><label>开始时间</label><input type="date" value="2026-01-01"></div>
+        <div class="form-item"><label>结束时间</label><input type="date" value="2099-12-31"></div>
+      </div>
+      <div class="form-item">
+        <label>心愿面板状态</label>
+        <div class="radio-group">
+          <label><input type="radio" name="status" checked> 启用</label>
+          <label><input type="radio" name="status"> 停用</label>
+        </div>
+      </div>
+      <div class="error-banner">
+        <span>⚠</span> 该礼物已存在于心愿礼物面板中。
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-outline">取消</button>
+      <button class="btn btn-primary">确认关联</button>
+    </div>
+  </div>
+</div>
+</body>
+</html>

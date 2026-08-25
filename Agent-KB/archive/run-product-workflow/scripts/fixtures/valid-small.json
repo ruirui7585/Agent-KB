@@ -1,0 +1,63 @@
+{
+  "version": "0.2",
+  "task": {
+    "summary": "Change one confirmed button label",
+    "size": "S",
+    "rationale": "One bounded, low-risk outcome",
+    "riskLevel": "low",
+    "impactScope": "local"
+  },
+  "route": ["discover", "execute", "review"],
+  "activeSource": {
+    "status": "confirmed",
+    "sources": ["/project/src/button.html"]
+  },
+  "reading": {
+    "required": ["/workspace/AGENTS.md", "/project/src/button.html"],
+    "triggered": [],
+    "deferred": [],
+    "forbidden": ["/project/archive"],
+    "sensitive": [],
+    "receipts": [
+      {
+        "source": "/workspace/AGENTS.md",
+        "tier": "L0",
+        "reason": "workspace authority",
+        "mode": "full",
+        "status": "read",
+        "fingerprint": "workspace-rules-v1"
+      },
+      {
+        "source": "/project/src/button.html",
+        "tier": "L1",
+        "reason": "active target",
+        "mode": "full",
+        "status": "read",
+        "fingerprint": "button-source-v1"
+      }
+    ],
+    "counterexampleCheck": {
+      "status": "pass",
+      "candidates": [],
+      "resolution": []
+    }
+  },
+  "evidenceGate": ["static", "runtime"],
+  "budget": {
+    "status": "within",
+    "note": "Small-task shortcut"
+  },
+  "unresolvedHighRiskItems": [],
+  "gate": {
+    "status": "clear",
+    "items": []
+  },
+  "confirmedFacts": ["Target label and file are confirmed"],
+  "tickets": [],
+  "review": {
+    "requirement": {"status": "not-run", "evidence": []},
+    "product-ui": {"status": "not-run", "evidence": []},
+    "engineering": {"status": "not-applicable", "evidence": []},
+    "evidence": {"status": "not-run", "evidence": []}
+  }
+}

@@ -1,0 +1,113 @@
+{
+  "version": "0.1",
+  "task": {
+    "summary": "Produce a test-only 1v1 gift wish-list draft with independently reviewable recipient and sender capabilities",
+    "size": "L",
+    "rationale": "The request crosses two user roles, multiple states, product specification, prototype behavior, and independent acceptance outcomes"
+  },
+  "route": ["discover", "align", "spec", "tickets", "execute", "review"],
+  "gate": {
+    "status": "clear",
+    "items": [
+      {
+        "decision": "Gift prices and currency",
+        "classification": "draft-safe",
+        "handling": "Keep values TBD and use non-committal prototype placeholders; resolve before production implementation"
+      },
+      {
+        "decision": "Wish-list visibility and creation permissions",
+        "classification": "draft-safe",
+        "handling": "Limit the draft to the two stated roles and mark the production permission policy TBD"
+      },
+      {
+        "decision": "Payment, refund, cancellation, and delivery behavior",
+        "classification": "draft-safe",
+        "handling": "Prototype only initiation; do not claim settlement or delivery behavior"
+      },
+      {
+        "decision": "Privacy, safety, age, and regional restrictions",
+        "classification": "draft-safe",
+        "handling": "Mark compliance behavior TBD and exclude production rollout"
+      },
+      {
+        "decision": "Post-send list and notification behavior",
+        "classification": "draft-safe",
+        "handling": "Stop the prototype at a successful initiation state and mark downstream effects TBD"
+      }
+    ]
+  },
+  "confirmedFacts": [
+    "The work is a Sandbox-only draft",
+    "The recipient manages a wish list",
+    "The sender views the list in a 1v1 context and initiates a gift send",
+    "The UI language is English"
+  ],
+  "tickets": [
+    {
+      "id": "T01",
+      "outcome": "Recipient can view available gifts and add or remove wish-list items",
+      "scope": ["available gifts", "wish-list membership", "loading", "empty", "error", "disabled", "success"],
+      "nonGoals": ["pricing policy", "production permissions"],
+      "acceptance": [
+        "Adding an available gift makes it visible in the recipient wish list",
+        "Removing a gift removes it from the visible wish list",
+        "Loading, empty, error, disabled, and success states are inspectable"
+      ],
+      "evidence": ["PRD acceptance criteria", "browser interaction check"],
+      "blockedBy": [],
+      "capability": "active PRD and mobile HTML prototype Skills",
+      "openDecisions": ["item limit", "ordering rule"]
+    },
+    {
+      "id": "T02",
+      "outcome": "Sender can open and understand the recipient wish list from a 1v1 context",
+      "scope": ["1v1 entry", "recipient context", "wish-list display", "empty and error states"],
+      "nonGoals": ["global discovery", "public profile visibility policy"],
+      "acceptance": [
+        "The sender reaches the correct recipient list from a visible 1v1 context",
+        "The list preserves recipient identity and relationship context",
+        "Empty and error states explain the next available action"
+      ],
+      "evidence": ["PRD flow check", "browser navigation check"],
+      "blockedBy": [],
+      "capability": "active PRD and mobile HTML prototype Skills",
+      "openDecisions": ["production visibility policy"]
+    },
+    {
+      "id": "T03",
+      "outcome": "Sender can select a wish-list gift and reach a successful send-initiation state",
+      "scope": ["gift selection", "primary action", "disabled state", "initiation feedback"],
+      "nonGoals": ["payment settlement", "refund", "delivery", "post-send retention"],
+      "acceptance": [
+        "Selecting a gift enables the initiation action when draft prerequisites are met",
+        "The action provides visible success feedback",
+        "The prototype does not imply unconfirmed payment or delivery behavior"
+      ],
+      "evidence": ["PRD boundary check", "browser interaction check"],
+      "blockedBy": ["T02"],
+      "capability": "active PRD and mobile HTML prototype Skills",
+      "openDecisions": ["balance and payment policy", "post-send list behavior"]
+    },
+    {
+      "id": "T04",
+      "outcome": "The draft is reviewed against requirements, product/UI behavior, engineering constraints, and executed evidence",
+      "scope": ["four-axis review", "TBD audit", "evidence ledger"],
+      "nonGoals": ["production approval"],
+      "acceptance": [
+        "Each applicable review axis has an independent status",
+        "Every pass claim names evidence",
+        "Unverified production behavior remains explicit"
+      ],
+      "evidence": ["review artifact", "workflow state validation"],
+      "blockedBy": ["T01", "T02", "T03"],
+      "capability": "review workflow",
+      "openDecisions": []
+    }
+  ],
+  "review": {
+    "requirement": {"status": "not-run", "evidence": []},
+    "product-ui": {"status": "not-run", "evidence": []},
+    "engineering": {"status": "not-run", "evidence": []},
+    "evidence": {"status": "not-run", "evidence": []}
+  }
+}

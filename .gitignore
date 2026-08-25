@@ -58,3 +58,6 @@ venv/
 # Sandbox experiments (temporary, not formal projects)
 # Uncomment if you don't want to track sandbox:
 # Sandbox/
+
+# Independent nested Git repositories (synced separately)
+/Projects/personal/ai-pm-learning-agent/

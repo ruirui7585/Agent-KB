@@ -1,0 +1,764 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Laka · 1v1 心愿礼物 · 交互原型</title>
+<style>
+/* ========== 画布基础 ========== */
+:root{
+  --p1:#a14cff; --p2:#b943f5;
+  --grad:linear-gradient(135deg,#ff73dc,#c47cff);
+  --ink:#2c1540; --sub:#9a86ae; --sub2:#9978b5;
+  --line:rgba(220,150,255,.35);
+  --appbg:linear-gradient(180deg,#fff0fb 0%,#f6efff 28%,#f5f3f8 100%);
+  --c-send:#a14cff; --c-recv:#e2548f; --c-branch:#f59e0b;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{
+  font-family:-apple-system,BlinkMacSystemFont,"SF Pro Display","Helvetica Neue","PingFang SC",Arial,sans-serif;
+  background:#f3eff7 radial-gradient(circle at 20% 10%,#faf6ff 0,transparent 40%);
+  color:var(--ink); padding:34px 40px 64px; min-width:1860px;
+}
+
+/* ========== 画板头 ========== */
+.bhead h1{font-size:26px;font-weight:900;letter-spacing:-.3px}
+.bhead h1 span{font-size:13px;font-weight:700;color:#fff;background:var(--grad);border-radius:999px;padding:4px 12px;vertical-align:middle;margin-left:10px}
+.bhead .meta{margin-top:8px;font-size:12.5px;color:#8d7f9c;font-weight:600}
+.legend{margin-top:12px;display:flex;gap:10px;align-items:center}
+.lg{font-size:11.5px;font-weight:800;color:#fff;border-radius:999px;padding:4px 12px}
+.lg.s{background:var(--c-send)} .lg.r{background:var(--c-recv)} .lg.b{background:var(--c-branch)}
+.lg-t{font-size:11.5px;color:#8d7f9c;font-weight:600}
+
+/* ========== 行 / 屏 ========== */
+.frow{margin-top:40px}
+.frow-t{font-size:16px;font-weight:900;display:flex;align-items:center;gap:10px}
+.frow-t em{font-style:normal;font-size:11px;font-weight:700;color:#9a86ae;background:#fff;border:1px solid #e7ddf1;border-radius:999px;padding:3px 10px}
+.lane{display:flex;gap:30px;margin-top:18px;align-items:flex-start}
+.arr{align-self:center;margin-top:380px;font-size:26px;font-weight:900;color:#c9b4e4;flex-shrink:0}
+.shot{width:391px;flex-shrink:0}
+.tag{display:flex;align-items:center;gap:8px;margin-bottom:8px}
+.tno{font-size:11px;font-weight:900;color:#fff;border-radius:999px;padding:3px 10px;background:var(--c-send)}
+.tno.r{background:var(--c-recv)} .tno.b{background:var(--c-branch)}
+.tname{font-size:13.5px;font-weight:800}
+.note{font-size:11.5px;line-height:17px;color:#8d7f9c;margin-bottom:10px;font-weight:500}
+.note b{color:#6d5a7e}
+
+/* ========== 手机壳 ========== */
+.device{width:391px;padding:8px;background:#17121d;border-radius:52px;box-shadow:0 24px 60px rgba(60,30,90,.22)}
+.scr{width:375px;height:812px;border-radius:44px;overflow:hidden;position:relative;background:var(--appbg)}
+
+/* ========== 状态栏 ========== */
+.sb{height:46px;padding:13px 22px 0;display:flex;justify-content:space-between;align-items:flex-start;font-size:15px;font-weight:800;color:#08070a}
+.sicons{display:flex;align-items:center;gap:6px}
+.sig{display:flex;gap:2px;align-items:flex-end;height:12px}
+.sig b{width:3px;border-radius:1.5px;background:#08070a;display:block}
+.sig b:nth-child(1){height:4px}.sig b:nth-child(2){height:7px}.sig b:nth-child(3){height:9px}.sig b:nth-child(4){height:12px}
+.bat{background:#59c667;color:#fff;padding:1px 6px;border-radius:6px;font-size:11px;font-weight:900}
+
+/* ========== 聊天头部 ========== */
+.chd{height:52px;display:grid;grid-template-columns:44px 1fr 44px;align-items:center;padding:0 12px}
+.rbtn{width:32px;height:32px;border-radius:50%;background:rgba(255,255,255,.88);border:1px solid rgba(115,61,149,.08);display:flex;align-items:center;justify-content:center;color:#351146;font-size:18px;box-shadow:0 2px 8px rgba(127,65,180,.06)}
+.ct{justify-self:center;display:flex;align-items:center;gap:7px;font-size:16px;font-weight:700}
+.mav{width:32px;height:32px;border-radius:50%;overflow:hidden;background:#e8e0f0;flex-shrink:0}
+.mav img{width:100%;height:100%;object-fit:cover;display:block}
+
+/* ========== 奖励卡 ========== */
+.rcd{margin:4px 14px 0;height:58px;border-radius:13px;background:linear-gradient(135deg,#efe5ff,#ffdff6);display:grid;grid-template-columns:56px 1fr 40px;align-items:center;padding:6px 9px;border:1px solid rgba(220,120,255,.22)}
+.rl{font-size:10.5px;line-height:16px;color:#5d4a68;font-weight:500}
+.rl .dm{color:var(--p1);font-size:14px;font-weight:800;display:block;line-height:15px}
+.rt{font-size:12.5px;font-weight:800;color:#33203f;white-space:nowrap}
+.rtrack{height:14px;border-radius:8px;background:rgba(255,255,255,.78);display:grid;grid-template-columns:repeat(6,1fr);align-items:center;text-align:center;color:#9a45ff;font-size:10.5px;font-weight:700;margin-top:3px}
+.rnum{display:grid;grid-template-columns:repeat(6,1fr);text-align:center;color:#93869f;font-size:9.5px;line-height:12px;margin-top:1px}
+.rd{color:var(--p2);font-size:12px;font-weight:700;text-align:right}
+
+/* ========== 资料卡片 + 心愿入口 ========== */
+.pcard{margin:12px 14px 0;border-radius:15px;background:rgba(255,255,255,.92);border:1px solid var(--line);position:relative;padding:14px 12px 16px;box-shadow:0 8px 28px rgba(127,65,180,.07)}
+/* 心愿入口：贴右边悬浮浮标（按竞品参考图优化：渐变方块 + 心愿图标 + 进度） */
+.wfx{position:absolute;right:0;width:64px;background:linear-gradient(165deg,#b95cff 0%,#8b3cf0 55%,#7628d8 100%);border-radius:16px 0 0 16px;padding:8px 7px 7px;z-index:6;box-shadow:-4px 8px 20px rgba(139,60,240,.38),inset 0 1px 0 rgba(255,255,255,.25)}
+.wfx-notch{position:absolute;left:1px;top:50%;transform:translateY(-50%);color:rgba(255,255,255,.8);font-size:10px;font-weight:900}
+.wfx-ic{width:44px;height:44px;margin:0 auto;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:22px;box-shadow:inset 0 0 0 2px rgba(255,255,255,.65),0 3px 8px rgba(60,10,120,.3)}
+.wfx-pg{margin:5px auto 0;width:44px;text-align:center;background:rgba(46,8,86,.45);color:#fff;font-size:10.5px;font-weight:800;border-radius:999px;padding:2px 0;letter-spacing:.3px}
+.wfx-bar{width:44px;height:4px;border-radius:3px;background:rgba(255,255,255,.32);margin:5px auto 0;overflow:hidden}
+.wfx-bar i{display:block;height:100%;border-radius:3px;background:linear-gradient(90deg,#ffb0e6,#ffd9a8)}
+.uname{font-size:17px;font-weight:900;color:#303036;display:flex;align-items:center;gap:4px}
+.age{font-size:12px;color:#63aeea;font-weight:600;margin:2px 0 8px}
+.prev{width:150px;aspect-ratio:9/14;border-radius:11px;overflow:hidden;background:#f5eef8;border:1px solid rgba(190,165,225,.3)}
+.prev img{width:100%;height:100%;object-fit:cover;display:block}
+.like{position:absolute;right:10px;bottom:11px;display:flex;flex-direction:column;align-items:center;gap:1px}
+.like .h{font-size:23px;line-height:1;filter:drop-shadow(0 2px 4px rgba(255,120,180,.28))}
+.like b{font-size:12px;font-weight:800;color:#e87dbf}
+/* 入口高亮标注 */
+.ring{position:absolute;border:2px dashed #ff5ca8;z-index:8;pointer-events:none}
+.ring em{position:absolute;top:-11px;left:-8px;font-style:normal;font-size:10px;font-weight:900;color:#fff;background:#ff5ca8;border-radius:999px;padding:2px 8px;box-shadow:0 2px 8px rgba(255,92,168,.4)}
+
+/* ========== 日期 / 系统提示 / 快捷回复 ========== */
+.idate{margin-top:14px;text-align:center;font-size:12px;font-weight:600;color:#a396ad}
+.stip{margin:14px auto 0;width:280px;text-align:center;color:#685d70;font-size:12px;line-height:19px}
+.qr{display:flex;gap:7px;margin:12px 14px 0;direction:rtl}
+.qk{height:28px;padding:0 11px;background:#f6efff;border-radius:9px;border:1px solid rgba(220,200,240,.4);color:#6d527a;font-size:11px;display:flex;align-items:center;white-space:nowrap}
+
+/* ========== 底部输入区 ========== */
+.bpan{position:absolute;left:0;right:0;bottom:0;background:rgba(255,255,255,.96);border-radius:22px 22px 0 0;box-shadow:0 -10px 32px rgba(127,65,180,.10);border-top:1px solid rgba(220,120,255,.18);padding:10px 14px 14px;z-index:7}
+.irow{display:grid;grid-template-columns:1fr 44px;gap:8px;align-items:center}
+.inp{height:40px;border-radius:20px;background:#f2edf6;color:#9a90a2;font-size:13.5px;display:flex;align-items:center;padding-left:16px}
+.snd{height:40px;width:44px;border-radius:20px;background:var(--grad);display:flex;align-items:center;justify-content:center}
+.tbar{display:flex;justify-content:space-around;padding-top:8px;font-size:19px}
+
+/* ========== 遮罩 / 骨架 ========== */
+.mask{position:absolute;inset:0;background:rgba(30,16,45,.45);z-index:8}
+.skg{margin:12px 14px 0;border-radius:14px;background:rgba(255,255,255,.55);border:1px solid rgba(220,150,255,.25);padding:12px}
+.skl{height:9px;border-radius:5px;background:#eadff2;margin-bottom:8px}
+.skb{height:74px;border-radius:10px;background:#efe6f6}
+
+/* ========== 底部半屏面板 ========== */
+.sheet{position:absolute;left:0;right:0;bottom:0;background:#fdfbff;border-radius:26px 26px 0 0;z-index:9;padding:10px 16px 16px;box-shadow:0 -14px 44px rgba(60,20,100,.28)}
+.grab{width:36px;height:4px;border-radius:3px;background:#e3dcec;margin:0 auto 10px}
+.sh-head{display:flex;justify-content:space-between;align-items:flex-start}
+.sh-t{font-size:17px;font-weight:900}
+.sh-s{font-size:11.5px;color:var(--sub);margin-top:2px;font-weight:500}
+.x{width:28px;height:28px;border-radius:50%;background:#f3eef8;color:#8b7a9c;font-size:12px;display:flex;align-items:center;justify-content:center;font-weight:700}
+.bar{height:7px;border-radius:4px;background:#eee6f6;overflow:hidden;margin:6px 0 4px}
+.bar i{display:block;height:100%;border-radius:4px;background:linear-gradient(90deg,#ff73dc,#c47cff)}
+/* P2 心愿面板：规则说明 + 3 心愿进度卡（按竞品参考图：编号徽章 + 各自进度 + 各自赠送按钮） */
+.desc{margin-top:10px;background:#f4f1f7;border-radius:12px;padding:9px 12px;font-size:10.5px;line-height:15px;color:#8d8198;font-weight:500;text-align:center}
+.desc b{color:var(--p1);font-weight:800}
+.wcard{margin-top:12px;border-radius:18px;background:linear-gradient(160deg,#b06bff,#8a4bf0 60%,#7c3aed);padding:14px 12px;box-shadow:0 10px 26px rgba(138,75,240,.3)}
+.wcard-t{text-align:center;color:#fff;font-size:13px;font-weight:800;letter-spacing:.3px;text-shadow:0 1px 6px rgba(70,20,130,.4)}
+.wcols{display:grid;grid-template-columns:repeat(3,1fr);gap:9px;margin-top:12px}
+.wcol{background:rgba(255,255,255,.96);border-radius:14px;padding:15px 8px 10px;text-align:center;position:relative}
+.wc-ic{width:46px;height:46px;border-radius:50%;margin:0 auto 6px;display:flex;align-items:center;justify-content:center;font-size:23px;box-shadow:0 3px 10px rgba(60,20,110,.18)}
+.wc-n{font-size:11px;font-weight:800;color:#3a2450;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.wc-p{font-size:11px;font-weight:900;color:#8a4bf0;margin-top:2px}
+.wc-bar{height:5px;border-radius:3px;background:#eee6f6;overflow:hidden;margin-top:5px}
+.wc-bar i{display:block;height:100%;border-radius:3px;background:linear-gradient(90deg,#ff73dc,#c47cff)}
+.wsends{display:grid;grid-template-columns:repeat(3,1fr);gap:9px;margin-top:11px}
+.wc-send{background:rgba(255,255,255,.22);border:1px solid rgba(255,255,255,.55);color:#fff;border-radius:999px;padding:6px 2px;text-align:center;font-size:11.5px;font-weight:800;line-height:13px;box-shadow:0 3px 10px rgba(70,20,130,.18)}
+.sh-foot{display:flex;justify-content:space-between;align-items:center;margin-top:14px}
+.bal{font-size:12.5px;color:#6d5a7e;font-weight:600}
+.bal b{font-size:15px;color:var(--ink);font-weight:900}
+.bal a{color:var(--p2);font-size:11.5px;font-weight:800;margin-left:8px;text-decoration:none}
+
+/* ========== 充值半屏面板 ========== */
+.rch{max-height:85%}
+.rch-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:14px}
+.rch-pk{border:1.5px solid #e8e0f2;border-radius:16px;padding:14px 8px 12px;text-align:center;background:#fff;position:relative}
+.rch-pk.hot{border-color:#f5a623;background:linear-gradient(180deg,#fffef8,#fff9e8)}
+.rch-pk hot em{position:absolute;top:-7px;left:50%;transform:translateX(-50%);font-size:8px;font-weight:900;color:#fff;background:linear-gradient(135deg,#f5a623,#e88e1b);border-radius:999px;padding:2px 8px;letter-spacing:.4px}
+.rch-ic{display:flex;justify-content:center;align-items:center;gap:1px;margin-bottom:6px;line-height:1;height:20px}
+.coin{width:18px;height:18px;border-radius:50%;background:linear-gradient(135deg,#ffe7a0 0%,#f6c948 42%,#e0a020 78%,#c9850f 100%);box-shadow:inset 0 2px 2px rgba(255,255,255,.7),inset 0 -2px 3px rgba(150,90,0,.4),0 1px 2px rgba(120,70,0,.25);position:relative}
+.coin::after{content:"";position:absolute;inset:5px 5px;border-radius:50%;border:1px solid rgba(170,110,10,.4)}
+.rch-pk b{display:block;font-size:17px;font-weight:900;color:var(--ink);margin-bottom:4px}
+.rch-pk span{font-size:10.5px;color:#8a7a9c;font-weight:700}
+.rch-foot{margin-top:18px;text-align:center;font-size:10px;color:#9a86ae;line-height:1.5;padding-bottom:4px}
+.rch-foot a{color:var(--p2);text-decoration:none;font-weight:700}
+.btn-p{background:var(--grad);color:#fff;border-radius:999px;padding:11px 20px;font-size:13.5px;font-weight:800;text-align:center;box-shadow:0 6px 18px rgba(196,124,255,.35)}
+.btn-g{background:#f3eef8;color:#7a6890;border-radius:999px;padding:11px 16px;font-size:13px;font-weight:700;text-align:center}
+.btn-p.wide{margin-top:14px}
+
+/* ========== 居中弹窗 ========== */
+.dlg{position:absolute;left:50%;top:45%;transform:translate(-50%,-50%);width:280px;background:#fff;border-radius:22px;padding:22px 18px 16px;z-index:10;text-align:center;box-shadow:0 24px 70px rgba(50,20,90,.35)}
+.dic{width:64px;height:64px;border-radius:50%;margin:0 auto 10px;display:flex;align-items:center;justify-content:center;font-size:30px;box-shadow:0 8px 22px rgba(126,200,232,.35)}
+.dt{font-size:16px;font-weight:900}
+.dp{font-size:13px;font-weight:800;color:var(--p1);margin-top:3px}
+.dnote{font-size:11.5px;color:var(--sub);line-height:17px;margin-top:8px;font-weight:500}
+.dnote b{color:#6d5a7e}
+.dnote .red{color:#f04438;font-weight:800}
+.dbtns{display:flex;gap:9px;margin-top:15px}
+.dbtns>div{flex:1}
+.packs{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:13px}
+.pack{border:1.5px solid #eee5f7;border-radius:12px;padding:9px 4px 7px;position:relative;background:#fff}
+.pack b{display:block;font-size:12.5px;color:var(--ink)}
+.pack span{font-size:9.5px;color:var(--sub);font-weight:600}
+.pack.hot{border-color:#c47cff;background:#faf5ff}
+.pack em{position:absolute;top:-8px;left:50%;transform:translateX(-50%);font-style:normal;font-size:8px;font-weight:900;color:#fff;background:var(--grad);border-radius:999px;padding:2px 7px}
+
+/* ========== 成功反馈 ========== */
+.succ{position:absolute;left:50%;top:42%;transform:translate(-50%,-50%);z-index:10;text-align:center;width:280px}
+.sc{width:88px;height:88px;border-radius:50%;margin:0 auto 12px;display:flex;align-items:center;justify-content:center;font-size:42px;background:linear-gradient(135deg,#e0f2fa,#f3e8ff);box-shadow:0 0 0 12px rgba(255,255,255,.25),0 0 60px 20px rgba(255,150,220,.45);position:relative}
+.sc .ok{position:absolute;bottom:-2px;right:-2px;width:26px;height:26px;border-radius:50%;background:#34c759;color:#fff;font-size:14px;font-weight:900;display:flex;align-items:center;justify-content:center;border:2.5px solid #fff}
+.st{font-size:19px;font-weight:900;color:#fff;text-shadow:0 2px 12px rgba(80,30,120,.5)}
+.ss{font-size:12px;color:rgba(255,255,255,.92);font-weight:600;margin-top:4px;text-shadow:0 1px 8px rgba(80,30,120,.5)}
+.succ .bar{width:150px;margin:12px auto 5px;background:rgba(255,255,255,.35)}
+.sp{font-size:11px;color:#fff;font-weight:800;text-shadow:0 1px 8px rgba(80,30,120,.5)}
+.cf{position:absolute;z-index:9;font-size:16px;opacity:.95}
+
+/* ========== 聊天消息 ========== */
+.msg-r{display:flex;flex-direction:column;align-items:flex-end;margin:12px 14px 0}
+.gmsg{width:212px;background:linear-gradient(135deg,#ffe3f6,#efe0ff);border:1px solid rgba(196,124,255,.4);border-radius:16px 16px 4px 16px;padding:10px;display:flex;gap:9px;box-shadow:0 6px 18px rgba(196,124,255,.18)}
+.gm-ic{width:40px;height:40px;border-radius:50%;flex-shrink:0;background:rgba(255,255,255,.85);display:flex;align-items:center;justify-content:center;font-size:20px}
+.gm-mid{flex:1;min-width:0}
+.gm-mid b{font-size:12.5px;color:#3a1a60;display:block}
+.gm-mid>span{font-size:10px;color:#9a78b5;font-weight:600}
+.gm-mid .bar{margin:5px 0 3px;background:rgba(255,255,255,.85)}
+.gm-p{font-size:9.5px;color:var(--p1);font-weight:800}
+.mtime{font-size:9.5px;color:#b3a6bf;margin-top:3px;font-weight:600}
+.msg-l{margin:12px 14px 0;max-width:250px}
+.bub{background:#fff;border:1px solid #f0e8f6;border-radius:16px 16px 16px 4px;padding:9px 12px;font-size:13px;color:#3c3044;line-height:18px;box-shadow:0 3px 10px rgba(127,65,180,.05)}
+.tr{font-size:9.5px;color:#63aeea;font-weight:600;margin-top:3px}
+
+/* ========== 接收方：心愿管理 ========== */
+.mwg-body{background:#f6f5f9;min-height:100%;padding-bottom:30px}
+.mwg-nav{display:flex;align-items:center;justify-content:space-between;padding:12px 16px;background:#fff}
+.mwg-nav .bk{width:28px;height:28px;display:flex;align-items:center;justify-content:center;font-size:18px;color:#333}
+.mwg-nav .ttl{font-size:17px;font-weight:800;color:#1a1a2e}
+.mwg-nav .hp{width:28px;height:28px;display:flex;align-items:center;justify-content:center;font-size:17px;color:#999}
+.mwg-sec{margin:14px 16px 0}
+.mwg-sh{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px}
+.mwg-sh .sh-l{font-size:16px;font-weight:800;color:#1a1a2e}
+.mwg-sh .sh-r{display:flex;align-items:center;gap:8px}
+.mwg-slots{font-size:12px;color:#999;font-weight:600}
+.mwg-sub{display:flex;align-items:center;justify-content:space-between;font-size:11.5px;color:#999;font-weight:500;margin-bottom:10px}
+.mwg-sub .tips{color:#8b5cf6;font-weight:600}
+/* wish cards */
+.mwg-card{background:#fff;border-radius:14px;padding:12px 14px;margin-bottom:10px;display:flex;align-items:center;gap:12px;border:1px solid #f0edf5}
+.mwg-ci{width:52px;height:52px;border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:27px;flex-shrink:0}
+.mwg-info{flex:1;min-width:0}
+.mwg-name{font-size:15px;font-weight:800;color:#1a1a2e}
+.mwg-price{font-size:13px;font-weight:700;color:#8b5cf6;margin-top:2px}
+.mwg-price em{font-style:normal;font-size:11px;margin-right:2px}
+.mwg-target{font-size:12px;color:#666;margin-top:3px;font-weight:500}
+.mwg-st{display:inline-block;font-size:11px;font-weight:700;color:#10b981;background:#ecfdf5;border-radius:8px;padding:2px 9px;margin-top:4px}
+.mwg-arrow{color:#ccc;font-size:16px;flex-shrink:0}
+.mwg-edit{width:30px;height:30px;border-radius:50%;background:#f3eff8;color:#8b5cf6;display:flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0;margin-right:4px}
+/* add card */
+.mwg-add{background:#faf9fc;border:2px dashed #dcd6e4;border-radius:14px;padding:14px;display:flex;align-items:center;gap:12px;margin-top:4px}
+.mwg-add-ic{width:40px;height:40px;border-radius:50%;background:#f3eff8;display:flex;align-items:center;justify-content:center;font-size:20px;color:#8b5cf6;flex-shrink:0}
+.mwg-add-info .add-t{font-size:14px;font-weight:700;color:#8b5cf6}
+.mwg-add-info .add-s{font-size:11.5px;color:#999;margin-top:2px}
+.mwg-add-dec{margin-left:auto;font-size:36px;color:#ede8f2;opacity:.6}
+/* performance */
+.mwg-perf{margin:22px 16px 0}
+.mwg-perf-h{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px}
+.mwg-perf-h .ph-l{font-size:16px;font-weight:800;color:#1a1a2e;display:flex;align-items:center;gap:4px}
+.mwg-perf-h .ph-l i{font-size:14px;color:#bbb;font-style:normal}
+.mwg-perf-h .ph-r{font-size:13px;font-weight:700;color:#8b5cf6}
+/* date tabs */
+.date-tabs{display:flex;gap:0;background:#f0edf7;border-radius:10px;padding:3px;margin-bottom:14px}
+.date-tab{flex:1;text-align:center;padding:7px 0;font-size:12.5px;font-weight:700;color:#888;border-radius:8px;cursor:pointer;transition:all .15s}
+.date-tab.on{background:#fff;color:#8b5cf6;box-shadow:0 2px 8px rgba(139,92,246,.12)}
+/* metrics */
+.metric-row{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+.metric-card{background:#fff;border-radius:14px;padding:14px 8px;text-align:center;border:1px solid #f0edf5}
+.metric-ic{width:38px;height:38px;border-radius:50%;margin:0 auto 8px;display:flex;align-items:center;justify-content:center;font-size:19px}
+.metric-val{font-size:22px;font-weight:900;color:#1a1a2e;line-height:1.2}
+.metric-lbl{font-size:11px;color:#888;font-weight:600;margin-top:3px}
+.metric-vs{font-size:10px;color:#aaa;margin-top:4px}
+.metric-chg{font-size:11px;font-weight:800;color:#10b981;margin-top:3px;display:flex;align-items:center;justify-content:center;gap:2px}
+.mwg-foot{display:flex;align-items:center;justify-content:space-between;margin-top:14px;font-size:11px;color:#bbb;font-weight:500}
+.mwg-disclaimer{text-align:center;font-size:10.5px;color:#ccc;margin-top:16px;font-weight:500}
+.hstats{display:grid;grid-template-columns:repeat(3,1fr);gap:9px;margin:10px 14px 0}
+.hstat{background:rgba(255,255,255,.92);border:1px solid var(--line);border-radius:13px;padding:10px 4px;text-align:center}
+.hstat b{display:block;font-size:15px;font-weight:900}
+.hstat span{font-size:9.5px;color:var(--sub);font-weight:600}
+.wrow{display:flex;gap:10px;align-items:center;background:rgba(255,255,255,.94);border:1px solid var(--line);border-radius:14px;margin:10px 14px 0;padding:11px 12px}
+.wic{width:42px;height:42px;border-radius:50%;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:20px}
+.wm{flex:1;min-width:0}
+.wm b{font-size:13.5px;display:flex;align-items:center;gap:6px}
+.wm span{font-size:10px;color:var(--sub);font-weight:600}
+.wedit{width:26px;height:26px;border-radius:50%;background:#f3eef8;color:#8b7a9c;font-size:11px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.ful{font-size:8.5px;font-weight:900;color:#fff;background:linear-gradient(135deg,#f5b942,#f08c1e);border-radius:999px;padding:2px 8px}
+.wrow.done{background:linear-gradient(135deg,#fffdf5,#fff8ea);border-color:rgba(240,180,60,.35)}
+.wadd{margin:12px 14px 0;border:1.5px dashed #cfa8ee;border-radius:14px;text-align:center;padding:13px;color:var(--p1);font-size:13px;font-weight:800;background:rgba(255,255,255,.6)}
+.sec-t{font-size:11px;font-weight:800;color:var(--sub);margin:16px 18px 0;letter-spacing:.5px}
+
+/* ========== 接收方入口（粉色变体，与送礼方紫色区分） ========== */
+.wfx.her{background:linear-gradient(165deg,#ff7ab8 0%,#f04e9a 55%,#d93687 100%);box-shadow:-4px 8px 20px rgba(240,78,154,.38),inset 0 1px 0 rgba(255,255,255,.25)}
+
+/* ========== 心愿配置页（选礼物+数量同页，至多3个，价格上限锁定） ========== */
+.cgrid{display:grid;grid-template-columns:repeat(3,1fr);gap:9px;margin:12px 14px 0}
+.ccell{border:1.5px solid #eee5f7;border-radius:14px;padding:10px 6px 9px;text-align:center;background:#fff;position:relative}
+.ccell.sel{border-color:#c47cff;background:#faf5ff;box-shadow:0 4px 14px rgba(168,139,250,.18)}
+.ccell.lock{background:#f6f4f8;border-color:#ebe6f0}
+.cc-ic{width:42px;height:42px;border-radius:50%;margin:0 auto 5px;display:flex;align-items:center;justify-content:center;font-size:20px}
+.ccell.lock .cc-ic{filter:grayscale(.9);opacity:.5}
+.cc-n{font-size:11px;font-weight:800;color:#3a2450;white-space:nowrap;overflow:hidden}
+.cc-p{font-size:10px;font-weight:800;color:var(--p1);margin-top:1px}
+.ccell.lock .cc-n,.ccell.lock .cc-p{color:#a89fb2}
+.cck{position:absolute;top:-7px;right:-5px;width:18px;height:18px;border-radius:50%;background:var(--grad);color:#fff;font-size:10px;font-weight:900;display:flex;align-items:center;justify-content:center;box-shadow:0 2px 6px rgba(196,124,255,.45)}
+.locktag{display:inline-block;margin-top:3px;font-size:8.5px;font-weight:800;color:#a89fb2;background:#ece7f0;border-radius:999px;padding:2px 6px}
+.ccell.special{border-color:#f0a93a;background:#fffaf0;box-shadow:0 4px 14px rgba(240,169,58,.22)}
+.spectag{display:inline-block;margin-top:3px;font-size:8.5px;font-weight:800;color:#a36b00;background:#ffedcc;border-radius:999px;padding:2px 6px;letter-spacing:.3px}
+.selcount{margin:14px 18px 0;font-size:11.5px;font-weight:800;color:#6d5a7e}
+.selcount b{color:var(--p1)}
+.qtyrow{display:flex;align-items:center;gap:10px;background:rgba(255,255,255,.94);border:1px solid var(--line);border-radius:14px;margin:10px 14px 0;padding:10px 12px}
+.qtyrow .qn{flex:1;font-size:13px;font-weight:800;min-width:0}
+.qtyrow .qn span{display:block;font-size:9.5px;color:var(--sub);font-weight:600;margin-top:1px}
+.step{display:flex;align-items:center;gap:12px}
+.step span{width:28px;height:28px;border-radius:50%;background:#fff;border:1px solid #e7ddf1;color:#7a6890;font-size:15px;font-weight:800;display:flex;align-items:center;justify-content:center}
+.step b{font-size:15px;font-weight:900;min-width:24px;text-align:center}
+.cfg-save{margin:16px 14px 0}
+
+/* ========== 庆祝弹窗 ========== */
+.celeb .dt{font-size:18px}
+.gold{background:linear-gradient(135deg,#fdf1d7,#f6d98a);box-shadow:0 8px 22px rgba(240,193,75,.4)}
+</style>
+</head>
+<body>
+
+<!-- ================= 画板头 ================= -->
+<div class="bhead">
+  <h1>Laka · 1v1 心愿礼物 <span>交互原型 v1.6</span></h1>
+  <div class="meta">2026-07-31 ｜ 375 × 812 @1x ｜ 9 屏 ｜ 浅粉紫社交风（延续 PRD 视觉体系）｜ 静态高保真原型</div>
+  <div class="legend">
+    <span class="lg s">送礼方 Sender</span>
+    <span class="lg r">接收方 Receiver</span>
+    <span class="lg b">分支：余额不足</span>
+    <span class="lg-t">主线：P1 → P2 → P5 → P6（点 Send 直赠，无二次确认）｜ 分支：余额不足 → P4 ｜ 接收方：心愿入口 → P7 → P8 配置（至多 3 个 · 价格上限 · 1 个特殊礼物），收礼 → P9</span>
+  </div>
+</div>
+
+<!-- ================= 第一行：送礼方 · 发现与决策 ================= -->
+<div class="frow">
+  <div class="frow-t">① 送礼方链路 · 发现与决策 <em>Sender / Discover &amp; Decide</em></div>
+  <div class="lane">
+
+    <!-- P1 聊天页 · 心愿入口 -->
+    <div class="shot">
+      <div class="tag"><span class="tno">P1</span><span class="tname">聊天页 · 心愿礼物入口</span></div>
+      <div class="note">右侧贴边悬浮入口：当前心愿图标 + 进度（3/5），按竞品参考图优化为浮标形态。点击 → <b>P2</b></div>
+      <div class="device"><div class="scr">
+        <div class="sb"><span>15:54</span><span class="sicons"><span class="sig"><b></b><b></b><b></b><b></b></span><svg width="15" height="12" viewBox="0 0 18 15" fill="#08070a"><path d="M9 2.5C13 2.5 16 5 17.5 7.8L15.8 9C14.5 6.8 12 5 9 5S3.5 6.8 2.2 9L0.5 7.8C2 5 5 2.5 9 2.5ZM9 6.5c2.5 0 4.7 1.3 6 3.3l-1.7 1.2c-1-1.5-2.6-2.5-4.3-2.5s-3.3 1-4.3 2.5L3 9.8C4.3 7.8 6.5 6.5 9 6.5ZM9 10.5c1.1 0 2 .6 2.5 1.5l-2.5 1.5-2.5-1.5C6.5 11.1 7.4 10.5 9 10.5Z"/></svg><span class="bat">82</span></span></div>
+        <div class="chd"><div class="rbtn">←</div><div class="ct"><span class="mav"><img src="../avatar_male.png" alt=""></span>Amar</div><div class="rbtn" style="font-size:13px">•••</div></div>
+        <div class="rcd">
+          <div class="rl"><span class="dm">0 💎</span>You get<br>He sent <b>0</b></div>
+          <div><div class="rt">Reply in 2 min to get all~</div>
+            <div class="rtrack"><span>44</span><span>198</span><span>440</span><span>1100</span><span>1980</span><span>3080</span></div>
+            <div class="rnum"><span>1</span><span>3</span><span>5</span><span>10</span><span>15</span><span>20</span></div></div>
+          <div class="rd">detail</div>
+        </div>
+        <div class="pcard">
+          <div class="uname">Amar <span>🇮🇶</span></div>
+          <div class="age">⏱ 18</div>
+          <div class="prev"><img src="../Reference%20image/avatar_me_female.png" alt=""></div>
+          <div class="like"><span class="h">💗</span><b>0</b></div>
+        </div>
+        <div class="ring" style="top:204px;right:-5px;width:78px;height:92px;border-radius:18px 0 0 18px"><em>入口</em></div>
+        <div class="wfx" style="top:212px">
+          <span class="wfx-notch">‹</span>
+          <div class="wfx-ic" style="background:linear-gradient(135deg,#e0f2fa,#b3dff0)">🩷</div>
+          <div class="wfx-pg">3/5</div>
+          <div class="wfx-bar"><i style="width:60%"></i></div>
+        </div>
+        <div class="idate">Jun 26, 11:01</div>
+        <div class="stip">【Match】 He is a good match for you. Start chatting for free and get diamonds!</div>
+        <div class="qr"><div class="qk">مرحبا كيف...</div><div class="qk">ازيك ايه...</div><div class="qk">مساندة الحلو...</div></div>
+        <div class="bpan">
+          <div class="irow"><div class="inp">Say something...</div><div class="snd"><svg width="20" height="20" viewBox="0 0 24 24" fill="#fff"><path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/></svg></div></div>
+          <div class="tbar">🖼️&nbsp;&nbsp;🎤&nbsp;&nbsp;🎁&nbsp;&nbsp;😊&nbsp;&nbsp;📞</div>
+        </div>
+      </div></div>
+    </div>
+
+    <div class="arr">→</div>
+
+    <!-- P2 心愿面板 -->
+    <div class="shot">
+      <div class="tag"><span class="tno">P2</span><span class="tname">心愿面板 · 选择礼物</span></div>
+      <div class="note">底部半屏：仅展示她的 <b>3 个心愿</b>（编号徽章），各显示已送进度；点 Send <b>直接赠送</b>（以 #1 为例）→ <b>P5</b>；余额不足 → <b>P4</b></div>
+      <div class="device"><div class="scr">
+        <div class="sb"><span>15:54</span><span class="sicons"><span class="sig"><b></b><b></b><b></b><b></b></span><svg width="15" height="12" viewBox="0 0 18 15" fill="#08070a"><path d="M9 2.5C13 2.5 16 5 17.5 7.8L15.8 9C14.5 6.8 12 5 9 5S3.5 6.8 2.2 9L0.5 7.8C2 5 5 2.5 9 2.5ZM9 6.5c2.5 0 4.7 1.3 6 3.3l-1.7 1.2c-1-1.5-2.6-2.5-4.3-2.5s-3.3 1-4.3 2.5L3 9.8C4.3 7.8 6.5 6.5 9 6.5ZM9 10.5c1.1 0 2 .6 2.5 1.5l-2.5 1.5-2.5-1.5C6.5 11.1 7.4 10.5 9 10.5Z"/></svg><span class="bat">82</span></span></div>
+        <div class="chd"><div class="rbtn">←</div><div class="ct"><span class="mav"><img src="../avatar_male.png" alt=""></span>Amar</div><div class="rbtn" style="font-size:13px">•••</div></div>
+        <div class="skg" style="height:56px;padding:0"></div>
+        <div class="skg"><div class="skl" style="width:45%"></div><div class="skl" style="width:30%"></div><div class="skb"></div></div>
+        <div class="wfx" style="top:212px">
+          <span class="wfx-notch">‹</span>
+          <div class="wfx-ic" style="background:linear-gradient(135deg,#e0f2fa,#b3dff0)">🩷</div>
+          <div class="wfx-pg">3/5</div>
+        </div>
+        <div class="mask"></div>
+        <div class="sheet">
+          <div class="grab"></div>
+          <div class="sh-head">
+            <div style="width:28px"></div>
+            <div class="sh-t" style="font-size:16px">Amar's Gift Wishes 🌸</div>
+            <div class="x">✕</div>
+          </div>
+          <div class="desc">Complete a wish to earn <b>+10 Intimacy</b> bonus. Daily wishes reset at 0:00.</div>
+          <div class="wcard">
+            <div class="wcard-t">✦ Wish Progress ✦</div>
+            <div class="wcols">
+              <div class="wcol">
+                <div class="wc-ic" style="background:linear-gradient(135deg,#e0f2fa,#b3dff0)">🩷</div>
+                <div class="wc-n">Crystal Heart</div>
+                <div class="wc-p">3/5</div>
+                <div class="wc-bar"><i style="width:60%"></i></div>
+              </div>
+              <div class="wcol">
+                <div class="wc-ic" style="background:linear-gradient(135deg,#fbe4f8,#f2b6e8)">🌷</div>
+                <div class="wc-n">Lily</div>
+                <div class="wc-p">5/10</div>
+                <div class="wc-bar"><i style="width:50%"></i></div>
+              </div>
+              <div class="wcol">
+                <div class="wc-ic" style="background:linear-gradient(135deg,#fbe0e6,#f5aebe)">🌹</div>
+                <div class="wc-n">Rose</div>
+                <div class="wc-p">12/20</div>
+                <div class="wc-bar"><i style="width:60%"></i></div>
+              </div>
+            </div>
+            <div class="wsends">
+              <div class="wc-send">Send</div>
+              <div class="wc-send">Send</div>
+              <div class="wc-send">Send</div>
+            </div>
+          </div>
+          <div class="sh-foot">
+            <div class="bal">💎 <b>320</b><a>Recharge ›</a></div>
+            <div style="font-size:10.5px;color:#9a86ae;font-weight:600">Each gift sends separately</div>
+          </div>
+        </div>
+      </div></div>
+    </div>
+
+    <div class="arr">→</div>
+
+    <!-- P4 余额不足（分支） -->
+    <div class="shot">
+      <div class="tag"><span class="tno b">P4 · 分支</span><span class="tname">余额不足 · 充值引导</span></div>
+      <div class="note">点 Send 后余额不足时拦截，弹出底部半屏 <b>Recharge</b> 面板（6 个充值包 3×2 网格）。选包支付成功回 <b>P2</b> 继续赠送</div>
+      <div class="device"><div class="scr">
+        <div class="sb"><span>15:54</span><span class="sicons"><span class="sig"><b></b><b></b><b></b><b></b></span><svg width="15" height="12" viewBox="0 0 18 15" fill="#08070a"><path d="M9 2.5C13 2.5 16 5 17.5 7.8L15.8 9C14.5 6.8 12 5 9 5S3.5 6.8 2.2 9L0.5 7.8C2 5 5 2.5 9 2.5ZM9 6.5c2.5 0 4.7 1.3 6 3.3l-1.7 1.2c-1-1.5-2.6-2.5-4.3-2.5s-3.3 1-4.3 2.5L3 9.8C4.3 7.8 6.5 6.5 9 6.5ZM9 10.5c1.1 0 2 .6 2.5 1.5l-2.5 1.5-2.5-1.5C6.5 11.1 7.4 10.5 9 10.5Z"/></svg><span class="bat">82</span></span></div>
+        <div class="chd"><div class="rbtn">←</div><div class="ct"><span class="mav"><img src="../avatar_male.png" alt=""></span>Amar</div><div class="rbtn" style="font-size:13px">•••</div></div>
+        <div class="skg" style="height:56px;padding:0"></div>
+        <div class="skg"><div class="skl" style="width:45%"></div><div class="skl" style="width:30%"></div><div class="skb"></div></div>
+        <div class="wfx" style="top:212px">
+          <span class="wfx-notch">‹</span>
+          <div class="wfx-ic" style="background:linear-gradient(135deg,#e0f2fa,#b3dff0)">🩷</div>
+          <div class="wfx-pg">3/5</div>
+        </div>
+        <div class="mask"></div>
+        <div class="sheet rch">
+          <div class="grab"></div>
+          <div class="sh-head">
+            <div style="width:28px"></div>
+            <div class="sh-t">Recharge</div>
+            <div class="x">✕</div>
+          </div>
+          <div class="rch-grid">
+            <div class="rch-pk"><div class="rch-ic"><i class="coin"></i><i class="coin"></i></div><b>3500</b><span>USD 0.99</span></div>
+            <div class="rch-pk"><div class="rch-ic"><i class="coin"></i><i class="coin"></i></div><b>6999</b><span>USD 1.99</span></div>
+            <div class="rch-pk hot"><em>HOT</em><div class="rch-ic"><i class="coin"></i><i class="coin"></i><i class="coin"></i></div><b>17499</b><span>USD 4.99</span></div>
+            <div class="rch-pk"><div class="rch-ic"><i class="coin"></i><i class="coin"></i><i class="coin"></i></div><b>34999</b><span>USD 9.99</span></div>
+            <div class="rch-pk"><div class="rch-ic"><i class="coin"></i><i class="coin"></i><i class="coin"></i></div><b>69999</b><span>USD 19.99</span></div>
+            <div class="rch-pk"><div class="rch-ic"><i class="coin"></i><i class="coin"></i><i class="coin"></i></div><b>174999</b><span>USD 49.99</span></div>
+          </div>
+          <div class="rch-foot">By continuing, you agree to the <a href="#">Terms of Service</a> and <a href="#">Privacy Policy</a></div>
+        </div>
+      </div></div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ================= 第二行：送礼方 · 结果与反馈 ================= -->
+<div class="frow">
+  <div class="frow-t">② 送礼方链路 · 赠送与反馈 <em>Sender / Send &amp; Feedback</em></div>
+  <div class="lane">
+
+    <!-- P5 赠送成功 -->
+    <div class="shot">
+      <div class="tag"><span class="tno">P5</span><span class="tname">赠送成功反馈</span></div>
+      <div class="note">全屏庆祝动效（约 2s 自动消失），心愿进度 3/5 → <b>4/5</b>。随后回到 → <b>P6</b></div>
+      <div class="device"><div class="scr">
+        <div class="sb" style="position:relative;z-index:1"><span>15:54</span><span class="sicons"><span class="sig"><b></b><b></b><b></b><b></b></span><svg width="15" height="12" viewBox="0 0 18 15" fill="#08070a"><path d="M9 2.5C13 2.5 16 5 17.5 7.8L15.8 9C14.5 6.8 12 5 9 5S3.5 6.8 2.2 9L0.5 7.8C2 5 5 2.5 9 2.5ZM9 6.5c2.5 0 4.7 1.3 6 3.3l-1.7 1.2c-1-1.5-2.6-2.5-4.3-2.5s-3.3 1-4.3 2.5L3 9.8C4.3 7.8 6.5 6.5 9 6.5ZM9 10.5c1.1 0 2 .6 2.5 1.5l-2.5 1.5-2.5-1.5C6.5 11.1 7.4 10.5 9 10.5Z"/></svg><span class="bat">82</span></span></div>
+        <div class="chd"><div class="rbtn">←</div><div class="ct"><span class="mav"><img src="../avatar_male.png" alt=""></span>Amar</div><div class="rbtn" style="font-size:13px">•••</div></div>
+        <div class="skg" style="height:56px;padding:0"></div>
+        <div class="skg"><div class="skl" style="width:45%"></div><div class="skl" style="width:30%"></div><div class="skb"></div></div>
+        <div class="wfx" style="top:212px">
+          <span class="wfx-notch">‹</span>
+          <div class="wfx-ic" style="background:linear-gradient(135deg,#e0f2fa,#b3dff0)">🩷</div>
+          <div class="wfx-pg">3/5</div>
+        </div>
+        <div class="mask" style="background:rgba(60,20,90,.62)"></div>
+        <span class="cf" style="left:44px;top:150px">✨</span>
+        <span class="cf" style="right:50px;top:180px;font-size:13px">💜</span>
+        <span class="cf" style="left:64px;top:300px;font-size:13px">🎉</span>
+        <span class="cf" style="right:70px;top:330px">✨</span>
+        <span class="cf" style="left:110px;top:120px;font-size:12px">💗</span>
+        <span class="cf" style="right:110px;top:420px;font-size:12px">🎊</span>
+        <div class="succ">
+          <div class="sc">🩷<span class="ok">✓</span></div>
+          <div class="st">Sent Successfully!</div>
+          <div class="ss">Her wish · Crystal Heart</div>
+          <div class="bar"><i style="width:80%"></i></div>
+          <div class="sp">4/5 fulfilled · 1 more to go!</div>
+        </div>
+      </div></div>
+    </div>
+
+    <div class="arr">→</div>
+
+    <!-- P6 聊天页 · 礼物消息 -->
+    <div class="shot">
+      <div class="tag"><span class="tno">P6</span><span class="tname">聊天页 · 礼物消息卡片</span></div>
+      <div class="note">礼物消息进入聊天流（含心愿进度）；右侧悬浮入口进度同步为 <b>4/5</b></div>
+      <div class="device"><div class="scr">
+        <div class="sb"><span>15:56</span><span class="sicons"><span class="sig"><b></b><b></b><b></b><b></b></span><svg width="15" height="12" viewBox="0 0 18 15" fill="#08070a"><path d="M9 2.5C13 2.5 16 5 17.5 7.8L15.8 9C14.5 6.8 12 5 9 5S3.5 6.8 2.2 9L0.5 7.8C2 5 5 2.5 9 2.5ZM9 6.5c2.5 0 4.7 1.3 6 3.3l-1.7 1.2c-1-1.5-2.6-2.5-4.3-2.5s-3.3 1-4.3 2.5L3 9.8C4.3 7.8 6.5 6.5 9 6.5ZM9 10.5c1.1 0 2 .6 2.5 1.5l-2.5 1.5-2.5-1.5C6.5 11.1 7.4 10.5 9 10.5Z"/></svg><span class="bat">82</span></span></div>
+        <div class="chd"><div class="rbtn">←</div><div class="ct"><span class="mav"><img src="../avatar_male.png" alt=""></span>Amar</div><div class="rbtn" style="font-size:13px">•••</div></div>
+        <div class="rcd">
+          <div class="rl"><span class="dm">0 💎</span>You get<br>He sent <b>0</b></div>
+          <div><div class="rt">Reply in 2 min to get all~</div>
+            <div class="rtrack"><span>44</span><span>198</span><span>440</span><span>1100</span><span>1980</span><span>3080</span></div>
+            <div class="rnum"><span>1</span><span>3</span><span>5</span><span>10</span><span>15</span><span>20</span></div></div>
+          <div class="rd">detail</div>
+        </div>
+        <div class="pcard" style="padding-bottom:12px">
+          <div class="uname">Amar <span>🇮🇶</span></div>
+          <div class="age">⏱ 18</div>
+          <div class="prev" style="width:110px"><img src="../Reference%20image/avatar_me_female.png" alt=""></div>
+          <div class="like"><span class="h">💗</span><b>1</b></div>
+        </div>
+        <div class="wfx" style="top:212px">
+          <span class="wfx-notch">‹</span>
+          <div class="wfx-ic" style="background:linear-gradient(135deg,#e0f2fa,#b3dff0)">🩷</div>
+          <div class="wfx-pg">4/5</div>
+        </div>
+        <div class="msg-r">
+          <div class="gmsg">
+            <div class="gm-ic">🩷</div>
+            <div class="gm-mid">
+              <b>Crystal Heart</b>
+              <span>Wish gift · 💎 199</span>
+              <div class="bar"><i style="width:80%"></i></div>
+              <span class="gm-p">Her wish 4/5 ✨</span>
+            </div>
+          </div>
+          <div class="mtime">15:56 ✓✓</div>
+        </div>
+        <div class="msg-l">
+          <div class="bub">Thank you! That's so sweet 🥰</div>
+          <div class="tr">See translation</div>
+        </div>
+        <div class="bpan">
+          <div class="irow"><div class="inp">Say something...</div><div class="snd"><svg width="20" height="20" viewBox="0 0 24 24" fill="#fff"><path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/></svg></div></div>
+          <div class="tbar">🖼️&nbsp;&nbsp;🎤&nbsp;&nbsp;🎁&nbsp;&nbsp;😊&nbsp;&nbsp;📞</div>
+        </div>
+      </div></div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ================= 第三行：接收方链路 ================= -->
+<div class="frow">
+  <div class="frow-t">③ 接收方链路 · 心愿管理 <em>Receiver / Her Wishes</em></div>
+  <div class="lane">
+
+    <!-- 接收方入口：聊天页 -->
+    <div class="shot">
+      <div class="tag"><span class="tno r">入口</span><span class="tname">接收方聊天页 · 心愿入口</span></div>
+      <div class="note">她视角的右侧悬浮入口（<b>粉色变体</b>，区别于送礼方紫色）。点击 → <b>P7</b> 心愿管理</div>
+      <div class="device"><div class="scr">
+        <div class="sb"><span>15:58</span><span class="sicons"><span class="sig"><b></b><b></b><b></b><b></b></span><svg width="15" height="12" viewBox="0 0 18 15" fill="#08070a"><path d="M9 2.5C13 2.5 16 5 17.5 7.8L15.8 9C14.5 6.8 12 5 9 5S3.5 6.8 2.2 9L0.5 7.8C2 5 5 2.5 9 2.5ZM9 6.5c2.5 0 4.7 1.3 6 3.3l-1.7 1.2c-1-1.5-2.6-2.5-4.3-2.5s-3.3 1-4.3 2.5L3 9.8C4.3 7.8 6.5 6.5 9 6.5ZM9 10.5c1.1 0 2 .6 2.5 1.5l-2.5 1.5-2.5-1.5C6.5 11.1 7.4 10.5 9 10.5Z"/></svg><span class="bat">82</span></span></div>
+        <div class="chd"><div class="rbtn">←</div><div class="ct"><span class="mav"><img src="../avatar_male.png" alt=""></span>Faisal</div><div class="rbtn" style="font-size:13px">•••</div></div>
+        <div class="msg-l" style="max-width:240px"><div class="bub">Hey 💕 did you get the gift I sent?</div><div class="tr">15:57</div></div>
+        <div class="pcard">
+          <div class="uname">Faisal <span>🇮🇶</span></div>
+          <div class="age">⏱ 28</div>
+          <div class="prev"><img src="../Reference%20image/avatar_me_female.png" alt=""></div>
+          <div class="like"><span class="h">💗</span><b>0</b></div>
+        </div>
+        <div class="ring" style="top:204px;right:-5px;width:78px;height:92px;border-radius:18px 0 0 18px"><em>入口</em></div>
+        <div class="wfx her" style="top:212px">
+          <span class="wfx-notch">‹</span>
+          <div class="wfx-ic" style="background:linear-gradient(135deg,#ffe0ee,#ffb3d4)">🌸</div>
+          <div class="wfx-pg">My 3/3</div>
+        </div>
+        <div class="bpan">
+          <div class="irow"><div class="inp">Say something...</div><div class="snd"><svg width="20" height="20" viewBox="0 0 24 24" fill="#fff"><path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/></svg></div></div>
+          <div class="tbar">🖼️&nbsp;&nbsp;🎤&nbsp;&nbsp;🎁&nbsp;&nbsp;😊&nbsp;&nbsp;📞</div>
+        </div>
+      </div></div>
+    </div>
+
+    <div class="arr">→</div>
+
+    <!-- P7 心愿列表 -->
+    <div class="shot">
+      <div class="tag"><span class="tno r">P7</span><span class="tname">My Wish Gifts（主播侧管理页）</span></div>
+      <div class="note">1:1 还原截图 + 增强：右上角去掉 Edit wishes，改在每个礼物卡片右侧加 ✎ 编辑 icon（点之 → <b>P8</b>）+ Wish performance（日期筛选 + 3 指标）</div>
+      <div class="device"><div class="scr">
+        <div class="sb"><span>15:58</span><span class="sicons"><span class="sig"><b></b><b></b><b></b><b></b></span><svg width="15" height="12" viewBox="0 0 18 15" fill="#08070a"><path d="M9 2.5C13 2.5 16 5 17.5 7.8L15.8 9C14.5 6.8 12 5 9 5S3.5 6.8 2.2 9L0.5 7.8C2 5 5 2.5 9 2.5ZM9 6.5c2.5 0 4.7 1.3 6 3.3l-1.7 1.2c-1-1.5-2.6-2.5-4.3-2.5s-3.3 1-4.3 2.5L3 9.8C4.3 7.8 6.5 6.5 9 6.5ZM9 10.5c1.1 0 2 .6 2.5 1.5l-2.5 1.5-2.5-1.5C6.5 11.1 7.4 10.5 9 10.5Z"/></svg><span class="bat">82</span></span></div>
+        <!-- Nav -->
+        <div class="mwg-nav"><div class="bk">‹</div><div class="ttl">My Wish Gifts</div><div class="hp">?</div></div>
+        <div class="mwg-body">
+          <!-- Today's wishes -->
+          <div class="mwg-sec">
+            <div class="mwg-sh">
+              <span class="sh-l">Today's wishes</span>
+              <div class="sh-r"><span class="mwg-slots">3/3 slots</span></div>
+            </div>
+            <div class="mwg-sub"><span>⏱ Valid until 23:59 (local time)</span><span class="tips">Tips ›</span></div>
+            <!-- Card 1 -->
+            <div class="mwg-card">
+              <div class="mwg-ci" style="background:linear-gradient(135deg,#fce4ec,#f8bbd9)">💗</div>
+              <div class="mwg-info">
+                <div class="mwg-name">Crystal Heart</div>
+                <div class="mwg-price"><em>❤️</em>199</div>
+                <div class="mwg-target">Target per user: 5</div>
+                <span class="mwg-st">Active</span>
+              </div>
+              <div class="mwg-edit">✎</div>
+              <div class="mwg-arrow">›</div>
+            </div>
+            <!-- Card 2 -->
+            <div class="mwg-card">
+              <div class="mwg-ci" style="background:linear-gradient(135deg,#fce4ec,#f8c0d8)">🌷</div>
+              <div class="mwg-info">
+                <div class="mwg-name">Lily</div>
+                <div class="mwg-price"><em>💜</em>99</div>
+                <div class="mwg-target">Target per user: 10</div>
+                <span class="mwg-st">Active</span>
+              </div>
+              <div class="mwg-edit">✎</div>
+              <div class="mwg-arrow">›</div>
+            </div>
+            <!-- Card 3 -->
+            <div class="mwg-card">
+              <div class="mwg-ci" style="background:linear-gradient(135deg,#fce4ec,#f5b8c8)">🌹</div>
+              <div class="mwg-info">
+                <div class="mwg-name">Rose</div>
+                <div class="mwg-price"><em>💜</em>44</div>
+                <div class="mwg-target">Target per user: 20</div>
+                <span class="mwg-st">Active</span>
+              </div>
+              <div class="mwg-edit">✎</div>
+              <div class="mwg-arrow">›</div>
+            </div>
+            <!-- Add card -->
+            <div class="mwg-add">
+              <div class="mwg-add-ic">⊕</div>
+              <div class="mwg-add-info"><div class="add-t">Add wish gift</div><div class="add-s">You can add up to 3 wishes</div></div>
+              <div class="mwg-add-dec">🎁</div>
+            </div>
+          </div>
+
+          <!-- Wish performance -->
+          <div class="mwg-perf">
+            <div class="mwg-perf-h">
+              <span class="ph-l">Wish performance<i>ⓘ</i></span>
+              <span class="ph-r">View details ›</span>
+            </div>
+            <div class="date-tabs">
+              <div class="date-tab on">Today</div>
+              <div class="date-tab">Yesterday</div>
+              <div class="date-tab">Last 7 days</div>
+            </div>
+            <div class="metric-row">
+              <div class="metric-card">
+                <div class="metric-ic" style="background:#ede7fd;color:#8b5cf6">👥</div>
+                <div class="metric-val">12</div>
+                <div class="metric-lbl">Wish payers</div>
+                <div class="metric-vs">vs yesterday</div>
+                <div class="metric-chg">▲ 20%</div>
+              </div>
+              <div class="metric-card">
+                <div class="metric-ic" style="background:#e6f9f0;color:#10b981">✅</div>
+                <div class="metric-val">8</div>
+                <div class="metric-lbl">Users completed</div>
+                <div class="metric-vs">vs yesterday</div>
+                <div class="metric-chg">▲ 14%</div>
+              </div>
+              <div class="metric-card">
+                <div class="metric-ic" style="background:#e0f2fe;color:#0ea5e9">💎</div>
+                <div class="metric-val">3.1k</div>
+                <div class="metric-lbl">Wish earnings</div>
+                <div class="metric-vs">vs yesterday</div>
+                <div class="metric-chg">▲ 18%</div>
+              </div>
+            </div>
+            <div class="mwg-foot"><span>⏱ Updated in real time · 15:58</span><span>Compared with yesterday at the same time</span></div>
+            <div class="mwg-disclaimer">ⓘ Data is for reference only</div>
+          </div>
+        </div>
+      </div></div>
+    </div>
+
+    <div class="arr">→</div>
+
+    <!-- P8 心愿配置 -->
+    <div class="shot">
+      <div class="tag"><span class="tno r">P8</span><span class="tname">心愿配置（选礼物+数量·同页）</span></div>
+      <div class="note">选礼物与设数量 <b>同一页面</b>；至多 <b>3 个</b>；每个礼物带 <b>价格上限</b>锁定高价；可标 <b>1 个</b>为 <b>特殊礼物（置顶心愿）</b></div>
+      <div class="device"><div class="scr">
+        <div class="sb"><span>15:58</span><span class="sicons"><span class="sig"><b></b><b></b><b></b><b></b></span><svg width="15" height="12" viewBox="0 0 18 15" fill="#08070a"><path d="M9 2.5C13 2.5 16 5 17.5 7.8L15.8 9C14.5 6.8 12 5 9 5S3.5 6.8 2.2 9L0.5 7.8C2 5 5 2.5 9 2.5ZM9 6.5c2.5 0 4.7 1.3 6 3.3l-1.7 1.2c-1-1.5-2.6-2.5-4.3-2.5s-3.3 1-4.3 2.5L3 9.8C4.3 7.8 6.5 6.5 9 6.5ZM9 10.5c1.1 0 2 .6 2.5 1.5l-2.5 1.5-2.5-1.5C6.5 11.1 7.4 10.5 9 10.5Z"/></svg><span class="bat">82</span></span></div>
+        <div class="chd"><div class="rbtn">←</div><div class="ct">My Wishes 💝</div><div style="width:32px"></div></div>
+        <div class="skg" style="height:64px;padding:0"></div>
+        <div class="skg" style="height:86px"><div class="skl" style="width:55%"></div><div class="skb" style="height:30px"></div></div>
+        <div class="skg" style="height:86px"><div class="skl" style="width:50%"></div><div class="skb" style="height:30px"></div></div>
+        <div class="mask"></div>
+        <div class="sheet">
+          <div class="grab"></div>
+          <div class="sh-head">
+            <div><div class="sh-t">Edit Wishes ⚙️</div><div class="sh-s">Up to 3 gifts · price cap on</div></div>
+            <div class="x">✕</div>
+          </div>
+          <div class="desc">Pick <b>up to 3</b> gifts. A <b>price cap</b> (💎 520) locks out high-value gifts. Mark <b>one</b> gift as your special top wish — shown with a gold highlight.</div>
+          <div class="cgrid">
+            <div class="ccell sel"><span class="cck">✓</span><div class="cc-ic" style="background:linear-gradient(135deg,#fbe0e6,#f5aebe)">🌹</div><div class="cc-n">Rose</div><div class="cc-p">💎 44</div></div>
+            <div class="ccell sel"><span class="cck">✓</span><div class="cc-ic" style="background:linear-gradient(135deg,#fbe4f8,#f2b6e8)">🌷</div><div class="cc-n">Lily</div><div class="cc-p">💎 99</div></div>
+            <div class="ccell sel special"><span class="cck">✓</span><div class="cc-ic" style="background:linear-gradient(135deg,#e0f2fa,#b3dff0)">🩷</div><div class="cc-n">Heart</div><div class="spectag">SPECIAL</div><div class="cc-p">💎 199</div></div>
+            <div class="ccell"><div class="cc-ic" style="background:linear-gradient(135deg,#fdf1d7,#f6d98a)">👑</div><div class="cc-n">Crown</div><div class="cc-p">💎 520</div></div>
+            <div class="ccell lock"><div class="cc-ic" style="background:linear-gradient(135deg,#ece5fd,#c9b8f7)">📿</div><div class="cc-n">Necklace</div><div class="cc-p">💎 999</div><div class="locktag">Over cap</div></div>
+            <div class="ccell lock"><div class="cc-ic" style="background:linear-gradient(135deg,#e0faf0,#a9ecd2)">💍</div><div class="cc-n">Ring</div><div class="cc-p">💎 1314</div><div class="locktag">Over cap</div></div>
+          </div>
+          <div class="selcount">Selected <b>3</b>/3 · max reached</div>
+          <div class="qtyrow">
+            <div class="qn">🌹 Rose <span>Price cap 💎 100 · qty goal</span></div>
+            <div class="step"><span>−</span><b>20</b><span>＋</span></div>
+          </div>
+          <div class="qtyrow">
+            <div class="qn">🌷 Lily <span>Price cap 💎 200 · qty goal</span></div>
+            <div class="step"><span>−</span><b>10</b><span>＋</span></div>
+          </div>
+          <div class="qtyrow">
+            <div class="qn">🩷 Heart <span>⭐ special · price cap 💎 300 · qty goal</span></div>
+            <div class="step"><span>−</span><b>5</b><span>＋</span></div>
+          </div>
+          <div class="cfg-save"><div class="btn-p wide">Save Wishes</div></div>
+        </div>
+      </div></div>
+    </div>
+
+    <div class="arr">→</div>
+
+    <!-- P9 心愿达成 -->
+    <div class="shot">
+      <div class="tag"><span class="tno r">P9</span><span class="tname">收到礼物 · 心愿达成庆祝</span></div>
+      <div class="note">收到第 5 件 Crystal Heart → 心愿达成全屏弹窗。Thank Him → 跳转聊天回复</div>
+      <div class="device"><div class="scr">
+        <div class="sb"><span>16:02</span><span class="sicons"><span class="sig"><b></b><b></b><b></b><b></b></span><svg width="15" height="12" viewBox="0 0 18 15" fill="#08070a"><path d="M9 2.5C13 2.5 16 5 17.5 7.8L15.8 9C14.5 6.8 12 5 9 5S3.5 6.8 2.2 9L0.5 7.8C2 5 5 2.5 9 2.5ZM9 6.5c2.5 0 4.7 1.3 6 3.3l-1.7 1.2c-1-1.5-2.6-2.5-4.3-2.5s-3.3 1-4.3 2.5L3 9.8C4.3 7.8 6.5 6.5 9 6.5ZM9 10.5c1.1 0 2 .6 2.5 1.5l-2.5 1.5-2.5-1.5C6.5 11.1 7.4 10.5 9 10.5Z"/></svg><span class="bat">82</span></span></div>
+        <div class="chd"><div class="rbtn">←</div><div class="ct"><span class="mav"><img src="../avatar_male.png" alt=""></span>Faisal</div><div class="rbtn" style="font-size:13px">•••</div></div>
+        <div class="idate">Jun 26, 16:02</div>
+        <div class="msg-l" style="max-width:240px">
+          <div class="gmsg" style="border-radius:16px 16px 16px 4px">
+            <div class="gm-ic">🩷</div>
+            <div class="gm-mid">
+              <b>Crystal Heart</b>
+              <span>Wish gift · 💎 199</span>
+              <div class="bar"><i style="width:100%"></i></div>
+              <span class="gm-p">Your wish 5/5 🎉</span>
+            </div>
+          </div>
+          <div class="mtime">16:02</div>
+        </div>
+        <div class="mask" style="background:rgba(60,20,90,.55)"></div>
+        <span class="cf" style="left:40px;top:170px">🎉</span>
+        <span class="cf" style="right:44px;top:200px;font-size:13px">✨</span>
+        <span class="cf" style="left:70px;top:560px;font-size:13px">🎊</span>
+        <span class="cf" style="right:66px;top:590px">💜</span>
+        <div class="dlg celeb">
+          <div class="dic gold">🩷</div>
+          <div class="dt">Wish Fulfilled! 🎉</div>
+          <div class="dnote" style="margin-top:10px">Your wish <b>Crystal Heart ×5</b> is complete!<br>Say thanks to him 💜</div>
+          <div class="dbtns"><div class="btn-g">Later</div><div class="btn-p">Thank Him 💌</div></div>
+        </div>
+      </div></div>
+    </div>
+
+  </div>
+</div>
+
+</body>
+</html>

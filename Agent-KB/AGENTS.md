@@ -25,6 +25,10 @@ Knowledge base is located at: `~/.kb/`
   - or equivalent explicit instruction.
 - `./archive/` is **never an active rule source**. Do not read from it by default.
 
+### Agent-Neutral Authoring
+
+Agent-KB 是跨 Agent 复用的通用知识库。所有活动 Markdown 必须使用“Agent”作为通用执行主体，不得将 Codex、GPT、ChatGPT 或其他特定模型定性为唯一执行者。只有在描述真实的平台专属路径、命令、API 或 Runtime 时，才保留具体产品名称，并明确限定其适用范围。归档内容不追溯修改。
+
 ### For Humans
 - Place new skills under `./skills/<skill-name>/`.
 - Place cross-project rules under `./global-rules/`.

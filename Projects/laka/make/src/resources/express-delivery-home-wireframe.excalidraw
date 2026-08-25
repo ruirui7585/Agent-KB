@@ -1,0 +1,34 @@
+{
+  "type": "excalidraw",
+  "version": 2,
+  "source": "https://excalidraw.com",
+  "elements": [
+    {
+      "id": "wireframe-title-20260723", "type": "text", "x": 80, "y": 40, "width": 420, "height": 34, "angle": 0,
+      "strokeColor": "#1e1e1e", "backgroundColor": "transparent", "fillStyle": "solid", "strokeWidth": 1, "strokeStyle": "solid", "roughness": 1, "opacity": 100,
+      "groupIds": [], "frameId": null, "index": "a0", "roundness": null, "seed": 120725, "version": 1, "versionNonce": 207231, "isDeleted": false,
+      "boundElements": null, "updated": 1784764800000, "link": null, "locked": false, "text": "快递官网首页 · 可标注线框图", "fontSize": 28, "fontFamily": 1,
+      "textAlign": "left", "verticalAlign": "top", "containerId": null, "originalText": "快递官网首页 · 可标注线框图", "autoResize": true, "lineHeight": 1.25
+    },
+    {
+      "id": "wireframe-preview-20260723", "type": "embeddable", "x": 80, "y": 105, "width": 720, "height": 620, "angle": 0,
+      "strokeColor": "#1e1e1e", "backgroundColor": "#ffffff", "fillStyle": "solid", "strokeWidth": 2, "strokeStyle": "solid", "roughness": 0, "opacity": 100,
+      "groupIds": [], "frameId": null, "index": "a1", "roundness": {"type": 3}, "seed": 230723, "version": 1, "versionNonce": 607231, "isDeleted": false,
+      "boundElements": null, "updated": 1784764800000, "link": "/?resourceType=prototype&resourceId=express-delivery-home&view=demo&sidebar=collapsed", "locked": false,
+      "customData": {
+        "title": "快递官网首页线框图",
+        "previewUrl": "/prototypes/express-delivery-home",
+        "openUrl": "/?resourceType=prototype&resourceId=express-delivery-home&view=demo&sidebar=collapsed",
+        "previewKind": "web",
+        "resourceType": "prototype",
+        "resourceId": "express-delivery-home",
+        "embedViewMode": "preview",
+        "embedContentScale": 0.55,
+        "annotation": "可运行线框预览。点击右侧标注工具可查看页面结构说明，并切换寄件、查件及表单状态。",
+        "annotationUpdatedAt": "2026-07-23T00:00:00.000Z"
+      }
+    }
+  ],
+  "appState": {"gridSize": 20, "viewBackgroundColor": "#f5f5f5"},
+  "files": {}
+}

@@ -10,7 +10,7 @@ Result: Blocked / Fail / Pass with Issues / Pass / Excellent
 
 Score: __ / 100
 
-Ready for Codex use: Yes / No
+Ready for Agent use: Yes / No
 
 ---
 
@@ -85,7 +85,7 @@ Remaining issues:
 
 # Human Decisions Needed
 
-List anything Codex cannot safely decide by itself.
+List anything the Agent cannot safely decide by itself.
 
 1.
 2.
