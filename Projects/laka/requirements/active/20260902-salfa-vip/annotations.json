@@ -1,0 +1,465 @@
+{
+  "version": "1.0",
+  "updatedAt": "2026-09-08T00:00:00.000Z",
+  "annotations": [
+    {
+      "id": "ann-manual-mtl4zalc",
+      "pageId": "vip-center-same-level",
+      "page": "VIP 中心－查看同等级（购买校验）",
+      "category": "page-flow",
+      "title": "校验用户余额是否充足\n1.充足直接扣除金币，购买成功\n2.不足弹出半屏充值页面",
+      "description": "校验用户余额是否充足\n1.充足直接扣除金币，购买成功\n2.不足弹出半屏充值页面",
+      "rules": [
+        "余额充足直接扣金币购买",
+        "余额不足弹出半屏充值页面"
+      ],
+      "target": {
+        "annotationId": "same-level-renew"
+      },
+      "context": {
+        "ruleId": "TBD",
+        "triggerCondition": "用户发起购买（余额校验）",
+        "expectedOutcome": "余额充足扣金币成功；不足弹充值半屏",
+        "acceptanceCriteria": "余额校验分支正确引导充值",
+        "pageState": "购买校验",
+        "state": "normal",
+        "visibleWhen": "发起购买时"
+      },
+      "status": "needs-review",
+      "createdAt": "2026-09-03T00:00:00Z",
+      "updatedAt": "2026-09-03T06:32:02.213Z"
+    },
+    {
+      "id": "ann-manual-mtl5noeu",
+      "pageId": "vip-gift-recipient-select",
+      "page": "VIP gifting",
+      "category": "page-flow",
+      "title": "1.用户列表展示好友关系,列表排序按好友列表排序逻辑展示; 若没有好友显示空状态\n2.支持全局用户ID搜索",
+      "description": "1.用户列表展示好友关系,列表排序按好友列表排序逻辑展示; 若没有好友显示空状态\n2.支持全局用户ID搜索",
+      "rules": [],
+      "target": {
+        "annotationId": "gift-recipient-select",
+        "selector": "[data-annotation-id=\"gift-recipient-select\"]"
+      },
+      "context": {
+        "ruleId": "TBD",
+        "triggerCondition": "待补充",
+        "expectedOutcome": "待补充",
+        "acceptanceCriteria": "待补充"
+      },
+      "status": "needs-review",
+      "createdAt": "2026-09-03T06:39:50.358Z",
+      "updatedAt": "2026-09-07T02:53:47.363Z"
+    },
+    {
+      "id": "ann-manual-mtl66jkk",
+      "pageId": "vip-center-higher-level",
+      "page": "VIP Center browsing",
+      "category": "page-flow",
+      "title": "1.升级套餐有效期必须 ≥ 当前等级剩余有效期；若目标套餐有效期 < 当前剩余有效期，则该套餐不可升级并置灰\n\n2.升级应付金币=目标等级套餐售价- 当前生效等级剩余价值\n\n3.当前生效等级剩余价值=当前 VIP 套餐实际支付金币*当前 VIP 剩余时长/当前 VIP 套餐总时长",
+      "description": "1.升级套餐有效期必须 ≥ 当前等级剩余有效期；若目标套餐有效期 < 当前剩余有效期，则该套餐不可升级并置灰\n\n2.升级应付金币=目标等级套餐售价- 当前生效等级剩余价值\n\n3.当前生效等级剩余价值=当前 VIP 套餐实际支付金币*当前 VIP 剩余时长/当前 VIP 套餐总时长",
+      "rules": [],
+      "target": {
+        "selector": "[data-annotation-id=\"higher-level-upgrade\"] > section > div:nth-of-type(1) > div:nth-of-type(2)"
+      },
+      "context": {
+        "ruleId": "TBD",
+        "triggerCondition": "待补充",
+        "expectedOutcome": "待补充",
+        "acceptanceCriteria": "待补充"
+      },
+      "status": "needs-review",
+      "createdAt": "2026-09-03T06:54:30.545Z",
+      "updatedAt": "2026-09-07T02:50:44.938Z"
+    },
+    {
+      "id": "ann-manual-mtl6b0ag",
+      "pageId": "vip-center-recharge-tier",
+      "page": "VIP Center browsing",
+      "category": "page-flow",
+      "title": "跳转页面: 弹出充值半弹窗\n相关逻辑: VIP8-10是指可循环周期性的充值活动, 满足充值要求后将获得相关权益,均由后台配置下发",
+      "description": "跳转页面: 弹出充值半弹窗\n相关逻辑: VIP8-10是指可循环周期性的充值活动, 满足充值要求后将获得相关权益,均由后台配置下发",
+      "rules": [],
+      "target": {
+        "selector": "[data-annotation-id=\"vip5-recharge-entry\"] > section > div > button"
+      },
+      "context": {
+        "ruleId": "TBD",
+        "triggerCondition": "待补充",
+        "expectedOutcome": "待补充",
+        "acceptanceCriteria": "待补充"
+      },
+      "status": "needs-review",
+      "createdAt": "2026-09-03T06:57:58.839Z",
+      "updatedAt": "2026-09-07T02:51:40.530Z"
+    },
+    {
+      "id": "ann-manual-mtl8ks4y",
+      "pageId": "vip-gift-recipient-select",
+      "page": "VIP gifting",
+      "category": "page-flow",
+      "title": "前置校验, 接收方是否持有VIP\n1.没有,赠送没有阻力,按流程执行\n2.有VIP,需校验用户VIP等级和赠送VIP等级\na.赠送VIP等级>用户等级, 支持赠送,接收方会更新为最新等级\nb.赠送VIP等级=用户等级,支持赠送, 为当前等级续费\nc.赠送VIP等级<用户等级, 弹出toast, Please gift a higher VIP level.",
+      "description": "前置校验, 接收方是否持有VIP\n1.没有,赠送没有阻力,按流程执行\n2.有VIP,需校验用户VIP等级和赠送VIP等级\na.赠送VIP等级>用户等级, 支持赠送,接收方会更新为最新等级\nb.赠送VIP等级=用户等级,支持赠送, 为当前等级续费\nc.赠送VIP等级<用户等级, 弹出toast, Please gift a higher VIP level.",
+      "rules": [],
+      "target": {
+        "selector": "section:nth-of-type(2) > div:nth-of-type(1) > button"
+      },
+      "context": {
+        "ruleId": "TBD",
+        "triggerCondition": "待补充",
+        "expectedOutcome": "待补充",
+        "acceptanceCriteria": "待补充"
+      },
+      "status": "needs-review",
+      "createdAt": "2026-09-03T08:01:34.066Z",
+      "updatedAt": "2026-09-03T08:10:46.646Z"
+    },
+    {
+      "id": "ann-manual-mtl8yrbn",
+      "pageId": "vip-activate-no-vip",
+      "page": "Purchase and upgrade",
+      "category": "page-flow",
+      "title": "跳转道具背包中心",
+      "description": "跳转道具背包中心",
+      "rules": [],
+      "target": {
+        "selector": "[data-annotation-id=\"activate-no-vip\"] > section > div:nth-of-type(5) > button:nth-of-type(1)"
+      },
+      "context": {
+        "ruleId": "TBD",
+        "triggerCondition": "待补充",
+        "expectedOutcome": "待补充",
+        "acceptanceCriteria": "待补充"
+      },
+      "status": "needs-review",
+      "createdAt": "2026-09-03T08:12:26.195Z",
+      "updatedAt": "2026-09-03T08:12:50.191Z"
+    },
+    {
+      "id": "ann-manual-mtl9400a",
+      "pageId": "vip-privilege-detail",
+      "page": "Identity, privileges and assets",
+      "category": "page-flow",
+      "title": "此处为道具预览, 道具有动效需播放",
+      "description": "此处为道具预览, 道具有动效需播放",
+      "rules": [],
+      "target": {
+        "annotationId": "privilege-detail-sheet",
+        "selector": "[data-annotation-id=\"privilege-detail-sheet\"]"
+      },
+      "context": {
+        "ruleId": "TBD",
+        "triggerCondition": "待补充",
+        "expectedOutcome": "待补充",
+        "acceptanceCriteria": "待补充"
+      },
+      "status": "needs-review",
+      "createdAt": "2026-09-03T08:16:30.729Z",
+      "updatedAt": "2026-09-03T08:17:35.949Z"
+    },
+    {
+      "id": "ann-manual-mtl95pxh",
+      "pageId": "vip-privilege-setting",
+      "page": "Identity, privileges and assets",
+      "category": "page-flow",
+      "title": "该页面罗列展示VIP功能有关权益的所有事件, 虚拟道具无需在这展示;\n用户未解锁权益,点击开启按钮无反应\n用户已解锁权益,开启视为功能启用,关闭视为功能禁用; 权益失效后按钮状态自动更新为关闭",
+      "description": "该页面罗列展示VIP功能有关权益的所有事件, 虚拟道具无需在这展示;\n用户未解锁权益,点击开启按钮无反应\n用户已解锁权益,开启视为功能启用,关闭视为功能禁用; 权益失效后按钮状态自动更新为关闭",
+      "rules": [],
+      "target": {
+        "annotationId": "vip-privilege-setting",
+        "selector": "[data-annotation-id=\"vip-privilege-setting\"]"
+      },
+      "context": {
+        "ruleId": "TBD",
+        "triggerCondition": "待补充",
+        "expectedOutcome": "待补充",
+        "acceptanceCriteria": "待补充"
+      },
+      "status": "needs-review",
+      "createdAt": "2026-09-03T08:17:50.981Z",
+      "updatedAt": "2026-09-03T08:20:40.779Z"
+    },
+    {
+      "id": "ann-manual-mtl9jwvk",
+      "pageId": "vip-renew-success",
+      "page": "Renewal states",
+      "category": "page-flow",
+      "title": "点击非弹窗位置时的任意区域,支持收起弹窗; 所有弹窗均适用",
+      "description": "点击非弹窗位置时的任意区域,支持收起弹窗; 所有弹窗均适用",
+      "rules": [],
+      "target": {
+        "annotationId": "renew-success",
+        "selector": "[data-annotation-id=\"renew-success\"]"
+      },
+      "context": {
+        "ruleId": "TBD",
+        "triggerCondition": "待补充",
+        "expectedOutcome": "待补充",
+        "acceptanceCriteria": "待补充"
+      },
+      "status": "needs-review",
+      "createdAt": "2026-09-03T08:28:53.167Z",
+      "updatedAt": "2026-09-03T08:29:36.051Z"
+    },
+    {
+      "id": "ann-manual-mtl9ll0u",
+      "pageId": "vip-send-success",
+      "page": "VIP gifting",
+      "category": "page-flow",
+      "title": "点击后跳转该用户的im对话框",
+      "description": "点击后跳转该用户的im对话框",
+      "rules": [],
+      "target": {
+        "selector": "div:nth-of-type(3) > section > div:nth-of-type(5) > button"
+      },
+      "context": {
+        "ruleId": "TBD",
+        "triggerCondition": "待补充",
+        "expectedOutcome": "待补充",
+        "acceptanceCriteria": "待补充"
+      },
+      "status": "needs-review",
+      "createdAt": "2026-09-03T08:30:11.117Z",
+      "updatedAt": "2026-09-03T08:30:49.925Z"
+    },
+    {
+      "id": "ann-manual-mtlavir9",
+      "pageId": "vip-center-recharge-tier",
+      "page": "VIP Center browsing",
+      "category": "state",
+      "title": "1. 购买和累计充值\n用户当前等级VIP x1为直接购买, 后续通过通过充值活动获得VIP x2 ; 展示最高等级VIP x2  VIP x1冻结处理, 等待VIP x2过期后解冻VIP x1; \n冻结指暂停VIP相关权益的使用和倒计时\n2.充值满足多档位\n用户充值满足VIP多个档位门槛,下发最高档位权益\n3.充值活动中的高低档位兼容\n用户在7月获得VIP10,且有效期到8月; 8月获得VIP9; 优先展示最高档位, 冻结低档位, 高档位过期后释放低档位",
+      "description": "1. 购买和累计充值\n用户当前等级VIP x1为直接购买, 后续通过通过充值活动获得VIP x2 ; 展示最高等级VIP x2  VIP x1冻结处理, 等待VIP x2过期后解冻VIP x1; \n冻结指暂停VIP相关权益的使用和倒计时\n2.充值满足多档位\n用户充值满足VIP多个档位门槛,下发最高档位权益\n3.充值活动中的高低档位兼容\n用户在7月获得VIP10,且有效期到8月; 8月获得VIP9; 优先展示最高档位, 冻结低档位, 高档位过期后释放低档位",
+      "rules": [],
+      "target": {
+        "selector": "[data-annotation-id=\"vip5-recharge-entry\"] > section > div > button"
+      },
+      "context": {
+        "ruleId": "TBD",
+        "triggerCondition": "待补充",
+        "expectedOutcome": "待补充",
+        "acceptanceCriteria": "待补充"
+      },
+      "status": "needs-review",
+      "createdAt": "2026-09-03T09:05:54.357Z",
+      "updatedAt": "2026-09-03T09:40:32.144Z"
+    },
+    {
+      "id": "ann-manual-mtmjbaqv",
+      "pageId": "vip-recharge-upgrade",
+      "page": "Recharge grants",
+      "category": "page-flow",
+      "title": "定位VIP5 tab",
+      "description": "定位VIP5 tab",
+      "rules": [],
+      "target": {
+        "selector": "div:nth-of-type(4) > button"
+      },
+      "context": {
+        "ruleId": "TBD",
+        "triggerCondition": "待补充",
+        "expectedOutcome": "待补充",
+        "acceptanceCriteria": "待补充"
+      },
+      "status": "needs-review",
+      "createdAt": "2026-09-04T05:49:53.574Z",
+      "updatedAt": "2026-09-04T05:50:12.449Z"
+    },
+    {
+      "id": "ann-manual-mtmjbyvt",
+      "pageId": "vip-profile-medal",
+      "page": "User Profile",
+      "category": "page-flow",
+      "title": "VIP logo自动佩戴",
+      "description": "VIP logo自动佩戴",
+      "rules": [],
+      "target": {
+        "annotationId": "vip-profile-avatar-medal",
+        "selector": "[data-annotation-id=\"vip-profile-avatar-medal\"]"
+      },
+      "context": {
+        "ruleId": "TBD",
+        "triggerCondition": "待补充",
+        "expectedOutcome": "待补充",
+        "acceptanceCriteria": "待补充"
+      },
+      "status": "needs-review",
+      "createdAt": "2026-09-04T05:50:24.856Z",
+      "updatedAt": "2026-09-04T05:51:20.182Z"
+    },
+    {
+      "id": "ann-manual-mtmjkf91",
+      "pageId": "vip-gift-record",
+      "page": "VIP gifting",
+      "category": "page-flow",
+      "title": "赠送记录按生成时间倒序排列，最新生成的记录展示在最上方",
+      "description": "赠送记录按生成时间倒序排列，最新生成的记录展示在最上方",
+      "rules": [],
+      "target": {
+        "annotationId": "vip-gift-record",
+        "selector": "[data-annotation-id=\"vip-gift-record\"]"
+      },
+      "context": {
+        "ruleId": "TBD",
+        "triggerCondition": "待补充",
+        "expectedOutcome": "待补充",
+        "acceptanceCriteria": "待补充"
+      },
+      "status": "needs-review",
+      "createdAt": "2026-09-04T05:56:59.316Z",
+      "updatedAt": "2026-09-04T05:57:02.580Z"
+    },
+    {
+      "id": "ann-vip-transfer-sheet",
+      "pageId": "vip-transfer-sheet",
+      "page": "VIP 转赠－半屏展开",
+      "category": "page-flow",
+      "title": "从 Mine 转赠 VIP",
+      "description": "在第 39 页点击转赠后，从底部展开半屏，搜索用户 ID、输入自定义天数并提交转赠。",
+      "rules": [
+        "半屏保留第 39 页作为变暗背景",
+        "支持输入用户 ID 并显示搜索结果",
+        "支持输入自定义转赠天数",
+        "手续费、最小天数、接收人资格与冻结 VIP 规则保持待确认"
+      ],
+      "target": {
+        "annotationId": "vip-transfer-sheet",
+        "selector": "[data-annotation-id=\"vip-transfer-sheet\"]"
+      },
+      "context": {
+        "ruleId": "USER-2026-09-04-TRANSFER",
+        "contractSection": "用户本轮确认",
+        "triggerCondition": "用户在第 39 页 Gift 列表点击转赠",
+        "expectedOutcome": "底部展开转赠半屏，包含 ID 搜索、接收人结果、自定义天数和转赠按钮",
+        "acceptanceCriteria": "半屏高度约为画布一半；第 39 页背景保持可识别并变暗；三个核心输入与操作均清晰可见",
+        "pageState": "VIP 转赠半屏展开态",
+        "state": "normal",
+        "visibleWhen": "点击可转赠 VIP 卡片底部的转赠按钮"
+      },
+      "status": "active",
+      "createdAt": "2026-09-04T12:20:00.000Z",
+      "updatedAt": "2026-09-04T12:20:00.000Z"
+    },
+    {
+      "id": "ann-manual-mtmyi738",
+      "pageId": "vip-center-mine",
+      "page": "VIP Center browsing",
+      "category": "page-flow",
+      "title": "只展示冻结中的等级,若没有冻结中状态等级, 此处显示空状态",
+      "description": "只展示冻结中的等级,若没有冻结中状态等级, 此处显示空状态",
+      "rules": [],
+      "target": {
+        "annotationId": "vip-center-mine",
+        "selector": "[data-annotation-id=\"vip-center-mine\"]"
+      },
+      "context": {
+        "ruleId": "TBD",
+        "triggerCondition": "待补充",
+        "expectedOutcome": "待补充",
+        "acceptanceCriteria": "待补充"
+      },
+      "status": "needs-review",
+      "createdAt": "2026-09-04T12:55:09.662Z",
+      "updatedAt": "2026-09-04T12:55:43.429Z"
+    },
+    {
+      "id": "ann-manual-mtmyjh7q",
+      "pageId": "vip-transfer-sheet",
+      "page": "VIP gifting",
+      "category": "page-flow",
+      "title": "转赠校验\n1. 剩余不足1天：若当前剩余时长不足24小时，则不可继续转赠，提示toast:Less than 1 day remaining. Unable to transfer.\n2.非整数剩余：例如剩余 3天8小时，最多可赠3天，赠送后保留8小时\n3.转赠天数大于持有天数, 提示toast: You don’t have enough VIP days to transfer.\n4.转赠成功,提示toast: VIP days transferred successfully.\n5.转赠成功后不可撤回：已成功转移的时长不得撤销、返还或恢复",
+      "description": "转赠校验\n1. 剩余不足1天：若当前剩余时长不足24小时，则不可继续转赠，提示toast:Less than 1 day remaining. Unable to transfer.\n2.非整数剩余：例如剩余 3天8小时，最多可赠3天，赠送后保留8小时\n3.转赠天数大于持有天数, 提示toast: You don’t have enough VIP days to transfer.\n4.转赠成功,提示toast: VIP days transferred successfully.\n5.转赠成功后不可撤回：已成功转移的时长不得撤销、返还或恢复",
+      "rules": [],
+      "target": {
+        "selector": "div:nth-of-type(7) > button:nth-of-type(2)"
+      },
+      "context": {
+        "ruleId": "TBD",
+        "triggerCondition": "待补充",
+        "expectedOutcome": "待补充",
+        "acceptanceCriteria": "待补充"
+      },
+      "status": "needs-review",
+      "createdAt": "2026-09-04T12:56:09.445Z",
+      "updatedAt": "2026-09-04T12:56:14.135Z"
+    },
+    {
+      "id": "ann-manual-mtqnians",
+      "pageId": "vip-center-collection",
+      "page": "VIP Center browsing",
+      "category": "page-flow",
+      "title": "页面排序按等级从大到小降序排列",
+      "description": "页面排序按等级从大到小降序排列",
+      "rules": [],
+      "target": {
+        "annotationId": "vip-center-collection",
+        "selector": "[data-annotation-id=\"vip-center-collection\"]"
+      },
+      "context": {
+        "ruleId": "TBD",
+        "triggerCondition": "待补充",
+        "expectedOutcome": "待补充",
+        "acceptanceCriteria": "待补充"
+      },
+      "status": "needs-review",
+      "createdAt": "2026-09-07T02:58:23.223Z",
+      "updatedAt": "2026-09-07T02:58:47.318Z"
+    },
+    {
+      "id": "ann-settings-vip-entry",
+      "pageId": "settings-vip-entry",
+      "page": "Settings－VIP setting 入口",
+      "category": "page-flow",
+      "title": "Settings 增加 VIP setting",
+      "description": "在 Block list 下方新增 VIP setting 入口，点击后进入第 38 页 VIP 权益设置。",
+      "rules": [
+        "VIP setting 位于 Block list 与 Clear the cache 之间",
+        "其他 Settings 字段、顺序和视觉保持参考图不变"
+      ],
+      "target": {
+        "annotationId": "settings-vip-entry",
+        "selector": "[data-annotation-id=\"settings-vip-entry\"]"
+      },
+      "context": {
+        "ruleId": "USER-2026-09-07-SETTINGS",
+        "triggerCondition": "用户打开 Settings 页面",
+        "expectedOutcome": "Block list 下方显示 VIP setting，点击可进入 VIP 权益设置",
+        "acceptanceCriteria": "新增行位置、文案和箭头正确；点击后定位第 38 页；其他设置项不变",
+        "pageState": "Settings 默认态",
+        "state": "normal",
+        "visibleWhen": "Settings 页面加载完成"
+      },
+      "status": "active",
+      "createdAt": "2026-09-08T00:00:00.000Z",
+      "updatedAt": "2026-09-08T00:00:00.000Z"
+    },
+    {
+      "id": "ann-receiver-vip-record",
+      "pageId": "receiver-vip-record",
+      "page": "接收方 Mine · Record",
+      "category": "page-flow",
+      "title": "查看我收到的 VIP 记录",
+      "description": "接收方 Mine 仅展示 Collection 与 Record，并默认定位 Record 展示收到的 VIP。",
+      "rules": [
+        "不展示 Gift Tab",
+        "Record 默认选中",
+        "记录按时间倒序展示来源用户、VIP 等级、天数和到账时间"
+      ],
+      "target": {
+        "annotationId": "receiver-vip-record",
+        "selector": "[data-annotation-id=\"receiver-vip-record\"]"
+      },
+      "context": {
+        "ruleId": "USER-2026-09-08-RECEIVED",
+        "triggerCondition": "接收方进入 Mine Tab",
+        "expectedOutcome": "页面仅显示 Collection、Record，并在 Record 中展示我收到的 VIP 记录",
+        "acceptanceCriteria": "Record 默认选中；无 Gift Tab；左侧类型显示获赠或转赠；每条记录包含来源用户、VIP 等级、天数和时间",
+        "pageState": "接收方收到记录态",
+        "state": "normal",
+        "visibleWhen": "接收方进入 Mine 的 Record 页面"
+      },
+      "status": "active",
+      "createdAt": "2026-09-08T00:00:00.000Z",
+      "updatedAt": "2026-09-08T00:00:00.000Z"
+    }
+  ]
+}

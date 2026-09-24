@@ -284,6 +284,7 @@ background | scenario | page-flow | state | permission | edge | acceptance
 
 - Marker 与标注面板读取同一份数据；
 - 所有未停用且目标当前可见的标注自动显示 Marker，不受主面板内容/状态筛选影响；
+- Marker 必须固定等宽等高并保持圆形；Runtime CSS 必须显式覆盖宿主页面对 `button` 的 `width`、`height`、`min-width`、`min-height`、`padding` 和 `border-radius` 影响，双位编号不得将 Marker 撑成长条；
 - 点击 Marker 后，主面板自动切换到对应类型，展开并滚动到对应标注，同时高亮目标并显示标注浮窗；
 - 标注浮窗位于原型画板右侧、固定主面板左侧；同一时间只显示一个，且不得覆盖原型画板或主面板；
 - 浮窗与主面板详情读取同一条标注，展示标题、说明、适用的产品上下文、规则和图片；
@@ -355,7 +356,7 @@ node /Users/shilv/Agent-Workspace/Agent-KB/skills/prototype-annotation/scripts/a
 4. 图片附件使用项目相对路径，文件可以加载，`alt` 非空，JSON 中不存在 Base64、本机绝对路径或远程 URL；
 5. Marker 与主面板读取同一份 `annotations.json`，原型目录独立读取 HTML 页面和画板；
 6. 标注主面板不存在页面目录或页面筛选，左侧原型目录可以独立定位全部静态画板；
-7. 当前可见目标的 Marker 自动出现，且不依赖主面板内容/状态筛选或“定位”；
+7. 当前可见目标的 Marker 自动出现，且不依赖主面板内容/状态筛选或“定位”；逐个实测 Marker 的宽高必须相等、圆角为 `50%`、横向 padding 为 `0`，并确认宿主页面的全局 `button` 最小高度不会将其拉成长条；
 8. 点击内容或状态 Marker 后，主面板切换并展开正确条目，浮窗与目标高亮正确；
 9. 浮窗位于原型和固定主面板之间，不覆盖任何画板或主面板；点击内部保持，点击外部关闭；
 10. 主面板固定在 HTML 最右侧且不可拖动、不可缩放；打开和隐藏均不改变固定画板尺寸；

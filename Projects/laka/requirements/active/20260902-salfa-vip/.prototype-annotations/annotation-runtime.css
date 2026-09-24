@@ -310,11 +310,11 @@
 
 .paa-item-title {
   display: block;
-  overflow: hidden;
   font-size: 13px;
   font-weight: 800;
-  text-overflow: ellipsis;
-  white-space: nowrap;
+  line-height: 1.45;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
 }
 
 .paa-summary-meta {
@@ -920,3 +920,82 @@
     grid-template-columns: 1fr;
   }
 }
+
+/* 单句模式：编辑只留一句话 + 类型开关 */
+.paa-kind-pick {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-bottom: 8px;
+}
+.paa-kind-option {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 4px 8px;
+  border: 1px solid #d9d6e3;
+  border-radius: 14px;
+  background: #fff;
+  color: #555;
+  font-size: 11px;
+  cursor: pointer;
+}
+.paa-kind-option input { margin: 0; }
+.paa-kind-option.is-checked {
+  border-color: #5a5ae0;
+  background: #eef0ff;
+  color: #3a3a9a;
+  font-weight: 600;
+}
+.paa-sentence-input {
+  min-height: 64px;
+  padding: 10px 12px;
+  border: 1px solid #cfc9dc;
+  border-radius: 8px;
+  font: inherit;
+  font-size: 13px;
+  line-height: 1.5;
+  width: 100%;
+  resize: vertical;
+  background: #fff;
+}
+
+/* 标注类型三色：内容蓝 / 状态绿 / 边界红 */
+.paa-kind-option.paa-kind-content { border-color: #93c5fd; color: #1d4ed8; }
+.paa-kind-option.paa-kind-content.is-checked { border-color: #3b82f6; background: #eff6ff; color: #1d4ed8; }
+.paa-kind-option.paa-kind-state { border-color: #86efac; color: #15803d; }
+.paa-kind-option.paa-kind-state.is-checked { border-color: #22c55e; background: #f0fdf4; color: #15803d; }
+.paa-kind-option.paa-kind-edge { border-color: #fca5a5; color: #b91c1c; }
+.paa-kind-option.paa-kind-edge.is-checked { border-color: #ef4444; background: #fef2f2; color: #b91c1c; }
+
+/* 删除两步确认 */
+.paa-button.is-danger.is-pending {
+  background: #dc2626;
+  border-color: #dc2626;
+  color: #fff;
+  font-weight: 700;
+  box-shadow: 0 0 0 2px rgba(220, 38, 38, 0.28);
+}
+
+/* 标注面板左下角拖拽缩放手柄：面板固定在右侧，向左拖动即可放大 */
+.paa-resize {
+  position: absolute;
+  left: 2px;
+  bottom: 2px;
+  width: 18px;
+  height: 18px;
+  padding: 0;
+  display: grid;
+  place-items: center;
+  border: 0;
+  background: transparent;
+  color: #9aa0b5;
+  cursor: nesw-resize;
+  touch-action: none;
+  opacity: .8;
+  z-index: 2;
+}
+.paa-resize svg { width: 14px; height: 14px; }
+.paa-resize:hover { color: #4c6fff; opacity: 1; }
+.paa-panel { position: fixed; resize: none; }
+.paa-panel[style*="height"] { bottom: auto; }

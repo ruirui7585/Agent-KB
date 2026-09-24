@@ -141,3 +141,19 @@
 - 特定品牌、地区、人群或内容风格。
 - 固定设备型号、固定画布尺寸或单一平台规范。
 - 仅在某一次需求中成立的临时设计结论。
+
+## 11. HTML / UI Prototype Defaults
+
+When working on HTML or UI prototypes:
+
+1. Identify the active prototype path first.
+2. Do not use files from legacy, backup, broken, or archive folders unless explicitly asked.
+3. Preserve existing interactions unless the user asks to remove them.
+4. Avoid creating a new HTML file when the user expects the existing file to be updated.
+5. If updating an existing local preview, confirm the exact file path.
+6. For mobile prototypes, default to high-fidelity mobile UI.
+7. Use English UI copy by default unless the user asks for Chinese.
+8. For social, dating, or MENA-facing products, use realistic MENA-style female avatars when avatar assets are needed.
+9. Verify that the page opens without blank screen.
+10. Verify that main click paths still work.
+11. Verify that the browser console has no critical errors.

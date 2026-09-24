@@ -1,97 +1,27 @@
 # Agent Workspace
 
-A unified local workspace shared by Codex, Claude Code, and Cursor.
+Codex、Claude Code 和 Cursor 共用的工作区：`/Users/shilv/Agent-Workspace`。
+本文件提供目录说明与导航；执行规则以对应入口和规则文件为准。
 
-This workspace ensures all agents operate on a **single authoritative knowledge base**, preventing accidental reads from Desktop, Documents, plugins, legacy folders, or date-stamped directories.
+## 规则与入口
 
----
+| 文件 | 职责 |
+|---|---|
+| [AGENTS.md](AGENTS.md) | 工作区权威入口、权限边界、项目与 Skill 路由 |
+| [CLAUDE.md](CLAUDE.md) | Claude 专用入口，继承 AGENTS.md |
+| [COMMON_RULES.md](COMMON_RULES.md) | 文件控制、冲突处理、修改与验证细则 |
+| [COMMON_UI_RULES.md](COMMON_UI_RULES.md) | 通用 UI / HTML 原型规范 |
+| [handoff.md](handoff.md) | 全局交接协议与最近一次任务快照 |
+| [Agent-KB/AGENTS.md](Agent-KB/AGENTS.md) | 共享知识库使用规则 |
 
-## Directory Structure
+## 目录
 
-```text
-Agent-Workspace/
-├── AGENTS.md              # Entry rules for Codex / general coding agents
-├── CLAUDE.md              # Entry rules for Claude Code
-├── .cursorrules           # Cursor rules entry (optional)
-├── README.md              # This file
-│
-├── Agent-KB/              # Single source of truth knowledge base (read-only by default)
-│   ├── AGENTS.md          # Knowledge base usage rules
-│   ├── skills/            # Shared reusable skills
-│   ├── global-rules/      # Cross-project global rules
-│   ├── templates/         # File templates
-│   ├── examples/          # Reference examples
-│   └── archive/           # Historical materials (not active by default)
-│
-├── Projects/              # Active projects (one folder per project)
-├── Sandbox/               # Experimental workspace (non-production)
-└── Archive/               # Completed, deprecated, or migrated projects
+| 目录 | 用途 |
+|---|---|
+| `Projects/` | 正式项目；新项目放在这里，包含项目级 AGENTS.md 和 CLAUDE.md |
+| `Agent-KB/` | 共享 Skill、规则、模板与案例，默认只读；`~/.kb/` 指向此处 |
+| `Sandbox/` | 临时实验与验证，不作为正式项目事实源 |
+| `Archive/` | 已完成、停用或迁移的历史内容，默认不读取 |
 
-Usage Guidelines
-
-* All new projects must be created under Projects/.
-* Each project must include its own AGENTS.md and CLAUDE.md.
-* Shared skills must be stored under Agent-KB/skills/.
-* Temporary experiments must be placed in Sandbox/.
-* Completed or deprecated projects must be moved to Archive/.
-
-⸻
-
-Core Principles
-
-* Agent-KB/ is the only authoritative knowledge base and is read-only during normal operations.
-* The knowledge base may only be modified when explicitly requested by the user (e.g., “update knowledge base” or “update skill”).
-* Each task must be strictly scoped to a single project only. Cross-project modifications are forbidden.
-* Agent-KB/archive/ and Archive/ are not considered active sources of truth.
-* Agents must NOT treat Desktop, Documents, Downloads, plugins, legacy folders, backup folders, or date-stamped directories as valid sources of operational data.
-
-⸻
-
-Governance Hierarchy
-
-All agents must follow this strict priority order:
-
-1. Projects/<active-project>/ → highest priority, writable scope
-2. Agent-KB/ → read-only authoritative reference
-3. External directories → ignored unless explicitly provided by user
-
-⸻
-
-Safety Constraints
-
-Agents must NEVER:
-
-* Modify multiple projects in a single task
-* Cross-reference unrelated project contexts
-* Infer missing files from external or non-project directories
-* Create duplicate or forked project structures without explicit instruction
-* Modify Agent-KB/ without explicit user approval
-
-⸻
-
-Execution Rules
-
-Before performing any file operation, the agent must:
-
-1. Identify active project scope
-2. Identify exact file path to be modified
-3. Confirm file is within allowed scope
-4. Output planned change summary
-
-If any ambiguity exists:
-→ The agent must STOP and request clarification.
-
-⸻
-
-File Modification Rules
-
-* Prefer minimal, targeted diffs over full file rewrites
-* Never generate duplicate files (e.g., *_copy, *_v2, *_backup)
-* All modifications must be applied IN PLACE
-* Preserve existing project structure unless explicitly instructed otherwise
-
-⸻
-
-Final Principle
-
-Single Source of Truth + Single Write Target + In-Place Modification Only
+共享 Skill 存放于 `Agent-KB/skills/`。项目归档、跨项目操作与知识库修改均按入口规则及用户授权执行。
+开始项目工作时，按 AGENTS.md 的读取顺序定位项目规则与当前需要的资料，无需全量读取目录。
