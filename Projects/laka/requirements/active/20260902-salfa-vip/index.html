@@ -4476,8 +4476,10 @@
               <div class="benefit-hero">
                 <div class="hero-glow"></div>
                 <div class="hero-icon">GIFT</div>
-                <strong>VIP 专属礼物</strong>
-                <span>随等级解锁专属礼物 · 传递独特心意</span>
+                <strong data-lang-only="zh">VIP 专属礼物</strong>
+                <strong data-lang-only="en">Exclusive VIP Gifts</strong>
+                <span data-lang-only="zh">随等级解锁专属礼物 · 传递独特心意</span>
+                <span data-lang-only="en">Unlock gifts as you level up · Make every gift special</span>
               </div>
               <div class="gift-mini gift-strip">
                 <div class="active">VIP1 Gift<br>888</div><div>VIP2 Gift<br>888</div><div>VIP3 Gift<br>888</div>
@@ -4763,7 +4765,8 @@
             <button class="primary">Send</button>
           </div>
         </section>
-        <p class="recipient-empty-rule">输入完整或部分用户名 / ID 后点击 Search；结果为空时在同一区域显示空状态，不新增页面状态。</p>
+        <p class="recipient-empty-rule" data-lang-only="zh">输入完整或部分用户名 / ID 后点击 Search；结果为空时在同一区域显示空状态，不新增页面状态。</p>
+        <p class="recipient-empty-rule" data-lang-only="en">Enter a full or partial user name / ID, then tap Search. If no results match, show the empty state here without adding a new page state.</p>
       </div>
       <p class="state-note"><strong>选择对象：</strong>点击 VIP 页面底部 Send 进入本页；可搜索用户名或 ID。点击某个用户行的 Send 后，带入该用户并进入状态 08 的赠送确认弹窗。</p>
     `;
@@ -5211,7 +5214,7 @@
           </div>
         </section>
         <section class="purchase-panel">
-          <div class="membership-context"><span>Current VIP1 · <i class="expiry-inline">到期 2026-10-02 · 12:00</i></span><strong>VIP1 active</strong></div>
+          <div class="membership-context"><span>Current VIP1 · <i class="expiry-inline"><span data-lang-only="zh">到期</span><span data-lang-only="en">Expires</span> 2026-10-02 · 12:00</i></span><strong>VIP1 active</strong></div>
           <div class="plans">
             <div class="plan selected"><span class="coin">188888</span><span class="days">/30 days</span></div>
             <div class="plan"><span class="coin">288888</span><span class="days">/60 days</span></div>
@@ -5252,6 +5255,10 @@
       document.body.dataset.lang = lang;
       document.documentElement.lang = lang === "zh" ? "zh-CN" : "en";
       document.querySelectorAll("[data-language]").forEach((button) => button.classList.toggle("active", button.dataset.language === lang));
+      document.querySelectorAll(".phone [data-placeholder-en]").forEach((input) => {
+        input.setAttribute("placeholder", input.getAttribute(`data-placeholder-${lang}`));
+        input.setAttribute("aria-label", input.getAttribute(`data-aria-label-${lang}`));
+      });
       try { localStorage.setItem("salfa-vip-review-language", lang); } catch (error) {}
       renderPrototypeToc();
     };
@@ -5411,16 +5418,16 @@
     window.setTimeout(() => {
       if (document.getElementById("state-37-vip-gift-record")) return;
       const recs = [
-        ["assets/avatar-me-male.png", "Omar",  "VIP1", "30 天", "09-02 16:20", "成功"],
-        ["assets/avatar-me-male.png", "Omar",  "VIP1", "90 天", "09-02 16:18", "成功"],
-        ["assets/avatar-me-male.png", "Nour",  "VIP4", "30 天", "09-01 12:05", "成功"],
-        ["assets/avatar-me-male.png", "Sami",  "VIP2", "60 天", "08-28 20:11", "成功"]
+        ["assets/avatar-me-male.png", "Omar",  "VIP1", 30, "09-02 16:20"],
+        ["assets/avatar-me-male.png", "Omar",  "VIP1", 90, "09-02 16:18"],
+        ["assets/avatar-me-male.png", "Nour",  "VIP4", 30, "09-01 12:05"],
+        ["assets/avatar-me-male.png", "Sami",  "VIP2", 60, "08-28 20:11"]
       ];
       const recRows = recs.map((r) => `
         <div class="gift-row">
           <span class="gift-uava"><img src="${r[0]}" alt="receiver avatar"></span>
-          <span class="gift-u-copy"><strong>${r[1]}</strong><span data-lang-only="zh">赠予 ${r[2]} · ${r[3]}</span><span data-lang-only="en">Sent ${r[2]} · ${r[3]}</span></span>
-          <span class="gift-u-meta"><b>${r[4]}</b><small>${r[5]}</small></span>
+          <span class="gift-u-copy"><strong>${r[1]}</strong><span data-lang-only="zh">赠予 ${r[2]} · ${r[3]} 天</span><span data-lang-only="en">Sent ${r[2]} · ${r[3]} days</span></span>
+          <span class="gift-u-meta"><b>${r[4]}</b><small data-lang-only="zh">成功</small><small data-lang-only="en">Success</small></span>
         </div>`).join("");
       const article = document.createElement("article");
       article.className = "state";
@@ -5535,12 +5542,13 @@
     window.setTimeout(() => {
       if (document.getElementById("state-39-vip-center-mine")) return;
       const mine = [
-        { badge: "V4", tier: "VIP4", status: "frozen", maxDays: 60, zhD: "剩余 <b>60</b> 天 · 冻结中", enD: "<b>60</b> days · frozen", exp: "冻结于 2026-09-04" },
-        { badge: "V2", tier: "VIP2", status: "frozen", maxDays: 45, zhD: "剩余 <b>45</b> 天 · 冻结中", enD: "<b>45</b> days · frozen", exp: "冻结于 2026-09-04（天数暂停消耗）" },
-        { badge: "V1", tier: "VIP1", status: "frozen", maxDays: 6, zhD: "剩余 <b>6</b> 天 · 冻结中", enD: "<b>6</b> days · frozen", exp: "冻结于 2026-09-04" },
-        { badge: "V3", tier: "VIP3", status: "expired", maxDays: 0, zhD: "已过期", enD: "Expired", exp: "到期 2026-08-20" }
+        { badge: "V4", tier: "VIP4", status: "frozen", maxDays: 60, zhD: "剩余 <b>60</b> 天 · 冻结中", enD: "<b>60</b> days · frozen", exp: "冻结于 2026-09-04", expEn: "Frozen since 2026-09-04" },
+        { badge: "V2", tier: "VIP2", status: "frozen", maxDays: 45, zhD: "剩余 <b>45</b> 天 · 冻结中", enD: "<b>45</b> days · frozen", exp: "冻结于 2026-09-04（天数暂停消耗）", expEn: "Frozen since 2026-09-04 (days paused)" },
+        { badge: "V1", tier: "VIP1", status: "frozen", maxDays: 6, zhD: "剩余 <b>6</b> 天 · 冻结中", enD: "<b>6</b> days · frozen", exp: "冻结于 2026-09-04", expEn: "Frozen since 2026-09-04" },
+        { badge: "V3", tier: "VIP3", status: "expired", maxDays: 0, zhD: "已过期", enD: "Expired", exp: "到期 2026-08-20", expEn: "Expired 2026-08-20" }
       ];
       const zhStatus = { active: "生效中", frozen: "冻结中", expired: "已过期" };
+      const enStatus = { active: "Active", frozen: "Frozen", expired: "Expired" };
       const giftItems = mine.filter((m) => m.status !== "expired");
       const mineRows = giftItems.map((m) => `
         <div class="mvip-card ${m.status}">
@@ -5548,14 +5556,15 @@
           <span class="c-main">
             <span class="c-top">
               <span class="c-tier">${m.tier}</span>
-              <span class="pill s-${m.status}">${zhStatus[m.status]}</span>
+              <span class="pill s-${m.status}"><span data-lang-only="zh">${zhStatus[m.status]}</span><span data-lang-only="en">${enStatus[m.status]}</span></span>
             </span>
             <span class="c-days" data-lang-only="zh">${m.zhD}</span>
             <span class="c-days" data-lang-only="en">${m.enD}</span>
-            <span class="c-exp">${m.exp}</span>
+            <span class="c-exp" data-lang-only="zh">${m.exp}</span>
+            <span class="c-exp" data-lang-only="en">${m.expEn}</span>
           </span>
           <span class="c-actions">
-            ${m.status === "expired" ? "" : `<button class="mini" type="button" data-open-transfer data-tier="${m.tier}" data-max-days="${m.maxDays}">转赠</button>`}
+            ${m.status === "expired" ? "" : `<button class="mini" type="button" data-open-transfer data-tier="${m.tier}" data-max-days="${m.maxDays}"><span data-lang-only="zh">转赠</span><span data-lang-only="en">Transfer</span></button>`}
           </span>
         </div>`).join("");
       const art39 = document.createElement("article");
@@ -5629,8 +5638,8 @@
             <div class="gs-title"><span data-lang-only="zh">转赠 VIP4</span><span data-lang-only="en">Transfer VIP4</span></div>
             <div class="gs-sub"><span data-lang-only="zh">当前剩余 60 天 · 自定义本次转赠天数</span><span data-lang-only="en">60 days remaining · Choose transfer days</span></div>
             <div class="gs-search">
-              <input type="search" value="3418767" inputmode="numeric" aria-label="搜索用户 ID" placeholder="输入用户 ID">
-              <button type="button" class="mini" data-transfer-search>搜索</button>
+              <input type="search" value="3418767" inputmode="numeric" aria-label="搜索用户 ID" placeholder="输入用户 ID" data-placeholder-zh="输入用户 ID" data-placeholder-en="Enter user ID" data-aria-label-zh="搜索用户 ID" data-aria-label-en="Search user ID">
+              <button type="button" class="mini" data-transfer-search><span data-lang-only="zh">搜索</span><span data-lang-only="en">Search</span></button>
             </div>
             <div class="gs-user" data-transfer-user>
               <span class="ava"><img src="assets/avatar-me-male.png" alt="Omar"></span>
