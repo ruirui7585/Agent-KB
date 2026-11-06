@@ -20,6 +20,12 @@
       "runtimeExecutable": "python3",
       "runtimeArgs": ["-m", "http.server", "7742"],
       "port": 7742
+    },
+    {
+      "name": "salfa-pk-gallery",
+      "runtimeExecutable": "python3",
+      "runtimeArgs": ["-m", "http.server", "7743", "-d", "/Users/shilv/Documents/Codex/2026-09-22/pk-chatgpt-conversation-6ab21ff3-d318-83e8/outputs/salfa-pk"],
+      "port": 7743
     }
   ]
 }
