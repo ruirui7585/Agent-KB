@@ -1,0 +1,15 @@
+{
+  "name": "wedding-photos-vercel",
+  "version": "1.0.0",
+  "description": "婚礼照片下载系统 - Vercel + Cloudinary 版本",
+  "scripts": {
+    "dev": "vercel dev",
+    "deploy": "vercel --prod"
+  },
+  "dependencies": {
+    "cloudinary": "^2.0.0"
+  },
+  "devDependencies": {
+    "vercel": "^33.0.0"
+  }
+}
