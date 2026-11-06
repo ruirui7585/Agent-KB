@@ -1,8 +1,9 @@
 <!doctype html>
-<html lang="zh-CN">
+<html lang="zh-CN" translate="no" class="notranslate">
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="google" content="notranslate">
   <title>SALFA VIP APP High-fidelity Prototype · Feature Contract V1.0</title>
   <style>
     :root {
@@ -3247,6 +3248,16 @@
       color: #f2ead6;
       font-size: 13px;
     }
+    .phone .setting-copy {
+      padding: 8px 0;
+    }
+    .phone .setting-description {
+      display: block;
+      margin-top: 3px;
+      color: #cfc8d9;
+      font-size: 12px;
+      line-height: 1.4;
+    }
     .phone .setting-copy small {
       display: block;
       margin-top: 3px;
@@ -3662,6 +3673,67 @@
     body[data-mode="admin"] .paa-marker-layer,
     body[data-mode="admin"] .paa-toggle { display: none !important; }
     body[data-mode="admin"] .review-nav-floating { display: none !important; }
+
+    /* ===== VIP 人工下发（Admin Grant）===== */
+    .modal-mask {
+      position: fixed; inset: 0; background: rgba(0,0,0,.45);
+      display: none; align-items: flex-start; justify-content: center;
+      padding: 40px 16px; z-index: 9000; overflow: auto;
+    }
+    .modal-mask.open { display: flex; }
+    .modal { width: 760px; max-width: 100%; background: #fff; border: 1px solid #111; }
+    .modal-head { padding: 14px 18px; border-bottom: 2px solid #111; display: flex; align-items: center; justify-content: space-between; }
+    .modal-head h3 { margin: 0; font-size: 17px; }
+    .modal-close { border: 1px solid #111; background: #fff; cursor: pointer; padding: 4px 10px; font: inherit; font-size: 12px; font-weight: 700; }
+    .modal-close:hover { background: #eee; }
+    .modal-body { padding: 16px 18px; }
+    .modal-foot { padding: 14px 18px; border-top: 1px solid #ddd; display: flex; justify-content: flex-end; gap: 10px; }
+    .modal .btn { padding: 7px 16px; border: 1px solid #111; background: #fff; color: #111; font-weight: 700; cursor: pointer; font: inherit; font-size: 13px; }
+    .modal .btn.primary { background: #111; color: #fff; }
+    .modal .btn:disabled { opacity: .5; cursor: not-allowed; }
+
+    .gf-grid { display: grid; grid-template-columns: 116px 1fr; gap: 14px 14px; align-items: start; }
+    .gf-label { font-size: 12px; font-weight: 800; color: #222; padding-top: 8px; }
+    .gf-label .req { color: #c00; margin-left: 2px; }
+    .gf-ctrl input[type=text], .gf-ctrl input[type=number], .gf-ctrl select, .gf-ctrl textarea {
+      width: 100%; padding: 8px 10px; border: 1px solid #bbb; background: #fff; font: inherit; font-size: 13px; color: #222;
+    }
+    .gf-ctrl textarea { min-height: 64px; resize: vertical; }
+    .gf-ctrl .hint { font-size: 11px; color: #999; margin-top: 4px; }
+    .gf-ctrl .err { color: #c00; font-size: 11px; margin-top: 4px; display: none; }
+    .gf-ctrl.invalid input, .gf-ctrl.invalid select { border-color: #c00; }
+    .gf-ctrl.invalid .err { display: block; }
+
+    .vip-info-card { display: flex; align-items: center; gap: 12px; border: 1px solid #ddd; padding: 10px 12px; background: #fafafa; }
+    .vip-info-card .avatar { width: 40px; height: 40px; line-height: 40px; font-size: 10px; }
+    .vip-info-card .vi-name { font-weight: 800; font-size: 14px; }
+    .vip-info-card .vi-uid { font-size: 11px; color: #888; }
+    .vip-cards { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 2px; }
+    .vip-card-mini { border: 1px solid #ddd; padding: 8px 10px; min-width: 130px; background: #fff; }
+    .vip-card-mini .t { font-weight: 800; font-size: 13px; }
+    .vip-card-mini .d { font-size: 11px; color: #666; margin-top: 2px; }
+
+    .stag { display: inline-block; padding: 2px 8px; border: 1px solid #111; font-size: 10px; margin-left: 6px; vertical-align: middle; }
+    .stag.s-active { background: #111; color: #fff; }
+    .stag.s-frozen { background: #fff; color: #2b6cb0; border-color: #2b6cb0; }
+    .stag.s-pending { background: #fff; color: #b7791f; border-color: #b7791f; }
+    .stag.s-expired { background: #fff; color: #999; border-color: #aaa; }
+
+    .preview-box { border: 1px solid #111; background: #fafafa; padding: 12px 14px; }
+    .preview-box .pv-row { display: flex; justify-content: space-between; gap: 12px; padding: 5px 0; border-bottom: 1px dashed #ddd; font-size: 12px; }
+    .preview-box .pv-row:last-child { border-bottom: 0; }
+    .preview-box .pv-k { color: #666; white-space: nowrap; }
+    .preview-box .pv-v { font-weight: 800; text-align: right; }
+    .preview-empty { color: #999; font-size: 12px; padding: 10px 0; }
+
+    .toast { position: fixed; left: 50%; top: 24px; transform: translateX(-50%); padding: 12px 22px; font-size: 13px; font-weight: 700; color: #fff; z-index: 9999; display: none; }
+    .toast.show { display: block; }
+    .toast.ok { background: #111; }
+    .toast.fail { background: #c00; }
+
+    .grant-rec-toolbar .fld input, .grant-rec-toolbar .fld select { border: 0; background: transparent; font: inherit; font-size: 12px; }
+    .grant-rec-toolbar .fld input[type=date] { font-size: 11px; }
+    table.bw td .tag { color: #999; }
     .mini {
       display: inline-block;
       margin-left: 8px;
@@ -3954,7 +4026,7 @@
 <script src=".prototype-annotations/annotation-runtime.js?v=20260908-1" defer></script>
 <!-- /prototype-annotation runtime -->
 </head>
-<body>
+<body translate="no" class="notranslate">
   <div class="mode-tabs" role="tablist" aria-label="评审视图">
     <button type="button" class="mode-tab active" data-mode="front">App 前台</button>
     <button type="button" class="mode-tab" data-mode="admin">运营后台</button>
@@ -3966,6 +4038,7 @@
       <a href="#ap-tier" class="active" data-admin-page="ap-tier">等级与套餐</a>
       <a href="#ap-recharge" data-admin-page="ap-recharge">充值活动</a>
       <a href="#ap-record" data-admin-page="ap-record">VIP 等级记录</a>
+      <a href="#ap-grant" data-admin-page="ap-grant">VIP 下发</a>
     </nav>
     <div class="admin-pages">
 
@@ -4066,7 +4139,7 @@
         </header>
         <div class="ap-cols">
           <div class="ap-main">
-            <div class="toolbar"><span class="fld">用户 ID</span><span class="fld">类型 ▾</span><span class="fld">状态 ▾</span><button class="btn">＋ 新增记录</button></div>
+            <div class="toolbar"><span class="fld">用户 ID</span><span class="fld">类型 ▾</span><span class="fld">状态 ▾</span><button class="btn" id="open-grant-from-record">VIP下发</button><button class="btn" data-admin-page="ap-grant">下发记录</button><button class="btn">＋ 新增记录</button></div>
             <table class="bw">
               <thead><tr><th>用户 ID</th><th>用户头像</th><th>VIP 等级</th><th>类型</th><th>赠送对象</th><th>生效时间</th><th>有效期</th><th>状态 / 操作</th></tr></thead>
               <tbody>
@@ -4087,6 +4160,49 @@
               <dt>生效时间 <span class="tag">时间 · 必填</span></dt><dd>该等级开始生效时间。</dd>
               <dt>有效期 <span class="tag">时长 · 必填</span></dt><dd>生效持续时长。</dd>
               <dt>状态 <span class="tag">开关</span></dt><dd>生效 / 失效 / 停用。</dd>
+            </dl></div>
+          </aside>
+        </div>
+      </section>
+
+      <!-- VIP 人工下发 -->
+      <section id="ap-grant" class="admin-page" data-admin-content="ap-grant">
+        <header class="ap-head">
+          <h3>VIP 人工下发</h3>
+          <p>管理员指定用户、VIP 等级与有效天数，人工发放 VIP 权益（来源固定标记 Admin Grant）。下方为下发记录，支持按用户 UID、VIP 等级、操作人、下发时间筛选。</p>
+        </header>
+        <div class="ap-cols">
+          <div class="ap-main">
+            <div class="toolbar grant-rec-toolbar">
+              <span class="fld">用户 UID <input id="f-uid" placeholder="输入 UID"></span>
+              <span class="fld">VIP 等级
+                <select id="f-tier-filter">
+                  <option value="">全部</option>
+                  <option>VIP1</option><option>VIP2</option><option>VIP3</option><option>VIP4</option>
+                  <option>VIP5</option><option>VIP6</option><option>VIP7</option><option>VIP8</option>
+                  <option>VIP9</option><option>VIP10</option>
+                </select>
+              </span>
+              <span class="fld">操作人 <input id="f-op" placeholder="管理员"></span>
+              <span class="fld">下发时间 <input id="f-time" type="date"></span>
+              <button class="btn" id="open-grant-from-grant">＋ VIP下发</button>
+            </div>
+            <table class="bw" id="grant-record-table">
+              <thead><tr><th>用户 UID</th><th>用户昵称</th><th>VIP 等级</th><th>下发天数</th><th>下发来源</th><th>下发原因</th><th>操作人</th><th>下发时间</th><th>状态</th></tr></thead>
+              <tbody><!-- 由 JS 渲染 --></tbody>
+            </table>
+            <p class="admin-note">注：下发来源固定为 Admin Grant；记录状态由服务端返回（演示数据为前端模拟）。点击「＋ VIP下发」打开下发弹窗。</p>
+          </div>
+          <aside class="ap-side">
+            <div class="ap-section-title">字段解释（常驻）</div>
+            <div class="field-doc"><h4>下发记录</h4><dl>
+              <dt>用户 UID <span class="tag">文本</span></dt><dd>接收人工下发 VIP 的用户。</dd>
+              <dt>VIP 等级 <span class="tag">下拉 1–10</span></dt><dd>本次下发的等级。</dd>
+              <dt>下发天数 <span class="tag">正整数 ≥1</span></dt><dd>本次发放的有效天数。</dd>
+              <dt>下发来源 <span class="tag">固定 Admin Grant</span></dt><dd>标记人工下发，区别于购买 / 赠送 / 转赠 / 充值活动。</dd>
+              <dt>下发原因 <span class="tag">运营补偿/活动奖励/其他</span></dt><dd>选择后可在备注补充具体说明。</dd>
+              <dt>操作人 <span class="tag">后台管理员</span></dt><dd>执行下发的管理员账号。</dd>
+              <dt>状态 <span class="tag">成功 / 失败</span></dt><dd>下发请求的处理结果。</dd>
             </dl></div>
           </aside>
         </div>
@@ -4123,8 +4239,12 @@
         <section class="background-card" aria-labelledby="background-title">
           <h2 id="background-title" data-lang-only="zh">需求背景</h2>
           <h2 data-lang-only="en">Requirement background</h2>
-          <p id="background-copy-zh" data-lang-only="zh" contenteditable="true">VIP 是 SALFA 高价值用户体系。本期建立独立套餐与唯一 Current VIP Level，区分身份、功能权益和永久虚拟道具，并用续费、补差升级、VIP1–4 赠送及 VIP5–10 充值活动形成完整闭环。</p>
-          <p id="background-copy-en" data-lang-only="en" contenteditable="true">VIP is SALFA's high-value user system. This release defines independent packages and one Current VIP Level, separates identity, functional privileges and permanent items, and closes the loop with renewals, prorated upgrades, VIP1–4 gifts and VIP5–10 recharge activities.</p>
+          <p id="background-copy-zh" data-lang-only="zh" contenteditable="true">VIP 是 SALFA 高价值用户体系。本期建立独立套餐与唯一 Current VIP Level，区分身份、功能权益和永久虚拟道具。VIP1–VIP7 支持金币购买和赠送，并支持同级续费、补差升级；VIP8–VIP10 仅通过充值活动获得，不支持金币购买或赠送。</p>
+          <p id="background-copy-en" data-lang-only="en" contenteditable="true">VIP is SALFA's premium membership system, with separate packages, one active VIP level, functional perks and permanent virtual items. VIP1–VIP7 can be purchased with coins or gifted, with same-tier renewals and prorated upgrades. VIP8–VIP10 are available only through recharge events and cannot be purchased with coins or gifted.</p>
+          <p data-lang-only="zh" contenteditable="true"><strong>转赠定义：</strong>用户将自己已持有（冻结状态）的 VIP1–VIP10 任意等级的剩余有效时长，按照自定义天数转赠给其他用户。转赠天数从转赠方对应等级的剩余有效时长中扣除，接收方获得相同等级、相同天数的 VIP 权益；被转赠的 VIP 不支持二次转赠。</p>
+          <p data-lang-only="en" contenteditable="true"><strong>Transfer definition:</strong> A user may transfer any remaining valid duration of their own held VIP1–VIP10 (including frozen status) to another user, by a custom number of days. The transferred days are deducted from the transferor's remaining valid duration at that tier; the recipient receives the same tier with the same number of days. A transferred VIP cannot be re-transferred.</p>
+          <p data-lang-only="zh" contenteditable="true"><strong>冻结状态定义：</strong>当用户持有有效低等级 VIP 期间，获得并激活更高等级 VIP 时，系统暂停低等级 VIP 剩余有效期的倒计时。高等级 VIP 有效期间，低等级 VIP 处于冻结状态；待覆盖该低等级 VIP 的所有更高等级 VIP 失效后，系统自动解冻，继续按照冻结前剩余的有效时长计算。</p>
+          <p data-lang-only="en" contenteditable="true"><strong>Frozen status definition:</strong> When a user holds a valid lower-tier VIP and obtains and activates a higher-tier VIP, the system pauses the countdown of the lower-tier VIP's remaining validity. While the higher-tier VIP is active, the lower-tier VIP stays frozen; once all higher-tier VIPs covering that lower tier expire, the system automatically unfreezes it and continues counting down from the remaining duration at the point of freezing.</p>
         </section>
       </div>
     </header>
@@ -4166,7 +4286,7 @@
               <div class="plan"><span class="coin">388888</span><span class="days">/90 days</span></div>
               <span class="discount">20% OFF</span>
             </div>
-            <div class="actions"><button>Send</button><button disabled>Activate</button></div>
+            <div class="actions"><button><span data-lang-only="zh">Send</span><span data-lang-only="en">Gift VIP</span></button><button disabled>Activate</button></div>
           </section>
         </div>
         <p class="state-note"><strong>低等级：</strong>查看等级低于当前等级时，主按钮置灰显示 Activate 且不可点击。画面中的 VIP1 仅用于表达相对关系，不限定用户实际等级。</p>
@@ -4206,7 +4326,7 @@
               <div class="plan"><span class="coin">788888</span><span class="days">/60 days</span></div>
               <div class="plan"><span class="coin">1188888</span><span class="days">/90 days</span></div>
             </div>
-            <div class="actions"><button>Send</button><button class="primary">Renew</button></div>
+            <div class="actions"><button><span data-lang-only="zh">Send</span><span data-lang-only="en">Gift VIP</span></button><button class="primary">Renew</button></div>
           </section>
         </div>
         <p class="state-note"><strong>同等级：</strong>查看等级等于当前等级时，主按钮显示 Renew；套餐按续费规则选择，不套用升级时长限制。</p>
@@ -4242,11 +4362,11 @@
           </section>
           <section class="purchase-panel">
             <div class="plans">
-              <div class="plan unavailable"><span class="coin">Unavailable</span><span class="days">/30 days</span><small>Duration &lt; R</small></div>
-              <div class="plan selected"><span class="coin">Δ Quote A</span><span class="days">/60 days</span><small>Target actual − remaining actual-paid value</small></div>
-              <div class="plan"><span class="coin">Δ Quote B</span><span class="days">/90 days</span><small>Server final integer Coins</small></div>
+              <div class="plan unavailable"><span class="coin">Unavailable</span><span class="days">/30 days</span><small><span data-lang-only="zh">Duration &lt; R</span><span data-lang-only="en">Minimum 45 days</span></small></div>
+              <div class="plan selected"><span class="coin"><span data-lang-only="zh">Δ Quote A</span><span data-lang-only="en">Upgrade cost</span></span><span class="days">/60 days</span><small><span data-lang-only="zh">Target actual − remaining actual-paid value</span><span data-lang-only="en">VIP4 price minus your VIP2 credit</span></small></div>
+              <div class="plan"><span class="coin"><span data-lang-only="zh">Δ Quote B</span><span data-lang-only="en">Upgrade cost</span></span><span class="days">/90 days</span><small><span data-lang-only="zh">Server final integer Coins</span><span data-lang-only="en">Final amount in coins</span></small></div>
             </div>
-            <div class="actions"><button>Send</button><button class="primary notranslate" lang="en" translate="no">Upgrade</button></div>
+            <div class="actions"><button><span data-lang-only="zh">Send</span><span data-lang-only="en">Gift VIP</span></button><button class="primary notranslate" lang="en" translate="no">Upgrade</button></div>
           </section>
         </div>
         <p class="state-note"><strong>高等级：</strong>查看等级高于当前等级时显示 Upgrade。示例 R=45 天，因此 30 天置灰，60/90 天可选；金额展示后端返回的折算差价，不展示套餐原价。</p>
@@ -4282,7 +4402,7 @@
           </section>
           <section class="purchase-panel">
             <div class="recharge-rule">
-              <p>VIP8–VIP10 members can only come from recharge activities</p>
+              <p><span data-lang-only="zh">VIP8–VIP10 members can only come from recharge activities</span><span data-lang-only="en">Unlock VIP8–VIP10 exclusively through recharge events.</span></p>
               <button class="primary">Recharge</button>
             </div>
           </section>
@@ -4320,12 +4440,12 @@
           </section>
           <section class="purchase-panel">
             <div class="recharge-rule">
-              <p>VIP10 members can only come from recharge activities</p>
+              <p><span data-lang-only="zh">VIP10 members can only come from recharge activities</span><span data-lang-only="en">Unlock VIP10 exclusively through recharge events.</span></p>
               <button class="primary">Recharge</button>
             </div>
           </section>
         </div>
-        <p class="state-note">最高等级终点态不再展示右侧下一等级；其余结构与 VIP5–VIP9 复用。</p>
+        <p class="state-note">最高等级终点态不再展示右侧下一等级；其余结构与 VIP8–VIP9 复用。</p>
       </article>
 
       <!-- 06 -->
@@ -4472,7 +4592,7 @@
               <div class="benefit-level">VIP 1</div>
               <div class="sheet-mark">GIFT</div>
               <h3>VIP Gifts</h3>
-              <p class="sheet-copy">Send exclusive privilege gifts based on your VIP level. Enjoy a unique gifting experience.</p>
+              <p class="sheet-copy"><span data-lang-only="zh">Send exclusive privilege gifts based on your VIP level. Enjoy a unique gifting experience.</span><span data-lang-only="en">Stand out in voice rooms with exclusive gifts unlocked at your VIP level.</span></p>
               <div class="benefit-hero">
                 <div class="hero-glow"></div>
                 <div class="hero-icon">GIFT</div>
@@ -4638,26 +4758,10 @@
       </article>
     </section>
 
-    <aside class="source-note">
-      <span data-lang-only="zh">
-        <strong>Feature Contract V1.0 实现口径</strong>
-        页面中的 VIP1、VIP2、VIP4、剩余 45 天及价格数字均为静态状态示例，不限定真实账号或后台配置。所有成交价格、升级抵扣、接收人状态和最终会员结果以服务端返回为准；客户端不自行计算最终支付金额，也不在本地修改 Current VIP。
-        <strong>继承的原型基线</strong>
-        保留 v0.15 的 VIP1–VIP10 浏览、21 项当前上线权益、Star Identity、Privileges、半屏详情与赠送框架。本版新增冻结契约要求的 Activate、Renew、Upgrade、支付结果、Receiver 变化、Recharge 发放、VIP Items 和精选常见结果状态。VIP5–VIP10 仅由 Recharge Activity 获得，不能金币购买或赠送。
-        <strong>本轮高保真边界</strong>
-        本页为深色金色高保真静态原型，画布沿用 360 × 780px；身份道具与权益图标以金色铭牌占位表达，真实品牌素材、人物头像与阿拉伯语 RTL 版式未在原型内实现。本页不接真实钱包、订单、充值、背包或服务端接口。
-      </span>
-      <span data-lang-only="en">
-        <strong>Feature Contract V1.0 implementation baseline</strong>
-        VIP levels, 45 remaining days and price figures are static state examples only. Final prices, credits, receiver state and membership results come from the server; the client does not calculate final payment or mutate Current VIP locally.
-        <strong>Inherited prototype baseline</strong>
-        This update keeps v0.15's VIP1–VIP10 browsing, 21 currently released privileges, Star Identity, Privileges, shared detail sheet and gift framework. It adds the frozen contract's Activate, Renew, Upgrade, payment results, receiver changes, Recharge grants, VIP Items and selected common result states. VIP5–VIP10 come only from Recharge Activity.
-        <strong>High-fidelity boundary</strong>
-        This is a dark-gold high-fidelity static prototype on the existing 360 × 780px canvas. Identity and privilege assets appear as gold placeholder tiles; real brand assets, people avatars and Arabic RTL layout are not implemented. No real wallet, order, recharge, backpack or server integration is included.
-      </span>
-    </aside>
   </main>
   <script>
+    const isPublicReview = /^https?:$/.test(window.location.protocol)
+      && !["localhost", "127.0.0.1", "::1", "[::1]"].includes(window.location.hostname);
     const vipBenefits = [
       ["GIFT", "VIP Gifts", 1],
       ["CAR", "Exclusive Car", 1],
@@ -4689,6 +4793,43 @@
       ["LABEL", "Identity Label"]
     ];
 
+    const vipEnglishLabels = {
+      "Unlimited Follow": "Unlimited Following",
+      "Golden Nickname": "Gold Name",
+      "Mall Discount": "Shop Discount",
+      "Entry Notice Design": "Custom Entry Announcement",
+      "Home Decorate": "Home Decor",
+      "On Mic Effect": "On-Mic Effect",
+      "MIC Skin": "Mic Skin",
+      "App Skin": "App Theme",
+      "Mystery Man": "Anonymous Mode",
+      "Bubbles": "Chat Bubbles",
+      "Wheat Wave": "Voice Wave",
+      "Card Skin": "Profile Card Theme",
+      "Identity Label": "VIP Tag",
+      "Hide Identity in List": "Hide Identity in Lists",
+      "Visit Incognito": "Browse Profiles Privately",
+      "Enter Room Incognito": "Enter Rooms Privately",
+      "Send": "Gift VIP",
+      "Mine": "My VIP",
+      "Collection": "VIP Cards",
+      "Record": "History",
+      "VIP Privilege Setting": "VIP Settings",
+      "Privilege toggles": "Privacy Controls",
+      "CURRENT / TARGET": "Your membership",
+      "DURATION": "Membership renewal",
+      "CURRENT VIP REPLACEMENT": "Membership upgrade",
+      "UPGRADE REWARD": "VIP reward",
+      "Search user name / ID": "Search by username or ID",
+      "神秘人": "Mystery Person",
+      "防踢保护": "Kick Protection",
+      "禁止跟随": "Block Follow",
+      "隐藏在线状态": "Hide Online Status"
+    };
+    const vipLabel = (name, english = vipEnglishLabels[name]) => english
+      ? `<span data-lang-only="zh">${name}</span><span data-lang-only="en">${english}</span>`
+      : name;
+
     const mallDiscount = (tier) =>
       tier === 3 ? "5%" : tier === 4 ? "8%" : tier === 5 ? "10%" : "12%";
 
@@ -4704,7 +4845,7 @@
         <div class="privilege-card ${active ? "active" : "locked"} ${name === focusName ? "focus" : ""}">
           <div class="tile-icon">${mark}</div>
           ${active ? "" : '<span class="lock-mark" aria-label="Locked"></span>'}
-          <strong>${name}</strong>
+          <strong>${vipLabel(name)}</strong>
           <small>${status}</small>
         </div>
       `;
@@ -4735,13 +4876,13 @@
         <div class="statusbar"><span>15:41</span><span>••• 90%</span></div>
         <header class="send-appbar">
           <span class="icon-button back">←</span>
-          <h2>Send</h2>
+          <h2>${vipLabel("Send")}</h2>
           <span></span>
         </header>
         <section class="recipient-search">
           <div class="recipient-search-box">
             <i class="recipient-search-icon"></i>
-            <span>Search user name / ID</span>
+            <span>${vipLabel("Search user name / ID")}</span>
           </div>
           <button>Search</button>
         </section>
@@ -4753,7 +4894,7 @@
               <span><b>LV 5</b> Female</span>
               <span>ID: 3418767</span>
             </div>
-            <button class="primary">Send</button>
+            <button class="primary">${vipLabel("Send")}</button>
           </div>
           <div class="recipient-row">
             <div class="recipient-avatar">USER<br>PHOTO</div>
@@ -4762,11 +4903,11 @@
               <span><b>LV 4</b> Male</span>
               <span>ID: 6527857</span>
             </div>
-            <button class="primary">Send</button>
+            <button class="primary">${vipLabel("Send")}</button>
           </div>
         </section>
         <p class="recipient-empty-rule" data-lang-only="zh">输入完整或部分用户名 / ID 后点击 Search；结果为空时在同一区域显示空状态，不新增页面状态。</p>
-        <p class="recipient-empty-rule" data-lang-only="en">Enter a full or partial user name / ID, then tap Search. If no results match, show the empty state here without adding a new page state.</p>
+        <p class="recipient-empty-rule" data-lang-only="en">Enter a username or user ID, then tap Search.</p>
       </div>
       <p class="state-note"><strong>选择对象：</strong>点击 VIP 页面底部 Send 进入本页；可搜索用户名或 ID。点击某个用户行的 Send 后，带入该用户并进入状态 08 的赠送确认弹窗。</p>
     `;
@@ -4802,14 +4943,14 @@
           </section>
           <footer class="gift-source-footer">
             <div><strong>188888 · 30 days</strong><small>Selected VIP1 plan</small></div>
-            <button>Send</button>
+            <button>${vipLabel("Send")}</button>
             <button class="primary">Renew</button>
           </footer>
         </div>
         <div class="screen-dim"></div>
         <section class="gift-confirm-modal">
-          <h3>Tips</h3>
-          <p>Send VIP1 to your friend?</p>
+          <h3><span data-lang-only="zh">Tips</span><span data-lang-only="en">Confirm VIP Gift</span></h3>
+          <p><span data-lang-only="zh">Send VIP1 to your friend?</span><span data-lang-only="en">Gift VIP1 to this friend?</span></p>
           <div class="gift-transfer">
             <div class="gift-vip-badge"><strong>V1</strong><small>VIP ICON</small></div>
             <span class="gift-arrow">→</span>
@@ -4821,7 +4962,7 @@
           </div>
           <div class="gift-actions">
             <button>Cancel</button>
-            <button class="primary">Send</button>
+            <button class="primary">${vipLabel("Send")}</button>
           </div>
         </section>
       </div>
@@ -4893,7 +5034,7 @@
         contextLabel: "CURRENT / TARGET", context: "No VIP  →  VIP1 · 30 days", icon: "shield", headingZh: "VIP1 购买成功", headingEn: "VIP1 Purchase Successful",
         messageZh: "付款成功后立即建立唯一 Current VIP，并从成功时间开始计算有效期。", messageEn: "Create the single Current VIP immediately after payment and start the term at payment success.",
         facts: [["Actual paid", "Server final price"], ["Functions", "VIP1"], ["Items granted", "VIP1 only"], ["Identity", "VIP1"]],
-        primary: {label: "Activate"}, secondary: {label: "Send"}, noteZh: "No VIP 可购买 VIP1–4；成功后发放目标等级 Items，并开放目标等级及以下功能权益。", noteEn: "A user without VIP can buy VIP1–4; success grants target-level items and cumulative functional privileges."
+        primary: {label: "Activate"}, secondary: {label: "Send"}, noteZh: "No VIP 可购买 VIP1–VIP7；成功后发放目标等级 Items，并开放目标等级及以下功能权益。", noteEn: "A user without VIP can buy VIP1–VIP7; success grants target-level items and cumulative functional privileges."
       },
       {
         id: "19", slug: "renew-success", pageId: "vip-renew-success", groupZh: "续费状态", groupEn: "Renewal states", rule: "FC §8, §15", state: "success",
@@ -4914,18 +5055,18 @@
       {
         id: "26", slug: "send-success", pageId: "vip-send-success", groupZh: "VIP赠送", groupEn: "VIP gifting", rule: "FC §29–30, §71", state: "success",
         titleZh: "赠送－成功", titleEn: "Gift · Success", pageTitle: "Send result", condition: "Gift order = Success",
-        contextLabel: "FINAL RECEIVER STATE", context: "VIP granted immediately", icon: "success", headingZh: "VIP 赠送成功", headingEn: "VIP sent successfully",
+        contextLabel: "FINAL RECEIVER STATE", context: "VIP granted immediately", icon: "success", headingZh: "VIP 赠送成功", headingEn: "VIP Gift Sent",
         messageZh: "好友已收到 VIP；赠送成功后不可撤回、退款、拆分或转移。", messageEn: "Your friend received VIP. A successful gift cannot be withdrawn, refunded, split or transferred.",
         facts: [["Receiver", "Friend Name · ID 3418767"], ["Package", "VIP1 · 30 days"], ["Receiver action", "No claim required"]],
         primary: {label: "Done"}, noteZh: "成功结果必须使用服务端最新 Receiver 状态，并确保一次扣款、一次发放。", noteEn: "Success uses the server's latest receiver state and guarantees one debit and one grant."
       },
       {
         id: "30", slug: "recharge-upgrade", pageId: "vip-recharge-upgrade", groupZh: "充值活动发放", groupEn: "Recharge grants", rule: "FC §38–42", state: "success", modal: true,
-        titleZh: "充值活动－获得升级", titleEn: "Recharge · Upgrade reward", pageTitle: "Recharge reward", condition: "Current VIP4 · Recharge reward VIP5",
-        contextLabel: "UPGRADE REWARD", context: "VIP4 → VIP5 · Reward granted", icon: "success", headingZh: "恭喜升级到 VIP5 !", headingEn: "Congratulations on reaching VIP5!",
-        messageZh: "你的 VIP 等级已提升为 VIP5，立即生效。", messageEn: "Your VIP level is now VIP5 and active immediately.",
-        facts: [["Current VIP", "VIP4 → VIP5"], ["Expiry", "Not earlier than current"], ["Items", "Grant VIP5 items"]],
-        primary: {label: "View VIP5"}, noteZh: "充值活动发放只产生升级；发放等级高于当前时才生效，不产生同等级续期或低等级降级。", noteEn: "A Recharge reward only grants an upgrade when it is higher than the current tier; there is no same-level renew or downgrade."
+        titleZh: "充值活动－获得升级", titleEn: "Recharge · Upgrade reward", pageTitle: "Recharge reward", condition: "Current VIP4 · Recharge reward VIP8",
+        contextLabel: "UPGRADE REWARD", context: "VIP4 → VIP8 · Reward granted", icon: "success", headingZh: "恭喜升级到 VIP8 !", headingEn: "Congratulations on reaching VIP8!",
+        messageZh: "你的 VIP 等级已提升为 VIP8，立即生效。", messageEn: "Your VIP level is now VIP8 and active immediately.",
+        facts: [["Current VIP", "VIP4 → VIP8"], ["Expiry", "Not earlier than current"], ["Items", "Grant VIP8 items"]],
+        primary: {label: "View VIP8"}, noteZh: "VIP8–VIP10 仅通过充值活动获得；发放等级高于当前时才生效。再次充值达标 → 根据活动规则获得新一期权益；高等级权益到期 → 自动恢复至仍然有效的最高 VIP 等级。", noteEn: "VIP8–VIP10 are available only through recharge events, and a reward applies only when its tier is higher than the user's current VIP. Reaching the threshold again → a new benefit period is granted per event rules; when the higher-tier benefit expires → automatically reverts to the highest still-valid VIP level."
       }
     ];
 
@@ -4944,36 +5085,37 @@
     const halfUnderlay = (config) => {
       const isGift = config.groupZh === "VIP赠送";
       const isRecharge = config.groupZh === "充值活动发放";
-      const vip = pickVipToken((config.context || "") + (config.headingZh || "") + (config.headingEn || "")) || "VIP2";
+      const result = isGift ? giftSuccessMeta[config.slug] : isRecharge ? buyerSuccessMeta[config.slug] : null;
+      const vip = result?.level || pickVipToken((config.context || "") + (config.headingZh || "") + (config.headingEn || "")) || "VIP2";
       const badge = vip.replace("VIP", "");
       if (isRecharge) {
         return `
           <div class="statusbar"><span>16:02</span><span>••• 90%</span></div>
-          <header class="appbar"><span class="icon-button back">‹</span><h2>Recharge reward</h2><span></span></header>
+          <header class="appbar"><span class="icon-button back">‹</span><h2><span data-lang-only="zh">Recharge reward</span><span data-lang-only="en">Recharge Reward</span></h2><span></span></header>
           <div class="cs-u-stage">
             <div class="cs-u-emblem">R</div>
-            <div class="cs-u-tier">Recharge Activity · Reward</div>
+            <div class="cs-u-tier"><span data-lang-only="zh">Recharge Activity · Reward</span><span data-lang-only="en">Recharge Event Reward</span></div>
           </div>
-          <div class="cs-u-context"><strong>${config.contextLabel}</strong>${config.context}</div>
+          <div class="cs-u-context"><strong>${vipLabel(config.contextLabel)}</strong>${config.context}</div>
           <div class="cs-u-row">
-            <div class="cs-u-cell"><b>${vip}</b>reward tier</div>
+            <div class="cs-u-cell"><b>${vip}</b><span data-lang-only="zh">reward tier</span><span data-lang-only="en">VIP reward</span></div>
             <div class="cs-u-cell"><b>+30</b>days</div>
-            <div class="cs-u-cell"><b>Max</b>expiry rule</div>
+            <div class="cs-u-cell"><span data-lang-only="zh"><b>Max</b>expiry rule</span><span data-lang-only="en"><b>Protected</b>existing expiry</span></div>
           </div>`;
       }
       if (isGift) {
         return `
           <div class="statusbar"><span>16:02</span><span>••• 90%</span></div>
-          <header class="appbar"><span class="icon-button back">‹</span><h2>Send</h2><span></span></header>
+          <header class="appbar"><span class="icon-button back">‹</span><h2>${vipLabel("Send")}</h2><span></span></header>
           <div class="recipient-search">
-            <div class="recipient-search-box"><i class="recipient-search-icon"></i><span>Search user name / ID</span></div>
+            <div class="recipient-search-box"><i class="recipient-search-icon"></i><span>${vipLabel("Search user name / ID")}</span></div>
             <button>Search</button>
           </div>
-          <div class="cs-u-context"><strong>RECEIVER</strong>Friend Name · ID 3418767</div>
+          <div class="cs-u-context"><strong><span data-lang-only="zh">RECEIVER</span><span data-lang-only="en">Recipient</span></strong>Friend Name · ID 3418767</div>
           <div class="cs-u-row">
-            <div class="cs-u-cell"><b>${vip}</b>selected gift tier</div>
+            <div class="cs-u-cell"><b>${vip}</b><span data-lang-only="zh">selected gift tier</span><span data-lang-only="en">VIP gift</span></div>
             <div class="cs-u-cell"><b>30</b>days</div>
-            <div class="cs-u-cell"><b>0</b>receiver coins</div>
+            <div class="cs-u-cell"><b>0</b><span data-lang-only="zh">receiver coins</span><span data-lang-only="en">Recipient pays</span></div>
           </div>`;
       }
       // VIP 中心 / 续费 / 购买 / 支付 上下文
@@ -4984,7 +5126,7 @@
           <div class="cs-u-emblem">${badge}</div>
           <div class="cs-u-tier">${vip}</div>
         </div>
-        <div class="cs-u-context"><strong>${config.contextLabel}</strong>${config.context}</div>
+        <div class="cs-u-context"><strong>${vipLabel(config.contextLabel)}</strong>${config.context}</div>
         <div class="cs-u-row">
           <div class="cs-u-cell"><b>188888</b>/30 days</div>
           <div class="cs-u-cell"><b>288888</b>/60 days</div>
@@ -4993,19 +5135,19 @@
     };
 
     const buyerSuccessMeta = {
-      "activate-no-vip": {level: "VIP1", days: "30 days", expireZh: "有效期至 2026-10-02", expireEn: "Valid until Oct 2, 2026", perk1Zh: "VIP1 功能权益已解锁，部分已默认佩戴", perk1En: "VIP1 functional privileges unlocked · some auto-equipped", perk2Zh: "VIP1 专属道具已放入背包", perk2En: "VIP1 exclusive items added to your backpack"},
-      "purchase-success": {level: "VIP2", days: "30 days", expireZh: "有效期至 2026-10-02", expireEn: "Valid until Oct 2, 2026", perk1Zh: "VIP2 功能权益已解锁，部分已默认佩戴", perk1En: "VIP2 functional privileges unlocked · some auto-equipped", perk2Zh: "VIP2 专属道具已放入背包", perk2En: "VIP2 exclusive items added to your backpack"},
-      "renew-success": {level: "VIP2", days: "+30 days", expireZh: "续费后有效期至 2026-10-02", expireEn: "Extended until Oct 2, 2026", perk1Zh: "当前 VIP2 等级不变，权益与身份继续生效", perk1En: "Your VIP2 level, privileges and identity continue unchanged", perk2Zh: "有效期已顺延 30 天", perk2En: "Membership extended by 30 days"},
-      "upgrade-success": {level: "VIP4", days: "60 days", expireZh: "有效期至 2026-11-01", expireEn: "Valid until Nov 1, 2026", perk1Zh: "已解锁 VIP1–VIP4 功能权益，部分已默认佩戴", perk1En: "VIP1–VIP4 functional privileges unlocked · some auto-equipped", perk2Zh: "VIP4 专属道具已放入背包", perk2En: "VIP4 exclusive items added to your backpack"},
-      "recharge-upgrade": {level: "VIP5", days: "Reward", expireZh: "到期时间不早于原 VIP4", expireEn: "Expiry is never earlier than the previous VIP4", perk1Zh: "已解锁 VIP1–VIP5 功能权益，部分已默认佩戴", perk1En: "VIP1–VIP5 functional privileges unlocked · some auto-equipped", perk2Zh: "VIP5 专属道具已放入背包", perk2En: "VIP5 exclusive items added to your backpack"}
+      "activate-no-vip": {level: "VIP1", days: "30 days", expireZh: "有效期至 2026-10-02", expireEn: "Expires Oct 2, 2026", perk1Zh: "VIP1 功能权益已解锁，部分已默认佩戴", perk1En: "VIP1 perks unlocked · some enabled by default", perk2Zh: "VIP1 专属道具已放入背包", perk2En: "Your VIP1 items are in your backpack"},
+      "purchase-success": {level: "VIP2", days: "30 days", expireZh: "有效期至 2026-10-02", expireEn: "Expires Oct 2, 2026", perk1Zh: "VIP2 功能权益已解锁，部分已默认佩戴", perk1En: "VIP2 perks unlocked · some enabled by default", perk2Zh: "VIP2 专属道具已放入背包", perk2En: "Your VIP2 items are in your backpack"},
+      "renew-success": {level: "VIP2", days: "+30 days", expireZh: "续费后有效期至 2026-10-02", expireEn: "Extended to Oct 2, 2026", perk1Zh: "当前 VIP2 等级不变，权益与身份继续生效", perk1En: "Keep your VIP2 status and all your perks", perk2Zh: "有效期已顺延 30 天", perk2En: "30 days added to your membership"},
+      "upgrade-success": {level: "VIP4", days: "60 days", expireZh: "有效期至 2026-11-01", expireEn: "Expires Nov 1, 2026", perk1Zh: "已解锁 VIP1–VIP4 功能权益，部分已默认佩戴", perk1En: "VIP1–VIP4 perks unlocked · some enabled by default", perk2Zh: "VIP4 专属道具已放入背包", perk2En: "Your VIP4 items are in your backpack"},
+      "recharge-upgrade": {level: "VIP8", days: "Reward", expireZh: "到期时间不早于原 VIP4", expireEn: "Your VIP expiry date won't be shortened", perk1Zh: "已解锁 VIP1–VIP8 功能权益，部分已默认佩戴", perk1En: "VIP1–VIP8 perks unlocked · some enabled by default", perk2Zh: "VIP8 专属道具已放入背包", perk2En: "Your VIP8 items are in your backpack"}
     };
 
     const giftSuccessMeta = {
       "send-success": {
         level: "VIP1", days: "30 days", avatar: "assets/avatar-me-male.png", name: "Omar", id: "ID 3418767",
         expireZh: "好友已收到 VIP1 · 立即生效至 2026-10-02", expireEn: "Your friend received VIP1, active until Oct 2, 2026",
-        perk1Zh: "VIP1 已成功送给好友，即刻生效", perk1En: "VIP1 sent to your friend and active now",
-        perk2Zh: "一次扣款、一次发放，赠送已完成", perk2En: "One debit, one grant — the gift is complete"
+        perk1Zh: "VIP1 已成功送给好友，即刻生效", perk1En: "Your friend's VIP1 membership is now active",
+        perk2Zh: "一次扣款、一次发放，赠送已完成", perk2En: "Payment complete. Your friend has received VIP1."
       }
     };
 
@@ -5027,7 +5169,7 @@
       const cardActions = isBuyer
         ? `<button class="primary">View Privileges</button><button>Back to VIP</button>`
         : isGiftCard
-          ? `<button class="primary"><span data-lang-only="zh">去通知他/她</span><span data-lang-only="en">Notify them</span></button>`
+          ? `<button class="primary"><span data-lang-only="zh">去通知他/她</span><span data-lang-only="en">Message</span></button>`
           : actionMarkup;
       const cardBlock = (isBuyer || isGiftCard) ? `
         <div class="cs-handle"></div>
@@ -5110,9 +5252,9 @@
                 </span>
               </div>
               <div class="cs-valid">
-                <span data-lang-only="zh">${meta.level || "VIP5"} · ${meta.days || ""}</span>
+                <span data-lang-only="zh">${meta.level || "VIP8"} · ${meta.days || ""}</span>
                 <small data-lang-only="zh">${meta.expireZh || ""}</small>
-                <span data-lang-only="en">${meta.level || "VIP5"} · ${meta.days || ""}</span>
+                <span data-lang-only="en">${meta.level || "VIP8"} · ${meta.days || ""}</span>
                 <small data-lang-only="en">${meta.expireEn || ""}</small>
               </div>
               <div class="cs-perks">
@@ -5136,7 +5278,7 @@
     });
 
     const baseStateMetadata = {
-      "01": {pageId: "vip-center-lower-level", slug: "lower-level-disabled", groupZh: "VIP中心浏览", groupEn: "VIP Center browsing", titleZh: "VIP中心－查看低等级", titleEn: "VIP Center · Browse lower level", rule: "FC §6.1, §70", state: "loaded", noteEn: "Loaded state: when Target VIP is below Current VIP, self-purchase stays disabled while Send remains available for VIP1–VIP4."},
+      "01": {pageId: "vip-center-lower-level", slug: "lower-level-disabled", groupZh: "VIP中心浏览", groupEn: "VIP Center browsing", titleZh: "VIP中心－查看低等级", titleEn: "VIP Center · Browse lower level", rule: "FC §6.1, §70", state: "loaded", noteEn: "Loaded state: when Target VIP is below Current VIP, self-purchase stays disabled while Send remains available for VIP1–VIP7."},
       "02": {pageId: "vip-center-same-level", slug: "same-level-renew", groupZh: "VIP中心浏览", groupEn: "VIP Center browsing", titleZh: "VIP中心－查看同等级", titleEn: "VIP Center · Browse same level", rule: "FC §6.2, §8, §70", state: "loaded", noteEn: "Loaded state: when Target VIP equals Current VIP, the primary action is Renew and package duration is added to the existing expiry."},
       "03": {pageId: "vip-center-higher-level", slug: "higher-level-upgrade", groupZh: "VIP中心浏览", groupEn: "VIP Center browsing", titleZh: "VIP中心－查看高等级", titleEn: "VIP Center · Browse higher level", rule: "FC §6.3, §9–17, §70", state: "loaded", noteEn: "Loaded state: when Target VIP is higher, show Upgrade; only D≥R packages with a positive server quote are enabled."},
       "04": {pageId: "vip-center-recharge-tier", slug: "vip5-recharge-entry", groupZh: "VIP中心浏览", groupEn: "VIP Center browsing", titleZh: "VIP中心－VIP8-10充值获得", titleEn: "VIP Center · VIP8–VIP10 via Recharge", rule: "FC §6.4, §38, §70", state: "loaded", noteEn: "Loaded state: VIP8–VIP10 share this page structure, have no Coins purchase or Send action, and route only to the matching Recharge Activity."},
@@ -5220,11 +5362,11 @@
             <div class="plan"><span class="coin">288888</span><span class="days">/60 days</span></div>
             <div class="plan"><span class="coin">388888</span><span class="days">/90 days</span></div>
           </div>
-          <div class="actions"><button>Send</button><button class="primary">Renew</button></div>
+          <div class="actions"><button>${vipLabel("Send")}</button><button class="primary">Renew</button></div>
         </section>
       </div>
-      <p class="state-note" data-lang-only="zh"><strong>规则：</strong>购买成功返回后展示当前已拥有的 VIP1：顶部身份与到期时间、已解锁的 Star Identity 与 Privileges；主按钮 Renew 续费、副按钮 Send 赠送（VIP1–4 可送）。</p>
-      <p class="state-note" data-lang-only="en"><strong>Rule:</strong> After a successful purchase the center shows the owned VIP1 with its identity, expiry and unlocked privileges; primary Renew, secondary Send (VIP1–4 gifting).</p>
+      <p class="state-note" data-lang-only="zh"><strong>规则：</strong>购买成功返回后展示当前已拥有的 VIP1：顶部身份与到期时间、已解锁的 Star Identity 与 Privileges；主按钮 Renew 续费、副按钮 Send 赠送（VIP1–VIP7 可送）。</p>
+      <p class="state-note" data-lang-only="en"><strong>Rule:</strong> After a successful purchase the center shows the owned VIP1 with its identity, expiry and unlocked privileges; primary Renew, secondary Send (VIP1–VIP7 gifting).</p>
     `;
     const anchor09 = document.getElementById("state-09-activate-no-vip");
     if (anchor09 && anchor09.nextSibling) anchor09.parentNode.insertBefore(ownedVipCenter, anchor09.nextSibling);
@@ -5269,6 +5411,10 @@
 
     ["background-copy-zh", "background-copy-en"].forEach((id) => {
       const element = document.getElementById(id);
+      if (isPublicReview) {
+        element.contentEditable = "false";
+        return;
+      }
       try {
         const saved = localStorage.getItem(`salfa-vip-${id}`);
         if (saved) element.textContent = saved;
@@ -5324,7 +5470,7 @@
         extraIdentityAssets.forEach(([mark, label]) => {
           row.insertAdjacentHTML(
             "beforeend",
-            `<div class="asset"><div class="asset-shape">${mark}</div><span>${label}</span></div>`
+            `<div class="asset"><div class="asset-shape">${mark}</div><span>${vipLabel(label)}</span></div>`
           );
         });
       });
@@ -5427,7 +5573,7 @@
         <div class="gift-row">
           <span class="gift-uava"><img src="${r[0]}" alt="receiver avatar"></span>
           <span class="gift-u-copy"><strong>${r[1]}</strong><span data-lang-only="zh">赠予 ${r[2]} · ${r[3]} 天</span><span data-lang-only="en">Sent ${r[2]} · ${r[3]} days</span></span>
-          <span class="gift-u-meta"><b>${r[4]}</b><small data-lang-only="zh">成功</small><small data-lang-only="en">Success</small></span>
+          <span class="gift-u-meta"><b>${r[4]}</b><small data-lang-only="zh">成功</small><small data-lang-only="en">Sent</small></span>
         </div>`).join("");
       const article = document.createElement("article");
       article.className = "state";
@@ -5446,7 +5592,7 @@
           <header class="appbar">
             <span class="icon-button back">‹</span>
             <h2 data-lang-only="zh">我送出的 VIP</h2>
-            <h2 data-lang-only="en">My VIP Gifts</h2>
+            <h2 data-lang-only="en">VIP Gifts Sent</h2>
             <span class="appbar-right"></span>
           </header>
           <div class="setting-head"><h3 data-lang-only="zh">送礼记录</h3><h3 data-lang-only="en">Gift records</h3><span>Count 4</span></div>
@@ -5491,18 +5637,19 @@
     window.setTimeout(() => {
       if (document.getElementById("state-38-vip-privilege-setting")) return;
       const priv38 = [
-        ["INC",  "Incognito",            1],
-        ["LVL",  "Hide Level",           1],
-        ["IDL",  "Hide Identity in List",0],
-        ["ONL",  "Hide Online Status",   1],
-        ["VIS",  "Visit Incognito",      0],
-        ["ROM",  "Enter Room Incognito", 0],
-        ["MSK",  "Mystery Man",          0]
+        ["MSK", "神秘人", "Hide your identity from other users.", 0],
+        ["KICK", "防踢保护", "Prevent others from kicking you out of rooms.", 0],
+        ["BLOCK", "禁止跟随", "Prevent others from following you into rooms.", 0],
+        ["HIDE", "隐藏在线状态", "Hide your online status from others.", 0]
       ];
-      const rows38 = priv38.map(([mark, name, on]) => `
+      const rows38 = priv38.map(([mark, name, description, on]) => `
         <div class="setting-row">
           <span class="setting-ico">${mark}</span>
-          <span class="setting-copy"><strong>${name}</strong><small>${on ? "Enabled" : "Off"}</small></span>
+          <span class="setting-copy">
+            <strong>${vipLabel(name)}</strong>
+            <span class="setting-description" lang="en">${description}</span>
+            <small>${on ? "Enabled" : "Off"}</small>
+          </span>
           <span class="setting-switch ${on ? "on" : ""}" aria-hidden="true"></span>
         </div>`).join("");
       const art38 = document.createElement("article");
@@ -5514,20 +5661,20 @@
       art38.dataset.pageGroupEn = "Identity, privileges and assets";
       art38.dataset.contractRule = "FC §5";
       art38.innerHTML = `
-        <h2 class="state-title"><span class="state-id">38</span><span data-lang-only="zh">VIP 权益设置</span><span data-lang-only="en">VIP Privilege Setting</span></h2>
+        <h2 class="state-title"><span class="state-id">38</span><span data-lang-only="zh">VIP 权益设置</span><span data-lang-only="en">VIP Settings</span></h2>
         <p class="state-rule-line">FC §5 · Enable / disable privileges</p>
         <div class="phone setting-page" data-state="loaded" data-annotation-id="vip-privilege-setting" data-contract-rule="FC §5">
           <div class="speaker"></div>
           <div class="statusbar"><span>16:30</span><span>••• 90%</span></div>
           <header class="appbar">
             <span class="icon-button back">‹</span>
-            <h2>VIP Privilege Setting</h2>
+            <h2>${vipLabel("VIP Privilege Setting")}</h2>
             <span class="appbar-right"></span>
           </header>
-          <div class="setting-head"><h3>Privilege toggles</h3><span>Current VIP1</span></div>
+          <div class="setting-head"><h3>${vipLabel("Privilege toggles")}</h3><span>Current VIP1</span></div>
           <div class="setting-sub">
             <span data-lang-only="zh">开启或关闭当前已拥有的 VIP 权益；未解锁权益为关闭态、点击无效。</span>
-            <span data-lang-only="en">Turn each owned VIP privilege on or off. Locked privileges stay off.</span>
+            <span data-lang-only="en">Choose what others can see. Only perks unlocked at your VIP level can be turned on.</span>
           </div>
           <div class="setting-rows">${rows38}</div>
         </div>
@@ -5542,13 +5689,13 @@
     window.setTimeout(() => {
       if (document.getElementById("state-39-vip-center-mine")) return;
       const mine = [
-        { badge: "V4", tier: "VIP4", status: "frozen", maxDays: 60, zhD: "剩余 <b>60</b> 天 · 冻结中", enD: "<b>60</b> days · frozen", exp: "冻结于 2026-09-04", expEn: "Frozen since 2026-09-04" },
-        { badge: "V2", tier: "VIP2", status: "frozen", maxDays: 45, zhD: "剩余 <b>45</b> 天 · 冻结中", enD: "<b>45</b> days · frozen", exp: "冻结于 2026-09-04（天数暂停消耗）", expEn: "Frozen since 2026-09-04 (days paused)" },
-        { badge: "V1", tier: "VIP1", status: "frozen", maxDays: 6, zhD: "剩余 <b>6</b> 天 · 冻结中", enD: "<b>6</b> days · frozen", exp: "冻结于 2026-09-04", expEn: "Frozen since 2026-09-04" },
+        { badge: "V4", tier: "VIP4", status: "frozen", maxDays: 60, zhD: "剩余 <b>60</b> 天 · 冻结中", enD: "<b>60</b> days left · paused", exp: "冻结于 2026-09-04", expEn: "Paused Sep 4, 2026" },
+        { badge: "V2", tier: "VIP2", status: "frozen", maxDays: 45, zhD: "剩余 <b>45</b> 天 · 冻结中", enD: "<b>45</b> days left · paused", exp: "冻结于 2026-09-04（天数暂停消耗）", expEn: "Paused Sep 4, 2026 (days do not count down)" },
+        { badge: "V1", tier: "VIP1", status: "frozen", maxDays: 6, zhD: "剩余 <b>6</b> 天 · 冻结中", enD: "<b>6</b> days left · paused", exp: "冻结于 2026-09-04", expEn: "Paused Sep 4, 2026" },
         { badge: "V3", tier: "VIP3", status: "expired", maxDays: 0, zhD: "已过期", enD: "Expired", exp: "到期 2026-08-20", expEn: "Expired 2026-08-20" }
       ];
       const zhStatus = { active: "生效中", frozen: "冻结中", expired: "已过期" };
-      const enStatus = { active: "Active", frozen: "Frozen", expired: "Expired" };
+      const enStatus = { active: "Active", frozen: "Paused", expired: "Expired" };
       const giftItems = mine.filter((m) => m.status !== "expired");
       const mineRows = giftItems.map((m) => `
         <div class="mvip-card ${m.status}">
@@ -5576,30 +5723,30 @@
       art39.dataset.pageGroupEn = "VIP Center browsing";
       art39.dataset.contractRule = "FC §Mine";
       art39.innerHTML = `
-        <h2 class="state-title"><span class="state-id">39</span><span data-lang-only="zh">Vip Center · Mine</span><span data-lang-only="en">Vip Center · Mine</span></h2>
-        <p class="state-rule-line">Mine · Collection / Record / Gift</p>
+        <h2 class="state-title"><span class="state-id">39</span><span data-lang-only="zh">Vip Center · Mine</span><span data-lang-only="en">VIP Center · My VIP</span></h2>
+        <p class="state-rule-line"><span data-lang-only="zh">Mine · Collection / Record / Gift</span><span data-lang-only="en">My VIP · VIP Cards / History / Transfer</span></p>
         <div class="phone minevip" data-state="loaded" data-annotation-id="vip-center-mine" data-contract-rule="FC §Mine">
           <div class="speaker"></div>
           <div class="statusbar"><span>16:40</span><span>••• 90%</span></div>
           <div class="mvip-tabs">
             <span data-lang-only="zh">VIP</span><span data-lang-only="en">VIP</span>
-            <span class="on" data-lang-only="zh">Mine</span><span class="on" data-lang-only="en">Mine</span>
+            <span class="on" data-lang-only="zh">Mine</span><span class="on" data-lang-only="en">My VIP</span>
           </div>
           <div class="mvip-ident">
             <span class="ava"><img src="assets/avatar-me-female.png" alt="Me"></span>
             <span><strong>Layla</strong><small data-lang-only="zh">VIP4 · 有效期至 2026-10-18</small><small data-lang-only="en">VIP4 · Valid until 2026-10-18</small></span>
           </div>
           <div class="m-subtabs">
-            <button type="button">Collection</button>
-            <button type="button">Record</button>
-            <button type="button" class="on">Gift</button>
+            <button type="button">${vipLabel("Collection")}</button>
+            <button type="button">${vipLabel("Record")}</button>
+            <button type="button" class="on">${vipLabel("Gift", "Transfer")}</button>
           </div>
           <div class="mvip-cap sm" data-lang-only="zh">Gift · 我可转赠的 VIP（可自定义天数）</div>
-          <div class="mvip-cap sm" data-lang-only="en">Gift · VIP I can gift (custom days)</div>
+          <div class="mvip-cap sm" data-lang-only="en">Transfer VIP Days · Choose how many days to send</div>
           <div class="mvip-grid" style="padding-top:2px">${mineRows}</div>
         </div>
         <p class="state-note" data-lang-only="zh"><strong>规则：</strong>Mine 分三块：Collection＝已过期等级；Record＝赠送/转赠记录；Gift＝当前可转赠 VIP。转赠支持自定义转赠天数（≤ 持有剩余），可搜索选择好友。</p>
-        <p class="state-note" data-lang-only="en"><strong>Rule:</strong> Mine has Collection (expired), Record (gift history), Gift (transferable VIP). Gift lets you choose a friend and gift a custom number of days (≤ remaining).</p>
+        <p class="state-note" data-lang-only="en"><strong>Rule:</strong> My VIP includes VIP Cards, History and Transfer. Transfer lets you send a chosen number of days from a VIP membership you already own, up to the remaining balance.</p>
       `;
       document.querySelector(".states").appendChild(art39);
 
@@ -5618,25 +5765,24 @@
           <div class="speaker"></div>
           <div class="statusbar"><span>16:42</span><span>••• 90%</span></div>
           <div class="mvip-tabs">
-            <span>VIP</span><span class="on">Mine</span>
+            <span>VIP</span><span class="on">${vipLabel("Mine")}</span>
           </div>
           <div class="mvip-ident">
             <span class="ava"><img src="assets/avatar-me-female.png" alt="Layla"></span>
             <span><strong>Layla</strong><small data-lang-only="zh">VIP4 · 有效期至 2026-10-18</small><small data-lang-only="en">VIP4 · Valid until 2026-10-18</small></span>
           </div>
           <div class="m-subtabs">
-            <button type="button">Collection</button>
-            <button type="button">Record</button>
-            <button type="button" class="on">Gift</button>
+            <button type="button">${vipLabel("Collection")}</button>
+            <button type="button">${vipLabel("Record")}</button>
+            <button type="button" class="on">${vipLabel("Gift", "Transfer")}</button>
           </div>
           <div class="mvip-cap sm" data-lang-only="zh">Gift · 我可转赠的 VIP（可自定义天数）</div>
-          <div class="mvip-cap sm" data-lang-only="en">Gift · VIP I can transfer (custom days)</div>
+          <div class="mvip-cap sm" data-lang-only="en">Transfer VIP Days · Choose how many days to send</div>
           <div class="mvip-grid" style="padding-top:2px">${mineRows}</div>
           <div class="screen-dim"></div>
           <section class="gift-sheet" data-annotation-id="vip-transfer-sheet" data-contract-rule="USER-2026-09-04-TRANSFER">
             <div class="gs-handle"></div>
-            <div class="gs-title"><span data-lang-only="zh">转赠 VIP4</span><span data-lang-only="en">Transfer VIP4</span></div>
-            <div class="gs-sub"><span data-lang-only="zh">当前剩余 60 天 · 自定义本次转赠天数</span><span data-lang-only="en">60 days remaining · Choose transfer days</span></div>
+            <div class="gs-title"><span data-lang-only="zh">转赠 VIP4</span><span data-lang-only="en">Transfer VIP4 Days</span></div>
             <div class="gs-search">
               <input type="search" value="3418767" inputmode="numeric" aria-label="搜索用户 ID" placeholder="输入用户 ID" data-placeholder-zh="输入用户 ID" data-placeholder-en="Enter user ID" data-aria-label-zh="搜索用户 ID" data-aria-label-en="Search user ID">
               <button type="button" class="mini" data-transfer-search><span data-lang-only="zh">搜索</span><span data-lang-only="en">Search</span></button>
@@ -5647,9 +5793,8 @@
               <span class="pick"><span data-lang-only="zh">已选择</span><span data-lang-only="en">Selected</span></span>
             </div>
             <div class="gs-days">
-              <label for="transfer-days"><span data-lang-only="zh">转赠天数</span><span data-lang-only="en">Transfer days</span></label>
+              <label for="transfer-days"><span data-lang-only="zh">转赠天数</span><span data-lang-only="en">Days to transfer</span></label>
               <input id="transfer-days" type="number" min="1" max="60" value="30" inputmode="numeric">
-              <div class="max"><span data-lang-only="zh">最多可转赠 60 天；实际边界规则待确认</span><span data-lang-only="en">Up to 60 days; final boundary rules are TBD</span></div>
             </div>
             <div class="gs-actions">
               <button type="button" class="mini" data-close-transfer><span data-lang-only="zh">取消</span><span data-lang-only="en">Cancel</span></button>
@@ -5657,8 +5802,8 @@
             </div>
           </section>
         </div>
-        <p class="state-note" data-lang-only="zh"><strong>规则：</strong>从第 39 页点击转赠进入本展开态；支持搜索用户 ID、自定义天数并点击转赠。手续费、最小天数、接收人资格与冻结 VIP 是否可转赠仍待确认。</p>
-        <p class="state-note" data-lang-only="en"><strong>Rule:</strong> Tap Transfer on page 39 to open this half-sheet, search by user ID, enter custom days, then tap Transfer. Fees, minimum days, receiver eligibility and frozen-VIP transfer remain TBD.</p>
+        <p class="state-note" data-lang-only="zh"><strong>规则：</strong>从第 39 页点击转赠进入本展开态；支持搜索用户 ID、自定义天数并点击转赠。</p>
+        <p class="state-note" data-lang-only="en"><strong>Rule:</strong> Tap Transfer on page 39 to open this half-sheet, search by user ID, enter custom days, then tap Transfer.</p>
       `;
       art39.parentNode.insertBefore(art40, art39.nextSibling);
 
@@ -5674,23 +5819,21 @@
       try { applyReviewLanguage(document.body.dataset.lang || "zh"); } catch (e) {}
     }, 0);
 
-    // 41 画板：Mine · Collection（我的 VIP 卡片状态：使用中/有效/冻结/过期）
+    // 41 画板：Mine · Collection（我的 VIP 卡片状态：使用中/冻结/过期）
     // 42 画板：Mine · Record（赠送与转赠记录）
     window.setTimeout(() => {
       if (document.getElementById("state-41-vip-center-collection")) return;
       const colCards = [
         { badge: "V4", tier: "VIP4", st: "inuse",  zhD: "剩余 <b>60</b> 天", enD: "<b>60</b> days left",   zhE: "到期 2026-10-18", enE: "Expires 2026-10-18" },
-        { badge: "V1", tier: "VIP1", st: "valid",  zhD: "剩余 <b>6</b> 天",  enD: "<b>6</b> days left",    zhE: "到期 2026-09-11", enE: "Expires 2026-09-11" },
-        { badge: "V2", tier: "VIP2", st: "frozen", zhD: "剩余 <b>45</b> 天 · 冻结中", enD: "<b>45</b> days · frozen", zhE: "冻结于 2026-09-04", enE: "Frozen since 2026-09-04" },
+        { badge: "V2", tier: "VIP2", st: "frozen", zhD: "剩余 <b>45</b> 天 · 冻结中", enD: "<b>45</b> days left · paused", zhE: "冻结于 2026-09-04", enE: "Paused Sep 4, 2026" },
         { badge: "V3", tier: "VIP3", st: "expired", zhD: "剩余 <b>0</b> 天", enD: "No days left", zhE: "到期 2026-08-20", enE: "Expired 2026-08-20" }
       ];
       const colLabel = {
-        inuse: ["使用中", "In use"],
-        valid: ["有效", "Valid"],
-        frozen: ["冻结", "Frozen"],
+        inuse: ["使用中", "Active"],
+        frozen: ["冻结", "Paused"],
         expired: ["过期", "Expired"]
       };
-      const colChips = ["inuse", "valid", "frozen", "expired"].map((s, i) => `
+      const colChips = ["inuse", "frozen", "expired"].map((s, i) => `
         <span class="chip ${i === 0 ? "on" : ""}"><span data-lang-only="zh">${colLabel[s][0]}</span><span data-lang-only="en">${colLabel[s][1]}</span></span>`).join("");
       const colRows = colCards.map((c) => `
         <div class="mvip-card ${c.st === "frozen" ? "frozen" : ""} ${c.st === "expired" ? "expired" : ""}">
@@ -5716,32 +5859,32 @@
       art41.dataset.pageGroupEn = "VIP Center browsing";
       art41.dataset.contractRule = "FC §Mine";
       art41.innerHTML = `
-        <h2 class="state-title"><span class="state-id">41</span><span data-lang-only="zh">我的 VIP · Collection（卡片状态）</span><span data-lang-only="en">My VIP · Collection (card states)</span></h2>
-        <p class="state-rule-line" data-lang-only="zh">Mine · Collection：我的 VIP 卡片状态（使用中 / 有效 / 冻结 / 过期）</p>
-        <p class="state-rule-line" data-lang-only="en">Mine · Collection: possible VIP card states (In use / Valid / Frozen / Expired)</p>
+        <h2 class="state-title"><span class="state-id">41</span><span data-lang-only="zh">我的 VIP · Collection（卡片状态）</span><span data-lang-only="en">My VIP · VIP Cards (membership status)</span></h2>
+        <p class="state-rule-line" data-lang-only="zh">Mine · Collection：我的 VIP 卡片状态（使用中 / 冻结 / 过期）</p>
+        <p class="state-rule-line" data-lang-only="en">My VIP · VIP Cards: Active / Paused / Expired</p>
         <div class="phone minevip tall" data-state="loaded" data-annotation-id="vip-center-collection" data-contract-rule="FC §Mine">
           <div class="speaker"></div>
           <div class="statusbar"><span>16:41</span><span>••• 90%</span></div>
           <div class="mvip-tabs">
             <span data-lang-only="zh">VIP</span><span data-lang-only="en">VIP</span>
-            <span class="on" data-lang-only="zh">Mine</span><span class="on" data-lang-only="en">Mine</span>
+            <span class="on" data-lang-only="zh">Mine</span><span class="on" data-lang-only="en">My VIP</span>
           </div>
           <div class="mvip-ident">
             <span class="ava"><img src="assets/avatar-me-female.png" alt="Me"></span>
             <span><strong>Layla</strong><small data-lang-only="zh">VIP4 · 有效期至 2026-10-18</small><small data-lang-only="en">VIP4 · Valid until 2026-10-18</small></span>
           </div>
           <div class="m-subtabs">
-            <button type="button" class="on">Collection</button>
-            <button type="button">Record</button>
-            <button type="button">Gift</button>
+            <button type="button" class="on">${vipLabel("Collection")}</button>
+            <button type="button">${vipLabel("Record")}</button>
+            <button type="button">${vipLabel("Gift", "Transfer")}</button>
           </div>
-          <div class="mvip-cap sm"><span data-lang-only="zh">Collection · 我的 VIP 卡片，展示可能存在的状态</span><span data-lang-only="en">Collection · my VIP cards and the states they can be in</span></div>
+          <div class="mvip-cap sm"><span data-lang-only="zh">Collection · 我的 VIP 卡片，展示可能存在的状态</span><span data-lang-only="en">VIP Cards · Your memberships at a glance</span></div>
           <div class="st-chips">${colChips}</div>
           <div class="mvip-grid" style="padding-top:10px">${colRows}</div>
-          <div class="mvip-cap sm"><span data-lang-only="zh">使用中＝当前生效等级；有效＝未到期但未启用；冻结＝天数暂停消耗；过期＝剩余天数为 0。</span><span data-lang-only="en">In use = current level; Valid = unexpired but not activated; Frozen = days paused; Expired = no days left.</span></div>
+          <div class="mvip-cap sm"><span data-lang-only="zh">使用中＝当前生效等级；冻结＝天数暂停消耗；过期＝剩余天数为 0。</span><span data-lang-only="en">Active: currently in use. Paused: remaining days do not count down. Expired: no days left.</span></div>
         </div>
-        <p class="state-note" data-lang-only="zh"><strong>规则：</strong>Collection 展示我持有的 VIP 卡片及其状态。使用中为当前生效等级；有效为未过期但未启用的等级（如备用/赠得）；冻结状态天数暂停消耗；过期状态剩余天数为 0、不可使用。各状态的可用操作按上下文展示（使用中/有效支持查看权益、续费，Gift 页仅转赠）。</p>
-        <p class="state-note" data-lang-only="en"><strong>Rule:</strong> Collection lists my VIP cards and their states: In use is the active level, Valid is unexpired but not activated, Frozen pauses day consumption, Expired has no days left. Available actions depend on context (renew/benefits for active or valid, transfer only on the Gift tab).</p>
+        <p class="state-note" data-lang-only="zh"><strong>规则：</strong>Collection 展示我持有的 VIP 卡片及其状态。使用中为当前生效等级；冻结状态天数暂停消耗；过期状态剩余天数为 0、不可使用。</p>
+        <p class="state-note" data-lang-only="en"><strong>Rule:</strong> VIP Cards lists owned memberships: Active is currently in use; Paused preserves the remaining days; Expired has no days left.</p>
       `;
       document.querySelector(".states").appendChild(art41);
 
@@ -5765,7 +5908,7 @@
             <span class="rec-days"><span data-lang-only="zh">${r.tier} · ${r.d} 天</span><span data-lang-only="en">${r.tier} · ${r.d} days</span></span>
             ${r.coin ? `<span class="rec-coins"><span data-lang-only="zh">消耗金币 ${r.coin}</span><span data-lang-only="en">Spent ${r.coin} Coins</span></span>` : ""}
           </span>
-          <span class="rec-meta"><b>${r.time}</b><small data-lang-only="zh">成功</small><small data-lang-only="en">Done</small></span>
+          <span class="rec-meta"><b>${r.time}</b><small data-lang-only="zh">成功</small><small data-lang-only="en">Sent</small></span>
         </div>`).join("");
 
       const art42 = document.createElement("article");
@@ -5777,30 +5920,30 @@
       art42.dataset.pageGroupEn = "VIP Center browsing";
       art42.dataset.contractRule = "FC §Mine";
       art42.innerHTML = `
-        <h2 class="state-title"><span class="state-id">42</span><span data-lang-only="zh">我的 VIP · Record（赠送 / 转赠记录）</span><span data-lang-only="en">My VIP · Record (gift & transfer log)</span></h2>
+        <h2 class="state-title"><span class="state-id">42</span><span data-lang-only="zh">我的 VIP · Record（赠送 / 转赠记录）</span><span data-lang-only="en">My VIP · History (sent gifts & VIP days)</span></h2>
         <p class="state-rule-line" data-lang-only="zh">Mine · Record：赠送与转赠记录（对象昵称 / ID / 天数；赠送含消耗金币）</p>
-        <p class="state-rule-line" data-lang-only="en">Mine · Record: gift and transfer log (recipient nickname / ID / days; gifting shows coins spent)</p>
+        <p class="state-rule-line" data-lang-only="en">My VIP · History: recipients, VIP days and coins spent on gifts</p>
         <div class="phone minevip" data-state="loaded" data-annotation-id="vip-center-record" data-contract-rule="FC §Mine">
           <div class="speaker"></div>
           <div class="statusbar"><span>16:42</span><span>••• 90%</span></div>
           <div class="mvip-tabs">
             <span data-lang-only="zh">VIP</span><span data-lang-only="en">VIP</span>
-            <span class="on" data-lang-only="zh">Mine</span><span class="on" data-lang-only="en">Mine</span>
+            <span class="on" data-lang-only="zh">Mine</span><span class="on" data-lang-only="en">My VIP</span>
           </div>
           <div class="mvip-ident">
             <span class="ava"><img src="assets/avatar-me-female.png" alt="Me"></span>
             <span><strong>Layla</strong><small data-lang-only="zh">VIP4 · 有效期至 2026-10-18</small><small data-lang-only="en">VIP4 · Valid until 2026-10-18</small></span>
           </div>
           <div class="m-subtabs">
-            <button type="button">Collection</button>
-            <button type="button" class="on">Record</button>
-            <button type="button">Gift</button>
+            <button type="button">${vipLabel("Collection")}</button>
+            <button type="button" class="on">${vipLabel("Record")}</button>
+            <button type="button">${vipLabel("Gift", "Transfer")}</button>
           </div>
-          <div class="mvip-cap sm"><span data-lang-only="zh">Record · 我赠送 / 转赠 VIP 的记录</span><span data-lang-only="en">Record · VIP I gifted or transferred</span></div>
+          <div class="mvip-cap sm"><span data-lang-only="zh">Record · 我赠送 / 转赠 VIP 的记录</span><span data-lang-only="en">History · VIP gifts and days you've sent</span></div>
           <div class="rec-list" style="padding-top:6px">${recRows}</div>
         </div>
-        <p class="state-note" data-lang-only="zh"><strong>规则：</strong>Record 同时记录赠送与转赠：每笔展示对象昵称、用户 ID、VIP 等级与天数、完成时间；赠送（为好友购买新 VIP）额外标注消耗金币，转赠（从我持有的 VIP 划出天数）不消耗金币。转赠手续费等边界规则待确认。</p>
-        <p class="state-note" data-lang-only="en"><strong>Rule:</strong> Record keeps both gift and transfer logs: recipient nickname, ID, VIP level, days and time per entry. Gifting (buying VIP for a friend) also shows coins spent; transferring days from my own VIP does not spend coins. Transfer fees remain TBD.</p>
+        <p class="state-note" data-lang-only="zh"><strong>规则：</strong>Record 同时记录赠送与转赠：每笔展示对象昵称、用户 ID、VIP 等级与天数、完成时间。</p>
+        <p class="state-note" data-lang-only="en"><strong>Rule:</strong> History shows the recipient, ID, VIP level, days and time.</p>
       `;
       document.querySelector(".states").appendChild(art42);
 
@@ -5830,28 +5973,28 @@
       art43.dataset.pageGroupEn = "VIP Center browsing";
       art43.dataset.contractRule = "USER-2026-09-08-RECEIVED";
       art43.innerHTML = `
-        <h2 class="state-title"><span class="state-id">43</span><span data-lang-only="zh">接收方 Mine · Record（我收到的 VIP）</span><span data-lang-only="en">Receiver Mine · Record (VIP received)</span></h2>
+        <h2 class="state-title"><span class="state-id">43</span><span data-lang-only="zh">接收方 Mine · Record（我收到的 VIP）</span><span data-lang-only="en">My VIP · History (received gifts & VIP days)</span></h2>
         <p class="state-rule-line" data-lang-only="zh">Mine · Record：接收方查看收到的 VIP 赠送与转赠记录</p>
-        <p class="state-rule-line" data-lang-only="en">Mine · Record: VIP gifts and transfers received by this user</p>
+        <p class="state-rule-line" data-lang-only="en">My VIP · History: VIP memberships and days received</p>
         <div class="phone minevip" data-state="loaded" data-annotation-id="receiver-vip-record" data-contract-rule="USER-2026-09-08-RECEIVED">
           <div class="speaker"></div>
           <div class="statusbar"><span>16:46</span><span>••• 90%</span></div>
           <div class="mvip-tabs">
-            <span>VIP</span><span class="on">Mine</span>
+            <span>VIP</span><span class="on">${vipLabel("Mine")}</span>
           </div>
           <div class="mvip-ident">
             <span class="ava"><img src="assets/avatar-me-male.png" alt="Omar"></span>
-            <span><strong>Omar</strong><small data-lang-only="zh">接收方 · 我的 VIP</small><small data-lang-only="en">Receiver · My VIP</small></span>
+            <span><strong>Omar</strong><small data-lang-only="zh">接收方 · 我的 VIP</small><small data-lang-only="en">Received VIP memberships</small></span>
           </div>
           <div class="m-subtabs">
-            <button type="button">Collection</button>
-            <button type="button" class="on">Record</button>
+            <button type="button">${vipLabel("Collection")}</button>
+            <button type="button" class="on">${vipLabel("Record")}</button>
           </div>
-          <div class="mvip-cap sm"><span data-lang-only="zh">Record · 我收到的 VIP</span><span data-lang-only="en">Record · VIP I received</span></div>
+          <div class="mvip-cap sm"><span data-lang-only="zh">Record · 我收到的 VIP</span><span data-lang-only="en">History · VIP gifts and days you've received</span></div>
           <div class="rec-list" style="padding-top:6px">${receivedRows}</div>
         </div>
         <p class="state-note" data-lang-only="zh"><strong>规则：</strong>接收方 Mine 仅展示 Collection 与 Record；进入页面默认定位 Record，按时间倒序展示我收到的 VIP，区分获赠和转赠，并展示来源用户、VIP 等级、天数与到账时间。</p>
-        <p class="state-note" data-lang-only="en"><strong>Rule:</strong> Receiver Mine only shows Collection and Record. It opens on Record and lists received VIP entries newest first, with source user, VIP level, days and received time.</p>
+        <p class="state-note" data-lang-only="en"><strong>Rule:</strong> The recipient sees VIP Cards and History. History opens by default, showing the sender, VIP level, days and time received, newest first. Gift is a membership bought for you; Transfer is VIP time sent from another user's balance.</p>
       `;
       document.querySelector(".states").appendChild(art43);
       try { applyReviewLanguage(document.body.dataset.lang || "zh"); } catch (e) {}
@@ -5868,9 +6011,9 @@
         if (!h2) return;
         const tabs = document.createElement("span");
         tabs.className = "vc-tabs";
-        tabs.innerHTML = '<button type="button" class="on">VIP</button><button type="button">Mine</button>';
+        tabs.innerHTML = `<button type="button" class="on">VIP</button><button type="button" data-vip-tab="mine">${vipLabel("Mine")}</button>`;
         tabs.querySelectorAll("button").forEach((b) => b.addEventListener("click", () => {
-          if (b.textContent.trim() === "Mine") {
+          if (b.dataset.vipTab === "mine") {
             const mine = document.getElementById("state-39-vip-center-mine");
             if (mine) mine.scrollIntoView({ behavior: "smooth", block: "center" });
           }
@@ -5905,6 +6048,326 @@
         try { applyReviewLanguage(document.body.dataset.lang || "zh"); } catch (e) {}
       }
     }, 0);
+  </script>
+
+  <!-- ===== VIP 人工下发：下发弹窗 ===== -->
+  <div class="modal-mask" id="grant-mask">
+    <div class="modal" role="dialog" aria-modal="true" aria-label="VIP下发">
+      <div class="modal-head"><h3>VIP 下发</h3><button class="modal-close" data-close-grant type="button" aria-label="关闭">✕</button></div>
+      <div class="modal-body">
+        <div class="gf-grid">
+          <div class="gf-label">用户 ID<span class="req">*</span></div>
+          <div class="gf-ctrl" id="ctl-uid">
+            <div style="display:flex;gap:8px">
+              <input type="text" id="g-uid" placeholder="输入用户 UID 后查询" style="flex:1">
+              <button class="btn" id="g-query" type="button">查询</button>
+            </div>
+            <div class="err" id="err-uid">请输入用户 ID</div>
+          </div>
+
+          <div class="gf-label">用户信息</div>
+          <div class="gf-ctrl">
+            <div class="vip-info-card" id="g-user-card" style="display:none">
+              <span class="avatar" id="g-avatar">头像</span>
+              <div><div class="vi-name" id="g-name">—</div><div class="vi-uid" id="g-uid-show">—</div></div>
+            </div>
+            <div class="preview-empty" id="g-user-empty">查询后展示头像、昵称与 UID</div>
+          </div>
+
+          <div class="gf-label">当前 VIP 状态</div>
+          <div class="gf-ctrl">
+            <div class="vip-cards" id="g-current-cards"></div>
+            <div class="preview-empty" id="g-current-empty" style="display:none">当前无有效 VIP</div>
+          </div>
+
+          <div class="gf-label">VIP 等级<span class="req">*</span></div>
+          <div class="gf-ctrl" id="ctl-tier">
+            <select id="g-tier">
+              <option value="">请选择</option>
+              <option>VIP1</option><option>VIP2</option><option>VIP3</option><option>VIP4</option>
+              <option>VIP5</option><option>VIP6</option><option>VIP7</option><option>VIP8</option>
+              <option>VIP9</option><option>VIP10</option>
+            </select>
+            <div class="err" id="err-tier">请选择 VIP 等级</div>
+          </div>
+
+          <div class="gf-label">下发天数<span class="req">*</span></div>
+          <div class="gf-ctrl" id="ctl-days">
+            <input type="number" id="g-days" min="1" value="30" style="max-width:160px">
+            <div class="hint">必填，正整数，最小 1 天</div>
+            <div class="err" id="err-days">请输入大于 0 的正整数</div>
+          </div>
+
+          <div class="gf-label">下发原因</div>
+          <div class="gf-ctrl">
+            <select id="g-reason">
+              <option>运营补偿</option><option>活动奖励</option><option>其他</option>
+            </select>
+          </div>
+
+          <div class="gf-label">备注</div>
+          <div class="gf-ctrl">
+            <textarea id="g-note" placeholder="记录具体下发原因"></textarea>
+          </div>
+
+          <div class="gf-label">下发结果预览</div>
+          <div class="gf-ctrl">
+            <div class="preview-box" id="g-preview">
+              <div class="preview-empty">选择 VIP 等级与下发天数后展示预计生效状态</div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="modal-foot">
+        <button class="btn" data-close-grant type="button">取消</button>
+        <button class="btn primary" id="g-submit" type="button">确认下发</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== VIP 人工下发：二次确认弹窗 ===== -->
+  <div class="modal-mask" id="confirm-mask">
+    <div class="modal" role="dialog" aria-modal="true" aria-label="确认下发" style="width:480px">
+      <div class="modal-head"><h3>确认下发</h3><button class="modal-close" data-close-confirm type="button" aria-label="关闭">✕</button></div>
+      <div class="modal-body">
+        <div class="preview-box" id="confirm-summary"></div>
+      </div>
+      <div class="modal-foot">
+        <button class="btn" data-close-confirm type="button">取消</button>
+        <button class="btn" id="confirm-fail-demo" type="button" style="border-color:#c00;color:#c00">（演示）模拟失败</button>
+        <button class="btn primary" id="confirm-ok" type="button">确认下发</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="toast" id="toast"></div>
+
+  <script>
+  if (isPublicReview) {
+    window.setTimeout(() => {
+      document.querySelectorAll("input, textarea, select, .admin-board button:not([data-admin-page]), .modal-mask button, [data-transfer-search], [data-submit-transfer]").forEach((control) => {
+        control.disabled = true;
+      });
+      document.querySelectorAll('[contenteditable="true"]').forEach((element) => {
+        element.contentEditable = "false";
+      });
+      document.querySelectorAll("form").forEach((form) => {
+        form.addEventListener("submit", (event) => event.preventDefault());
+      });
+    }, 0);
+  }
+  // ===== VIP 人工下发（Admin Grant）交互 =====
+  (function () {
+    var $ = function (s, r) { return (r || document).querySelector(s); };
+    var $$ = function (s, r) { return Array.prototype.slice.call((r || document).querySelectorAll(s)); };
+
+    var MOCK_USERS = {
+      "3418767": { name: "Omar", avatar: "O", cards: [ { tier: "VIP4", status: "active", days: 60 } ] },
+      "8832104": { name: "Layla", avatar: "L", cards: [ { tier: "VIP1", status: "active", days: 30 } ] },
+      "6661234": { name: "Ken", avatar: "K", cards: [] },
+      "7778888": { name: "Mia", avatar: "M", cards: [ { tier: "VIP6", status: "active", days: 90 }, { tier: "VIP2", status: "frozen", days: 45 } ] },
+      "5550000": { name: "Zoe", avatar: "Z", cards: [ { tier: "VIP3", status: "expired", days: 0 } ] }
+    };
+    var OPERATOR = "admin@salfa";
+    var GRANT_RECORDS = [
+      { uid: "3418767", name: "Omar", tier: "VIP8", days: 30, source: "Admin Grant", reason: "活动奖励", operator: "admin@salfa", time: "2026-09-20 14:12", status: "成功" },
+      { uid: "8832104", name: "Layla", tier: "VIP5", days: 60, source: "Admin Grant", reason: "运营补偿", operator: "admin@salfa", time: "2026-09-18 09:40", status: "成功" },
+      { uid: "6661234", name: "Ken", tier: "VIP2", days: 15, source: "Admin Grant", reason: "其他", operator: "admin@salfa", time: "2026-09-15 21:05", status: "失败" }
+    ];
+
+    function tierNum(t) { return parseInt(String(t).replace(/\D/g, ""), 10); }
+    function statusTag(status) {
+      var map = { active: ["s-active", "使用中"], frozen: ["s-frozen", "冻结"], pending: ["s-pending", "待使用"], expired: ["s-expired", "过期"] };
+      var m = map[status] || ["s-expired", "未知"];
+      return '<span class="stag ' + m[0] + '">' + m[1] + "</span>";
+    }
+    function computePreview(cards, grantTier, grantDays) {
+      var hasActive = cards.some(function (c) { return c.status === "active"; });
+      var higher = cards.filter(function (c) { return c.status === "active" && tierNum(c.tier) > grantTier; });
+      var same = cards.filter(function (c) { return tierNum(c.tier) === grantTier; })[0];
+      var predicted, effect;
+      if (cards.length === 0 || cards.every(function (c) { return c.status === "expired"; })) {
+        predicted = "直接生效";
+        effect = "用户当前无有效 VIP，下发后该等级直接生效。";
+      } else if (higher.length) {
+        predicted = "高等级生效，本等级冻结";
+        effect = "用户已有更高等级（" + higher[0].tier + "）生效，下发后高等级继续生效，本等级进入冻结状态。";
+      } else if (same && same.status === "active") {
+        predicted = "累加剩余有效时长";
+        effect = "与当前生效等级相同，累加对应等级剩余有效时长（原 " + same.days + " 天 + 下发 " + grantDays + " 天）。";
+      } else if (same && same.status === "frozen") {
+        predicted = "累加冻结剩余时长";
+        effect = "该等级当前为冻结状态，累加冻结剩余时长（原 " + same.days + " 天 + 下发 " + grantDays + " 天）。";
+      } else if (hasActive) {
+        predicted = "低等级进入冻结";
+        effect = "用户已有低等级生效，下发高等级后，原低等级进入冻结状态。";
+      } else {
+        predicted = "直接生效"; effect = "下发后直接生效。";
+      }
+      return { predicted: predicted, effect: effect };
+    }
+    function renderRecords() {
+      var tbody = $("#grant-record-table tbody");
+      if (!tbody) return;
+      var fUid = ($("#f-uid") ? $("#f-uid").value : "").trim().toLowerCase();
+      var fTier = $("#f-tier-filter") ? $("#f-tier-filter").value : "";
+      var fOp = ($("#f-op") ? $("#f-op").value : "").trim().toLowerCase();
+      var fTime = $("#f-time") ? $("#f-time").value : "";
+      var rows = GRANT_RECORDS.filter(function (r) {
+        if (fUid && r.uid.toLowerCase().indexOf(fUid) === -1) return false;
+        if (fTier && r.tier !== fTier) return false;
+        if (fOp && r.operator.toLowerCase().indexOf(fOp) === -1) return false;
+        if (fTime && r.time.slice(0, 10) < fTime) return false;
+        return true;
+      });
+      if (!rows.length) {
+        tbody.innerHTML = '<tr><td colspan="9" class="tag">无匹配记录</td></tr>';
+        return;
+      }
+      tbody.innerHTML = rows.map(function (r) {
+        var st = r.status === "成功" ? '<span class="pill">成功</span>' : '<span class="pill gray">失败</span>';
+        return "<tr><td>" + r.uid + "</td><td>" + r.name + "</td><td>" + r.tier + "</td><td>" + r.days + " 天</td><td>" + r.source + "</td><td>" + r.reason + "</td><td>" + r.operator + "</td><td>" + r.time + "</td><td>" + st + "</td></tr>";
+      }).join("");
+    }
+    function openMask(id) { $(id).classList.add("open"); }
+    function closeMask(el) { el.classList.remove("open"); }
+
+    var currentUser = null;
+    function queryUser() {
+      var uid = ($("#g-uid").value || "").trim();
+      var ctl = $("#ctl-uid");
+      if (!uid) { ctl.classList.add("invalid"); $("#err-uid").textContent = "请输入用户 ID"; return; }
+      ctl.classList.remove("invalid");
+      var u = MOCK_USERS[uid];
+      if (!u) {
+        $("#g-user-card").style.display = "none";
+        $("#g-user-empty").style.display = "block";
+        $("#g-user-empty").textContent = "未找到用户（UID 不存在）";
+        $("#g-current-cards").innerHTML = ""; $("#g-current-empty").style.display = "none";
+        currentUser = null; updatePreview(); return;
+      }
+      currentUser = { uid: uid, name: u.name, avatar: u.avatar, cards: u.cards };
+      $("#g-user-card").style.display = "flex";
+      $("#g-user-empty").style.display = "none";
+      $("#g-avatar").textContent = u.avatar;
+      $("#g-name").textContent = u.name;
+      $("#g-uid-show").textContent = "UID: " + uid;
+      if (!u.cards.length) {
+        $("#g-current-cards").innerHTML = ""; $("#g-current-empty").style.display = "block";
+      } else {
+        $("#g-current-empty").style.display = "none";
+        $("#g-current-cards").innerHTML = u.cards.map(function (c) {
+          return '<div class="vip-card-mini"><div class="t">' + c.tier + " " + statusTag(c.status) + '</div><div class="d">剩余 ' + c.days + " 天</div></div>";
+        }).join("");
+      }
+      updatePreview();
+    }
+    function updatePreview() {
+      var tier = $("#g-tier").value;
+      var days = parseInt($("#g-days").value, 10);
+      var box = $("#g-preview");
+      if (!tier || !days || days < 1) {
+        box.innerHTML = '<div class="preview-empty">选择 VIP 等级与下发天数后展示预计生效状态</div>';
+        return;
+      }
+      var cards = currentUser ? currentUser.cards : [];
+      var p = computePreview(cards, tierNum(tier), days);
+      box.innerHTML =
+        '<div class="pv-row"><span class="pv-k">下发 VIP 等级</span><span class="pv-v">' + tier + "</span></div>" +
+        '<div class="pv-row"><span class="pv-k">下发有效天数</span><span class="pv-v">' + days + " 天</span></div>" +
+        '<div class="pv-row"><span class="pv-k">下发来源</span><span class="pv-v">Admin Grant</span></div>' +
+        '<div class="pv-row"><span class="pv-k">预计生效状态</span><span class="pv-v">' + p.predicted + "</span></div>" +
+        '<div class="pv-row"><span class="pv-k">对原有 VIP 状态的影响</span><span class="pv-v">' + p.effect + "</span></div>";
+    }
+    function validateForm() {
+      var ok = true;
+      var uid = ($("#g-uid").value || "").trim();
+      var ctlU = $("#ctl-uid"), ctlT = $("#ctl-tier"), ctlD = $("#ctl-days");
+      if (!uid || !MOCK_USERS[uid]) { ctlU.classList.add("invalid"); ok = false; } else ctlU.classList.remove("invalid");
+      var tier = $("#g-tier").value;
+      if (!tier) { ctlT.classList.add("invalid"); ok = false; } else ctlT.classList.remove("invalid");
+      var days = parseInt($("#g-days").value, 10);
+      if (!days || days < 1) { ctlD.classList.add("invalid"); ok = false; } else ctlD.classList.remove("invalid");
+      return ok;
+    }
+    function openConfirm() {
+      if (!validateForm()) return;
+      var uid = ($("#g-uid").value || "").trim();
+      var tier = $("#g-tier").value;
+      var days = parseInt($("#g-days").value, 10);
+      var reason = $("#g-reason").value;
+      var cards = currentUser ? currentUser.cards : [];
+      var p = computePreview(cards, tierNum(tier), days);
+      $("#confirm-summary").innerHTML =
+        '<div class="pv-row"><span class="pv-k">接收用户</span><span class="pv-v">' + (currentUser ? currentUser.name : uid) + "（UID " + uid + "）</span></div>" +
+        '<div class="pv-row"><span class="pv-k">VIP 等级</span><span class="pv-v">' + tier + "</span></div>" +
+        '<div class="pv-row"><span class="pv-k">下发天数</span><span class="pv-v">' + days + " 天</span></div>" +
+        '<div class="pv-row"><span class="pv-k">下发原因</span><span class="pv-v">' + reason + "</span></div>" +
+        '<div class="pv-row"><span class="pv-k">预计生效状态</span><span class="pv-v">' + p.predicted + "</span></div>";
+      openMask("#confirm-mask");
+    }
+    function doGrant(forceFail) {
+      var uid = ($("#g-uid").value || "").trim();
+      var tier = $("#g-tier").value;
+      var days = parseInt($("#g-days").value, 10);
+      var reason = $("#g-reason").value;
+      var note = ($("#g-note").value || "").trim();
+      var btn = $("#confirm-ok");
+      btn.disabled = true; btn.textContent = "处理中…";
+      setTimeout(function () {
+        btn.disabled = false; btn.textContent = "确认下发";
+        var success = !forceFail;
+        var time = new Date().toISOString().slice(0, 16).replace("T", " ");
+        if (success) {
+          GRANT_RECORDS.unshift({
+            uid: uid, name: currentUser ? currentUser.name : "未知",
+            tier: tier, days: days, source: "Admin Grant",
+            reason: note ? (reason + "（" + note + "）") : reason,
+            operator: OPERATOR, time: time, status: "成功"
+          });
+          renderRecords();
+          closeMask($("#confirm-mask"));
+          closeMask($("#grant-mask"));
+          showToast("下发成功，已刷新用户 VIP 状态与下发记录", false);
+        } else {
+          closeMask($("#confirm-mask"));
+          showToast("下发失败，已保留填写内容，可重新提交", true);
+          openMask("#grant-mask");
+        }
+      }, 700);
+    }
+    function showToast(msg, fail) {
+      var t = $("#toast");
+      t.textContent = msg; t.className = "toast show " + (fail ? "fail" : "ok");
+      setTimeout(function () { t.classList.remove("show"); }, 2800);
+    }
+
+    function bind() {
+      if (isPublicReview) {
+        renderRecords();
+        return;
+      }
+      $("#open-grant-from-record") && $("#open-grant-from-record").addEventListener("click", function () { openMask("#grant-mask"); });
+      $("#open-grant-from-grant") && $("#open-grant-from-grant").addEventListener("click", function () { openMask("#grant-mask"); });
+      $("#g-query") && $("#g-query").addEventListener("click", queryUser);
+      $("#g-uid") && $("#g-uid").addEventListener("keydown", function (e) { if (e.key === "Enter") queryUser(); });
+      $("#g-tier") && $("#g-tier").addEventListener("change", updatePreview);
+      $("#g-days") && $("#g-days").addEventListener("input", updatePreview);
+      $$("[data-close-grant]").forEach(function (b) { b.addEventListener("click", function () { closeMask($("#grant-mask")); }); });
+      $$("[data-close-confirm]").forEach(function (b) { b.addEventListener("click", function () { closeMask($("#confirm-mask")); }); });
+      $("#g-submit") && $("#g-submit").addEventListener("click", openConfirm);
+      $("#confirm-ok") && $("#confirm-ok").addEventListener("click", function () { doGrant(false); });
+      $("#confirm-fail-demo") && $("#confirm-fail-demo").addEventListener("click", function () { doGrant(true); });
+      $$(".modal-mask").forEach(function (m) { m.addEventListener("click", function (e) { if (e.target === m) m.classList.remove("open"); }); });
+      ["#f-uid", "#f-tier-filter", "#f-op", "#f-time"].forEach(function (s) {
+        $(s) && $(s).addEventListener("input", renderRecords);
+        $(s) && $(s).addEventListener("change", renderRecords);
+      });
+      renderRecords();
+    }
+    if (document.readyState !== "loading") bind();
+    else document.addEventListener("DOMContentLoaded", bind);
+  })();
   </script>
 </body>
 </html>

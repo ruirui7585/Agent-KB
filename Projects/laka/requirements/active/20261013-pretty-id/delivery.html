@@ -1,0 +1,853 @@
+<!doctype html><html lang="en"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Pretty ID · Signature Collection</title><style>:root{--gold:#cbb990;--muted:#aaa79f;--line:#343735;--black:#111415;--red:#746853}*{box-sizing:border-box}body{margin:0;background:#080a0b;color:#eae7de;font:14px Arial,sans-serif}button,input,select{font:inherit}button{cursor:pointer;color:inherit}button:disabled{opacity:.4;cursor:default}button:focus-visible,input:focus-visible,select:focus-visible{outline:2px solid var(--gold);outline-offset:3px}#app{max-width:430px;min-height:100vh;margin:auto;background:radial-gradient(ellipse at 50% 20%,#b6a17e0b,transparent 42%),linear-gradient(165deg,#1a1d1e,#111415 70%);padding:0 22px 36px}nav{height:72px;display:flex;align-items:center;justify-content:space-between}nav button{background:none;border:none;min-width:44px;min-height:44px;font-size:22px;color:var(--gold)}nav strong{letter-spacing:.4px;font-size:16px}small,.muted{color:var(--muted);line-height:1.6}.eyebrow{font-size:9px;color:var(--gold);letter-spacing:2.3px;text-transform:uppercase}.hero{text-align:center;padding:24px 0 25px;position:relative}.hero:before{content:'';position:absolute;inset:30px -22px 70px;background:radial-gradient(ellipse,#b6a17e0c,transparent 65%);pointer-events:none}.hero h1{margin:0;font:35px Georgia,serif;letter-spacing:-1px;color:#e1d6bc}.hero p{color:#a9a69d;font-size:12px;margin:10px 0 20px}.crest{width:240px;height:180px;display:block;margin:9px auto 4px;filter:drop-shadow(0 9px 19px #0007)}.crest.compact{width:180px;height:135px}.hero-link{padding:11px 18px;min-height:44px;border:1px solid #6e6553;border-radius:24px;background:#202422;color:var(--gold);font-size:12px}.hero-link span{margin-left:12px}.small-hero{padding-top:10px}.small-hero h1{font-size:28px}.card{border:1px solid var(--line);border-radius:18px;padding:20px;background:linear-gradient(130deg,#ffffff04,#191c1d);margin:0 0 24px}.profile-card{padding:17px 18px}.profile{display:flex;align-items:center;gap:12px}.avatar{width:46px;height:46px;flex-shrink:0;border-radius:50%;background:linear-gradient(140deg,#a99a7b,#42443f);display:grid;place-items:center;font:24px Georgia;border:2px solid var(--gold)}.profile strong{display:block;font-size:16px;margin-bottom:5px}.profile small{font-size:10px}.profile-levels{margin-left:auto;display:grid;gap:5px;text-align:center;flex-shrink:0}.badge,.svip-badge{background:#cbb9900c;color:var(--gold);border:1px solid #665d4a;padding:5px 8px;border-radius:6px;font-size:10px}.svip-badge{color:#d2c9b7;background:#cbb9900a;border-color:#504c43}.hint{font-size:11px;color:#aaa79e;margin:12px 0 0;line-height:1.7}.section-title{display:flex;justify-content:space-between;align-items:center;margin:0 0 18px}h2{font:25px Georgia;margin:0 0 6px}.section-title h2{font-size:24px;margin-top:9px}.star{font-size:26px;color:var(--gold)}label{display:block}.route-tabs{display:flex;background:#101314;border:1px solid #343735;border-radius:12px;padding:4px;gap:4px;margin:18px 0}.route-tabs button{flex:1;min-height:44px;background:transparent;border:none;border-radius:9px;color:#aaa79f;font-size:12px}.route-tabs button.active{background:linear-gradient(110deg,#c4b28c,#a08d68);color:#141817;box-shadow:0 2px 10px #0005}.entitlement{display:flex;align-items:center;gap:10px;margin-bottom:24px;padding:14px 12px;border:1px solid #4c4a40;border-radius:12px;background:#cbb99006}.entitlement-icon{color:var(--gold);font-size:25px}.entitlement strong{display:block;font-size:12px;margin-bottom:5px}.entitlement small{display:block;font-size:10px}.entitlement button{margin-left:auto;background:none;border:0;font-size:26px;color:var(--gold);min-width:32px;min-height:44px}.input-label{margin:17px 0 12px}#number{width:100%;min-width:0;border:1px solid #766c55;background:#0e1112;color:var(--gold);padding:17px 12px;border-radius:12px;font-size:25px;text-align:center;letter-spacing:5px}#number::placeholder{font-size:14px;letter-spacing:1px;color:#96978f}.input-note{display:flex;justify-content:space-between;margin:8px 2px 17px;font-size:10px;color:var(--muted)}.keyboard{display:grid;grid-template-columns:repeat(6,1fr);gap:6px}.keyboard.numeric{grid-template-columns:repeat(3,1fr)}.key{min-height:44px;border:1px solid #444840;border-radius:8px;background:linear-gradient(#292d2e,#1b1f20);box-shadow:inset 0 1px 0 #ffffff0c,0 2px 0 #0b0d0e;font-weight:bold;color:#dfdcd3}.key:hover{border-color:var(--gold);background:#343931}.actions{display:flex;gap:8px;margin-top:10px}.actions button{min-height:47px;border-radius:9px;border:1px solid #444840;background:#222627;padding:0 16px}.actions .gold,.gold{background:linear-gradient(110deg,#e0d1ad,#b7a079)!important;color:#171b19!important;border:0!important;font-weight:bold}.actions .gold{flex:1}.claim-note{text-align:center;color:#96988f;font-size:10px;line-height:1.7;margin:15px 0 0}.rules-entry{display:flex;justify-content:space-between;align-items:center;padding:18px 0;width:100%;margin-top:28px;border:0;border-top:1px solid var(--line);border-bottom:1px solid var(--line);background:none;color:var(--gold);font-size:12px;min-height:54px}.foot{text-align:center;font-size:9px;letter-spacing:2px;color:#8f9389;margin:25px 0 0}.tabs{display:flex;gap:7px;margin:22px 0}.tabs button{flex:1;min-width:0;min-height:46px;background:#222627;border:1px solid #45493f;border-radius:10px;color:#b7b4a9;font-weight:bold}.tabs .selected{color:#151a17;background:linear-gradient(110deg,#d9c8a3,#b8a17b);border-color:#c5b38c;box-shadow:0 0 15px #cbb99008}.collection-heading{margin:25px 0 15px}.collection-heading h2{margin-top:7px}.pattern-card{padding-top:3px}.level-row{border-bottom:1px solid var(--line);padding:18px 0}.level-row:last-child{border-bottom:0}.level-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px}.level-head strong{font-size:14px}.available,.locked-label{font-size:10px;letter-spacing:.2px;color:#b4bba5}.locked-label{color:#a2a399}.patterns{display:flex;gap:8px;flex-wrap:wrap}.patterns button{border:1px solid #5b594b;background:#282d29;color:var(--gold);padding:9px 13px;border-radius:9px;min-height:50px;min-width:72px}.patterns b{display:block;font-size:16px;letter-spacing:1px}.patterns small{display:block;font-size:9px;color:#aaa79d;margin-top:4px}.locked{opacity:.6}.reward-section{margin:30px 0 0}.reward-section h2{margin:8px 0}.reward-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:18px}.reward{padding:24px 8px 19px;background:radial-gradient(ellipse at 50% 20%,#cbb99012,transparent 70%),#1c2020;border:1px solid #555448;border-radius:14px;text-align:center;line-height:1.5}.reward strong{display:block;font-size:11px;margin-top:18px}.reward small{display:block;font-size:9px;margin-top:5px;color:var(--gold)}.reward-avatar{width:72px;height:72px;display:grid;place-items:center;margin:auto;border:4px double #c8b891;border-radius:50%;box-shadow:0 0 0 5px #514d40,0 0 0 6px #8e8267,0 4px 22px #cbb99010;transform:rotate(-8deg)}.reward-avatar span{display:grid;place-items:center;font:28px Georgia;width:55px;height:55px;background:linear-gradient(140deg,#a99a7b,#42443f);border-radius:50%;transform:rotate(8deg)}.reward-badge{display:grid;place-items:center;margin:auto;width:72px;height:72px;border:4px double #c5b48e;background:linear-gradient(130deg,#555848,#242c27);clip-path:polygon(50% 0,95% 20%,88% 70%,50% 100%,12% 70%,5% 20%);font:bold 30px Georgia;color:var(--gold)}.rules-heading{padding:25px 0}.rules-heading h2{font-size:30px;margin-top:12px}.rule-category{font:18px Georgia;color:var(--gold);margin-top:24px;padding-bottom:10px;border-bottom:1px solid #cbb99022}.rule{display:flex;gap:16px;padding:22px 0;border-bottom:1px solid var(--line);line-height:1.7;color:#c2c3b9;font-size:12px}.rule span{flex-shrink:0;border:1px solid #6d6552;border-radius:50%;height:30px;width:30px;display:grid;place-items:center;color:var(--gold);font:17px Georgia}.example{display:flex;align-items:center;gap:24px;padding:15px 0;border-bottom:1px solid var(--line)}.example b{font:24px Georgia;color:var(--gold);min-width:52px}.example span{font-size:13px;line-height:1.7;color:#d5d3c7}.example small{font-size:10px}dialog{background:linear-gradient(140deg,#252a2a,#161b1b);color:#eae7de;border:1px solid #81755b;border-radius:22px;padding:25px;width:calc(100% - 32px);max-width:370px;max-height:85vh;overflow:auto}dialog::backdrop{background:#050809c7;backdrop-filter:blur(5px)}dialog h2{margin:10px 0 14px}dialog p{line-height:1.7;color:#c3c2b7;font-size:13px}dialog button{border:1px solid #4c5147;background:#2b312d;border-radius:9px;padding:13px;margin-top:10px;min-height:44px}dialog .close{float:right;margin:0;padding:5px 10px}.full{display:block;width:100%;margin-top:20px}dialog input,dialog select{width:100%;padding:12px;background:#111616;color:#eae7de;border:1px solid #4c5147;border-radius:8px;margin:8px 0 12px}.success{text-align:center}.success .number{font:45px Georgia;color:var(--gold);word-break:break-all}.pending{font-size:11px;color:#b4b2a5;line-height:1.7;margin:0}.status{padding:12px;border:1px solid #6d6653;border-radius:10px;margin-bottom:15px;color:var(--gold)}.test-launch{display:block;margin:0 auto 20px;border:1px solid #464d43;border-radius:25px;padding:12px;background:#1e2521;color:#b3b09e;font-size:11px;z-index:5}@media(min-width:600px){#app{margin:28px auto;border:1px solid #333a35;border-radius:28px;min-height:850px;box-shadow:0 25px 100px #000}.test-launch{position:fixed;right:30px;bottom:25px;margin:0}}@media(prefers-reduced-motion:no-preference){dialog[open]{animation:appear .2s ease}@keyframes appear{from{opacity:0;transform:translateY(12px)}}}
+
+/* Emblem materials follow the same restrained champagne palette. */
+.crest stop:nth-child(1){stop-color:#e5dcc3}.crest stop:nth-child(2){stop-color:#b5a17a}.crest stop:nth-child(3){stop-color:#74664e}.crest stop:nth-child(4){stop-color:#d4c49f}.crest stop:nth-child(5){stop-color:#9b8867}.crest>path:nth-of-type(1){fill:#343a31;stroke:#c2b18b}.crest>path:nth-of-type(2){fill:#151d19;stroke:#6d705d}.crest>path:last-of-type{fill:#c2b18b}.crest text{fill:#dacba8}.locked{opacity:.72}
+
+/* Bright vermilion edition. */
+:root{--gold:#fff0bb;--muted:#ffe0d2;--line:#ffba8b;--black:#ef332b;--red:#f5362e}
+body{background:#ff6650;color:#fff8e9}#app{background:radial-gradient(ellipse at 50% 10%,#ffab653d,transparent 48%),linear-gradient(165deg,#ff4935,#ec302d 70%);border-color:#ffb37c;box-shadow:0 22px 70px #c42b252e}
+.hero:before{background:radial-gradient(ellipse,#ffe7a43b,transparent 65%)}.hero h1{color:#fff2ca}.hero p{color:#ffe3d0}.hero-link{background:#ff76502e;border-color:#ffdaa1;color:#fff4d2}
+.card{background:linear-gradient(130deg,#ff9d6a55,#ff73523b);border-color:#ffbd8b}.avatar,.reward-avatar span{background:linear-gradient(140deg,#ffd486,#ffa055);color:#a92c22;border-color:#fff1b9}.badge,.svip-badge{background:#ffdfa52b;color:#fff5d4;border-color:#ffd89f}.hint{color:#ffe5d4}
+.route-tabs{background:#d829272b;border-color:#ffb184}.route-tabs button{color:#ffe8d9}.route-tabs button.active{background:linear-gradient(110deg,#fff1ba,#ffd27c);color:#ae291f;box-shadow:0 2px 10px #bd302323}.entitlement{background:#ffbd8130;border-color:#ffd09b}
+#number{background:#ff84603b;border-color:#ffdfa4;color:#fff8d8}#number::placeholder{color:#ffe4d2}.key{background:linear-gradient(#ff8260,#f85543);border-color:#ffc18c;box-shadow:inset 0 1px 0 #ffe7b548,0 2px 0 #d53a302b;color:#fff8e8}.key:hover{background:#ff9871;border-color:#fff1ba}.actions button{background:#fa73533b;border-color:#ffc18c;color:#fff5e5}.actions .gold,.gold{background:linear-gradient(110deg,#fff2c3,#ffd481)!important;color:#a72820!important}.claim-note,.foot{color:#ffdfce}
+.tabs button{background:#ff895347;border-color:#ffd093;color:#fff0d3}.tabs .selected{background:linear-gradient(110deg,#fff1ba,#ffd27c);color:#ad2c21;border-color:#fff0bb;box-shadow:0 0 15px #ffc98228}.available{color:#fff5bf}.locked-label{color:#ffe1d0}.patterns button{background:#ff95613b;border-color:#ffd5a0;color:#fff2c3}.patterns small{color:#ffe4d0}
+.reward{background:radial-gradient(ellipse at 50% 20%,#ffe3a449,transparent 70%),#ff81543b;border-color:#ffd59d}.reward-avatar{border-color:#fff2bf;box-shadow:0 0 0 5px #ffbd67,0 0 0 6px #ffe1a0,0 4px 22px #ffc98230}.reward-badge{background:linear-gradient(130deg,#ffbf6b,#ff7e43);border-color:#fff1b8;color:#b43321}.rule-category{border-color:#ffe1a65c}.rule{color:#fff0df}.rule span{border-color:#ffdfaa}.example span{color:#fff1dc}
+dialog{background:linear-gradient(140deg,#ff7b53,#f34233);color:#fff8e9;border-color:#ffe3a8}dialog::backdrop{background:#c62d276b}dialog p{color:#fff0df}dialog button{background:#ff9d6a44;border-color:#ffd39c;color:#fff6e5}dialog input,dialog select{background:#ff925e;color:#fff8e9;border-color:#ffe0a3}dialog select option{background:#ff925e;color:#fff8e9}.pending{color:#ffe3d0}.status{border-color:#ffd49b}.test-launch{background:#ff9160;color:#fff4df;border-color:#ffdaa1}
+.crest stop:nth-child(1){stop-color:#fff7cd}.crest stop:nth-child(2){stop-color:#ffd268}.crest stop:nth-child(3){stop-color:#e5952d}.crest stop:nth-child(4){stop-color:#ffe7a0}.crest stop:nth-child(5){stop-color:#f7b94b}.crest>path:nth-of-type(1){fill:#ff9d42;stroke:#fff1b2}.crest>path:nth-of-type(2){fill:#f15332;stroke:#ffd583}.crest>path:last-of-type{fill:#ffe18d}.crest text{fill:#fff4cd}.crest{filter:drop-shadow(0 9px 19px #b7302629)}
+
+/* Reference-matched crimson is confined to the mobile page. */
+body{background:#f3f3f1}
+#app{--gold:#ffe5a0;--muted:#f3d4ab;--line:#d99a37;color:#fff0cb;background:radial-gradient(ellipse at 50% 4%,#d3482040,transparent 45%),linear-gradient(160deg,#841c0c,#a6230b 52%,#761907);border-color:#d29a3e;box-shadow:0 22px 65px #45220c24}
+#app nav{background:#fff;color:#242321;margin:0 -22px;padding:0 22px;border-radius:28px 28px 0 0}#app nav button{color:#38332b}
+#app .hero:before{background:radial-gradient(ellipse,#f5b5412c,transparent 65%)}#app .hero h1{color:#ffedb4}#app .hero p{color:#efd0a1}#app .hero-link{background:linear-gradient(#d52e15,#a61c09);border-color:#efbb56;color:#ffe9aa}
+#app .card{background:linear-gradient(130deg,#b531173b,#65190947);border-color:#dda53e}#app .badge,#app .svip-badge{background:#b939162e;color:#ffe7ac;border-color:#d7a048}#app .hint{color:#f0cfa6}
+#app .route-tabs{background:#661a0c66;border-color:#d8993c}#app .route-tabs button{color:#f1cda0}#app .route-tabs button.active{background:linear-gradient(#ff7e51,#e63112 55%,#b4210a);color:#fff0b7;box-shadow:inset 0 1px 0 #ffd89188,0 2px 8px #75200633}
+#app .entitlement{background:#a9361438;border-color:#d99d42}#app #number{background:linear-gradient(#b03013,#951e09);border-color:#e0b451;color:#fff0b7}#app #number::placeholder{color:#e6bd91}
+#app .key{background:linear-gradient(#e63e1d,#b6240b);border-color:#dfab45;color:#ffedc5;box-shadow:inset 0 1px 0 #ffdba04d,0 2px 0 #701d0b33}#app .key:hover{background:#ec542c;border-color:#ffe294}#app .actions button{background:linear-gradient(#c63818,#9c200b);border-color:#dda640;color:#ffe8b4}#app .actions .gold{background:linear-gradient(#ffe393,#ffc553)!important;color:#86250d!important}
+#app .claim-note,#app .foot{color:#e4bc8a}#app .tabs button{background:linear-gradient(#cf401c,#90220d);border-color:#dfa94d;color:#ffe6ac}#app .tabs .selected{background:linear-gradient(#ff7850,#e33113,#b1220c);border-color:#ffe196;color:#fff4c5;box-shadow:inset 0 1px 0 #ffe5a188}
+#app .patterns button{background:linear-gradient(140deg,#bd3615,#9a210b);border-color:#d99b36;color:#ffebad}#app .patterns small{color:#efcda1}#app .reward{background:radial-gradient(ellipse at 50% 20%,#df883c33,transparent 70%),#791b0b6b;border-color:#e5ad40}#app .reward-badge{background:linear-gradient(#ed762e,#a3230a);border-color:#ffe399;color:#ffe6aa}
+#app .rule,#app .example span{color:#f8dfb8}#app .rule span{border-color:#e0aa44}#app .pending{color:#ebc89c}#app .available{color:#fff0ac}#app .locked-label{color:#edc79e}
+.test-launch{background:#fff;color:#675e50;border-color:#d5cfc3}
+dialog{background:linear-gradient(140deg,#bb3515,#861e0c);color:#fff0cb;border-color:#e6b04a}dialog::backdrop{background:#3e1b095e}dialog p{color:#f8deb7}dialog button{background:#a72a1059;border-color:#dda643;color:#ffebbd}dialog input,dialog select{background:#a72910;color:#fff0cc;border-color:#dda442}dialog select option{background:#a72910;color:#fff0cc}.gold{background:linear-gradient(#ffe393,#ffc553)!important;color:#86250d!important}
+@media(max-width:599px){#app nav{border-radius:0}}
+
+/* Distinct material colors for each part of the mobile experience. */
+#app{background:radial-gradient(ellipse at 50% 9%,#e2a04337,transparent 25%),linear-gradient(160deg,#791708 0%,#58160c 45%,#701b0c 100%)}
+#app .hero{background:radial-gradient(ellipse at 50% 35%,#ffd06938,transparent 55%),linear-gradient(155deg,#a93213,#741b0b 75%);margin:0 -22px 24px;padding-left:22px;padding-right:22px;border-bottom:1px solid #dc9f44}
+#app .hero-link{background:linear-gradient(#ed7040,#c32e13 55%,#982209);border-color:#f7c866;box-shadow:inset 0 1px 0 #ffe8a55c}
+#app .profile-card{background:linear-gradient(120deg,#85401e,#5e2a17);border-color:#dda957;box-shadow:inset 0 1px 0 #efc46b29}#app .badge{background:#5e3014;color:#ffe4a3;border-color:#d3a452}#app .svip-badge{background:#8c2830;color:#ffe8b7;border-color:#e5ae61}
+#app .route-tabs{background:#4c2113;border-color:#b77836}#app .route-tabs button{color:#edc58f}#app .route-tabs button.active{background:linear-gradient(#ffad87 0%,#ed4023 38%,#b4200c 80%,#d73816);color:#fff1bb;border:1px solid #ffc869}
+#app .entitlement{background:linear-gradient(120deg,#8f4b23,#69351b);border-color:#c99645}#app .entitlement small{color:#f0cea1}
+#app #number{background:linear-gradient(#fff0ce,#efd6a4);color:#872a16;border-color:#fbcf76;box-shadow:inset 0 2px 4px #9b6b2426}#app #number::placeholder{color:#976d44}#app .key{background:linear-gradient(#ca7439,#985020 65%,#81421c);border-color:#dfa457;color:#ffe9b6;box-shadow:inset 0 1px 0 #ffe5a76b,0 2px 0 #49210e44}#app .key:hover{background:linear-gradient(#e69a4a,#b76325)}
+#app .actions button{background:linear-gradient(#8e3030,#682021);border-color:#d39c53;color:#ffe4a9}#app .actions .gold{background:linear-gradient(#fff0b0,#f9ca61 55%,#dea336)!important;color:#743a16!important}
+#app .tabs{background:#5c2515;border:1px solid #9e6130;padding:6px;border-radius:14px}#app .tabs button{background:linear-gradient(#ba6228,#7a310c);color:#edb86c;border-color:#d69231}#app .tabs .selected{background:linear-gradient(#ffba9a,#ef3c24 40%,#c01609 75%,#e24316);color:#fff0ac;border-color:#ffe293;box-shadow:inset 0 1px 0 #fff3c480}
+#app .pattern-card{background:linear-gradient(140deg,#9f2b13,#74200f);border-color:#edbc52}#app .patterns button{background:linear-gradient(#6b351b,#49220f);color:#ffe8b2;border-color:#cf9947}#app .patterns small{color:#dbb78c}#app .level-row{border-color:#c988364f}
+#app .reward{background:radial-gradient(ellipse at 50% 28%,#e8af5730,transparent 65%),linear-gradient(#733315,#4f220d);border-color:#efbd53;box-shadow:inset 0 0 18px #e2a34d0c}#app .reward-avatar{border-color:#ffeaa1;box-shadow:0 0 0 5px #aa681f,0 0 0 6px #f1c568,0 4px 22px #f9b94830}#app .reward-badge{background:linear-gradient(#f6be53,#bb2c18);color:#fff0b6}
+#app .reward-section>.eyebrow,#app .collection-heading>.eyebrow{color:#e9b965}#app .collection-heading h2,#app .reward-section h2{color:#ffebbb}#app .rules-entry{background:linear-gradient(90deg,#872c15,#af3517,#872c15);padding-left:14px;padding-right:14px;border-color:#d7983d;color:#ffe4a2}
+#app .rules-heading{background:linear-gradient(130deg,#963316,#6e2311);margin:0 -22px 24px;padding-left:22px;padding-right:22px;border-bottom:1px solid #c79540}#app .rules-heading+.card,#app .rules-heading~.card{background:linear-gradient(140deg,#7a3a1d,#5e2a16);border-color:#d5a251}#app .rule-category{color:#ffd984;border-color:#d69a42}#app .rule{color:#f1dcba;border-color:#c68b3245}#app .rule span{background:linear-gradient(#b15c28,#843519);color:#ffe19b}
+dialog{background:linear-gradient(140deg,#82421f,#582714);border-color:#edba56}dialog button{background:linear-gradient(#963432,#702021);border-color:#cfa054}dialog input,dialog select,dialog select option{background:#f4dfb7;color:#783e20;border-color:#e8b95b}dialog .gold{background:linear-gradient(#fff0b0,#f9ca61,#dea336)!important;color:#743a16!important}
+
+/* Reference-inspired user card; changes stay within this component. */
+#app .profile-card{padding:12px 18px 17px;background:radial-gradient(ellipse at 50% 10%,#c2692230,transparent 70%),linear-gradient(125deg,#802b13,#5f1c0f);border:1px solid #e1b75f;box-shadow:inset 0 0 0 2px #ffffff05,inset 0 1px 0 #ffdfa650}
+.profile-card-title{display:flex;justify-content:center;align-items:center;gap:16px;border-bottom:1px solid #d69c434f;margin-bottom:15px;padding:0 0 10px;color:#ffdfa0}.profile-card-title h2{font:bold 20px Georgia;margin:0}.profile-card-title span{font-size:17px}
+#app .profile-card .profile{gap:16px;align-items:center}#app .profile-card .avatar{width:76px;height:76px;font-size:38px;border:2px solid #f2cd7e;box-shadow:0 0 0 3px #7c411e;flex-shrink:0}.profile-details{min-width:0;flex:1}#app .profile-details strong{font-size:18px;color:#ffe3a0;margin-bottom:8px}.profile-details p{font-size:12px;color:#f4e4ce;margin:5px 0;line-height:1.4;overflow-wrap:anywhere}.profile-details b{color:#ffe09a;font-weight:600}.profile-unlock{font-size:11px;color:#f6e3c4;line-height:1.6;margin:15px 0 0}.profile-unlock b{color:#ffdf8b}
+
+#app .claim-title{font:22px Georgia,serif;color:#ffebbb;margin:0 0 18px;line-height:1.35}
+
+#app .keyboard .keyboard-switch,#app .keyboard .keyboard-delete{background:linear-gradient(#963432,#702021);border-color:#cfa054;color:#ffe4a9;font-size:11px;font-weight:400;padding:0 2px}#app .keyboard .keyboard-next{grid-column:span 2;background:linear-gradient(#fff0b0,#f9ca61,#dea336)!important;color:#743a16!important;font-size:12px;padding:0 4px}.keyboard.numeric .keyboard-switch,.keyboard.numeric .keyboard-delete{grid-column:auto}.keyboard.numeric .keyboard-next{grid-column:1 / -1!important}
+
+/* Keep all digit keys equally wide; fit three smaller controls after zero. */
+#app .keyboard.numeric{grid-template-columns:repeat(18,minmax(0,1fr))}#app .keyboard.numeric>.key{grid-column:span 6}#app .keyboard.numeric>.key:nth-child(10){grid-column:span 6!important}#app .keyboard.numeric>.keyboard-switch,#app .keyboard.numeric>.keyboard-delete,#app .keyboard.numeric>.keyboard-next{grid-column:span 4!important}
+
+#app .claim-section #number+.keyboard{margin-top:16px}
+
+#app #number{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23976d44' stroke-width='1.8' stroke-linecap='round'%3E%3Ccircle cx='10.5' cy='10.5' r='6.5'/%3E%3Cpath d='m15.5 15.5 4.5 4.5'/%3E%3C/svg%3E"),linear-gradient(#fff0ce,#efd6a4);background-repeat:no-repeat;background-size:20px 20px,100% 100%;background-position:17px center,center;padding-left:48px;padding-right:48px}
+
+#app .table-card{padding:0;overflow:hidden;border:2px solid #e7b651;border-radius:18px;background:linear-gradient(130deg,#a82d12,#841e09)}.pattern-table{width:100%;border-collapse:collapse;table-layout:fixed;color:#ffe9b0;text-align:center}.pattern-table th,.pattern-table td{border:1px solid #dea642;padding:0;height:56px;vertical-align:middle}.pattern-table thead th{height:55px;background:linear-gradient(#f57b4f,#c93816 55%,#9c260b);font-size:10px;font-weight:bold;padding:6px 2px}.pattern-table th:first-child{width:23%}.pattern-table tbody th{font-size:13px;background:#76240c35}.pattern-table th small{display:block;font:9px Arial,sans-serif;margin-top:7px;color:#efc68b}.pattern-table td button{width:100%;height:100%;min-height:56px;border:0;background:none;padding:8px 2px;font-size:13px;font-weight:bold;color:#ffeab2;letter-spacing:.5px}.pattern-table td button:hover{background:#ed95402b}.pattern-table td>span{color:#c57a43;font-size:10px}.pattern-table .table-locked td button{color:#d4a77a}.pattern-table td.table-pending{font-size:11px;color:#e5bf92;padding:12px;line-height:1.5}
+
+#app .table-card{overflow:hidden}.pattern-table-scroll{overflow-x:auto;overscroll-behavior-x:contain}.pattern-table-scroll .pattern-table{min-width:100%}.pattern-table-scroll .pattern-table th:first-child{width:82px}.pattern-table-scroll .pattern-table td button{font-size:12px;letter-spacing:0;white-space:nowrap}.pattern-table-scroll .pattern-table tbody th{position:sticky;left:0;z-index:1;background:#7f240e}.pattern-table-scroll .pattern-table thead th:first-child{position:sticky;left:0;z-index:2;background:linear-gradient(#f57b4f,#b32b0f)}.table-scroll-hint{margin:0;padding:10px;text-align:center;font-size:10px;color:#f2d3a2;border-top:1px solid #dea642;background:#7f240e}
+
+/* Static review fixture: replaces the keyboard, without simulating a claim. */
+.redeemed-panel{margin-top:18px;min-height:306px;padding:25px 18px 22px;text-align:center;border:1px solid #dfac4e;border-radius:14px;background:radial-gradient(ellipse at 50% 5%,#f4bf5c24,transparent 62%),linear-gradient(145deg,#9d2b11,#6b1e0d)}.redeemed-check{display:grid;place-items:center;width:44px;height:44px;margin:0 auto 14px;border:1px solid #ffd88a;border-radius:50%;background:#eab4521c;color:#ffe6a5;font-size:26px}.redeemed-panel h3{margin:0 0 9px;font:25px Georgia,serif;color:#ffecb8}.redeemed-panel>p{font-size:12px;line-height:1.6;color:#f5d3a3;margin:0}.redeemed-detail{display:grid;gap:5px;margin:21px 0;color:#eaca93;font-size:10px}.redeemed-detail strong{font:40px Georgia,serif;letter-spacing:6px;color:#ffdf8d}.redeemed-rewards{display:flex;flex-wrap:wrap;justify-content:center;gap:8px;color:#ffe2a1;font-size:10px}.redeemed-rewards span{padding:7px 9px;border:1px solid #b97f39;border-radius:6px;background:#5d26113d}.redeemed-back{display:block;width:160px;min-height:44px;line-height:44px;margin:24px auto 0;background:linear-gradient(#f87f46,#d42b12 48%,#ae210b);border:1px solid #ffd18a;border-radius:9px;color:#fff0bc;font-size:14px;font-weight:bold;text-decoration:none}html[data-preview="redeemed"] .test-launch{display:none}html[data-preview="redeemed"] #app #number{background-image:linear-gradient(#fff0ce,#efd6a4);background-size:100% 100%;background-position:center;letter-spacing:6px;color:#872a16}
+
+html[data-preview="redeemed"] #app .hero{overflow:hidden}
+
+html[data-preview="level-locked"] .test-launch{display:none}html[data-preview="level-locked"] #app .hero{overflow:hidden}.level-locked-panel{display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:306px}.level-locked-panel .redeemed-check{font-family:Georgia,serif}.level-locked-panel .level-locked-message{font:23px/1.5 Georgia,serif;max-width:280px;margin:8px 0 12px;color:#ffe4a2}.level-locked-panel .redeemed-back{margin-top:30px}.static-review-nav{display:none}@media(min-width:900px){.static-review-nav{display:grid;gap:8px;position:fixed;left:24px;top:28px;width:145px;padding:16px;background:#fff;border:1px solid #e1d7c5;border-radius:12px;color:#625640;font-size:12px}.static-review-nav small{font-size:11px;color:#8a7b62;margin-bottom:3px}.static-review-nav a{padding:9px;border-radius:6px;color:#7e3922;text-decoration:none}.static-review-nav a[aria-current]{background:#f6e7d2;font-weight:bold}}
+</style><body><main id="app"></main><button class="test-launch" onclick="openTest()">⚙ Test studio</button><dialog id="modal"></dialog><script>'use strict';
+
+// Labels stay as shown in the source screenshots. Matching uses structure()
+// so that equivalent symbol arrangements can share a rule without rewriting
+// the labels exposed to the prototype.
+const CONFIG = Object.freeze([
+  {
+    "category": "C",
+    "level": 25,
+    "patterns": [
+      "ABCDABC",
+      "ABCABCD"
+    ],
+    "pending": false,
+    "tableRows": [
+      [
+        "ABCDABC",
+        "",
+        "",
+        "",
+        "",
+        "",
+        ""
+      ],
+      [
+        "ABCABCD",
+        "",
+        "",
+        "",
+        "",
+        "",
+        ""
+      ]
+    ]
+  },
+  {
+    "category": "C",
+    "level": 30,
+    "patterns": [
+      "ABCBBBB",
+      "AABBAC",
+      "AABBBAC",
+      "ABABAD",
+      "AABCCAA",
+      "ABCABCA",
+      "ABCCCAB",
+      "ABACABA"
+    ],
+    "pending": false,
+    "tableRows": [
+      [
+        "ABCBBBB",
+        "AABBAC",
+        "",
+        "",
+        "",
+        "",
+        ""
+      ],
+      [
+        "AABBBAC",
+        "ABABAD",
+        "",
+        "",
+        "",
+        "",
+        ""
+      ],
+      [
+        "AABCCAA",
+        "",
+        "",
+        "",
+        "",
+        "",
+        ""
+      ],
+      [
+        "ABCABCA",
+        "",
+        "",
+        "",
+        "",
+        "",
+        ""
+      ],
+      [
+        "ABCCCAB",
+        "",
+        "",
+        "",
+        "",
+        "",
+        ""
+      ],
+      [
+        "ABACABA",
+        "",
+        "",
+        "",
+        "",
+        "",
+        ""
+      ]
+    ]
+  },
+  {
+    "category": "C",
+    "level": 35,
+    "patterns": [
+      "ABBCCA",
+      "AABBBC",
+      "AAAABC",
+      "ABBBBC"
+    ],
+    "pending": false,
+    "tableRows": [
+      [
+        "",
+        "ABBCCA",
+        "",
+        "",
+        "",
+        "",
+        ""
+      ],
+      [
+        "",
+        "AABBBC",
+        "",
+        "",
+        "",
+        "",
+        ""
+      ],
+      [
+        "",
+        "AAAABC",
+        "",
+        "",
+        "",
+        "",
+        ""
+      ],
+      [
+        "",
+        "ABBBBC",
+        "",
+        "",
+        "",
+        "",
+        ""
+      ]
+    ]
+  },
+  {
+    "category": "C",
+    "level": 40,
+    "patterns": [
+      "AABBCC",
+      "ABCAA",
+      "ABCABC",
+      "AABBC"
+    ],
+    "pending": false,
+    "tableRows": [
+      [
+        "",
+        "AABBCC",
+        "ABCAA",
+        "",
+        "",
+        "",
+        ""
+      ],
+      [
+        "",
+        "ABCABC",
+        "AABBC",
+        "",
+        "",
+        "",
+        ""
+      ]
+    ]
+  },
+  {
+    "category": "B",
+    "level": 45,
+    "patterns": [
+      "ABABAB",
+      "AAABC",
+      "AABBAA",
+      "ABCCC",
+      "AABBBB"
+    ],
+    "pending": false,
+    "tableRows": [
+      [
+        "",
+        "ABABAB",
+        "AAABC",
+        "",
+        "",
+        "",
+        ""
+      ],
+      [
+        "",
+        "AABBAA",
+        "ABCCC",
+        "",
+        "",
+        "",
+        ""
+      ],
+      [
+        "",
+        "AABBBB",
+        "",
+        "",
+        "",
+        "",
+        ""
+      ]
+    ]
+  },
+  {
+    "category": "B",
+    "level": 50,
+    "patterns": [
+      "ABBBBB",
+      "AABBA",
+      "AAAAAB",
+      "AAABA"
+    ],
+    "pending": false,
+    "tableRows": [
+      [
+        "",
+        "ABBBBB",
+        "AABBA",
+        "",
+        "",
+        "",
+        ""
+      ],
+      [
+        "",
+        "AAAAAB",
+        "AAABA",
+        "",
+        "",
+        "",
+        ""
+      ]
+    ]
+  },
+  {
+    "category": "B",
+    "level": 55,
+    "patterns": [
+      "AAABBB",
+      "AAAAB",
+      "AABBB",
+      "AAABB"
+    ],
+    "pending": false,
+    "tableRows": [
+      [
+        "",
+        "AAABBB",
+        "AAAAB",
+        "",
+        "",
+        "",
+        ""
+      ],
+      [
+        "",
+        "",
+        "AABBB",
+        "",
+        "",
+        "",
+        ""
+      ],
+      [
+        "",
+        "",
+        "AAABB",
+        "",
+        "",
+        "",
+        ""
+      ]
+    ]
+  },
+  {
+    "category": "B",
+    "level": 60,
+    "patterns": [
+      "AAAAAA",
+      "AABAA",
+      "ABAC",
+      "ABCB",
+      "ABCA"
+    ],
+    "pending": false,
+    "tableRows": [
+      [
+        "",
+        "AAAAAA",
+        "AABAA",
+        "ABAC",
+        "",
+        "",
+        ""
+      ],
+      [
+        "",
+        "",
+        "",
+        "ABCB",
+        "",
+        "",
+        ""
+      ],
+      [
+        "",
+        "",
+        "",
+        "ABCA",
+        "",
+        "",
+        ""
+      ]
+    ]
+  },
+  {
+    "category": "B",
+    "level": 65,
+    "patterns": [
+      "ABBBB",
+      "AABC",
+      "ABBC",
+      "ABCC"
+    ],
+    "pending": false,
+    "tableRows": [
+      [
+        "",
+        "",
+        "ABBBB",
+        "AABC",
+        "",
+        "",
+        ""
+      ],
+      [
+        "",
+        "",
+        "",
+        "ABBC",
+        "",
+        "",
+        ""
+      ],
+      [
+        "",
+        "",
+        "",
+        "ABCC",
+        "",
+        "",
+        ""
+      ]
+    ]
+  },
+  {
+    "category": "B",
+    "level": 70,
+    "patterns": [
+      "AAAAA",
+      "ABBA",
+      "AABA"
+    ],
+    "pending": false,
+    "tableRows": [
+      [
+        "",
+        "",
+        "AAAAA",
+        "ABBA",
+        "",
+        "",
+        ""
+      ],
+      [
+        "",
+        "",
+        "",
+        "AABA",
+        "",
+        "",
+        ""
+      ]
+    ]
+  },
+  {
+    "category": "B",
+    "level": 75,
+    "patterns": [
+      "AABB",
+      "ABAB"
+    ],
+    "pending": false,
+    "tableRows": [
+      [
+        "",
+        "",
+        "",
+        "AABB",
+        "",
+        "",
+        ""
+      ],
+      [
+        "",
+        "",
+        "",
+        "ABAB",
+        "",
+        "",
+        ""
+      ]
+    ]
+  },
+  {
+    "category": "A",
+    "level": 85,
+    "patterns": [
+      "AAAA",
+      "ABB",
+      "ABBB",
+      "ABA"
+    ],
+    "pending": false,
+    "tableRows": [
+      [
+        "",
+        "",
+        "",
+        "AAAA",
+        "ABB",
+        "",
+        ""
+      ],
+      [
+        "",
+        "",
+        "",
+        "ABBB",
+        "ABA",
+        "",
+        ""
+      ]
+    ]
+  },
+  {
+    "category": "A",
+    "level": 95,
+    "patterns": [
+      "AAA",
+      "AB",
+      "AA"
+    ],
+    "pending": false,
+    "tableRows": [
+      [
+        "",
+        "",
+        "",
+        "",
+        "AAA",
+        "AB",
+        ""
+      ],
+      [
+        "",
+        "",
+        "",
+        "",
+        "",
+        "AA",
+        ""
+      ]
+    ]
+  },
+  {
+    "category": "A",
+    "level": 100,
+    "patterns": [
+      "A"
+    ],
+    "pending": false,
+    "tableRows": [
+      [
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "A"
+      ]
+    ]
+  }
+]);
+const SVIP_CONFIG = Object.freeze([
+  { category: 'SS', level: 5, patterns: ['AB', 'AA'], pending: false },
+  { category: 'SS', level: 6, patterns: [], pending: true, description: 'Four-letter code XXXX — matching rule pending confirmation' },
+  { category: 'SS', level: 7, patterns: [], pending: true, description: 'Three-letter code XXX — matching rule pending confirmation' }
+]);
+
+const CATEGORY_ORDER = { A: 0, B: 1, C: 2 };
+const MAX_LENGTH = Math.max(...[...CONFIG, ...SVIP_CONFIG].flatMap((entry) => entry.patterns.map((pattern) => pattern.length)));
+
+function clone(value) {
+  return JSON.parse(JSON.stringify(value));
+}
+
+function structure(value) {
+  if (typeof value !== 'string' || value.length === 0) return null;
+  const chars = [...value];
+  const isDigit = /^\d$/.test(chars[0]);
+  const isLetter = /^[A-Z]$/.test(chars[0]);
+  if ((!isDigit && !isLetter) || chars.some((char) => (isDigit ? !/^\d$/.test(char) : !/^[A-Z]$/.test(char)))) {
+    return null;
+  }
+
+  const symbols = [];
+  return chars.map((char) => {
+    let index = symbols.indexOf(char);
+    if (index === -1) {
+      symbols.push(char);
+      index = symbols.length - 1;
+    }
+    return String.fromCharCode(65 + index);
+  }).join('');
+}
+
+function patternCandidates(pattern, config = CONFIG) {
+  return config.flatMap((entry) => entry.patterns.map((label) => ({
+    category: entry.category,
+    level: entry.level,
+    label,
+    canonical: structure(label)
+  }))).filter((candidate) => candidate.canonical === pattern);
+}
+
+function normalState(state) {
+  return state && typeof state === 'object' ? state : createState();
+}
+
+function ownerOf(state, input) {
+  const owner = state.owned && state.owned[input];
+  return owner === undefined ? null : owner;
+}
+
+function validate(input, state) {
+  const currentState = normalState(state);
+  const normalizedInput = typeof input === 'string' ? input.toUpperCase() : '';
+  const pattern = structure(normalizedInput);
+  const route = currentState.route === 'svip' ? 'svip' : 'wealth';
+  const base = { ok: false, input: normalizedInput, pattern, category: null, level: null, route, entitlement: null, error: null };
+
+  if (!pattern) return { ...base, error: 'Use only letters or only numbers, without spaces.' };
+  if (normalizedInput.length > MAX_LENGTH) return { ...base, error: 'This Pretty ID is not available.' };
+
+  const config = route === 'svip' ? SVIP_CONFIG : CONFIG;
+  const candidates = patternCandidates(pattern, config);
+  if (!candidates.length) return { ...base, error: 'This Pretty ID is not available.' };
+
+  if (route === 'svip' && !currentState.svipActive) {
+    return { ...base, error: 'Your SVIP redemption entitlement has expired.' };
+  }
+
+  const unlocked = candidates
+    .filter((candidate) => route === 'svip'
+      ? Number(currentState.svip ?? 0) >= candidate.level
+      : candidate.level <= Number(currentState.level ?? 100))
+    .sort((left, right) => CATEGORY_ORDER[left.category] - CATEGORY_ORDER[right.category] || right.level - left.level);
+  const selected = unlocked[0];
+  if (!selected) {
+    const minimum = Math.min(...candidates.map((candidate) => candidate.level));
+    return {
+      ...base,
+      level: minimum,
+      entitlement: route === 'svip' ? `SVIP${minimum}` : `LV${minimum}`,
+      error: route === 'svip' ? `Unlock at SVIP${minimum}.` : `Unlock at Wealth Level LV${minimum}.`
+    };
+  }
+
+  const ownedBy = ownerOf(currentState, normalizedInput);
+  if (ownedBy !== null || currentState.current === normalizedInput) {
+    return { ...base, category: selected.category, level: selected.level, entitlement: route === 'svip' ? `SVIP${selected.level}` : `LV${selected.level}`, error: 'This Pretty ID is already taken.' };
+  }
+
+  if (Number(currentState.remaining ?? 0) <= 0) {
+    return { ...base, category: selected.category, level: selected.level, entitlement: route === 'svip' ? `SVIP${selected.level}` : `LV${selected.level}`, error: 'You have reached the redemption limit.' };
+  }
+
+  return { ...base, ok: true, category: selected.category, level: selected.level, entitlement: route === 'svip' ? `SVIP${selected.level}` : `LV${selected.level}`, error: null };
+}
+
+function createState(overrides = {}) {
+  return {
+    level: 100,
+    remaining: 2,
+    current: '',
+    svip: 0,
+    svipActive: true,
+    route: 'wealth',
+    owned: {},
+    rewards: [],
+    records: [],
+    ...clone(overrides)
+  };
+}
+
+function redeem(input, state, operationId) {
+  const before = createState(state || {});
+  const opid = String(operationId ?? '');
+  const previous = before.records.find((record) => record.operationId === opid);
+  if (opid && previous) {
+    return { ok: true, state: clone(before), input: previous.input, pattern: previous.pattern, category: previous.category, level: previous.level, route: previous.route, entitlement: previous.entitlement, operationId: opid, idempotent: true };
+  }
+
+  const check = validate(input, before);
+  if (!check.ok) return { ...check, state: clone(before), operationId: opid, idempotent: false };
+
+  const after = clone(before);
+  after.remaining -= 1;
+  after.current = check.input;
+  after.owned[check.input] = 'self';
+  const reward = { input: check.input, pattern: check.pattern, category: check.category, level: check.level, route: check.route, entitlement: check.entitlement };
+  if (!after.rewards.includes(check.category)) after.rewards.push(check.category);
+  after.records.push({ ...reward, operationId: opid });
+  return { ...check, state: after, operationId: opid, idempotent: false };
+}
+
+const PrettyEngine = Object.freeze({ CONFIG, config: CONFIG, SVIP_CONFIG, svipConfig: SVIP_CONFIG, maxLength: MAX_LENGTH, structure, createState, validate, redeem });
+
+if (typeof globalThis !== 'undefined') globalThis.PrettyEngine = PrettyEngine;
+if (typeof module !== 'undefined' && module.exports) module.exports = PrettyEngine;
+
+</script><script>const E = PrettyEngine;
+let state;
+try { state = E.createState(JSON.parse(localStorage.getItem('pretty-id-demo')) || {}); }
+catch { state = E.createState(); }
+state.route = 'wealth';
+const staticPreviewType = new URLSearchParams(location.search).get('preview');
+const staticRedeemed = staticPreviewType === 'redeemed';
+const staticLevelLocked = staticPreviewType === 'level-locked';
+const staticReview = staticRedeemed || staticLevelLocked;
+if (staticRedeemed) state = E.createState({level:85,current:'8888',remaining:1,rewards:['A']});
+if (staticLevelLocked) state = E.createState({level:24});
+document.documentElement.dataset.preview = staticReview ? staticPreviewType : '';
+let page = 'home', tab = 'A', svipTab = 'SS', keyboard = 'alpha', value = '', busy = false, network = 'normal', pending = null;
+if (staticReview) value = '8888';
+const navigation = [];
+const $ = s => document.querySelector(s);
+const esc = s => String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+function save() { try { localStorage.setItem('pretty-id-demo', JSON.stringify(state)); } catch {} }
+function closeModal() { $('#modal').close(); }
+function modal(html) {
+  $('#modal').innerHTML = `<button class="close" onclick="closeModal()" aria-label="Close">×</button>${html}`;
+  if (!$('#modal').open) $('#modal').showModal();
+}
+function go(p) {
+  if (p === page) return;
+  if (p === 'home') navigation.length = 0;
+  else navigation.push({page, scroll: window.scrollY});
+  page = p; render(); window.scrollTo(0, 0);
+}
+function back() {
+  const previous = navigation.pop(); page = previous ? previous.page : 'home';
+  render(); window.scrollTo(0, previous ? previous.scroll : 0);
+}
+function changeRoute(route) { state.route = route; pending = null; save(); render(); }
+function routeControls() {
+  return `<div class="route-tabs" aria-label="Redemption route"><button class="${state.route === 'wealth' ? 'active' : ''}" onclick="changeRoute('wealth')">Wealth level</button><button class="${state.route === 'svip' ? 'active' : ''}" onclick="changeRoute('svip')">SVIP privilege</button></div>`;
+}
+function crest(label = 'ID', compact = false) {
+  return `<svg class="crest ${compact ? 'compact' : ''}" viewBox="0 0 320 240" role="img" aria-label="${label} gold emblem"><defs><linearGradient id="metal-${label}" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#fff0b7"/><stop offset=".28" stop-color="#dfb868"/><stop offset=".5" stop-color="#815327"/><stop offset=".72" stop-color="#f7d995"/><stop offset="1" stop-color="#bd8741"/></linearGradient></defs><g fill="url(#metal-${label})"><path d="M139 180C80 177 27 134 15 64c32 29 61 39 106 44l-7 15c-35-5-63-16-82-31 14 32 44 52 80 59l7 19c-35-7-63-24-78-43 24 34 58 50 98 53Z"/><path d="M181 180c59-3 112-46 124-116-32 29-61 39-106 44l7 15c35-5 63-16 82-31-14 32-44 52-80 59l-7 19c35-7 63-24 78-43-24 34-58 50-98 53Z"/><path d="m127 54-6-23 23 13 16-28 16 28 23-13-6 23Z"/><path d="M160 60 221 88l-10 73-51 46-51-46-10-73Z"/></g><path d="m160 69 50 24-9 63-41 37-41-37-9-63Z" fill="#641e20" stroke="#ffd48b" stroke-width="2"/><path d="m160 81 39 19-7 48-32 31-32-31-7-48Z" fill="#311314" stroke="#9c6b3c"/><text x="160" y="145" text-anchor="middle" fill="#f5d99a" font-family="Georgia" font-size="${label.length > 1 ? 45 : 54}" font-weight="bold">${label}</text><path d="m160 211 10 9-10 9-10-9Z" fill="#f1c16d"/></svg>`;
+}
+function hero(compact = false) {
+  return `<div class="hero ${compact ? 'small-hero' : ''}"><div class="eyebrow">A SIGNATURE WORTH KEEPING</div>${crest(compact ? (state.route === 'svip' ? 'SS' : tab) : 'ID')}<h1>Make your mark.</h1><p>Your identity. A little more extraordinary.</p>${page === 'home' ? '<button class="hero-link" onclick="go(\'rewards\')">Rules & Rewards <span>↗</span></button>' : ''}</div>`;
+}
+function levelText(entry, route = state.route) { return route === 'svip' ? `SVIP${entry.level}` : `LV${entry.level}`; }
+function unlocked(entry, route = state.route) { return route === 'svip' ? state.svipActive && state.svip >= entry.level : state.level >= entry.level; }
+function rows(entries, route = state.route) {
+  return entries.slice().sort((a,b) => a.level - b.level).map(c => `<div class="level-row"><div class="level-head"><strong>${levelText(c, route)}${route === 'wealth' ? '+' : ''}</strong><span class="${unlocked(c,route) ? 'available' : 'locked-label'}">${c.pending ? 'To be confirmed' : unlocked(c,route) ? 'Unlocked' : route === 'svip' && !state.svipActive ? 'Expired' : 'Locked'}</span></div>${c.patterns.length ? `<div class="patterns ${unlocked(c,route) ? '' : 'locked'}">${c.patterns.map(p => `<button onclick="pattern('${p}',${c.level},'${c.category}','${route}')"><b>${p}</b><small>${p.length} ${p.length === 1 ? 'character' : 'characters'}</small></button>`).join('')}</div>` : `<p class="pending">${route === 'svip' ? c.level === 6 ? '4-letter ID (XXXX). Exact matching rule to be confirmed.' : '3-letter ID (XXX). Exact matching rule to be confirmed.' : 'Templates and lengths to be confirmed.'}<br>Not available for redemption yet.</p>`}</div>`).join('');
+}
+function rewards(category, confirmed = true) {
+  return `<section class="reward-section"><p class="muted">Users who successfully redeem an A-level pretty ID can<br>receive the following reward</p><div class="reward-grid">${['Profile Frame', category === 'SS' ? 'Identity Badge' : 'Chat Bubble'].map((r,i) => `<button class="reward" onclick="reward('${r}','${category}')">${i ? `<div class="reward-badge">${category}</div>` : `<div class="reward-avatar"><span>N</span></div>`}<strong>${r}</strong><small>Permanent</small></button>`).join('')}</div><p class="hint">${state.rewards.includes(category) ? '✓ This collection is already yours.' : 'Each category collection is awarded once.'}</p></section>`;
+}
+function home() {
+  const entries = state.route === 'svip' ? E.svipConfig : E.config;
+  const available = entries.filter(c => !c.pending && unlocked(c));
+  return `${hero()}<section class="card profile-card"><div class="profile-card-title"><span aria-hidden="true">✦</span><h2>Pretty ID</h2><span aria-hidden="true">✦</span></div><div class="profile"><div class="avatar" aria-label="Noura avatar">N</div><div class="profile-details"><strong>Noura</strong><p>Wealth Level: <b>LV${state.level}</b></p><p>Pretty ID: <b>${esc(state.current||'–')}</b></p></div></div><p class="profile-unlock">${staticRedeemed ? 'Your new Pretty ID is ready to use.' : state.route==='svip'?(state.svipActive?'Reach <b>SVIP5</b> to unlock the confirmed SS patterns.':'Your SVIP privilege has expired. An active entitlement is required.'):'Reach <b>LV25</b> to enter the Pretty ID collection. Check Rules & Rewards for the patterns available at your level.'}</p></section><section class="claim-section"><h2 class="claim-title">Enter your lucky Pretty ID</h2><input id="number" ${staticReview ? 'readonly' : ''} maxlength="${E.maxLength}" autocomplete="off" value="${esc(value)}" placeholder="Enter letters or numbers" aria-label="Pretty ID">${staticRedeemed ? `<div class="redeemed-panel" role="status"><div class="redeemed-check" aria-hidden="true">✓</div><h3>Pretty ID Redeemed!</h3><p>Your new Pretty ID is ready to use.</p><div class="redeemed-detail"><span>Pretty ID</span><strong>8888</strong><span>Class A · Permanent</span></div><div class="redeemed-rewards"><span>✦ Profile Frame</span><span>✦ Chat Bubble</span></div><a class="redeemed-back" href="delivery.html">Back</a></div>` : staticLevelLocked ? `<div class="redeemed-panel level-locked-panel" role="status"><div class="redeemed-check" aria-hidden="true">!</div><h3 class="level-locked-message">Reach Wealth Lv85 to redeem this ID.</h3><a class="redeemed-back" href="delivery.html">Back</a></div>` : `<div class="keyboard ${keyboard === 'numeric' ? 'numeric' : ''}">${(keyboard === 'alpha' ? 'ABCDEFGHIJKLMNOPQRSTUVWXYZ' : '1234567890').split('').map(c=>`<button class="key" onclick="key('${c}')">${c}</button>`).join('')}<button class="key keyboard-switch" onclick="keyboard=keyboard==='alpha'?'numeric':'alpha';render()">${keyboard==='alpha'?'123':'ABC'}</button><button class="key keyboard-delete" onclick="key('delete')">Delete</button><button class="key gold keyboard-next" id="submit" onclick="check()" ${!value ? 'disabled' : ''}>Next ↗</button></div>`}</section><p class="foot">YOUR IDENTITY. YOUR SIGNATURE.</p>`;
+}
+function patternTable(entries) {
+  const lengths = [7,6,5,4,3,2,1].filter(length => entries.some(e => e.patterns.some(p => p.length === length)));
+  const body = entries.slice().sort((a,b)=>a.level-b.level).map(e => {
+    const rows=e.tableRows.map(cells=>lengths.map(length=>cells[7-length]));
+    return rows.map((cells,i)=>`<tr class="${unlocked(e,'wealth')?'':'table-locked'}">${i===0?`<th scope="rowgroup" rowspan="${rows.length}"><b>≥${e.level}</b><small>${unlocked(e,'wealth')?'Unlocked':'Locked'}</small></th>`:''}${cells.map(p=>`<td>${p?`<button onclick="pattern('${p}',${e.level},'${e.category}','wealth')">${p}</button>`:''}</td>`).join('')}</tr>`).join('');
+  }).join('');
+  return `<div class="pattern-table-scroll" tabindex="0" role="region" aria-label="Pretty ID level and character table"><table class="pattern-table" style="min-width:${82+lengths.length*80}px"><thead><tr><th scope="col">Wealth<br>Level</th>${lengths.map(l=>`<th scope="col">${l}<br>${l===1?'character':'characters'}</th>`).join('')}</tr></thead><tbody>${body}</tbody></table></div><p class="table-scroll-hint">Swipe to view all character lengths ↔</p>`;
+}
+function collections() {
+  const selected = tab;
+  const entries = E.config.filter(c => c.category === selected);
+  return `${hero(true)}<h2>Rules & Rewards</h2><p class="muted">Find your pattern. Discover what comes with it.</p><div class="tabs">${['A','B','C'].map(c => `<button class="${selected===c?'selected':''}" onclick="tab='${c}';render()">${c}</button>`).join('')}</div><div class="collection-heading"><p class="muted">The following are ${selected}-level premium numbers. Users who reach the corresponding SVIP level can unlock the corresponding series of premium numbers.</p></div><section class="card pattern-card table-card">${patternTable(entries)}</section>${rewards(selected)}<button class="rules-entry" onclick="go('rules')"><span>All levels & collection rules</span><span>↗</span></button>`;
+}
+function rulesPage() {
+  return `<div class="rules-heading"><div class="eyebrow">YOUR GUIDE TO PRETTY ID</div><h2>Know your signature.</h2><p class="muted">Wealth milestones. One unique identity.</p></div><section class="card"><h2>Wealth level patterns</h2><p class="hint">Higher wealth levels inherit confirmed patterns from lower levels.</p>${['C','B','A'].map(c => `<div class="rule-category">Class ${c}</div>${rows(E.config.filter(e=>e.category===c),'wealth')}`).join('')}</section><section class="card"><h2>How patterns work</h2><div class="example"><b>AA</b><span>88 · KK<br><small>Same character twice</small></span></div><div class="example"><b>AB</b><span>89 · KL<br><small>Two different characters</small></span></div><div class="example"><b>ABA</b><span>898 · KLK<br><small>First and last match</small></span></div><p class="hint">Letters describe a structure, not a literal ID. Different letters must represent different characters. Use only numbers or only English letters.</p><p class="hint">Higher wealth levels inherit every lower-level pattern. Different placeholder letters must represent different characters.</p></section><h2>Collection rules</h2>${['Reach the required wealth level to unlock each pattern. For numbers outside the configured patterns, contact customer service.','After 90 consecutive days without login, or a suspected platform violation, the platform may reclaim your Pretty ID.','If a modified or reclaimed ID is assigned to another user, the original user cannot claim that ID again.','Redemptions are limited. Contact an administrator for additional opportunities.','Pretty IDs cannot be gifted or traded. Violations may result in an account ban.','Fraudulent activity may result in disqualification and cancellation of event data.'].map((r,i) => `<div class="rule"><span>${i+1}</span><div>${r}</div></div>`).join('')}<p class="foot">YOUR IDENTITY. YOUR SIGNATURE.</p>`;
+}
+function render() {
+  $('#app').innerHTML = `<nav>${page==='home'?'<span style="width:44px" aria-hidden="true"></span>':'<button onclick="back()" aria-label="Back">‹</button>'}<strong>${page==='rules'?'Rules':page==='rewards'?'Rules & Rewards':'Pretty ID'}</strong>${page==='rules'?'<span style="width:44px" aria-hidden="true"></span>':'<button onclick="go(&quot;rules&quot;)" aria-label="Rules">☷</button>'}</nav>${page==='home'?home():page==='rewards'?collections():rulesPage()}`;
+  if ($('#number') && !staticReview) $('#number').oninput = e => { value=e.target.value.toUpperCase(); e.target.value=value; $('#submit').disabled=!value; };
+}
+function key(c) { value = c==='delete' ? value.slice(0,-1) : (value+c).slice(0,E.maxLength); render(); }
+function pattern(p,l,c,route) {
+  const entry = {level:l}; const eligible=unlocked(entry,route);
+  modal(`<div class="eyebrow">CLASS ${c} · ${p.length} CHARACTERS</div><h2>${p}</h2><p>Same letters mean the same character.<br>Different letters mean different characters.</p><div class="example"><b>${p}</b><span>${p.split('').map(x=>({A:'8',B:'9',C:'7'}[x]||'6')).join('')}</span></div><p>Required: ${levelText(entry,route)}<br>Your level: ${route==='svip'?'SVIP '+state.svip+' · '+(state.svipActive?'Active':'Expired'):'LV'+state.level}</p>${eligible?`<button class="gold full" onclick="tryPattern('${p}','${route}')">Try this pattern</button>`:`<p class="status">${route==='svip'&&!state.svipActive?'Your SVIP entitlement has expired.':'Unlock at '+levelText(entry,route)+'.'}</p>`}`);
+}
+function tryPattern(p,route) { state.route=route; value=''; keyboard='numeric'; save(); closeModal(); go('home'); $('#number').focus(); }
+function reward(r,c) {
+  modal(`<div class="eyebrow">CLASS ${c} REWARD</div><h2>${r}</h2>${crest(c,true)}<p>A permanent ${r.toLowerCase()}, awarded once on your first Class ${c} claim.</p><small>${c==='SS'?'Illustrated reward preview. Final item details to be confirmed.':'Visual preview only; no real inventory is connected.'}</small>`);
+}
+function fail(result) { modal(`<div class="eyebrow">LET’S TRY ANOTHER</div><h2>Unable to claim</h2><p>${esc(result.error || 'Please try again.')}</p><button class="full" onclick="closeModal()">Edit Pretty ID</button>`); }
+async function check() {
+  if (!value || busy) return;
+  busy=true; modal('<h2>Checking your ID…</h2><p>Finding your place in the collection.</p>');
+  await new Promise(r=>setTimeout(r,350)); busy=false;
+  if (network!=='normal') { modal(`<h2>${network==='timeout'?'Request timed out':'Request failed'}</h2><p>Your ID and redemption opportunities are unchanged.</p><button class="gold full" onclick="network='normal';check()">Restore network & retry</button>`); return; }
+  const r=E.validate(value,state); if (!r.ok) { fail(r); return; }
+  pending={input:r.input,route:state.route,id:crypto.randomUUID?crypto.randomUUID():String(Date.now())};
+  modal(`<h2 style="font-size:22px;margin:4px 0 12px">Redeem this Pretty ID?</h2><p style="font:30px Georgia,serif;letter-spacing:3px;color:var(--gold);overflow-wrap:anywhere;margin:12px 0 18px">${esc(r.input)}</p><div class="actions"><button onclick="closeModal()">Cancel</button><button class="gold" onclick="confirmClaim()">Redeem</button></div>`);
+}
+async function confirmClaim() {
+  if (busy || !pending) return;
+  busy=true; const attempt=pending;
+  $('#modal').querySelectorAll('button').forEach(b=>b.disabled=true);
+  await new Promise(r=>setTimeout(r,300));
+  if (network!=='normal') { busy=false; modal('<h2>Request failed</h2><p>No changes were made. Restore the network in Test studio and try again.</p><button onclick="closeModal()">OK</button>'); return; }
+  if (attempt.route!==state.route) { busy=false; fail({error:'Your redemption route changed. Check availability again.'}); return; }
+  const r=E.redeem(attempt.input,state,attempt.id); busy=false;
+  if (!r.ok) { fail(r); return; }
+  state=r.state; pending=null; save(); render();
+  modal(`<div class="success">${crest(r.category,true)}<h2>Pretty ID Redeemed!</h2><div class="number">${esc(state.current)}</div><small>Your new identity is saved.</small><button class="gold full" onclick="closeModal()">OK</button></div>`);
+}
+function openTest() {
+  modal(`<div class="eyebrow">PROTOTYPE ONLY</div><h2>Test studio</h2><label>Wealth level<select id="test-level" onchange="state.level=Number(this.value);save();render()">${[1,24,25,30,35,40,45,50,55,60,65,70,75,80,85,90,95,100].map(l=>`<option ${state.level===l?'selected':''}>${l}</option>`).join('')}</select></label><label>SVIP level<select id="test-svip" onchange="state.svip=Number(this.value);save();render()">${[0,1,2,3,4,5,6,7].map(l=>`<option ${state.svip===l?'selected':''}>${l}</option>`).join('')}</select></label><label>SVIP entitlement<select id="test-validity" onchange="state.svipActive=this.value==='active';save();render()"><option value="active" ${state.svipActive?'selected':''}>Active</option><option value="expired" ${!state.svipActive?'selected':''}>Expired</option></select></label><label>Remaining redemptions<input type="number" min="0" max="100" value="${state.remaining}" onchange="state.remaining=Math.max(0,Math.floor(Number(this.value)||0));save();render()"></label><label>Number availability<input id="occupied" placeholder="e.g. 88"></label><button onclick="setTaken(true)">Set Taken</button> <button onclick="setTaken(false)">Set Available</button><label style="margin-top:18px">Network<select onchange="network=this.value"><option value="normal" ${network==='normal'?'selected':''}>Available</option><option value="fail" ${network==='fail'?'selected':''}>Request failed</option><option value="timeout" ${network==='timeout'?'selected':''}>Timeout</option></select></label><p class="pending">Wealth templates follow the confirmed level table: Class C LV25–40, Class B LV45–75, Class A LV85–100. Default: LV100 and 2 claims.</p><button onclick="resetTest()">Reset test data</button><p><small>Current Pretty ID: ${esc(state.current||'None')}<br>Redemption records: ${state.records.length}<br>Reward classes: ${esc(state.rewards.join(', ')||'None')}</small></p>`);
+}
+function resetTest() { state=E.createState(); network='normal'; value=''; pending=null; save(); render(); openTest(); }
+function setTaken(t) {
+  const v=$('#occupied').value.toUpperCase();
+  if (!/^[A-Z]+$|^[0-9]+$/.test(v)) { alert('Enter letters or numbers only.'); return; }
+  if (v===state.current) { alert('The current ID cannot be released using an availability override.'); return; }
+  if (t) state.owned[v]='other'; else delete state.owned[v];
+  save(); $('#occupied').value=''; $('#occupied').placeholder=`${v}: ${t?'Taken':'Available'}`;
+}
+if (staticReview) document.body.insertAdjacentHTML('afterbegin', `<aside class="static-review-nav" aria-label="静态评审状态"><small>静态评审状态</small><a href="?preview=redeemed" ${staticRedeemed ? 'aria-current="page"' : ''}>兑换成功</a><a href="?preview=level-locked" ${staticLevelLocked ? 'aria-current="page"' : ''}>等级不足</a></aside>`);
+render();
+</script></body></html>

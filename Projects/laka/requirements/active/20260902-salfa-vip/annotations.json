@@ -248,8 +248,8 @@
       "pageId": "vip-recharge-upgrade",
       "page": "Recharge grants",
       "category": "page-flow",
-      "title": "定位VIP5 tab",
-      "description": "定位VIP5 tab",
+      "title": "定位VIP8 tab",
+      "description": "定位VIP8 tab",
       "rules": [],
       "target": {
         "selector": "div:nth-of-type(4) > button"
@@ -319,7 +319,7 @@
         "半屏保留第 39 页作为变暗背景",
         "支持输入用户 ID 并显示搜索结果",
         "支持输入自定义转赠天数",
-        "手续费、最小天数、接收人资格与冻结 VIP 规则保持待确认"
+        "最小天数、接收人资格与冻结 VIP 规则保持待确认"
       ],
       "target": {
         "annotationId": "vip-transfer-sheet",

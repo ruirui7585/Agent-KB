@@ -1,0 +1,30 @@
+{
+  "version": "1.0",
+  "updatedAt": "2026-09-22T00:00:00Z",
+  "annotations": [
+    {
+      "id": "ann-pk-score",
+      "target": "pk-score",
+      "title": "积分扣除",
+      "note": "每次开始匹配实际扣除 1 coin。展示余额变化时应以真实扣除结果为准。"
+    },
+    {
+      "id": "ann-pk-seats",
+      "target": "pk-seats",
+      "title": "语音席位",
+      "note": "左右两侧各有 5 个演示席位；当前玩法仅支持房主语音。"
+    },
+    {
+      "id": "ann-pk-progress",
+      "target": "pk-progress",
+      "title": "对局进度",
+      "note": "进度显示 10 + 比例 80；归零后显示 50。"
+    },
+    {
+      "id": "ann-pk-result",
+      "target": "pk-result",
+      "title": "结果与惩罚",
+      "note": "结果在 2-3 秒后公布；失败方进入 60 秒惩罚，平局跳过惩罚。"
+    }
+  ]
+}
