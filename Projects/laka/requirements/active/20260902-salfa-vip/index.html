@@ -5637,18 +5637,18 @@
     window.setTimeout(() => {
       if (document.getElementById("state-38-vip-privilege-setting")) return;
       const priv38 = [
-        ["MSK", "神秘人", "Hide your identity from other users.", 0],
-        ["KICK", "防踢保护", "Prevent others from kicking you out of rooms.", 0],
-        ["BLOCK", "禁止跟随", "Prevent others from following you into rooms.", 0],
-        ["HIDE", "隐藏在线状态", "Hide your online status from others.", 0]
+        ["MSK", "神秘人", "向其他用户隐藏你的身份。", "Hide your identity from other users.", 0],
+        ["KICK", "防踢保护", "防止其他人将你踢出房间。", "Prevent others from kicking you out of rooms.", 0],
+        ["BLOCK", "禁止跟随", "防止其他人跟随你进入房间。", "Prevent others from following you into rooms.", 0],
+        ["HIDE", "隐藏在线状态", "向其他用户隐藏你的在线状态。", "Hide your online status from others.", 0]
       ];
-      const rows38 = priv38.map(([mark, name, description, on]) => `
+      const rows38 = priv38.map(([mark, name, descriptionZh, descriptionEn, on]) => `
         <div class="setting-row">
           <span class="setting-ico">${mark}</span>
           <span class="setting-copy">
             <strong>${vipLabel(name)}</strong>
-            <span class="setting-description" lang="en">${description}</span>
-            <small>${on ? "Enabled" : "Off"}</small>
+            <span class="setting-description">${vipLabel(descriptionZh, descriptionEn)}</span>
+            <small>${vipLabel(on ? "已开启" : "已关闭", on ? "Enabled" : "Off")}</small>
           </span>
           <span class="setting-switch ${on ? "on" : ""}" aria-hidden="true"></span>
         </div>`).join("");
@@ -5662,16 +5662,16 @@
       art38.dataset.contractRule = "FC §5";
       art38.innerHTML = `
         <h2 class="state-title"><span class="state-id">38</span><span data-lang-only="zh">VIP 权益设置</span><span data-lang-only="en">VIP Settings</span></h2>
-        <p class="state-rule-line">FC §5 · Enable / disable privileges</p>
+        <p class="state-rule-line">FC §5 · ${vipLabel("开启 / 关闭权益", "Enable / disable privileges")}</p>
         <div class="phone setting-page" data-state="loaded" data-annotation-id="vip-privilege-setting" data-contract-rule="FC §5">
           <div class="speaker"></div>
           <div class="statusbar"><span>16:30</span><span>••• 90%</span></div>
           <header class="appbar">
             <span class="icon-button back">‹</span>
-            <h2>${vipLabel("VIP Privilege Setting")}</h2>
+            <h2>${vipLabel("VIP 权益设置", "VIP Settings")}</h2>
             <span class="appbar-right"></span>
           </header>
-          <div class="setting-head"><h3>${vipLabel("Privilege toggles")}</h3><span>Current VIP1</span></div>
+          <div class="setting-head"><h3>${vipLabel("权益开关", "Privacy Controls")}</h3><span>${vipLabel("当前 VIP1", "Current VIP1")}</span></div>
           <div class="setting-sub">
             <span data-lang-only="zh">开启或关闭当前已拥有的 VIP 权益；未解锁权益为关闭态、点击无效。</span>
             <span data-lang-only="en">Choose what others can see. Only perks unlocked at your VIP level can be turned on.</span>
