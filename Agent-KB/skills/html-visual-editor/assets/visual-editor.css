@@ -1,0 +1,441 @@
+/* HTML Visual Editor Runtime CSS - Scoped to avoid host page conflicts */
+#ve-editor-root,
+#ve-editor-root * {
+  box-sizing: border-box !important;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif !important;
+  line-height: 1.4 !important;
+  -webkit-font-smoothing: antialiased !important;
+}
+
+#ve-editor-root {
+  position: fixed !important;
+  top: 16px;
+  left: 16px;
+  z-index: 2147483640 !important;
+  width: 316px;
+  background: rgba(18, 22, 31, 0.96) !important;
+  color: #f3f4f6 !important;
+  border: 1px solid rgba(255, 255, 255, 0.14) !important;
+  border-radius: 14px !important;
+  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.38), 0 2px 8px rgba(0, 0, 0, 0.2) !important;
+  backdrop-filter: blur(12px) !important;
+  user-select: none !important;
+  font-size: 12px !important;
+  overflow: hidden !important;
+  transition: box-shadow 0.15s ease !important;
+}
+
+#ve-editor-root.ve-collapsed {
+  width: auto !important;
+  min-width: 220px !important;
+}
+
+#ve-editor-root .ve-header {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: space-between !important;
+  padding: 10px 12px !important;
+  background: rgba(255, 255, 255, 0.05) !important;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.09) !important;
+  cursor: move !important;
+  gap: 8px !important;
+}
+
+#ve-editor-root.ve-collapsed .ve-header {
+  border-bottom: none !important;
+}
+
+#ve-editor-root .ve-title-wrap {
+  display: flex !important;
+  align-items: center !important;
+  gap: 7px !important;
+  font-weight: 600 !important;
+  font-size: 13px !important;
+  color: #ffffff !important;
+}
+
+#ve-editor-root .ve-dot {
+  width: 8px !important;
+  height: 8px !important;
+  border-radius: 50% !important;
+  background: #6b7280 !important;
+  flex-shrink: 0 !important;
+}
+
+#ve-editor-root.ve-active .ve-dot {
+  background: #10b981 !important;
+  box-shadow: 0 0 8px rgba(16, 185, 129, 0.8) !important;
+}
+
+#ve-editor-root .ve-header-actions {
+  display: flex !important;
+  align-items: center !important;
+  gap: 6px !important;
+}
+
+#ve-editor-root .ve-switch-btn {
+  padding: 4px 10px !important;
+  border-radius: 999px !important;
+  border: 1px solid rgba(255, 255, 255, 0.2) !important;
+  background: rgba(255, 255, 255, 0.08) !important;
+  color: #e5e7eb !important;
+  font-size: 11px !important;
+  font-weight: 600 !important;
+  cursor: pointer !important;
+  transition: all 0.15s ease !important;
+}
+
+#ve-editor-root.ve-active .ve-switch-btn {
+  background: #10b981 !important;
+  border-color: #059669 !important;
+  color: #052e16 !important;
+}
+
+#ve-editor-root .ve-icon-btn {
+  width: 24px !important;
+  height: 24px !important;
+  border-radius: 6px !important;
+  border: 1px solid rgba(255, 255, 255, 0.12) !important;
+  background: rgba(255, 255, 255, 0.06) !important;
+  color: #d1d5db !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  cursor: pointer !important;
+  font-size: 12px !important;
+  padding: 0 !important;
+}
+
+#ve-editor-root .ve-icon-btn:hover {
+  background: rgba(255, 255, 255, 0.15) !important;
+  color: #ffffff !important;
+}
+
+#ve-editor-root .ve-status-bar {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: space-between !important;
+  padding: 6px 12px !important;
+  background: rgba(0, 0, 0, 0.28) !important;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.07) !important;
+  font-size: 11px !important;
+  color: #9ca3af !important;
+}
+
+#ve-editor-root .ve-status-text {
+  display: inline-flex !important;
+  align-items: center !important;
+  gap: 5px !important;
+  white-space: nowrap !important;
+  overflow: hidden !important;
+  text-overflow: ellipsis !important;
+}
+
+#ve-editor-root .ve-status-text.ve-saving {
+  color: #fbbf24 !important;
+}
+
+#ve-editor-root .ve-status-text.ve-saved {
+  color: #34d399 !important;
+}
+
+#ve-editor-root .ve-status-text.ve-error {
+  color: #f87171 !important;
+}
+
+#ve-editor-root .ve-deploy-bar {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: space-between !important;
+  gap: 6px !important;
+  padding: 5px 12px !important;
+  background: rgba(37, 99, 235, 0.12) !important;
+  border-bottom: 1px solid rgba(59, 130, 246, 0.2) !important;
+  font-size: 11px !important;
+  color: #93c5fd !important;
+}
+
+#ve-editor-root.ve-collapsed .ve-deploy-bar {
+  display: none !important;
+}
+
+#ve-editor-root .ve-deploy-link {
+  color: #60a5fa !important;
+  text-decoration: underline !important;
+  font-weight: 600 !important;
+  cursor: pointer !important;
+  white-space: nowrap !important;
+}
+
+#ve-editor-root .ve-deploy-link:hover {
+  color: #bfdbfe !important;
+}
+
+#ve-editor-root .ve-body {
+  padding: 10px 12px 12px !important;
+  max-height: 78vh !important;
+  overflow-y: auto !important;
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 10px !important;
+}
+
+#ve-editor-root.ve-collapsed .ve-body,
+#ve-editor-root.ve-collapsed .ve-status-bar {
+  display: none !important;
+}
+
+#ve-editor-root .ve-section {
+  background: rgba(255, 255, 255, 0.04) !important;
+  border: 1px solid rgba(255, 255, 255, 0.07) !important;
+  border-radius: 10px !important;
+  padding: 8px 10px !important;
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 7px !important;
+}
+
+#ve-editor-root .ve-section.ve-hidden {
+  display: none !important;
+}
+
+#ve-editor-root .ve-section-title {
+  font-size: 11px !important;
+  font-weight: 600 !important;
+  color: #9ca3af !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: space-between !important;
+}
+
+#ve-editor-root .ve-tag-badge {
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace !important;
+  font-size: 10px !important;
+  padding: 1px 6px !important;
+  border-radius: 4px !important;
+  background: rgba(59, 130, 246, 0.2) !important;
+  color: #93c5fd !important;
+  border: 1px solid rgba(59, 130, 246, 0.35) !important;
+  max-width: 170px !important;
+  overflow: hidden !important;
+  text-overflow: ellipsis !important;
+  white-space: nowrap !important;
+}
+
+#ve-editor-root .ve-row {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: space-between !important;
+  gap: 6px !important;
+}
+
+#ve-editor-root .ve-grid-2 {
+  display: grid !important;
+  grid-template-columns: 1fr 1fr !important;
+  gap: 6px !important;
+}
+
+#ve-editor-root .ve-grid-3 {
+  display: grid !important;
+  grid-template-columns: 1fr 1fr 1fr !important;
+  gap: 6px !important;
+}
+
+#ve-editor-root .ve-grid-4 {
+  display: grid !important;
+  grid-template-columns: repeat(4, 1fr) !important;
+  gap: 5px !important;
+}
+
+#ve-editor-root .ve-grid-5 {
+  display: grid !important;
+  grid-template-columns: repeat(5, 1fr) !important;
+  gap: 4px !important;
+}
+
+#ve-editor-root .ve-btn-sm {
+  padding: 4px 4px !important;
+  font-size: 10px !important;
+}
+
+#ve-editor-root .ve-field {
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 3px !important;
+}
+
+#ve-editor-root .ve-field label {
+  font-size: 10px !important;
+  color: #9ca3af !important;
+}
+
+#ve-editor-root input[type="text"],
+#ve-editor-root input[type="number"],
+#ve-editor-root textarea {
+  width: 100% !important;
+  padding: 5px 7px !important;
+  border-radius: 6px !important;
+  border: 1px solid rgba(255, 255, 255, 0.14) !important;
+  background: rgba(0, 0, 0, 0.35) !important;
+  color: #f9fafb !important;
+  font-size: 11px !important;
+  outline: none !important;
+  user-select: text !important;
+}
+
+#ve-editor-root textarea {
+  resize: vertical !important;
+  min-height: 46px !important;
+}
+
+#ve-editor-root input[type="text"]:focus,
+#ve-editor-root input[type="number"]:focus,
+#ve-editor-root textarea:focus {
+  border-color: #3b82f6 !important;
+}
+
+#ve-editor-root .ve-color-wrap {
+  display: flex !important;
+  align-items: center !important;
+  gap: 4px !important;
+}
+
+#ve-editor-root input[type="color"] {
+  width: 24px !important;
+  height: 24px !important;
+  padding: 0 !important;
+  border: 1px solid rgba(255, 255, 255, 0.2) !important;
+  border-radius: 5px !important;
+  background: transparent !important;
+  cursor: pointer !important;
+  flex-shrink: 0 !important;
+}
+
+#ve-editor-root .ve-btn {
+  padding: 5px 8px !important;
+  border-radius: 6px !important;
+  border: 1px solid rgba(255, 255, 255, 0.14) !important;
+  background: rgba(255, 255, 255, 0.07) !important;
+  color: #e5e7eb !important;
+  font-size: 11px !important;
+  font-weight: 500 !important;
+  cursor: pointer !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  gap: 4px !important;
+  transition: all 0.12s ease !important;
+  text-align: center !important;
+}
+
+#ve-editor-root .ve-btn:hover {
+  background: rgba(255, 255, 255, 0.14) !important;
+  color: #ffffff !important;
+}
+
+#ve-editor-root .ve-btn.ve-btn-primary {
+  background: #2563eb !important;
+  border-color: #3b82f6 !important;
+  color: #ffffff !important;
+}
+
+#ve-editor-root .ve-btn.ve-btn-primary:hover {
+  background: #1d4ed8 !important;
+}
+
+#ve-editor-root .ve-btn.ve-btn-active {
+  background: rgba(16, 185, 129, 0.22) !important;
+  border-color: #10b981 !important;
+  color: #6ee7b7 !important;
+}
+
+#ve-editor-root .ve-btn.ve-btn-danger {
+  background: rgba(239, 68, 68, 0.16) !important;
+  border-color: rgba(239, 68, 68, 0.35) !important;
+  color: #fca5a5 !important;
+}
+
+#ve-editor-root .ve-btn.ve-btn-danger:hover {
+  background: rgba(239, 68, 68, 0.28) !important;
+}
+
+#ve-editor-root .ve-hint {
+  font-size: 11px !important;
+  color: #9ca3af !important;
+  line-height: 1.45 !important;
+}
+
+/* Host element highlight in Visual Edit Mode */
+html[data-ve-mode="on"] *[data-ve-hover="true"]:not([data-ve-selected="true"]) {
+  outline: 1.5px dashed #60a5fa !important;
+  outline-offset: 2px !important;
+}
+
+html[data-ve-mode="on"] *[data-ve-selected="true"] {
+  outline: 2px solid #10b981 !important;
+  outline-offset: 2px !important;
+  box-shadow: 0 0 0 4px rgba(16, 185, 129, 0.18) !important;
+}
+
+html[data-ve-mode="on"][data-ve-drag="on"] *[data-ve-selected="true"] {
+  cursor: grab !important;
+  outline: 2px solid #f59e0b !important;
+}
+
+html[data-ve-mode="on"][data-ve-drag="on"] *[data-ve-selected="true"]:active {
+  cursor: grabbing !important;
+}
+
+/* Hidden element reveal mode */
+*[data-ve-hidden="true"] {
+  display: none !important;
+}
+
+html[data-ve-show-hidden="on"] *[data-ve-hidden="true"] {
+  display: revert !important;
+  opacity: 0.38 !important;
+  outline: 2px dashed #ef4444 !important;
+  outline-offset: 2px !important;
+}
+
+/* Allow clicking directly inside embedded preview iframes & scaled screens when Edit Mode is ON */
+html[data-ve-mode="on"] .viewport iframe,
+html[data-ve-mode="on"] .home-screen-wrap,
+html[data-ve-mode="on"] .reference-screen {
+  pointer-events: auto !important;
+}
+
+/* 8-handle visual resize box overlay (rendered in host document outside selected element) */
+#ve-resize-overlay {
+  position: fixed !important;
+  pointer-events: none !important;
+  z-index: 2147483635 !important;
+  border: 1.5px solid #10b981 !important;
+  box-sizing: border-box !important;
+  display: none;
+}
+
+#ve-resize-overlay.ve-resize-visible {
+  display: block !important;
+}
+
+#ve-resize-overlay .ve-resize-handle {
+  position: absolute !important;
+  width: 9px !important;
+  height: 9px !important;
+  background: #ffffff !important;
+  border: 1.5px solid #10b981 !important;
+  border-radius: 2px !important;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.35) !important;
+  pointer-events: auto !important;
+  box-sizing: border-box !important;
+}
+
+#ve-resize-overlay .ve-rh-nw { top: -5px !important; left: -5px !important; cursor: nwse-resize !important; }
+#ve-resize-overlay .ve-rh-n  { top: -5px !important; left: 50% !important; transform: translateX(-50%) !important; cursor: ns-resize !important; }
+#ve-resize-overlay .ve-rh-ne { top: -5px !important; right: -5px !important; cursor: nesw-resize !important; }
+#ve-resize-overlay .ve-rh-e  { top: 50% !important; right: -5px !important; transform: translateY(-50%) !important; cursor: ew-resize !important; }
+#ve-resize-overlay .ve-rh-se { bottom: -5px !important; right: -5px !important; cursor: nwse-resize !important; }
+#ve-resize-overlay .ve-rh-s  { bottom: -5px !important; left: 50% !important; transform: translateX(-50%) !important; cursor: ns-resize !important; }
+#ve-resize-overlay .ve-rh-sw { bottom: -5px !important; left: -5px !important; cursor: nesw-resize !important; }
+#ve-resize-overlay .ve-rh-w  { top: 50% !important; left: -5px !important; transform: translateY(-50%) !important; cursor: ew-resize !important; }

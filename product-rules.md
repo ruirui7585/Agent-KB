@@ -4,27 +4,21 @@
 
 ### Product Prototype Skill Routing
 
-For a new product requirement, complete requirement discussion and confirm the Feature Contract before starting prototype delivery.
+采用“**云端收口 → 轻量契约 → 静态黑白线框图 + 完整 `PRD.md`（含 7 维边界自检）→【可选】色彩高保真**”交付路径，由 `~/.kb/skills/pm-delivery-workflow/SKILL.md` 作为**唯一编排器**执行（各阶段细节由对应 Skill 定义，本入口不重复展开）：
 
-Use `pm-delivery-workflow` as the only orchestrator for turning a confirmed Feature Contract into a reviewable HTML prototype. Follow this route:
+| 触发条件 | 动作与路由 | 完成标准 |
+|---|---|---|
+| 新需求/云端讨论思路/Feature Contract → 原型与 PRD | 启动 `pm-delivery-workflow`，按阶段按需读取 `ui-html-build`、`prd-boundary-audit`、`implementation-review`、`prototype-annotation` | 默认 `wireframe-only` 完成 `契约 + 黑白线框 index.html + PRD.md + 7 维边界自检 + 本地预览` 即交付 |
+| 明确要求“需要上色 / 高保真” | 在 `pm-delivery-workflow` 中走 `two-stage`（先线框确认再上色）或 `high-fidelity` | 在同一 `index.html` 原地升级高保真 + 标注 + 审查 + Vercel 只读 |
+| 普通 Bug、文案微调、局部样式或重构 | **不启动** `pm-delivery-workflow`，直接局部 `Patch-Only` 或调用专项 Skill | 仅改动目标范围，既有内容不变 |
 
-```text
-pm-delivery-workflow
-→ ui-html-build (static wireframe confirmation → high-fidelity static prototype in the same index.html → prototype-annotation)
-→ implementation-review
-→ final sync after review and required fixes pass
-```
-
-- `pm-delivery-workflow` includes execution-readiness checks. Do not add or call a separate contract-readiness Skill inside this workflow.
-- A standalone contract-executability check is outside this delivery route and must be explicitly requested by the user.
-- Do not use another orchestrator or any Skill from `~/.kb/archive/`.
-- Do not start `pm-delivery-workflow` for ordinary bugs, copy changes, isolated style adjustments, or technical refactoring; use the relevant specialist Skill or direct scoped execution.
-- Read each Skill from `~/.kb/skills/<skill-name>/SKILL.md` when its stage begins; do not duplicate its detailed rules in this entry file.
+- `pm-delivery-workflow` 已内置云端抓取、准备检查与范围锁定，禁止在内部再调用独立 `contract-review` 或 `~/.kb/archive/` 中的 Skill。
 
 ## Product Documentation Rules
 
-Use clear PM deliverables as needed: PRD, user flow, state matrix, edge cases, backend configuration fields, test cases, analytics events, toast copy, and acceptance criteria.
-For metrics and tracking, define event name, trigger timing, properties, user scope, denominator, numerator, deduplication rule, time window, and relevant `msg_id`, `reply_to_msg_id`, or session id relationships.
+- 正式编写 `PRD.md` 时使用 `~/.kb/templates/prd-template.md`，确保包含目标/非目标、角色与端差异、业务规则、状态流转与异常边界矩阵、后台字段表、数据口径与可测试验收标准（`Given-When-Then`）。
+- **定稿前必须运行边界扫雷**：`PRD.md` 输出定稿前（或对已有 PRD 补漏时），调用 `~/.kb/skills/prd-boundary-audit/SKILL.md` 完成 7 维对抗性边界自检；发现的 `P0/P1` 缺口先向用户确认或明确标为 `TBD`，不得静默遗漏。
+- For metrics and tracking, define event name, trigger timing, properties, user scope, denominator, numerator, deduplication rule, time window, timezone attribution, and relevant `msg_id`, `reply_to_msg_id`, or session id relationships.
 
 ## 新需求端到端产品协作规则
 

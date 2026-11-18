@@ -29,16 +29,14 @@
 
 - 新增组件优先复用原页面已有对齐线、间距和尺寸体系；同行组件保持垂直中心线一致，同组图标保持统一大小与间距。
 - 隐藏某个元素后，剩余元素按原产品规则或合理布局自然重排，不得出现元素重叠或遮挡。
-- 移动端原型默认采用高保真移动 UI 固定画布（通用默认 `393 × 852px` iPhone 16；项目另有规定如 Laka `440 × 956px` iPhone 17 Pro 时以项目规则为准）。画布宽高锁定，窄屏下由外层评审区滚动或换行，画布本身不随窗口机械缩放。
+- 移动端原型默认采用固定设备画布（通用默认 `393 × 852px`，若项目 `ui/UI_SYSTEM.md` 另有规定则以项目规则为准）。画布宽高锁定，窄屏下由外层评审区滚动或换行，画布本身不随窗口机械缩放。
 
 ## 6. 多语言、状态展示与产品标注
 
-- **界面语言**：除非用户明确要求中文，移动端 App 前台界面文案默认使用英文；社交/中东（MENA）方向产品需要人物头像素材时，默认使用写实成年 MENA 风格头像。
+- **界面语言与头像**：除非用户明确要求中文，移动端 App 前台界面文案默认使用英文；需要人物头像素材时，优先使用项目正式素材或符合目标市场语境的写实成年临时头像。
 - **多语言切换一致性**：当原型支持中/英文切换时，页面标题、特权/功能名称、描述、等级提示、状态标签、目录和规则说明必须同步切换，严禁出现中英混排残句。
-- **静态展示与交互边界**：
-  - 按 `pm-delivery-workflow` / `ui-html-build` 交付的产品评审原型，默认在唯一入口 `index.html` 中以独立静态画板展示核心页面、角色分支和关键状态（弹窗、Sheet、Toast 以静态展开态呈现），不要求实现业务按钮点击或动态业务流转；
-  - 仅在评审导航（左侧原型页面/画板目录、前后台切换、语言切换、产品标注层）或用户明确要求“可交互原型”时，实现对应的实时状态联动与可关闭弹窗反馈。
-- **产品标注层**：统一使用知识库 `prototype-annotation` 规范（`annotations.json` + 稳定锚点 `data-page-id` / `data-annotation-id` + 固定在最右侧且不遮挡画板的标注主面板与浮窗），不在同一页面混入多套注释器。
+- **静态展示与交付分层**：默认在唯一入口 `index.html` 中以独立静态画板展示白名单页面与状态（弹窗/Sheet 静态展开，不写业务点击流转；仅评审导航或用户明确要求时实现可交互反馈）。交付模式分流遵循 `pm-delivery-workflow`，构建与外联省 Token 规则遵循 `ui-html-build`。
+- **产品标注层**：仅高保真阶段按知识库 `prototype-annotation` 接入唯一标注层（`wireframe-only` 线框阶段不接），不在同一页面混入多套注释器。
 
 ## 7. 文件结构与资源路径
 
@@ -78,3 +76,7 @@
 4. 服务端必须拒绝未授权的写入操作；不得仅靠隐藏按钮限制修改，也不得通过 URL 参数开启编辑模式。
 5. 公网内容仅通过修改本地文件并重新执行 `vercel deploy --prod` 更新。
 6. 发布后必须以匿名访客身份验证：页面可正常浏览、中英文切换无混排、所有修改型交互均不可用、直接调用写入接口被拒绝，且线上展示内容与本地一致。
+
+## 11. HTML 静态可视化直改与自动部署
+
+12. When the user requests direct visual editing on a local static HTML prototype, use the `html-visual-editor` skill (`visual-edit-server.mjs`). All visual changes—text edits (500ms debounce / blur), style & visibility tweaks, drag/sibling-order adjustments, and image replacements (saved to `./assets/images/`)—must automatically write back to the local `.html` source file and automatically trigger a debounced `vercel deploy --prod --yes` deployment to the fixed production alias so cross-device views stay up to date while the public deployment remains strictly read-only (`§12`).

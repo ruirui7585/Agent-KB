@@ -1,0 +1,26 @@
+{
+  "manifest_version": 3,
+  "name": "HTML 静态可视化编辑 + 自动保存",
+  "version": "1.0.0",
+  "description": "打开本地任意 HTML 文件（file:// 或 localhost）即可直接改文案、调样式、拖拽挪位、换图片，并自动保存回原文件与同步 Vercel。",
+  "permissions": ["scripting", "activeTab"],
+  "host_permissions": [
+    "file:///*",
+    "http://127.0.0.1/*",
+    "http://localhost/*"
+  ],
+  "action": {
+    "default_title": "开启 / 切换 HTML 静态可视化编辑"
+  },
+  "background": {
+    "service_worker": "background.js"
+  },
+  "content_scripts": [
+    {
+      "matches": ["file:///*"],
+      "js": ["content-bridge.js"],
+      "run_at": "document_idle",
+      "all_frames": false
+    }
+  ]
+}

@@ -11,6 +11,14 @@ After installing, updating, renaming, moving, or removing any Skill under `~/.kb
 - Treat `AGENTS.md` and its routed specialist rules as the workspace source of truth and `CLAUDE.md` as a thin Claude-specific entry that references it. Keep routing semantically consistent without duplicating the shared rules.
 - Validate that every referenced Skill path exists and that no stale Skill references remain.
 
+### Skill 零冗余与单点归属原则
+
+修改或新增 Skill 与规则前，先检查上游、同级与下游文件是否已有相同条款，确保 Agent 按阶段读取时不重复加载废话：
+
+- **单点归属**：每条规则全库只留 1 份权威定义；路由入口与编排 Skill 只指明“何时调用谁”，不复述下游 Skill 的实现或验收细则。
+- **常用与可选路径隔离**：默认轻量路径（如 `wireframe-only`）不得夹带高耗 Token 可选分支（如高保真标注细则）的冗长文本。
+- **跨项目隔离**：`Agent-KB/` 与工作区通用规则不得硬编码单个产品的设备尺寸、角色或业务规则，项目专属事实只留在对应项目目录。
+
 ## 指令提炼与归类规则
 
 ### 触发条件

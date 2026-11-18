@@ -1,0 +1,47 @@
+{
+  "version": "1.0",
+  "updatedAt": "2026-11-18T09:07:30.000Z",
+  "scopes": {
+    "/assets/room-preview.html?scene=waiting": {
+      "patches": {
+        "#phone > div.seats > div.team:nth-of-type(1) > div.seat-grid > div.round-seat:nth-of-type(1) > span.round-seat-avatar > svg": {
+          "imageSrc": "./images/ve-mwlw5maa-b3db8d03.jpg"
+        }
+      },
+      "reorders": []
+    },
+    "/assets/room-preview.html?scene=switch-team": {
+      "patches": {
+        "#phone > div.overlay > div.dialog.team-switch-dialog > div.actions > button.secondary": {
+          "text": "NO"
+        },
+        "#phone > div.overlay > div.dialog.team-switch-dialog > div.actions > button.primary": {
+          "text": "YES"
+        }
+      },
+      "reorders": []
+    },
+    "/assets/room-preview.html?scene=turn-off-pk": {
+      "patches": {
+        "#phone > div.overlay > div.dialog.team-switch-dialog > div.actions > button.secondary": {
+          "text": "NO"
+        },
+        "#phone > div.overlay > div.dialog.team-switch-dialog > div.actions > button.primary": {
+          "text": "YES"
+        }
+      },
+      "reorders": []
+    },
+    "/assets/room-preview.html?scene=reset-pk": {
+      "patches": {
+        "#phone > div.overlay:nth-of-type(10) > div.dialog.team-switch-dialog > div.actions > button.secondary": {
+          "text": "NO"
+        },
+        "#phone > div.overlay:nth-of-type(10) > div.dialog.team-switch-dialog > div.actions > button.primary": {
+          "text": "YES"
+        }
+      },
+      "reorders": []
+    }
+  }
+}

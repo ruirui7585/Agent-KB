@@ -1,0 +1,980 @@
+<!DOCTYPE html>
+<html lang="en"><head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="google" content="notranslate">
+  <title>Recharge Rewards · Static B&amp;W Wireframe (Sandbox Test)</title>
+  <style>
+    * { box-sizing: border-box; }
+    html, body {
+      margin: 0;
+      padding: 0;
+      background: #F5F5F5;
+      color: #111111;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+      font-size: 14px;
+      line-height: 22px;
+    }
+
+    /* 顶部单行原生锚点导航（wireframe-only 轻量化标准） */
+    .top-anchor-nav {
+      position: static;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      padding: 12px 24px;
+      background: #FFFFFF;
+      border-bottom: 1px solid #D9D9D9;
+    }
+    .top-anchor-title {
+      font-size: 16px;
+      line-height: 24px;
+      font-weight: 600;
+      color: #111111;
+      white-space: nowrap;
+    }
+    .top-anchor-links {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+    .top-anchor-links a {
+      display: inline-flex;
+      align-items: center;
+      min-height: 32px;
+      padding: 4px 12px;
+      border: 1px solid #D9D9D9;
+      background: #FFFFFF;
+      color: #111111;
+      text-decoration: none;
+      font-size: 12px;
+      line-height: 18px;
+      font-weight: 600;
+      border-radius: 4px;
+    }
+    .top-anchor-links a:hover {
+      background: #111111;
+      color: #FFFFFF;
+      border-color: #111111;
+    }
+
+    /* 评审画布横排滚动区，禁止画布缩放 */
+    .boards-stage {
+      display: flex;
+      flex-wrap: nowrap;
+      align-items: flex-start;
+      gap: 32px;
+      padding: 24px;
+      overflow-x: auto;
+    }
+    .board-column {
+      flex: 0 0 440px;
+      width: 440px;
+      min-width: 440px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    /* 画布外上方元信息 */
+    .board-meta {
+      width: 440px;
+      padding: 8px 12px;
+      background: #FFFFFF;
+      border: 1px solid #D9D9D9;
+      border-radius: 4px;
+    }
+    .board-meta-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 8px;
+    }
+    .board-meta-id {
+      font-size: 14px;
+      line-height: 22px;
+      font-weight: 600;
+      color: #111111;
+    }
+    .board-meta-state {
+      font-size: 12px;
+      line-height: 18px;
+      color: #666666;
+      border: 1px solid #D9D9D9;
+      padding: 1px 8px;
+      border-radius: 4px;
+      white-space: nowrap;
+    }
+    .board-meta-sub {
+      margin-top: 4px;
+      font-size: 12px;
+      line-height: 18px;
+      color: #666666;
+    }
+
+    /* 锁定移动端画布 440 x 956 */
+    .device-frame {
+      width: 440px;
+      min-width: 440px;
+      max-width: 440px;
+      height: 956px;
+      min-height: 956px;
+      max-height: 956px;
+      flex: 0 0 440px;
+      background: #FFFFFF;
+      border: 2px solid #111111;
+      border-radius: 16px;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+      position: relative;
+    }
+
+    /* App 顶部导航 */
+    .app-nav {
+      flex: 0 0 56px;
+      height: 56px;
+      padding: 0 16px;
+      border-bottom: 1px solid #D9D9D9;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      background: #FFFFFF;
+    }
+    .app-nav-btn {
+      min-width: 44px;
+      min-height: 44px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 14px;
+      line-height: 22px;
+      font-weight: 600;
+      color: #111111;
+      text-decoration: none;
+    }
+    .app-nav-btn-right {
+      justify-content: flex-end;
+      padding: 0 4px;
+    }
+    .app-nav-title {
+      font-size: 20px;
+      line-height: 28px;
+      font-weight: 600;
+      color: #111111;
+      text-align: center;
+    }
+
+    /* 中间滚动区域 */
+    .screen-body {
+      flex: 1 1 auto;
+      min-height: 0;
+      overflow-y: auto;
+      padding: 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+    .screen-body > * {
+      flex-shrink: 0;
+    }
+
+    /* Banner 线框占位 */
+    .banner-wireframe {
+      border: 1px dashed #666666;
+      background: #FAFAFA;
+      padding: 16px;
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      min-height: 88px;
+    }
+    .banner-title {
+      font-size: 16px;
+      line-height: 24px;
+      font-weight: 600;
+      color: #111111;
+    }
+    .banner-sub {
+      font-size: 12px;
+      line-height: 18px;
+      color: #666666;
+      margin-top: 4px;
+    }
+
+    /* 周期 Tab 切换（静态展示） */
+    .cycle-tabs {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      border: 1px solid #111111;
+      border-radius: 8px;
+      overflow: hidden;
+    }
+    .cycle-tab {
+      min-height: 44px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 14px;
+      line-height: 22px;
+      font-weight: 600;
+      background: #FFFFFF;
+      color: #111111;
+      border-right: 1px solid #D9D9D9;
+    }
+    .cycle-tab:last-child { border-right: none; }
+    .cycle-tab.active {
+      background: #111111;
+      color: #FFFFFF;
+    }
+
+    /* 倒计时 */
+    .countdown-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 8px 12px;
+      border: 1px solid #D9D9D9;
+      border-radius: 8px;
+      background: #FFFFFF;
+    }
+    .countdown-label {
+      font-size: 12px;
+      line-height: 18px;
+      font-weight: 600;
+      color: #666666;
+    }
+    .countdown-boxes {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .cd-unit {
+      display: inline-flex;
+      align-items: baseline;
+      gap: 2px;
+      border: 1px solid #D9D9D9;
+      padding: 2px 6px;
+      border-radius: 4px;
+      font-size: 12px;
+      line-height: 18px;
+      font-weight: 600;
+      color: #111111;
+    }
+    .cd-unit span {
+      font-weight: 400;
+      color: #666666;
+    }
+
+    /* 动态进度卡片 */
+    .progress-card {
+      border: 1px solid #111111;
+      border-radius: 8px;
+      padding: 12px 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      background: #FFFFFF;
+    }
+    .progress-metrics {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 8px;
+    }
+    .metric-box-label {
+      font-size: 12px;
+      line-height: 18px;
+      color: #666666;
+    }
+    .metric-box-val {
+      font-size: 16px;
+      line-height: 24px;
+      font-weight: 600;
+      color: #111111;
+    }
+    .progress-track {
+      width: 100%;
+      height: 10px;
+      border: 1px solid #111111;
+      border-radius: 999px;
+      background: #FFFFFF;
+      overflow: hidden;
+    }
+    .progress-fill {
+      height: 100%;
+      background: #111111;
+    }
+    .progress-bounds {
+      display: flex;
+      justify-content: space-between;
+      font-size: 12px;
+      line-height: 18px;
+      color: #666666;
+    }
+
+    /* 档位奖励列表 */
+    .section-heading {
+      font-size: 16px;
+      line-height: 24px;
+      font-weight: 600;
+      color: #111111;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .section-sub {
+      font-size: 12px;
+      line-height: 18px;
+      font-weight: 400;
+      color: #666666;
+    }
+    .tier-list {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+    .tier-card {
+      border: 1px solid #D9D9D9;
+      border-radius: 8px;
+      padding: 12px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      background: #FFFFFF;
+    }
+    .tier-card-top {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+      border-bottom: 1px solid #D9D9D9;
+      padding-bottom: 8px;
+    }
+    .tier-amount {
+      font-size: 16px;
+      line-height: 24px;
+      font-weight: 600;
+      color: #111111;
+    }
+    .tier-status-tag {
+      font-size: 12px;
+      line-height: 18px;
+      color: #666666;
+    }
+    .tier-rewards-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+    }
+    .reward-items {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      flex: 1 1 auto;
+      min-width: 0;
+    }
+    .reward-item {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .reward-icon-box {
+      flex: 0 0 32px;
+      width: 32px;
+      height: 32px;
+      border: 1px solid #D9D9D9;
+      border-radius: 4px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: #FFFFFF;
+    }
+    .reward-text {
+      min-width: 0;
+    }
+    .reward-name {
+      font-size: 14px;
+      line-height: 20px;
+      font-weight: 600;
+      color: #111111;
+    }
+    .reward-duration {
+      font-size: 12px;
+      line-height: 18px;
+      color: #666666;
+    }
+
+    /* 按钮规范：高度 >= 44px */
+    .btn-primary {
+      min-width: 96px;
+      min-height: 44px;
+      padding: 8px 14px;
+      border: 1px solid #111111;
+      background: #111111;
+      color: #FFFFFF;
+      border-radius: 6px;
+      font-size: 14px;
+      line-height: 22px;
+      font-weight: 600;
+      text-align: center;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+    .btn-secondary {
+      min-width: 96px;
+      min-height: 44px;
+      padding: 8px 14px;
+      border: 1px solid #D9D9D9;
+      background: #FFFFFF;
+      color: #111111;
+      border-radius: 6px;
+      font-size: 14px;
+      line-height: 22px;
+      font-weight: 600;
+      text-align: center;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+    .btn-disabled {
+      min-width: 96px;
+      min-height: 44px;
+      padding: 8px 14px;
+      border: 1px solid #D9D9D9;
+      background: #F5F5F5;
+      color: #BFBFBF;
+      border-radius: 6px;
+      font-size: 14px;
+      line-height: 22px;
+      font-weight: 600;
+      text-align: center;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+
+    .ops-hint-bar {
+      padding: 6px 8px;
+      border: 1px dashed #D9D9D9;
+      border-radius: 4px;
+      font-size: 12px;
+      line-height: 18px;
+      color: #666666;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+    }
+    .ops-link {
+      color: #111111;
+      font-weight: 600;
+      text-decoration: underline;
+      white-space: nowrap;
+    }
+
+    /* 静态 Toast 展示 */
+    .toast-static {
+      padding: 10px 14px;
+      background: #111111;
+      color: #FFFFFF;
+      border-radius: 6px;
+      font-size: 12px;
+      line-height: 18px;
+      text-align: center;
+    }
+
+    /* 底部固定按钮 */
+    .bottom-cta-bar {
+      flex: 0 0 auto;
+      padding: 12px 16px;
+      border-top: 1px solid #D9D9D9;
+      background: #FFFFFF;
+    }
+    .bottom-cta-btn {
+      width: 100%;
+      min-height: 48px;
+      border: 1px solid #111111;
+      background: #111111;
+      color: #FFFFFF;
+      border-radius: 8px;
+      font-size: 16px;
+      line-height: 24px;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    /* 规则页排版 */
+    .rule-block {
+      border: 1px solid #D9D9D9;
+      border-radius: 8px;
+      padding: 12px;
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+    .rule-title {
+      font-size: 14px;
+      line-height: 22px;
+      font-weight: 600;
+      color: #111111;
+    }
+    .rule-desc {
+      font-size: 12px;
+      line-height: 18px;
+      color: #666666;
+    }
+    .rule-quote {
+      margin-top: 4px;
+      padding: 8px;
+      border: 1px solid #111111;
+      border-radius: 4px;
+      font-size: 12px;
+      line-height: 18px;
+      color: #111111;
+      background: #FAFAFA;
+    }
+
+    /* 画布外下方逻辑说明（1-3行） */
+    .board-footer-note {
+      width: 440px;
+      padding: 8px 12px;
+      background: #FFFFFF;
+      border: 1px solid #D9D9D9;
+      border-radius: 4px;
+      font-size: 12px;
+      line-height: 18px;
+      color: #666666;
+    }
+    .board-footer-note strong {
+      color: #111111;
+    }
+  </style>
+</head>
+<body>
+
+  <nav class="top-anchor-nav" aria-label="Wireframe Navigation">
+    <div class="top-anchor-title">Recharge Rewards · 黑白静态线框图（Sandbox 实测 · 3 画板白名单）</div>
+    <div class="top-anchor-links">
+      <a href="#S01">S01 Monthly 默认主态</a>
+      <a href="#S02">S02 Weekly 满档 + Toast + 过期态</a>
+      <a href="#S03">S03 Rules 规则页</a>
+    </div>
+  </nav>
+
+  <main class="boards-stage">
+
+    <!-- S01: Recharge Rewards — Monthly Default & Tier States -->
+    <section class="board-column" id="S01" data-page-id="recharge-rewards-monthly" data-contract-rule="R1,R2,R3,R4" data-state="monthly-default">
+      <div class="board-meta">
+        <div class="board-meta-row">
+          <span class="board-meta-id">S01 · Recharge Rewards</span>
+          <span class="board-meta-state">Monthly 默认主态</span>
+        </div>
+        <div class="board-meta-sub">角色/端：充值用户 · Mobile H5 (440×956)｜规则：R1 周期切换 / R2 进度计算 / R3 档位展示 / R4 领取状态</div>
+      </div>
+
+      <div class="device-frame notranslate" translate="no" role="region" aria-label="S01 Recharge Rewards Monthly">
+        <header class="app-nav">
+          <span class="app-nav-btn" aria-label="Back">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#111111" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"></polyline></svg>
+          </span>
+          <span class="app-nav-title">Recharge Rewards</span>
+          <span class="app-nav-btn app-nav-btn-right">Rules</span>
+        </header>
+
+        <div class="screen-body">
+          <div class="banner-wireframe">
+            <div>
+              <div class="banner-title">LAKA Recharge Rewards</div>
+              <div class="banner-sub">Cumulative USD recharge event banner visual area</div>
+            </div>
+            <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="#666666" stroke-width="1.5"><rect x="3" y="4" width="18" height="16" rx="2"></rect><circle cx="8.5" cy="9.5" r="1.5"></circle><path d="M21 16l-5-5-4 4-3-3-6 5"></path></svg>
+          </div>
+
+          <div class="cycle-tabs" role="tablist" aria-label="Reward Cycle">
+            <div class="cycle-tab">Daily</div>
+            <div class="cycle-tab">Weekly</div>
+            <div class="cycle-tab active">Monthly</div>
+          </div>
+
+          <div class="countdown-row">
+            <span class="countdown-label">Cycle Ends In</span>
+            <div class="countdown-boxes">
+              <span class="cd-unit">12 <span>Days</span></span>
+              <span class="cd-unit">08 <span>Hours</span></span>
+              <span class="cd-unit">34 <span>Min</span></span>
+              <span class="cd-unit">19 <span>Sec</span></span>
+            </div>
+          </div>
+
+          <div class="progress-card">
+            <div class="progress-metrics">
+              <div>
+                <div class="metric-box-label">Current</div>
+                <div class="metric-box-val">$1,434</div>
+              </div>
+              <div>
+                <div class="metric-box-label">Next Tier</div>
+                <div class="metric-box-val">$3,000</div>
+              </div>
+              <div>
+                <div class="metric-box-label">Remaining</div>
+                <div class="metric-box-val">$1,566</div>
+              </div>
+            </div>
+            <div class="progress-track" aria-label="Recharge Progress 47.8%">
+              <div class="progress-fill" style="width: 47.8%;"></div>
+            </div>
+            <div class="progress-bounds">
+              <span>$0</span>
+              <span>47.8%</span>
+              <span>$3,000</span>
+            </div>
+          </div>
+
+          <div class="section-heading">
+            <span>Tier Rewards</span>
+            <span class="section-sub">Monthly USD Tiers</span>
+          </div>
+
+          <div class="tier-list">
+            <!-- Claimed -->
+            <div class="tier-card">
+              <div class="tier-card-top">
+                <span class="tier-amount">Tier $100</span>
+                <span class="tier-status-tag">Status: Claimed (Auto)</span>
+              </div>
+              <div class="tier-rewards-row">
+                <div class="reward-items">
+                  <div class="reward-item">
+                    <div class="reward-icon-box">
+                      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#111111" stroke-width="1.8"><path d="M3 18h18M5 14l2-8 5 4 5-4 2 8H5z"></path></svg>
+                    </div>
+                    <div class="reward-text">
+                      <div class="reward-name">VIP Lv.3</div>
+                      <div class="reward-duration">7 Days</div>
+                    </div>
+                  </div>
+                </div>
+                <div class="btn-secondary" style="text-align: left; justify-content: flex-start;">Received</div>
+              </div>
+            </div>
+
+            <!-- Pending Fulfillment -->
+            <div class="tier-card">
+              <div class="tier-card-top">
+                <span class="tier-amount">Tier $500</span>
+                <span class="tier-status-tag">Status: Pending Fulfillment</span>
+              </div>
+              <div class="tier-rewards-row">
+                <div class="reward-items">
+                  <div class="reward-item">
+                    <div class="reward-icon-box">
+                      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#111111" stroke-width="1.8"><rect x="3" y="6" width="18" height="12" rx="2"></rect><path d="M7 12h10"></path></svg>
+                    </div>
+                    <div class="reward-text">
+                      <div class="reward-name">Custom ID Template</div>
+                      <div class="reward-duration">Ops Assigns ID</div>
+                    </div>
+                  </div>
+                </div>
+                <div class="btn-disabled">Pending</div>
+              </div>
+              <div class="ops-hint-bar">
+                <span>Manual reward awaiting fulfillment.</span>
+                <span class="ops-link">Contact Ops</span>
+              </div>
+            </div>
+
+            <!-- Available -->
+            <div class="tier-card">
+              <div class="tier-card-top">
+                <span class="tier-amount">Tier $1,000</span>
+                <span class="tier-status-tag">Status: Available (Multi-Reward)</span>
+              </div>
+              <div class="tier-rewards-row">
+                <div class="reward-items">
+                  <div class="reward-item">
+                    <div class="reward-icon-box">
+                      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#111111" stroke-width="1.8"><circle cx="12" cy="12" r="8"></circle><path d="M12 8v8M9 11h6"></path></svg>
+                    </div>
+                    <div class="reward-text">
+                      <div class="reward-name">15,000 Coins</div>
+                      <div class="reward-duration">Permanent</div>
+                    </div>
+                  </div>
+                  <div class="reward-item">
+                    <div class="reward-icon-box">
+                      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#111111" stroke-width="1.8"><circle cx="12" cy="12" r="9"></circle><circle cx="12" cy="12" r="5"></circle></svg>
+                    </div>
+                    <div class="reward-text">
+                      <div class="reward-name">Avatar Frame · Crest</div>
+                      <div class="reward-duration">15 Days</div>
+                    </div>
+                  </div>
+                </div>
+                <div class="btn-primary">Receive</div>
+              </div>
+            </div>
+
+            <!-- Locked -->
+            <div class="tier-card">
+              <div class="tier-card-top">
+                <span class="tier-amount">Tier $3,000</span>
+                <span class="tier-status-tag">Status: Locked (Target)</span>
+              </div>
+              <div class="tier-rewards-row">
+                <div class="reward-items">
+                  <div class="reward-item">
+                    <div class="reward-icon-box">
+                      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#111111" stroke-width="1.8"><path d="M4 15l2-6h11l3 6v3H4v-3z"></path><circle cx="7.5" cy="18" r="1.5"></circle><circle cx="16.5" cy="18" r="1.5"></circle></svg>
+                    </div>
+                    <div class="reward-text">
+                      <div class="reward-name">Mount · Sovereign + Banner Exposure</div>
+                      <div class="reward-duration">30 Days / 1 Slot</div>
+                    </div>
+                  </div>
+                </div>
+                <div class="btn-disabled">Locked</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <footer class="bottom-cta-bar">
+          <div class="bottom-cta-btn">Recharge Now</div>
+        </footer>
+      </div>
+
+      <div class="board-footer-note">
+        <strong>触发/条件：</strong>进入活动页默认选中 Monthly；从服务端读取档位与进度。<br>
+        <strong>结果：</strong>展示 4 类进行中状态（Received / Pending+联系运营 / Receive / Locked）；点击 Rules 进 S03，底部固定 Recharge Now。
+      </div>
+    </section>
+
+    <!-- S02: Weekly Max Tier 100% + Toast + Expired State Showcase -->
+    <section class="board-column" id="S02" data-page-id="recharge-rewards-weekly-completed" data-contract-rule="R1,R2,R4" data-state="max-tier-toast-expired">
+      <div class="board-meta">
+        <div class="board-meta-row">
+          <span class="board-meta-id">S02 · Recharge Rewards</span>
+          <span class="board-meta-state">满档 100% + Toast + Expired</span>
+        </div>
+        <div class="board-meta-sub">角色/端：充值用户 · Mobile H5 (440×956)｜规则：R1 切 Weekly / R2 达最高档隐藏下一档 / R4 领取反馈与过期态</div>
+      </div>
+
+      <div class="device-frame notranslate" translate="no" role="region" aria-label="S02 Recharge Rewards Weekly Max Tier">
+        <header class="app-nav">
+          <span class="app-nav-btn" aria-label="Back">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#111111" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"></polyline></svg>
+          </span>
+          <span class="app-nav-title">Recharge Rewards</span>
+          <span class="app-nav-btn app-nav-btn-right">Rules</span>
+        </header>
+
+        <div class="screen-body">
+          <div class="banner-wireframe">
+            <div>
+              <div class="banner-title">LAKA Recharge Rewards</div>
+              <div class="banner-sub">Weekly cycle visual &amp; status demonstration</div>
+            </div>
+            <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="#666666" stroke-width="1.5" style="background-image: url(&quot;./assets/images/ve-mwlyqbqs-6dcbacb4.png&quot;); background-size: cover; background-position: center center;"><rect x="3" y="4" width="18" height="16" rx="2"></rect><circle cx="8.5" cy="9.5" r="1.5"></circle><path d="M21 16l-5-5-4 4-3-3-6 5"></path></svg>
+          </div>
+
+          <div class="cycle-tabs" role="tablist" aria-label="Reward Cycle">
+            <div class="cycle-tab" style="width: 148px; height: 88px;">Daily</div>
+            <div class="cycle-tab active">Weekly</div>
+            <div class="cycle-tab">Monthly</div>
+          </div>
+
+          <div class="countdown-row">
+            <span class="countdown-label">Cycle Ends In</span>
+            <div class="countdown-boxes">
+              <span class="cd-unit">02 <span>Days</span></span>
+              <span class="cd-unit">14 <span>Hours</span></span>
+              <span class="cd-unit">09 <span>Min</span></span>
+              <span class="cd-unit">45 <span>Sec</span></span>
+            </div>
+          </div>
+
+          <div class="progress-card">
+            <div class="progress-metrics" style="grid-template-columns: 1fr 1fr;">
+              <div>
+                <div class="metric-box-label">Current Cumulative</div>
+                <div class="metric-box-val">$1,200</div>
+              </div>
+              <div>
+                <div class="metric-box-label">Cycle Status</div>
+                <div class="metric-box-val">All Tiers Completed</div>
+              </div>
+            </div>
+            <div class="progress-track" aria-label="Recharge Progress 100%">
+              <div class="progress-fill" style="width: 100%;"></div>
+            </div>
+            <div class="progress-bounds">
+              <span>$0</span>
+              <span>100% Completed (Next tier hidden)</span>
+              <span>$1,000 Max</span>
+            </div>
+          </div>
+
+          <div class="toast-static" role="status" style="background-color: rgb(196, 33, 33); text-align: left;">
+            You have successfully claimed the rewards!
+          </div>
+
+          <div class="section-heading">
+            <span>Tier Rewards</span>
+            <span class="section-sub">Claimed / Manual / Expired</span>
+          </div>
+
+          <div class="tier-list">
+            <div class="tier-card">
+              <div class="tier-card-top">
+                <span class="tier-amount">Tier $500</span>
+                <span class="tier-status-tag">Status: Claimed (Just Claimed)</span>
+              </div>
+              <div class="tier-rewards-row">
+                <div class="reward-items">
+                  <div class="reward-item">
+                    <div class="reward-icon-box">
+                      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#111111" stroke-width="1.8"><polygon points="12 2 15 9 22 9 16.5 14 18.5 21 12 17 5.5 21 7.5 14 2 9 9 9"></polygon></svg>
+                    </div>
+                    <div class="reward-text">
+                      <div class="reward-name">Medal · Weekly Star + Title</div>
+                      <div class="reward-duration">14 Days</div>
+                    </div>
+                  </div>
+                </div>
+                <div class="btn-secondary">Received</div>
+              </div>
+            </div>
+
+            <div class="tier-card">
+              <div class="tier-card-top">
+                <span class="tier-amount">Tier $1,000 (Max)</span>
+                <span class="tier-status-tag">Status: Pending Fulfillment (Manual)</span>
+              </div>
+              <div class="tier-rewards-row">
+                <div class="reward-items">
+                  <div class="reward-item">
+                    <div class="reward-icon-box" style="background-image: url(&quot;./assets/images/ve-mwlyrtlh-7741bde1.jpg&quot;); background-size: cover; background-position: center center;">
+                      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#111111" stroke-width="1.8"><path d="M20 12v8H4v-8M2 7h20v5H2zM12 22V7"></path></svg>
+                    </div>
+                    <div class="reward-text">
+                      <div class="reward-name">Custom Gift + Home Screen Feature</div>
+                      <div class="reward-duration">Manual Fulfillment</div>
+                    </div>
+                  </div>
+                </div>
+                <div class="btn-disabled">Pending</div>
+              </div>
+              <div class="ops-hint-bar">
+                <span>Fulfillment record created.</span>
+                <span class="ops-link">Contact Ops</span>
+              </div>
+            </div>
+
+            <div class="tier-card">
+              <div class="tier-card-top">
+                <span class="tier-amount">Tier $200 (State Showcase)</span>
+                <span class="tier-status-tag">Status: Expired (Cycle Ended)</span>
+              </div>
+              <div class="tier-rewards-row">
+                <div class="reward-items">
+                  <div class="reward-item">
+                    <div class="reward-icon-box">
+                      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#BFBFBF" stroke-width="1.8"><circle cx="12" cy="12" r="9"></circle><path d="M12 7v5l3 3"></path></svg>
+                    </div>
+                    <div class="reward-text">
+                      <div class="reward-name">VIP Lv.1</div>
+                      <div class="reward-duration">3 Days · Unclaimed before cycle reset</div>
+                    </div>
+                  </div>
+                </div>
+                <div class="btn-disabled">Expired</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <footer class="bottom-cta-bar">
+          <div class="bottom-cta-btn" style="transform: scale(0.9);" data-ve-scale="0.9">Recharge Now&gt;&gt;&gt;</div>
+        </footer>
+      </div>
+
+      <div class="board-footer-note">
+        <strong>触发/条件：</strong>切换 Weekly 或达到最高档（$1,200 ≥ $1,000），并演示点击 Receive 后的即时反馈与 Expired 卡片。<br>
+        <strong>结果：</strong>进度条满 100% 且隐藏“下一档/差额”；弹出成功 Toast；逾期未领显示禁用 Expired。
+      </div>
+    </section>
+
+    <!-- S03: Rules Page -->
+    <section class="board-column" id="S03" data-page-id="recharge-rewards-rules" data-contract-rule="R5,R6" data-state="rules-detail">
+      <div class="board-meta">
+        <div class="board-meta-row">
+          <span class="board-meta-id">S03 · Rules</span>
+          <span class="board-meta-state">规则说明页</span>
+        </div>
+        <div class="board-meta-sub">角色/端：充值用户 · Mobile H5 (440×956)｜规则：R5 靓号限兑条款 / R6 规则页说明结构</div>
+      </div>
+
+      <div class="device-frame notranslate" translate="no" role="region" aria-label="S03 Recharge Rewards Rules">
+        <header class="app-nav">
+          <span class="app-nav-btn" aria-label="Back">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#111111" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"></polyline></svg>
+          </span>
+          <span class="app-nav-title">Rules</span>
+          <span class="app-nav-btn"></span>
+        </header>
+
+        <div class="screen-body">
+          <div class="rule-block">
+            <div class="rule-title">1. Reward Cycles (Daily / Weekly / Monthly)</div>
+            <div class="rule-desc">This event provides Daily, Weekly, and Monthly recharge reward cycles. Each successful recharge counts simultaneously toward all applicable active cycles.</div>
+          </div>
+
+          <div class="rule-block">
+            <div class="rule-title">2. Currency &amp; Independent Cycle Tracking</div>
+            <div class="rule-desc">All cumulative recharge amounts are calculated uniformly in USD. Daily, Weekly, and Monthly maintain independent progress bars, tiers, and reward lists. Progress resets at the start of each natural cycle.</div>
+          </div>
+
+          <div class="rule-block">
+            <div class="rule-title">3. Tier Rewards &amp; Claiming</div>
+            <div class="rule-desc">Once your cumulative USD recharge reaches a tier threshold, tap Receive to claim rewards. Automatic rewards (e.g., VIP, Coins, Frames, Mounts, Titles, Medals) are credited immediately; manual rewards (e.g., Custom ID, Custom Gift, Banner Exposure) enter Pending Fulfillment — please contact Operations to arrange delivery.</div>
+          </div>
+
+          <div class="rule-block">
+            <div class="rule-title">4. Reward Claim Validity</div>
+            <div class="rule-desc">Unlocked tier rewards must be claimed within the active cycle. Unclaimed rewards expire automatically once the cycle ends (exact grace/reset timezone subject to event configuration).</div>
+          </div>
+
+          <div class="rule-block">
+            <div class="rule-title">5. Custom ID Template Redemption Rule</div>
+            <div class="rule-desc">A Custom ID template reward does not represent an already-assigned ID; actual Custom IDs are allocated with assistance from Operations.</div>
+            <div class="rule-quote">
+              If you receive multiple Custom ID template rewards from different tiers, you can redeem only one.
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="board-footer-note">
+        <strong>触发/条件：</strong>在 S01/S02 点击顶部右侧 Rules 进入；点击左上角返回箭头返回上一页。<br>
+        <strong>结果：</strong>完整呈现 5 大规则区块及固定英文靓号限兑声明；本页不展示底部 Recharge Now。
+      </div>
+    </section>
+
+  </main>
+
+
+
+</body></html>
