@@ -5,6 +5,7 @@ import path from 'node:path';
 import test from 'node:test';
 import {
   loadWorkflow,
+  parseArgs,
   resolveSelectedSteps,
   runWorkflow,
   validateWorkflow
@@ -42,5 +43,11 @@ test('mock workflow creates isolated artifacts and completed status', async () =
   );
   for (const artifact of ['pm-analysis.md', 'PRD.md', 'prototype/index.html', 'review.md']) {
     assert.match(await readFile(path.join(result.runDir, artifact), 'utf8'), /Mock artifact/);
+  }
+});
+
+test('parseArgs rejects flags missing values cleanly', () => {
+  for (const flag of ['--input', '--workflow', '--agents', '--slug']) {
+    assert.throws(() => parseArgs(['run', flag]), new RegExp(`Missing value for ${flag}`));
   }
 });

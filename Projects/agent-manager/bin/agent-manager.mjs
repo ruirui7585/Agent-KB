@@ -226,16 +226,24 @@ export async function runWorkflow({
   return { runDir, status };
 }
 
-function parseArgs(argv) {
+function requireArgValue(argv, index, flag) {
+  if (index + 1 >= argv.length) throw new Error(`Missing value for ${flag}`);
+  return argv[index + 1];
+}
+
+export function parseArgs(argv) {
   const [command = 'help', ...rest] = argv;
   const options = { command };
   for (let index = 0; index < rest.length; index += 1) {
     const token = rest[index];
     if (token === '--mock') options.mock = true;
-    else if (token === '--input') options.inputPath = rest[++index];
-    else if (token === '--workflow') options.workflowPath = rest[++index];
-    else if (token === '--agents') options.selectedIds = rest[++index].split(',').map(value => value.trim()).filter(Boolean);
-    else if (token === '--slug') options.slug = rest[++index];
+    else if (token === '--input') { options.inputPath = requireArgValue(rest, index, token); index += 1; }
+    else if (token === '--workflow') { options.workflowPath = requireArgValue(rest, index, token); index += 1; }
+    else if (token === '--agents') {
+      options.selectedIds = requireArgValue(rest, index, token).split(',').map(value => value.trim()).filter(Boolean);
+      index += 1;
+    }
+    else if (token === '--slug') { options.slug = requireArgValue(rest, index, token); index += 1; }
     else throw new Error(`Unknown argument: ${token}`);
   }
   return options;

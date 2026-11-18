@@ -1,4 +1,8 @@
-const MEAL_TYPES = new Set(['breakfast', 'lunch', 'dinner', 'snack']);
+export const MEAL_TYPES = new Set(['breakfast', 'lunch', 'dinner', 'snack']);
+
+export function normalizeMealType(value) {
+  return MEAL_TYPES.has(value) ? value : null;
+}
 
 function safeNumber(value) {
   const number = Number.parseFloat(value);
@@ -6,7 +10,7 @@ function safeNumber(value) {
 }
 
 export function normalizeRecordInput(input = {}) {
-  const mealType = MEAL_TYPES.has(input.meal_type) ? input.meal_type : null;
+  const mealType = normalizeMealType(input.meal_type);
   const rawFoods = Array.isArray(input.foods) ? input.foods : [];
   const foods = rawFoods.slice(0, 20).map((food) => ({
     name: String(food.name || '').trim().slice(0, 80),

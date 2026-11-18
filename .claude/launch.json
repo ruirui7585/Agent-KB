@@ -6,20 +6,21 @@
       "runtimeExecutable": "python3",
       "runtimeArgs": ["-m", "http.server", "4000"],
       "port": 4000,
-      "url": "http://localhost:4000/Projects/laka/requirements/active/20260902-salfa-vip/prototypes/salfa-vip-member-center-v1.html"
+      "url": "http://localhost:4000/Projects/laka/requirements/active/20260902-salfa-vip/index.html"
     },
     {
       "name": "salfa-vip-preview-8735",
       "runtimeExecutable": "python3",
       "runtimeArgs": ["-m", "http.server", "8735"],
       "port": 8735,
-      "url": "http://localhost:8735/Projects/laka/requirements/active/20260902-salfa-vip/prototypes/salfa-vip-member-center-v1.html"
+      "url": "http://localhost:8735/Projects/laka/requirements/active/20260902-salfa-vip/index.html"
     },
     {
       "name": "pk-prototype",
       "runtimeExecutable": "python3",
       "runtimeArgs": ["-m", "http.server", "7742"],
-      "port": 7742
+      "port": 7742,
+      "url": "http://localhost:7742/Projects/laka/requirements/active/20261014-salfa-room-pk/index.html"
     },
     {
       "name": "salfa-pk-gallery",

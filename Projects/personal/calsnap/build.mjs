@@ -56,10 +56,10 @@ const manifest = {
   product: 'FoodMind',
   buildVersion: versionMatch?.[1] || 'unversioned',
   builtAt: new Date().toISOString(),
-  projectRoot: ROOT,
-  previewRoot: OUTPUT_ROOT,
-  formalOutputRoot: OUTPUT_ROOT,
-  entryFile: ENTRY_FILE,
+  projectRoot: '.',
+  previewRoot: 'web',
+  formalOutputRoot: 'web',
+  entryFile: 'web/index.html',
   files: Object.fromEntries(
     files
       .map((filePath) => [path.relative(OUTPUT_ROOT, filePath), sha256(filePath)])

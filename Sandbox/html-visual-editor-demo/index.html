@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="zh-CN"><head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>HTML 静态可视化编辑 + 自动保存 演示页</title>
+  <style>
+    :root {
+      --bg: #0f172a;
+      --card: #1e293b;
+      --accent: #f59e0b;
+      --text: #f8fafc;
+      --muted: #94a3b8;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      padding: 36px 24px;
+      background: var(--bg);
+      color: var(--text);
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      display: flex;
+      justify-content: center;
+    }
+    .phone-frame {
+      width: 390px;
+      background: #111827;
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      border-radius: 32px;
+      padding: 20px 16px 28px;
+      box-shadow: 0 24px 60px rgba(0, 0, 0, 0.5);
+    }
+    .hero-banner {
+      background: linear-gradient(135deg, #b45309 0%, #78350f 100%);
+      border-radius: 18px;
+      padding: 18px 16px;
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      margin-bottom: 16px;
+    }
+    .avatar-img {
+      width: 56px;
+      height: 56px;
+      border-radius: 50%;
+      border: 2px solid #fbbf24;
+      object-fit: cover;
+      flex-shrink: 0;
+      background: #374151;
+    }
+    .hero-info h1 {
+      margin: 0 0 4px;
+      font-size: 18px;
+      font-weight: 700;
+      color: #fef3c7;
+    }
+    .hero-info p {
+      margin: 0;
+      font-size: 12px;
+      color: #fde68a;
+    }
+    .card-list {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+    .privilege-card {
+      background: var(--card);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 14px;
+      padding: 14px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+    }
+    .privilege-card h3 {
+      margin: 0 0 4px;
+      font-size: 15px;
+      color: #ffffff;
+    }
+    .privilege-card p {
+      margin: 0;
+      font-size: 12px;
+      color: var(--muted);
+    }
+    .claim-btn {
+      padding: 7px 14px;
+      border-radius: 999px;
+      border: none;
+      background: #f59e0b;
+      color: #111827;
+      font-size: 12px;
+      font-weight: 700;
+      cursor: pointer;
+      flex-shrink: 0;
+    }
+    /* Right-side Prototype Annotation Editor (.annotation-panel) */
+    .annotation-panel {
+      position: fixed;
+      top: 16px;
+      right: 16px;
+      width: 280px;
+      min-width: 240px;
+      min-height: 220px;
+      resize: both;
+      overflow: auto;
+      background: rgba(17, 24, 39, 0.96);
+      border: 1px solid rgba(255, 255, 255, 0.14);
+      border-radius: 14px;
+      padding: 12px;
+      color: #f3f4f6;
+      z-index: 2147483600;
+      box-shadow: 0 14px 36px rgba(0, 0, 0, 0.4);
+      font-size: 12px;
+    }
+    .annotation-panel-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      cursor: move;
+      padding-bottom: 8px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+      margin-bottom: 10px;
+      font-weight: 600;
+    }
+    .annotation-panel input,
+    .annotation-panel textarea {
+      width: 100%;
+      margin-top: 4px;
+      margin-bottom: 8px;
+      padding: 6px 8px;
+      border-radius: 6px;
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      background: rgba(0, 0, 0, 0.3);
+      color: #fff;
+      font-size: 12px;
+    }
+  </style>
+</head>
+<body class="annotation-mode">
+  <main class="phone-frame" data-spec-key="vip-demo-frame" data-spec-title="VIP 权益主画板" data-spec-note="支持左侧可视化直改页面元素并自动写回 HTML 原文件。">
+    <section class="hero-banner annotatable" data-spec-key="hero-header" data-spec-title="顶部身份卡片" data-spec-note="点击头像可上传替换图片，点击标题可直接打字修改。">
+      <img class="avatar-img" id="demo-avatar" src="./assets/images/ve-mwltmqt1-1a438a7d.png" alt="VIP Avatar">
+      <div class="hero-info">
+        <h1 id="hero-title">SALFA VIP 特权中心</h1>
+        <p id="hero-subtitle">单击这段文字直接打字，0.5 秒自动保存回 HTML</p>
+      </div>
+    </section>
+
+    <section class="card-list" id="privilege-list">
+      <article class="privilege-card annotatable" id="card-1" data-spec-key="priv-mystery" data-spec-title="神秘人特权" data-spec-note="支持上移/下移卡片顺序或修改颜色间距。">
+        <div>
+          <h3>01. Mystery Person 防踢人</h3>
+          <p>知道吗</p>
+        </div>
+        <button type="button" class="claim-btn">Claim</button>
+      </article>
+
+      <article class="privilege-card annotatable" id="card-2" data-spec-key="priv-kick" data-spec-title="防踢保护" data-spec-note="VIP 专属房间防踢保护开关。">
+        <div>
+          <h3>02. Kick Protection 防踢保护</h3>
+          <p>免疫普通房管踢出房间操作</p>
+        </div>
+        <button type="button" class="claim-btn">Claim</button>
+      </article>
+
+      <article class="privilege-card annotatable" id="card-3" data-spec-key="priv-online" data-spec-title="隐身在线" data-spec-note="开启后外部列表不展示当前在线绿点。">
+        <div>
+          <h3>03. Hide Online 隐身在线</h3>
+          <p>自由控制个人主页在线状态显示</p>
+        </div>
+        <button type="button" class="claim-btn">Claim</button>
+      </article>
+    </section>
+  </main>
+
+  <aside class="annotation-panel" id="annotation-panel">
+    <div class="annotation-panel-header" id="annotation-panel-drag">
+      <span>原型注释</span>
+      <label style="font-size:11px;font-weight:normal;">
+        <input type="checkbox" id="annotation-mode-toggle" checked="" style="width:auto;margin:0 4px 0 0;">注释模式
+      </label>
+    </div>
+    <div>
+      <label>模块 Key</label>
+      <input type="text" id="spec-key-input" readonly="" value="hero-header">
+      <label>模块标题</label>
+      <input type="text" id="spec-title-input" value="顶部身份卡片">
+      <label>产品注释说明</label>
+      <textarea id="spec-note-input" rows="3">点击头像可上传替换图片，点击标题可直接打字修改。</textarea>
+    </div>
+  </aside>
+
+
+
+
+</body></html>

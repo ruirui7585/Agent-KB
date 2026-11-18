@@ -3,14 +3,13 @@
 > 产品：Laka iOS 1.4.7 正式版
 > 设备：PM 提供的 iPhone 17 Pro
 > 截图日期：2026-07-13
-> 本地文件：43 个，男端视角 24 个，女端视角 19 个
+> 本地文件：34 个，男端视角 24 个，女端视角 10 个（已清理 9 张女端字节级重复截图）
 
 ## 使用规则
 
 - 截图用于说明已上线页面，不是可复用素材母版；
 - `canonical`：该角色和状态的首选截图；
 - `supporting`：补充状态或关联页面；
-- `duplicate`：PM 提供且本地保留的字节级重复文件，不代表另一个设计版本；
 - 禁止提取截图中的真实用户照片；
 - 标记为“不继承”的问题，在新产出中必须修正。
 
@@ -48,23 +47,14 @@
 | ID | 文件 | 页面 / 状态 | 状态 | 用途和限制 |
 | --- | --- | --- | --- | --- |
 | F01 | [relationship-20260713-115348.png](ios-1.4.7-iphone-17-pro/female/relationship-20260713-115348.png) | Relationship / 关系槽位 | canonical | `cp-relationship/reference.png`；全局关系页、广场/历史、CP 和好友槽位。 |
-| F02 | [relationship-20260713-115453.png](ios-1.4.7-iphone-17-pro/female/relationship-20260713-115453.png) | Relationship / 关系槽位 | duplicate | 与 F01 字节级相同，不是另一个版本。 |
 | F03 | [bd-center-20260713-115350.png](ios-1.4.7-iphone-17-pro/female/bd-center-20260713-115350.png) | BD Center / 空状态 | canonical | 独立暗色业务主题、收入汇总、角色 Tab、空状态和底部操作。 |
-| F04 | [bd-center-20260713-115459.png](ios-1.4.7-iphone-17-pro/female/bd-center-20260713-115459.png) | BD Center / 空状态 | duplicate | 与 F03 字节级相同。 |
 | F05 | [chat-center-20260713-115353.png](ios-1.4.7-iphone-17-pro/female/chat-center-20260713-115353.png) | Chat Center / 绩效 | canonical | 女端运营页：日期、雷达指标和等级权益；长标签必须正确换行。 |
-| F06 | [chat-center-20260713-115502.png](ios-1.4.7-iphone-17-pro/female/chat-center-20260713-115502.png) | Chat Center / 绩效 | duplicate | 与 F05 字节级相同。 |
 | F07 | [mine-20260713-115355.png](ios-1.4.7-iphone-17-pro/female/mine-20260713-115355.png) | Mine / 女端 | canonical | 女端 Income、Agency、Chat Center、BD 入口，保留共用宫殿框架。 |
-| F08 | [mine-20260713-115504.png](ios-1.4.7-iphone-17-pro/female/mine-20260713-115504.png) | Mine / 女端 | duplicate | 与 F07 字节级相同。 |
 | F09 | [my-agency-20260713-115357.png](ios-1.4.7-iphone-17-pro/female/my-agency-20260713-115357.png) | My Agency / 已加入 | canonical | 稀疏业务确认页；`Invalid date` 是上线问题，禁止继承。 |
-| F10 | [my-agency-20260713-115506.png](ios-1.4.7-iphone-17-pro/female/my-agency-20260713-115506.png) | My Agency / 已加入 | duplicate | 与 F09 字节级相同。 |
 | F11 | [tasks-20260713-115359.png](ios-1.4.7-iphone-17-pro/female/tasks-20260713-115359.png) | Tasks / 女端 | canonical | 女端任务币种和类别；中性页面与暖色签到头部，不照搬男端深绿主题。 |
-| F12 | [tasks-20260713-115509.png](ios-1.4.7-iphone-17-pro/female/tasks-20260713-115509.png) | Tasks / 女端 | duplicate | 与 F11 字节级相同。 |
 | F13 | [message-list-20260713-115402.png](ios-1.4.7-iphone-17-pro/female/message-list-20260713-115402.png) | Message / 女端会话列表 | canonical | 共用会话结构，内容为女端匹配对象和消息。 |
-| F14 | [message-list-20260713-115511.png](ios-1.4.7-iphone-17-pro/female/message-list-20260713-115511.png) | Message / 女端会话列表 | duplicate | 与 F13 字节级相同。 |
 | F15 | [home-for-you-list-20260713-115405.png](ios-1.4.7-iphone-17-pro/female/home-for-you-list-20260713-115405.png) | Home / 女端 For You | canonical | 共用宫殿和用户卡结构，推荐内容为男用户。 |
-| F16 | [home-for-you-list-20260713-115513.png](ios-1.4.7-iphone-17-pro/female/home-for-you-list-20260713-115513.png) | Home / 女端 For You | duplicate | 与 F15 字节级相同。 |
 | F17 | [home-daily-check-in-overlay-20260713-115408.png](ios-1.4.7-iphone-17-pro/female/home-daily-check-in-overlay-20260713-115408.png) | Home / 女端签到奖励 | canonical | 居中奖励弹窗和钻石奖励；英文文案不自然，保留层级、不继承文案。 |
-| F18 | [home-daily-check-in-overlay-20260713-115515.png](ios-1.4.7-iphone-17-pro/female/home-daily-check-in-overlay-20260713-115515.png) | Home / 女端签到奖励 | duplicate | 与 F17 字节级相同。 |
 | F19 | [vip-center-20260713-115456.png](ios-1.4.7-iphone-17-pro/female/vip-center-20260713-115456.png) | VIP Center / 未订阅 | canonical | 全局非性别功能；暗色高价值主题、权益、协议和订阅 CTA。 |
 
 ## 页面 reference.png 映射
@@ -87,5 +77,4 @@
 - 阿拉伯语、英语、国旗和徽章混排造成的裁切或遮挡；
 - 把活动素材误当成全局组件；
 - 把临时浮动推广入口误当成页面固定结构；
-- 把真实用户照片当成可复用设计素材；
-- 把重复女端截图当成不同设计版本。
+- 把真实用户照片当成可复用设计素材。

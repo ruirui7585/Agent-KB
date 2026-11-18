@@ -6144,17 +6144,15 @@
 
   <script>
   if (isPublicReview) {
-    window.setTimeout(() => {
-      document.querySelectorAll("input, textarea, select, .admin-board button:not([data-admin-page]), .modal-mask button, [data-transfer-search], [data-submit-transfer]").forEach((control) => {
-        control.disabled = true;
-      });
-      document.querySelectorAll('[contenteditable="true"]').forEach((element) => {
-        element.contentEditable = "false";
-      });
-      document.querySelectorAll("form").forEach((form) => {
-        form.addEventListener("submit", (event) => event.preventDefault());
-      });
-    }, 0);
+    document.querySelectorAll("input, textarea, select, .admin-board button:not([data-admin-page]), .modal-mask button, [data-transfer-search], [data-submit-transfer]").forEach((control) => {
+      control.disabled = true;
+    });
+    document.querySelectorAll('[contenteditable="true"]').forEach((element) => {
+      element.contentEditable = "false";
+    });
+    document.querySelectorAll("form").forEach((form) => {
+      form.addEventListener("submit", (event) => event.preventDefault());
+    });
   }
   // ===== VIP 人工下发（Admin Grant）交互 =====
   (function () {

@@ -5,20 +5,19 @@ Laka 社交 App 首页关系事件聚合功能的高保真原型。
 ## 项目结构
 
 ```
-foryou-newsbanner/
-├── newsbanner.html        # 主页面（结构 + 外联引用 CSS/JS）
-├── REQUIREMENTS.md        # 需求规格文档（12 章）
+20260710-for-you-news-banner/
+├── index.html             # 主页面（结构 + 外联引用 CSS/JS）
+├── PRD.md                 # 需求规格文档（12 章）
 ├── README.md              # 本文件
 ├── css/
 │   └── style.css          # 全部样式（设计 Token + 主样式）
-├── js/
-│   └── app.js             # 业务逻辑（图标/头像/数据/轮播/视图栈/排行榜/Highlights）
-└── .workbuddy/memory/     # 工作记录
+└── js/
+    └── app.js             # 业务逻辑（图标/头像/数据/轮播/视图栈/排行榜/Highlights）
 ```
 
 ## 文件说明
 
-### newsbanner.html
+### index.html
 单页三状态原型（`show-home` / `show-highlights` / `show-rank`），通过外联引用 CSS 和 JS。
 
 ### css/style.css
@@ -40,11 +39,11 @@ foryou-newsbanner/
 可直接双击用浏览器打开（`file://` 即可，无网络依赖），或本地 HTTP 服务：
 
 ```bash
-cd /Users/shilv/Agent-Workspace/Projects/laka/foryou-newsbanner
+cd /Users/shilv/Agent-Workspace/Projects/laka/requirements/active/20260710-for-you-news-banner
 python3 -m http.server 8765
 ```
 
-浏览器访问：`http://localhost:8765/newsbanner.html`
+浏览器访问：`http://localhost:8765/index.html`
 
 ## 设计目标
 

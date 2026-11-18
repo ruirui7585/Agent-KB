@@ -8,7 +8,7 @@ const dataDir = process.env.CALSNAP_DATA_DIR
   ? path.resolve(process.env.CALSNAP_DATA_DIR)
   : path.join(__dir, '..', 'data');
 const dbPath = process.env.CALSNAP_DB_PATH || path.join(dataDir, 'foodmind.db');
-if (dbPath !== ':memory:') fs.mkdirSync(dataDir, { recursive: true });
+if (dbPath !== ':memory:') fs.mkdirSync(path.dirname(dbPath), { recursive: true });
 
 const db = new Database(dbPath);
 

@@ -3,6 +3,8 @@ import { analyzeFoodWithQwen, calculateFoodByWeight } from '../services/qwen.js'
 import { lookupBarcode } from '../services/openfoodfacts.js';
 import db from '../db.js';
 import { ok, sendError } from '../utils/response.js';
+import { localDateTime } from '../utils/datetime.js';
+import { normalizeMealType } from '../utils/record.js';
 
 const ALLOWED_IMAGE_TYPES = new Set(['image/jpeg', 'image/png', 'image/webp']);
 const rateBuckets = new Map();
@@ -71,17 +73,17 @@ export default async function foodRoutes(app) {
   });
 
   app.post('/barcode', async (req, reply) => {
-    const { barcode, meal_type } = req.body;
+    const { barcode, meal_type } = req.body || {};
     if (!barcode) return sendError(reply, 400, '请输入条形码');
+    const hasMealType = meal_type !== undefined && meal_type !== null && meal_type !== '';
+    const meal = hasMealType ? normalizeMealType(meal_type) : 'snack';
+    if (!meal) return sendError(reply, 400, '请选择有效餐别');
 
     const result = await lookupBarcode(barcode);
     if (!result) return sendError(reply, 404, '未找到该商品信息');
 
     const id = randomUUID();
-    const now = new Date();
-    const date = now.toISOString().slice(0, 10);
-    const time = now.toTimeString().slice(0, 5);
-    const meal = meal_type || 'snack';
+    const { date, time } = localDateTime();
 
     db.prepare(`INSERT INTO records (id, date, time, meal_type, foods_json, total_cal, source)
       VALUES (?, ?, ?, ?, ?, ?, ?)`)

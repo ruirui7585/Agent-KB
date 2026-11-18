@@ -10,7 +10,9 @@ Codex、Claude Code 和 Cursor 共用的工作区：`/Users/shilv/Agent-Workspac
 | [AGENTS.md](AGENTS.md) | 工作区权威入口、权限边界、项目与 Skill 路由 |
 | [CLAUDE.md](CLAUDE.md) | Claude 专用入口，继承 AGENTS.md |
 | [COMMON_RULES.md](COMMON_RULES.md) | 文件控制、冲突处理、修改与验证细则 |
-| [COMMON_UI_RULES.md](COMMON_UI_RULES.md) | 通用 UI / HTML 原型规范 |
+| [COMMON_UI_RULES.md](COMMON_UI_RULES.md) | 通用 UI / HTML 原型与 Vercel 公网只读规范 |
+| [product-rules.md](product-rules.md) | 新需求端到端产品协作、文档标准与原型 Skill 路由 |
+| [rule-maintenance.md](rule-maintenance.md) | Skill 变更同步与长期指令提炼/确认门禁 |
 | [handoff.md](handoff.md) | 全局交接协议与最近一次任务快照 |
 | [Agent-KB/AGENTS.md](Agent-KB/AGENTS.md) | 共享知识库使用规则 |
 

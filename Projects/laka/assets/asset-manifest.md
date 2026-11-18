@@ -46,7 +46,7 @@
 
 | 素材 | 状态 | 位置 | 允许用途 |
 | --- | --- | --- | --- |
-| 43 张 Laka iOS 1.4.7 截图 | shipped-reference | `../ui/references/ios-1.4.7-iphone-17-pro/` | 布局、构图、状态识别和视觉验收。 |
+| 34 张 Laka iOS 1.4.7 截图 | shipped-reference | `../ui/references/ios-1.4.7-iphone-17-pro/` | 布局、构图、状态识别和视觉验收。 |
 | 8 个页面 `reference.png` | shipped-reference | `../ui/screens/*/reference.png` | 页面快速基线；禁止被蓝湖或 AI 素材覆盖。 |
 | 截图中的真实用户照片 | not-reusable | 嵌入截图中 | 禁止裁切、提取或作为可复用头像交付。 |
 | 截图中的礼物、游戏、Banner、活动素材 | not-reusable | 嵌入截图中 | 取得正式母版前只作为视觉证据。 |

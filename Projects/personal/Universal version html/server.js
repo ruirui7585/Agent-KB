@@ -1,13 +1,25 @@
 import http from "node:http";
-import { promises as fs } from "node:fs";
+import fsSync, { promises as fs } from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 import AdmZip from "adm-zip";
 import formidable from "formidable";
 
-const rootDir = path.dirname(fileURLToPath(import.meta.url));
+const rootDir = fsSync.realpathSync(path.dirname(fileURLToPath(import.meta.url)));
 const importedDir = path.join(rootDir, "imported-prototypes");
 const port = Number(process.env.PORT || 5173);
+const MAX_ZIP_ENTRIES = 500;
+const MAX_ZIP_UNCOMPRESSED_BYTES = 200 * 1024 * 1024;
+const ALLOWED_PUBLIC_FILES = new Set([
+  "index.html",
+  "styles.css",
+  "app.js",
+  "ai-helper.js",
+  "demo-data.js",
+  "exporter.js",
+  "prototype-bridge.js",
+  "storage.js"
+]);
 
 const mimeTypes = new Map([
   [".html", "text/html; charset=utf-8"],
@@ -32,36 +44,32 @@ const mimeTypes = new Map([
   [".webm", "video/webm"]
 ]);
 
-await fs.mkdir(importedDir, { recursive: true });
-
-const server = http.createServer(async (req, res) => {
-  try {
-    const url = new URL(req.url || "/", `http://${req.headers.host || "127.0.0.1"}`);
-    if (req.method === "POST" && url.pathname === "/api/prototype-projects") {
-      try {
-        await handlePrototypeProjectImport(req, res);
-      } catch (error) {
-        sendJson(res, 400, { error: error.message || "Import failed" });
+function createServerInstance() {
+  return http.createServer(async (req, res) => {
+    try {
+      const url = new URL(req.url || "/", `http://${req.headers.host || "127.0.0.1"}`);
+      if (req.method === "POST" && url.pathname === "/api/prototype-projects") {
+        try {
+          await handlePrototypeProjectImport(req, res);
+        } catch (error) {
+          sendJson(res, 400, { error: error.message || "Import failed" });
+        }
+        return;
       }
-      return;
+      if (req.method === "GET" && url.pathname === "/api/health") {
+        sendJson(res, 200, { ok: true });
+        return;
+      }
+      if (req.method !== "GET" && req.method !== "HEAD") {
+        sendText(res, 405, "Method Not Allowed");
+        return;
+      }
+      await serveStatic(url.pathname, res, req.method === "HEAD");
+    } catch (error) {
+      sendJson(res, 500, { error: error.message || "Internal Server Error" });
     }
-    if (req.method === "GET" && url.pathname === "/api/health") {
-      sendJson(res, 200, { ok: true });
-      return;
-    }
-    if (req.method !== "GET" && req.method !== "HEAD") {
-      sendText(res, 405, "Method Not Allowed");
-      return;
-    }
-    await serveStatic(url.pathname, res, req.method === "HEAD");
-  } catch (error) {
-    sendJson(res, 500, { error: error.message || "Internal Server Error" });
-  }
-});
-
-server.listen(port, "127.0.0.1", () => {
-  console.log(`Universal HTML prototype workbench running at http://127.0.0.1:${port}/`);
-});
+  });
+}
 
 async function handlePrototypeProjectImport(req, res) {
   const { fields, files } = await parseMultipart(req);
@@ -103,10 +111,30 @@ async function handlePrototypeProjectImport(req, res) {
   }
 }
 
+export function isAllowedPublicRelativePath(relativePath) {
+  const segments = String(relativePath || "").split("/").filter(Boolean);
+  if (!segments.length || segments.some((segment) => segment === ".." || segment.startsWith("."))) {
+    return false;
+  }
+  if (segments.length === 1) return ALLOWED_PUBLIC_FILES.has(segments[0]);
+  return segments[0] === "runtime" && segments[1] === "prototypes";
+}
+
 async function serveStatic(requestPath, res, headOnly) {
-  const cleanPath = decodeURIComponent(requestPath.split("?")[0]);
+  let cleanPath;
+  try {
+    cleanPath = decodeURIComponent(requestPath.split("?")[0]);
+  } catch {
+    sendText(res, 400, "Bad Request");
+    return;
+  }
   if (cleanPath.startsWith("/prototypes/")) {
     const prototypePath = cleanPath.replace(/^\/prototypes\//, "");
+    const segments = prototypePath.split("/").filter(Boolean);
+    if (segments.some((segment) => segment === ".." || segment.startsWith("."))) {
+      sendText(res, 403, "Forbidden");
+      return;
+    }
     const filePath = path.resolve(importedDir, prototypePath);
     if (!isPathInside(filePath, importedDir)) {
       sendText(res, 403, "Forbidden");
@@ -114,25 +142,37 @@ async function serveStatic(requestPath, res, headOnly) {
     }
     try {
       const stat = await fs.stat(filePath);
-      await sendFile(stat.isDirectory() ? path.join(filePath, "index.html") : filePath, res, headOnly);
+      const target = stat.isDirectory() ? path.join(filePath, "index.html") : filePath;
+      const realTarget = await fs.realpath(target);
+      const realImportedDir = await fs.realpath(importedDir);
+      if (!isPathInside(realTarget, realImportedDir)) {
+        sendText(res, 403, "Forbidden");
+        return;
+      }
+      await sendFile(realTarget, res, headOnly);
     } catch {
       sendText(res, 404, "Not Found");
     }
     return;
   }
-  const relativePath = cleanPath === "/" ? "index.html" : cleanPath.replace(/^\/+/, "");
+  const relativePath = cleanPath === "/" ? "index.html" : path.posix.normalize(cleanPath).replace(/^\/+/, "");
+  if (!isAllowedPublicRelativePath(relativePath)) {
+    sendText(res, 404, "Not Found");
+    return;
+  }
   const filePath = path.resolve(rootDir, relativePath);
   if (!isPathInside(filePath, rootDir)) {
     sendText(res, 403, "Forbidden");
     return;
   }
   try {
-    const stat = await fs.stat(filePath);
-    if (stat.isDirectory()) {
-      await sendFile(path.join(filePath, "index.html"), res, headOnly);
+    const realFilePath = await fs.realpath(filePath);
+    const stat = await fs.stat(realFilePath);
+    if (!isPathInside(realFilePath, rootDir) || stat.isDirectory()) {
+      sendText(res, 404, "Not Found");
       return;
     }
-    await sendFile(filePath, res, headOnly);
+    await sendFile(realFilePath, res, headOnly);
   } catch {
     sendText(res, 404, "Not Found");
   }
@@ -185,16 +225,29 @@ async function importUploadedFiles(uploadedFiles, relativePaths, targetDir) {
   return writtenFiles;
 }
 
-async function importZipFile(zipPath, targetDir) {
+export async function importZipFile(zipPath, targetDir) {
   const zip = new AdmZip(zipPath);
   const entries = zip.getEntries().filter((entry) => !entry.isDirectory);
+  if (entries.length > MAX_ZIP_ENTRIES) {
+    throw new Error(`ZIP contains too many files (${entries.length} > ${MAX_ZIP_ENTRIES})`);
+  }
   const strippedNames = stripCommonRoot(entries.map((entry) => entry.entryName));
   const writtenFiles = [];
+  let totalUncompressedBytes = 0;
   for (let index = 0; index < entries.length; index += 1) {
+    const declaredSize = Number(entries[index].header?.size || 0);
+    if (declaredSize < 0 || totalUncompressedBytes + declaredSize > MAX_ZIP_UNCOMPRESSED_BYTES) {
+      throw new Error("ZIP uncompressed size exceeds limit");
+    }
     const safeRelativePath = sanitizeRelativePath(strippedNames[index]);
     const destPath = resolveInside(targetDir, safeRelativePath);
+    const data = entries[index].getData();
+    totalUncompressedBytes += data.length;
+    if (totalUncompressedBytes > MAX_ZIP_UNCOMPRESSED_BYTES) {
+      throw new Error("ZIP uncompressed size exceeds limit");
+    }
     await fs.mkdir(path.dirname(destPath), { recursive: true });
-    await fs.writeFile(destPath, entries[index].getData());
+    await fs.writeFile(destPath, data);
     writtenFiles.push(safeRelativePath);
   }
   return writtenFiles;
@@ -284,4 +337,15 @@ function firstField(value) {
 
 function createPrototypeId() {
   return `${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 8)}`;
+}
+
+export { createServerInstance };
+
+const isEntrypoint = process.argv[1] && path.resolve(process.argv[1]) === fileURLToPath(import.meta.url);
+if (isEntrypoint) {
+  await fs.mkdir(importedDir, { recursive: true });
+  const server = createServerInstance();
+  server.listen(port, "127.0.0.1", () => {
+    console.log(`Universal HTML prototype workbench running at http://127.0.0.1:${port}/`);
+  });
 }

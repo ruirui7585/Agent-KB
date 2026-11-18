@@ -1,11 +1,11 @@
 {
   "product": "FoodMind",
   "buildVersion": "20260703-12",
-  "builtAt": "2026-07-03T10:11:33.165Z",
-  "projectRoot": "/Users/shilv/Agent-Workspace/Projects/personal/calsnap",
-  "previewRoot": "/Users/shilv/Agent-Workspace/Projects/personal/calsnap/web",
-  "formalOutputRoot": "/Users/shilv/Agent-Workspace/Projects/personal/calsnap/web",
-  "entryFile": "/Users/shilv/Agent-Workspace/Projects/personal/calsnap/web/index.html",
+  "builtAt": "2026-11-17T10:36:31.979Z",
+  "projectRoot": ".",
+  "previewRoot": "web",
+  "formalOutputRoot": "web",
+  "entryFile": "web/index.html",
   "files": {
     "assets/foodmind-logo.png": "d98a1026165750eeb272c75e1adcaeb0c5adb6d27f5b05a853b2b156d604c63e",
     "assets/icon-192.png": "daeac8a9f3c94a9584c03421a27a0661aa43d3bcc39d154c48e99a1193c7bb45",

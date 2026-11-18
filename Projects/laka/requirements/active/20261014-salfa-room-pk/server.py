@@ -13,6 +13,11 @@ from urllib.parse import unquote, urlsplit
 ROOT = Path(__file__).resolve().parent
 ANNOTATIONS = ROOT / "annotations.json"
 MAX_BODY = 1024 * 1024
+BLOCKED_SUFFIXES = {".py", ".md", ".tmp"}
+
+
+class ReusableHTTPServer(ThreadingHTTPServer):
+    allow_reuse_address = True
 
 
 class Handler(BaseHTTPRequestHandler):
@@ -83,17 +88,34 @@ class Handler(BaseHTTPRequestHandler):
         relative = "index.html" if path in ("", "/") else path.lstrip("/")
         candidate = (ROOT / relative).resolve()
         try:
-            candidate.relative_to(ROOT)
+            rel_parts = candidate.relative_to(ROOT).parts
         except ValueError:
             self._send_json(404, {"error": "not found"})
             return
-        if not candidate.is_file():
+        if (
+            not rel_parts
+            or any(part.startswith(".") for part in rel_parts)
+            or candidate.suffix.lower() in BLOCKED_SUFFIXES
+            or not candidate.is_file()
+        ):
             self._send_json(404, {"error": "not found"})
             return
         content = candidate.read_bytes()
-        content_types = {".html": "text/html; charset=utf-8", ".js": "text/javascript; charset=utf-8", ".css": "text/css; charset=utf-8", ".json": "application/json; charset=utf-8", ".jpg": "image/jpeg"}
+        content_types = {
+            ".html": "text/html; charset=utf-8",
+            ".js": "text/javascript; charset=utf-8",
+            ".css": "text/css; charset=utf-8",
+            ".json": "application/json; charset=utf-8",
+            ".jpg": "image/jpeg",
+            ".jpeg": "image/jpeg",
+            ".png": "image/png",
+            ".svg": "image/svg+xml",
+            ".webp": "image/webp",
+            ".ico": "image/x-icon",
+            ".woff2": "font/woff2",
+        }
         self.send_response(200)
-        self.send_header("Content-Type", content_types.get(candidate.suffix, "application/octet-stream"))
+        self.send_header("Content-Type", content_types.get(candidate.suffix.lower(), "application/octet-stream"))
         self.send_header("Content-Length", str(len(content)))
         self.end_headers()
         self.wfile.write(content)
@@ -106,7 +128,7 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Preview the Room PK prototype locally.")
     parser.add_argument("--port", type=int, default=8775)
     args = parser.parse_args()
-    server = ThreadingHTTPServer(("127.0.0.1", args.port), Handler)
+    server = ReusableHTTPServer(("127.0.0.1", args.port), Handler)
     print(f"Serving {ROOT} at http://127.0.0.1:{args.port}")
     try:
         server.serve_forever()

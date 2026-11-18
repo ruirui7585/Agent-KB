@@ -1,0 +1,21 @@
+# Dependencies
+node_modules/
+
+# Environment
+.env
+.env.local
+.env.*.local
+
+# Local runtime data & uploads
+server/data/
+app/uploads/
+*.db
+*.db-shm
+*.db-wal
+*.sqlite
+*.sqlite3
+
+# Archives & logs
+*.tar.gz
+*.log
+.DS_Store

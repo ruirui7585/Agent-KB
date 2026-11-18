@@ -3,25 +3,8 @@ import { ok, sendError } from '../utils/response.js';
 import { calcBMR, calcTDEE } from '../services/tdee.js';
 import { getBaselineExpenditure } from '../utils/profile-helper.js';
 import { randomUUID } from 'node:crypto';
+import { localDateTime } from '../utils/datetime.js';
 import { normalizeRecordInput } from '../utils/record.js';
-
-function localDateTime() {
-  const timeZone = process.env.APP_TIME_ZONE || 'Asia/Shanghai';
-  const parts = new Intl.DateTimeFormat('en-CA', {
-    timeZone,
-    year: 'numeric',
-    month: '2-digit',
-    day: '2-digit',
-    hour: '2-digit',
-    minute: '2-digit',
-    hourCycle: 'h23',
-  }).formatToParts(new Date());
-  const values = Object.fromEntries(parts.map((part) => [part.type, part.value]));
-  return {
-    date: `${values.year}-${values.month}-${values.day}`,
-    time: `${values.hour}:${values.minute}`,
-  };
-}
 
 function getTDEE() {
   const rows = db.prepare('SELECT key, value FROM profile').all();
@@ -65,7 +48,7 @@ export default async function recordsRoutes(app) {
   });
 
   app.get('/', async (req, reply) => {
-    const date = req.query.date || new Date().toISOString().slice(0, 10);
+    const date = req.query.date || localDateTime().date;
 
     const rows = db.prepare(`SELECT id, date, time, meal_type, foods_json, total_cal, source
       FROM records WHERE date = ? ORDER BY time ASC`).all(date);
@@ -76,7 +59,9 @@ export default async function recordsRoutes(app) {
     for (const row of rows) {
       const foods = JSON.parse(row.foods_json);
       const { foods_json: _foodsJson, ...publicRow } = row;
-      meals[row.meal_type].push({ ...publicRow, foods });
+      if (meals[row.meal_type]) {
+        meals[row.meal_type].push({ ...publicRow, foods });
+      }
       dayTotal += row.total_cal;
     }
 

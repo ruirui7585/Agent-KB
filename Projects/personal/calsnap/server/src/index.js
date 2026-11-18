@@ -46,10 +46,11 @@ await app.register(profileRoutes,  { prefix: '/api/profile' });
 await app.register(exerciseRoutes, { prefix: '/api/exercises' });
 
 const port = parseInt(process.env.PORT || '3000', 10);
+const host = process.env.HOST || '127.0.0.1';
 
 try {
-  await app.listen({ port, host: '0.0.0.0' });
-  console.log(`CalSnap API running on port ${port}`);
+  await app.listen({ port, host });
+  console.log(`CalSnap API running on http://${host}:${port}`);
 } catch (err) {
   app.log.error(err);
   process.exit(1);

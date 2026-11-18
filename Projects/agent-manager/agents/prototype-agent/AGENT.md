@@ -14,9 +14,11 @@ Create a runnable HTML prototype draft based on the PRD without changing any exi
 
 Create `prototype/index.html` and keep all assets self-contained or referenced by portable relative paths.
 
-Before implementation, read and follow the existing skill at:
+Before implementation, read and follow the workspace UI rules and active skills at:
 
-`/Users/shilv/Agent-Workspace/Agent-KB/skills/html-prototype-skill/html-h5-prototype-delivery/SKILL.md`
+- `/Users/shilv/Agent-Workspace/COMMON_UI_RULES.md`
+- `/Users/shilv/Agent-Workspace/Agent-KB/skills/ui-html-build/SKILL.md`
+- `/Users/shilv/Agent-Workspace/Agent-KB/skills/prototype-annotation/SKILL.md`
 
 Rules:
 

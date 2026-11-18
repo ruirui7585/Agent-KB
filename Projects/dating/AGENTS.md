@@ -7,12 +7,12 @@
 
 ## Active Knowledge Base
 
-This project may reference shared knowledge from:
+This project may reference project-local skills and cross-project workspace rules:
 
-- `../../Agent-KB/skills/html-prototype-skill/`
-- `../../Agent-KB/global-rules/`
+- `./male-mvp-v1/docs/skills/` (archived legacy KB source moved to `../../Agent-KB/archive/html-prototype-skill/`)
+- `../../COMMON_RULES.md`
 
-These are **read-only** during project tasks. Do not modify them unless the user explicitly says "update knowledge base" or "update skill".
+`Agent-KB/` is **read-only** during project tasks. Do not modify it unless the user explicitly says "update knowledge base" or "update skill".
 
 ## Project-Specific Rules
 
@@ -26,7 +26,6 @@ This project has its own skill files in `./male-mvp-v1/docs/skills/`:
 And project rules in:
 
 - `./male-mvp-v1/docs/codex-rules.md`
-- `./agent/` — project-specific agent files
 
 Read these before modifying prototype files.
 
