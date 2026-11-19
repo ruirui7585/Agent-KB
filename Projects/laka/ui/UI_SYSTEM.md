@@ -4,7 +4,7 @@
 > 产品基线：Laka iOS 1.4.7 正式版
 > 截图设备：PM 提供的 iPhone 17 Pro
 > 主验收视口：440 x 956 CSS px
-> 最后确认：2026-11-18
+> 最后确认：2026-11-19
 
 ## 1. 文件目的
 
@@ -16,7 +16,7 @@
 4. 正式素材、头像与截图使用规则；
 5. UI 视觉与状态验收门槛。
 
-> 跨项目通用 UI 保护、资源相对路径、产品标注层与 Vercel 公网只读规范继承工作区 [COMMON_UI_RULES.md](../../../COMMON_UI_RULES.md)；前后台统一 `index.html` 交付结构与后台字段表规范遵循项目 [AGENTS.md](../AGENTS.md) 第 8 节。单页面结构与局部例外写入 `ui/screens/<screen>/SCREEN_SPEC.md`；截图索引见 `ui/references/reference-index.md`；素材清单见 `assets/asset-manifest.md`。
+> 跨项目通用 UI 保护、英文取词规范与资源相对路径继承工作区 [COMMON_UI_RULES.md](../../../COMMON_UI_RULES.md)；前后台统一 `index.html` 交付结构与后台字段表规范遵循项目 [AGENTS.md](../AGENTS.md) 第 5 节。Laka 英文社交专有名词与 C 端微文案规范见 [COPY_GLOSSARY.md](COPY_GLOSSARY.md)；单页面结构与局部例外写入 `ui/screens/<screen>/SCREEN_SPEC.md`；截图索引见 `ui/references/reference-index.md`；素材清单见 `assets/asset-manifest.md`。
 
 ## 2. 不可偏离的产品气质
 
@@ -61,7 +61,7 @@ UI Intent Card
 ```
 
 - **执行边界**：明确且局部的文案、图标、显隐、顺序调整，复述理解后直接执行；新页面、新布局、新主题、商业化流程、角色差异、权限或跨页面行为，须经 PM 确认后再执行。不再向 PM 询问本文件已定义的常规颜色、圆角、间距、字体和按钮样式。
-- **前后台视觉分工**（详见 [AGENTS.md](../AGENTS.md) §8.3）：
+- **前后台视觉分工**（详见 [AGENTS.md](../AGENTS.md) 第 5 节）：
   - **`App 前台` 视图**：使用 Laka 当前真实 UI 基线完成静态高保真展示；
   - **`运营后台` 视图**：使用黑、白、灰静态线框，不套用 App 品牌配色、宫殿主题或装饰素材，重点表达信息架构、字段分组、任务流顺序与同视图常驻字段解释。
 
@@ -111,6 +111,7 @@ UI Intent Card
 
 - 使用平台系统无衬线字体，支持阿拉伯语和 RTL/LTR 混排（文字方向跟随内容，不只跟随应用语言）；
 - 字间距不能为负值，字号不随视口宽度缩放；用户名、国旗、徽章和数值不遮挡，数字/日期/ID/货币保持完整视觉分组；
+- App 前台英文专有名词与短微文案按 [COPY_GLOSSARY.md](COPY_GLOSSARY.md) 执行（新功能无现有产品对照时优先对标成熟竞品英文 UI），严禁逐字直译或沿用 `ui/references/reference-index.md` 中已标注“不继承”的旧版不自然英文；
 - **身份行三段式抗挤压**：列表/麦位/卡片头部采用「左定宽头像（含外扩框占位）→ 中间信息区 `min-width: 0`（超长昵称单行省略，单行最多展示 2~3 个核心徽章，按 `国旗 > VIP > 等级 > 称号` 优先显示，其余折叠）→ 右侧操作/数值 `flex-shrink: 0`（不被挤歪或出界）」；
 - **双向文本数字隔离与压力样本**：阿语旁的数字/ID/倒计时/`VIP10` 须使用 `dir="ltr"` / `unicode-bidi: isolate` 隔离；列表/麦位原型至少包含 1 条长阿英混排昵称与大额数字样本（如 `1,250,000`）。
 

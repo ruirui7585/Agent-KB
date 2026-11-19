@@ -1,24 +1,8 @@
-# Laka 项目内容分类与需求索引
+# Laka 需求总台账
 
-> 本文件作为 Laka 项目（`/Users/shilv/Agent-Workspace/Projects/laka`）的全局内容分类导航与需求台账。
+> 目录结构与文件职责见 [AGENTS.md](AGENTS.md) 第 2 节；本文件专注维护需求状态、关联页面与阻塞项。
 
----
-
-## 一、项目内容按类型归类总览
-
-| 内容类别 | 目录 / 文件路径 | 核心职责与包含内容 |
-| --- | --- | --- |
-| **1. 全局规则与公共上下文** | `AGENTS.md`<br>`PROJECT_CONTEXT.md`<br>`DECISIONS.md`<br>`REQUIREMENTS_INDEX.md`<br>`CHATGPT_CONTEXT.md` | 定义项目 AI 协作协议、市场与商业化基础认知、已确认长期决策、需求总台账及跨工具上下文镜像 |
-| **2. 产品需求与原型交付包** | `requirements/active/`<br>`requirements/archive/2026/` | 按需求维度管理 `README.md`、`PRD.md`、高保真/线框 HTML 评审原型及专属 `assets/`（活跃需求按 4 大业务方向归类见下文） |
-| **3. 真实产品 UI 基线与规范** | `ui/UI_SYSTEM.md`<br>`ui/references/`<br>`ui/screens/` | 全局设计系统规范、iOS 1.4.7 真机参考图库（34 张唯一截图），以及 8 个核心页面基线（`home-for-you`、`im-chat`、`conversation-list`、`user-profile`、`voice-room`、`cp-relationship`、`private-content`、`checkout`；`guardian` 待补充） |
-| **4. 公共品牌与视觉素材库** | `assets/asset-manifest.md`<br>`assets/lanhu/` | 跨页面视觉素材清单与 40 张蓝湖封面参考（`avatars/`、`backgrounds/`、`icons/`、`shared/` 等正式切图待补充） |
-| **5. 竞品监控与行业情报** | `agents/competitor-analysis/` | 针对 SUGO、Timo 等核心竞品的监控规则（`AGENT.md`）、竞品池、产品台账与监控报告（`reports/`） |
-| **6. 业务数据报表** | `data/laka-ad-daily-report-20260715.xlsx` | 渠道获客与广告投放日报数据 |
-| **7. Axhub Make 原型工程工具链** | `make/` | React + Vite 原型构建与预览工作台，含工程规则（`make/rules/`）、Excalidraw 线框草稿（`make/src/resources/`）、示例原型（`make/src/prototypes/`）与主题库（`make/src/themes/`） |
-
----
-
-## 二、活跃需求分类索引（`requirements/active/`）
+## 活跃需求索引（`requirements/active/`）
 
 ### 1. 首页与推荐分发类
 

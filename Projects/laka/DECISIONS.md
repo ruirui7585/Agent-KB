@@ -1,7 +1,7 @@
 # Laka Confirmed Product Decisions
 
 > 本文件仅记录经过用户明确确认、未来仍可能被复用或容易被后续 Agent 错误推翻的重要产品决策及原因。
-> 具体写入门禁见 [AGENTS.md](AGENTS.md) 第 9.1 节；不得写入 AI 未确认建议、临时 UI 微调或完整历史 PRD。
+> 具体写入门禁见 [AGENTS.md](AGENTS.md) 第 6 节；不得写入 AI 未确认建议、临时 UI 微调或完整历史 PRD。
 
 ## 决策记录格式
 

@@ -33,7 +33,6 @@
 
 - `sessions/`
 - `exports/`
-- `edit-history/`
 - `artifacts/`
 
 ## 模板提交边界

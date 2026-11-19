@@ -9,8 +9,8 @@
 
 This project may reference project-local skills and cross-project workspace rules:
 
-- `./male-mvp-v1/docs/skills/` (archived legacy KB source moved to `../../Agent-KB/archive/html-prototype-skill/`)
-- `../../COMMON_RULES.md`
+- `./male-mvp-v1/docs/skills/` (project-local skills)
+- `../../AGENTS.md`
 
 `Agent-KB/` is **read-only** during project tasks. Do not modify it unless the user explicitly says "update knowledge base" or "update skill".
 
@@ -53,7 +53,6 @@ Unless the user explicitly requests it, Codex must not:
 - modify `../../Agent-KB/`
 - modify `../laka/` or any other project
 - modify `../../Sandbox/`
-- modify `../../Archive/`
 - modify `./legacy/`, `./*backup*/`, `./*broken*/`, `./*restore*/`
 - merge prototype-v2 files back into a single HTML
 - delete existing pages, tabs, modals, or annotation editor

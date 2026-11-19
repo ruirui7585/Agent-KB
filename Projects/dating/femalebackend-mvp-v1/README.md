@@ -10,5 +10,4 @@ Decoupled from the frontend prototype. Defines model profiles, traffic allocatio
 - `config-docs/`: Configuration documentation and rule explanations
 - `rules/`: Backend rule definitions and validation logic
 - `api-schemas/`: API schema definitions for backend endpoints
-- `archive/`: Archived or deprecated backend configurations
 - `backend-config.json`: Backend system metadata and scripts

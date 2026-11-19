@@ -10,7 +10,6 @@ The female app is a staff workspace. Staff operators can manage conversations fo
 - `prototype/`: Runtime prototype files.
 - `annotations/`: Annotation data and rules.
 - `docs/`: Product notes, state dictionary, Codex rules, and changelog.
-- `exports/readonly/`: Reserved for read-only exports.
 - `legacy/`: Reserved for original or archived versions.
 
 ## Local Preview

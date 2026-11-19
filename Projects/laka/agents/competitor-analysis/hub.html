@@ -1,0 +1,1432 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Laka PM 竞品与文案资产工作台</title>
+  <style>
+    :root {
+      --bg: #f5f6fa;
+      --surface: #ffffff;
+      --surface-muted: #f9fafb;
+      --border: #e5e7eb;
+      --border-strong: #d1d5db;
+      --text: #111827;
+      --text-secondary: #4b5563;
+      --text-muted: #6b7280;
+      --primary: #4f46e5;
+      --primary-hover: #4338ca;
+      --primary-soft: #eef2ff;
+      --green-bg: #ecfdf5;
+      --green-text: #047857;
+      --blue-bg: #eff6ff;
+      --blue-text: #1d4ed8;
+      --amber-bg: #fffbeb;
+      --amber-text: #b45309;
+      --rose-bg: #fff1f2;
+      --rose-text: #be123c;
+      --slate-bg: #f3f4f6;
+      --slate-text: #374151;
+      --radius-lg: 14px;
+      --radius-md: 10px;
+      --radius-sm: 6px;
+      --shadow-sm: 0 1px 2px rgba(15, 23, 42, 0.05);
+      --shadow-md: 0 8px 24px rgba(15, 23, 42, 0.08);
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      background: var(--bg);
+      color: var(--text);
+      font-family: -apple-system, BlinkMacSystemFont, "PingFang SC", "Hiragino Sans GB", "SF Pro Text", "Segoe UI", sans-serif;
+      font-size: 14px;
+      line-height: 1.55;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    .app-shell {
+      max-width: 1320px;
+      margin: 0 auto;
+      padding: 24px 24px 56px;
+    }
+
+    /* Header */
+    .topbar {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      padding: 20px 24px;
+      box-shadow: var(--shadow-sm);
+      margin-bottom: 18px;
+    }
+
+    .topbar-row {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 16px;
+      flex-wrap: wrap;
+    }
+
+    .brand h1 {
+      margin: 0;
+      font-size: 20px;
+      font-weight: 700;
+      letter-spacing: -0.01em;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .brand-tag {
+      font-size: 11px;
+      font-weight: 600;
+      background: var(--primary-soft);
+      color: var(--primary);
+      padding: 2px 8px;
+      border-radius: 999px;
+    }
+
+    .brand p {
+      margin: 6px 0 0;
+      color: var(--text-secondary);
+      font-size: 13px;
+    }
+
+    .stats-row {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .stat-pill {
+      background: var(--surface-muted);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      padding: 8px 14px;
+      min-width: 112px;
+    }
+
+    .stat-pill .stat-val {
+      font-size: 18px;
+      font-weight: 700;
+      color: var(--text);
+      line-height: 1.2;
+    }
+
+    .stat-pill .stat-label {
+      font-size: 11px;
+      color: var(--text-muted);
+      margin-top: 2px;
+    }
+
+    .prompt-bar {
+      margin-top: 16px;
+      padding-top: 14px;
+      border-top: 1px dashed var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+
+    .prompt-actions {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .prompt-label {
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--text-muted);
+      margin-right: 4px;
+    }
+
+    .meta-updated {
+      font-size: 12px;
+      color: var(--text-muted);
+    }
+
+    /* Buttons */
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      border: 1px solid var(--border-strong);
+      background: var(--surface);
+      color: var(--text);
+      padding: 7px 12px;
+      border-radius: 8px;
+      font-size: 12.5px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.15s ease;
+    }
+
+    .btn:hover {
+      border-color: var(--primary);
+      color: var(--primary);
+      background: var(--primary-soft);
+    }
+
+    .btn-primary {
+      background: var(--primary);
+      border-color: var(--primary);
+      color: #ffffff;
+    }
+
+    .btn-primary:hover {
+      background: var(--primary-hover);
+      border-color: var(--primary-hover);
+      color: #ffffff;
+    }
+
+    .btn-sm {
+      padding: 5px 10px;
+      font-size: 12px;
+    }
+
+    /* Tabs */
+    .tabs {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 16px;
+      border-bottom: 1px solid var(--border);
+      padding-bottom: 10px;
+      flex-wrap: wrap;
+    }
+
+    .tab-btn {
+      border: 1px solid transparent;
+      background: transparent;
+      color: var(--text-secondary);
+      padding: 8px 16px;
+      border-radius: 9px;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      transition: all 0.15s ease;
+    }
+
+    .tab-btn:hover {
+      background: var(--surface);
+      color: var(--text);
+    }
+
+    .tab-btn.active {
+      background: var(--surface);
+      border-color: var(--border);
+      color: var(--primary);
+      box-shadow: var(--shadow-sm);
+    }
+
+    .tab-count {
+      font-size: 11px;
+      font-weight: 600;
+      padding: 1px 7px;
+      border-radius: 999px;
+      background: var(--slate-bg);
+      color: var(--slate-text);
+    }
+
+    .tab-btn.active .tab-count {
+      background: var(--primary-soft);
+      color: var(--primary);
+    }
+
+    /* Filter Panel */
+    .filter-panel {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      padding: 14px 16px;
+      margin-bottom: 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .chip-group {
+      display: flex;
+      gap: 6px;
+      flex-wrap: wrap;
+    }
+
+    .chip {
+      border: 1px solid var(--border);
+      background: var(--surface-muted);
+      color: var(--text-secondary);
+      padding: 5px 11px;
+      border-radius: 999px;
+      font-size: 12px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.15s ease;
+    }
+
+    .chip:hover {
+      border-color: var(--primary);
+      color: var(--primary);
+    }
+
+    .chip.active {
+      background: var(--primary);
+      border-color: var(--primary);
+      color: #ffffff;
+    }
+
+    .filter-controls {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      align-items: center;
+    }
+
+    .input, .select {
+      height: 34px;
+      padding: 0 11px;
+      border: 1px solid var(--border-strong);
+      border-radius: 8px;
+      background: var(--surface);
+      color: var(--text);
+      font-size: 13px;
+      outline: none;
+    }
+
+    .input:focus, .select:focus {
+      border-color: var(--primary);
+      box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.12);
+    }
+
+    .search-input {
+      flex: 1;
+      min-width: 220px;
+    }
+
+    /* Badges */
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      padding: 2px 8px;
+      border-radius: 999px;
+      font-size: 11px;
+      font-weight: 600;
+      white-space: nowrap;
+    }
+
+    .badge-green { background: var(--green-bg); color: var(--green-text); }
+    .badge-blue { background: var(--blue-bg); color: var(--blue-text); }
+    .badge-amber { background: var(--amber-bg); color: var(--amber-text); }
+    .badge-rose { background: var(--rose-bg); color: var(--rose-text); }
+    .badge-slate { background: var(--slate-bg); color: var(--slate-text); }
+    .badge-primary { background: var(--primary-soft); color: var(--primary); }
+
+    /* Cards Grid */
+    .cards-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+      gap: 16px;
+    }
+
+    .card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      box-shadow: var(--shadow-sm);
+      transition: transform 0.15s ease, box-shadow 0.15s ease;
+    }
+
+    .card:hover {
+      transform: translateY(-2px);
+      box-shadow: var(--shadow-md);
+    }
+
+    .card-thumb {
+      height: 196px;
+      background: #0f172a;
+      position: relative;
+      overflow: hidden;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .card-thumb img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+    }
+
+    .card-thumb-overlay {
+      position: absolute;
+      inset: 10px 10px auto 10px;
+      display: flex;
+      justify-content: space-between;
+      gap: 6px;
+      pointer-events: none;
+    }
+
+    .card-body {
+      padding: 14px 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      flex: 1;
+    }
+
+    .card-meta {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      flex-wrap: wrap;
+    }
+
+    .card-title {
+      margin: 0;
+      font-size: 15px;
+      font-weight: 700;
+      color: var(--text);
+      line-height: 1.35;
+    }
+
+    .card-desc {
+      margin: 0;
+      font-size: 13px;
+      color: var(--text-secondary);
+      display: -webkit-box;
+      -webkit-line-clamp: 3;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+    }
+
+    .card-note {
+      background: var(--surface-muted);
+      border-left: 3px solid var(--primary);
+      padding: 7px 10px;
+      border-radius: 0 6px 6px 0;
+      font-size: 12px;
+      color: var(--text-secondary);
+    }
+
+    .copy-pills {
+      display: flex;
+      gap: 5px;
+      flex-wrap: wrap;
+      margin-top: 2px;
+    }
+
+    .copy-pill {
+      font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+      font-size: 11px;
+      background: var(--primary-soft);
+      color: var(--primary);
+      padding: 2px 7px;
+      border-radius: 5px;
+    }
+
+    .card-footer {
+      padding: 10px 16px 14px;
+      border-top: 1px solid var(--border);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .card-date {
+      font-size: 11.5px;
+      color: var(--text-muted);
+    }
+
+    /* Copy Table */
+    .toolbar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 12px;
+      flex-wrap: wrap;
+    }
+
+    .table-wrap {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      overflow-x: auto;
+      box-shadow: var(--shadow-sm);
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      min-width: 820px;
+    }
+
+    th, td {
+      text-align: left;
+      padding: 12px 14px;
+      border-bottom: 1px solid var(--border);
+      vertical-align: top;
+      font-size: 13px;
+    }
+
+    th {
+      background: var(--surface-muted);
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--text-muted);
+    }
+
+    tr:last-child td { border-bottom: none; }
+
+    .en-code {
+      font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+      font-size: 12.5px;
+      font-weight: 600;
+      color: var(--primary);
+      background: var(--primary-soft);
+      padding: 3px 7px;
+      border-radius: 6px;
+      display: inline-block;
+      cursor: pointer;
+    }
+
+    .en-code:hover {
+      background: #e0e7ff;
+    }
+
+    .warn-text {
+      font-size: 12px;
+      color: var(--rose-text);
+      margin-top: 4px;
+    }
+
+    /* Memo List */
+    .memo-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(360px, 1fr));
+      gap: 14px;
+    }
+
+    .memo-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      padding: 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      box-shadow: var(--shadow-sm);
+    }
+
+    .memo-raw {
+      font-size: 15px;
+      font-weight: 700;
+      color: var(--text);
+    }
+
+    /* Empty State */
+    .empty-state {
+      background: var(--surface);
+      border: 1px dashed var(--border-strong);
+      border-radius: var(--radius-lg);
+      padding: 40px 24px;
+      text-align: center;
+      color: var(--text-secondary);
+    }
+
+    .empty-state h3 {
+      margin: 0 0 8px;
+      color: var(--text);
+      font-size: 16px;
+    }
+
+    .empty-example {
+      max-width: 680px;
+      margin: 16px auto 0;
+      text-align: left;
+      background: var(--surface-muted);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      padding: 14px 16px;
+      font-size: 12.5px;
+    }
+
+    /* Modal */
+    .modal-backdrop {
+      position: fixed;
+      inset: 0;
+      background: rgba(15, 23, 42, 0.56);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+      z-index: 1000;
+    }
+
+    .modal-backdrop.open { display: flex; }
+
+    .modal {
+      background: var(--surface);
+      border-radius: 16px;
+      max-width: 980px;
+      width: 100%;
+      max-height: 90vh;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      box-shadow: 0 24px 60px rgba(15, 23, 42, 0.28);
+    }
+
+    .modal-header {
+      padding: 16px 20px;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .modal-header h2 {
+      margin: 0;
+      font-size: 17px;
+    }
+
+    .modal-body {
+      padding: 20px;
+      overflow-y: auto;
+      display: grid;
+      grid-template-columns: minmax(280px, 1fr) minmax(300px, 1.15fr);
+      gap: 20px;
+    }
+
+    @media (max-width: 780px) {
+      .modal-body { grid-template-columns: 1fr; }
+    }
+
+    .modal-image-box {
+      background: #0f172a;
+      border-radius: var(--radius-md);
+      overflow: hidden;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 260px;
+    }
+
+    .modal-image-box img {
+      width: 100%;
+      max-height: 62vh;
+      object-fit: contain;
+    }
+
+    .detail-block {
+      margin-bottom: 12px;
+    }
+
+    .detail-label {
+      font-size: 11.5px;
+      font-weight: 700;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      margin-bottom: 4px;
+    }
+
+    .detail-text {
+      font-size: 13.5px;
+      color: var(--text);
+    }
+
+    /* Toast */
+    .toast {
+      position: fixed;
+      bottom: 24px;
+      left: 50%;
+      transform: translateX(-50%) translateY(16px);
+      background: #111827;
+      color: #ffffff;
+      padding: 10px 18px;
+      border-radius: 999px;
+      font-size: 13px;
+      font-weight: 500;
+      opacity: 0;
+      pointer-events: none;
+      transition: all 0.2s ease;
+      z-index: 1200;
+      box-shadow: var(--shadow-md);
+    }
+
+    .toast.show {
+      opacity: 1;
+      transform: translateX(-50%) translateY(0);
+    }
+
+    .hidden { display: none !important; }
+  </style>
+</head>
+<body>
+  <div class="app-shell">
+    <!-- Topbar -->
+    <header class="topbar">
+      <div class="topbar-row">
+        <div class="brand">
+          <h1>
+            Laka PM 竞品与文案资产工作台
+            <span class="brand-tag">本地离线 · 资产复利</span>
+          </h1>
+          <p>按 8 大业务能力域沉淀竞品机制、成熟英文词表与上下文完整的产品备忘，取代“飞书发给自己窗口”的重复搬运。</p>
+        </div>
+        <div class="stats-row" id="statsRow"></div>
+      </div>
+
+      <div class="prompt-bar">
+        <div class="prompt-actions">
+          <span class="prompt-label">高频 AI 口令：</span>
+          <button class="btn btn-primary btn-sm" data-prompt="pre-research">复制：需求前预研口令</button>
+          <button class="btn btn-sm" data-prompt="intake">复制：收箱整理口令</button>
+          <button class="btn btn-sm" data-prompt="approve-copy">复制：词表确认入库口令</button>
+        </div>
+        <div class="meta-updated" id="updatedMeta">最近同步：—</div>
+      </div>
+    </header>
+
+    <!-- Tabs -->
+    <nav class="tabs" role="tablist">
+      <button class="tab-btn active" data-tab="cards" role="tab" aria-selected="true">
+        竞品能力卡片 <span class="tab-count" id="countCards">0</span>
+      </button>
+      <button class="tab-btn" data-tab="copy" role="tab" aria-selected="false">
+        英文文案对照 & 研发交付台 <span class="tab-count" id="countCopy">0</span>
+      </button>
+      <button class="tab-btn" data-tab="memos" role="tab" aria-selected="false">
+        碎念转化台账（术语/物料/想法） <span class="tab-count" id="countMemos">0</span>
+      </button>
+    </nav>
+
+    <!-- Tab 1: Competitor Capability Cards -->
+    <section id="panel-cards">
+      <div class="filter-panel">
+        <div class="chip-group" id="moduleChips"></div>
+        <div class="filter-controls">
+          <input type="search" id="cardSearch" aria-label="搜索竞品能力卡片" class="input search-input" placeholder="搜竞品、页面、交互规则、提取的英文原词或 Laka 备注…" />
+          <select id="competitorFilter" aria-label="按竞品筛选" class="select">
+            <option value="all">全部竞品</option>
+          </select>
+          <select id="evidenceFilter" aria-label="按证据等级筛选" class="select">
+            <option value="all">全部证据等级</option>
+            <option value="实机截图">实机截图</option>
+            <option value="商店截图">商店截图</option>
+            <option value="公开宣传图">公开宣传图</option>
+          </select>
+          <select id="actionFilter" aria-label="按 Laka 结论筛选" class="select">
+            <option value="all">全部结论</option>
+            <option value="借鉴">借鉴</option>
+            <option value="避坑">避坑</option>
+            <option value="仅观察">仅观察</option>
+          </select>
+        </div>
+      </div>
+      <div class="cards-grid" id="cardsGrid"></div>
+    </section>
+
+    <!-- Tab 2: Copy Glossary & Dev Handoff -->
+    <section id="panel-copy" class="hidden">
+      <div class="filter-panel">
+        <div class="filter-controls">
+          <input type="search" id="copySearch" aria-label="搜索英文文案词条" class="input search-input" placeholder="搜中文概念、英文原词、来源竞品或避坑红线…" />
+          <select id="copyModuleFilter" aria-label="按能力域筛选词条" class="select">
+            <option value="all">全部能力域</option>
+          </select>
+          <select id="copyStatusFilter" aria-label="按词表状态筛选" class="select">
+            <option value="all">全部状态</option>
+            <option value="Pending">待 PM 确认 (Pending)</option>
+            <option value="Approved">已入词表 (Approved)</option>
+            <option value="Branching">竞品分叉 (Branching)</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="toolbar">
+        <label style="display:inline-flex;align-items:center;gap:6px;cursor:pointer;font-size:13px;color:var(--text-secondary);">
+          <input type="checkbox" id="selectAllCopy" /> 全选当前筛选结果（<span id="selectedCopyCount">0</span> 条）
+        </label>
+        <div style="display:flex;gap:8px;flex-wrap:wrap;">
+          <button class="btn btn-primary btn-sm" id="copyMarkdownBtn">复制研发/UI Markdown 表</button>
+          <button class="btn btn-sm" id="copyFeishuBtn">复制精简中英对照（贴飞书群）</button>
+        </div>
+      </div>
+
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th style="width:36px;">选</th>
+              <th style="width:120px;">能力域</th>
+              <th style="width:170px;">中文概念</th>
+              <th style="width:230px;">竞品标准英文（点击单条复制）</th>
+              <th style="width:140px;">来源竞品</th>
+              <th>建议与红线提醒</th>
+              <th style="width:110px;">词表状态</th>
+            </tr>
+          </thead>
+          <tbody id="copyTableBody"></tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- Tab 3: Domain Memos -->
+    <section id="panel-memos" class="hidden">
+      <div class="filter-panel">
+        <div class="chip-group" id="memoCatChips"></div>
+        <div class="filter-controls">
+          <input type="search" id="memoSearch" aria-label="搜索碎念备忘台账" class="input search-input" placeholder="搜原始 14 字短句、AI 补全后的业务口径或关联需求…" />
+        </div>
+      </div>
+      <div id="memosContainer"></div>
+    </section>
+  </div>
+
+  <!-- Card Detail Modal -->
+  <div class="modal-backdrop" id="cardModal" aria-hidden="true">
+    <div class="modal" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+      <div class="modal-header">
+        <h2 id="modalTitle">卡片详情</h2>
+        <div style="display:flex;gap:8px;">
+          <button class="btn btn-primary btn-sm" id="modalCopyPromptBtn">复制给 AI 写原型/PRD 引用</button>
+          <button class="btn btn-sm" id="modalCloseBtn">关闭 (ESC)</button>
+        </div>
+      </div>
+      <div class="modal-body" id="modalBody"></div>
+    </div>
+  </div>
+
+  <div class="toast" id="toast">已复制到剪贴板</div>
+
+  <script src="./library-data.js"></script>
+  <script>
+    (function () {
+      const DATA = window.LAKA_PM_LIBRARY;
+      if (!DATA) {
+        document.body.innerHTML =
+          '<div style="max-width:640px;margin:60px auto;padding:24px;background:#fff;border:1px solid #e5e7eb;border-radius:12px;font-family:sans-serif;">' +
+          '<h2>尚未生成离线数据文件</h2>' +
+          '<p>请在 <code>Projects/laka</code> 目录下运行 <code>node pm-inbox/scripts/scan-inbox.mjs sync</code>，或直接对 AI 说「收箱整理」。</p>' +
+          '</div>';
+        return;
+      }
+
+      const moduleMap = Object.fromEntries((DATA.modules || []).map((m) => [m.id, m]));
+      const memoCatMap = Object.fromEntries((DATA.memoCategories || []).map((c) => [c.id, c]));
+
+      const state = {
+        activeTab: 'cards',
+        cardModule: 'all',
+        cardCompetitor: 'all',
+        cardEvidence: 'all',
+        cardAction: 'all',
+        cardSearch: '',
+        copyModule: 'all',
+        copyStatus: 'all',
+        copySearch: '',
+        selectedCopyIds: new Set(),
+        memoCategory: 'all',
+        memoSearch: '',
+        modalCard: null,
+      };
+
+      const PROMPTS = {
+        'pre-research':
+          '需求前预研：我想做 [填具体功能，如 VIP 续费升级 / 语聊房 PK]，请先按 pm-inbox/PLAYBOOK.md 检索本地竞品能力卡片、COPY_GLOSSARY.md 和竞品池，输出已有可复用方案、成熟英文词，以及只需我实机补拍的 3-5 张精准截图清单。',
+        intake:
+          '收箱整理：请按 pm-inbox/PLAYBOOK.md 扫描 pm-inbox/raw/ 和 pm-inbox/quick-notes.md，完成去重校验、竞品机制拆解卡片、提取英文文案并对照 COPY_GLOSSARY.md 输出研发可用文案表、补全碎念上下文分流台账，最后同步刷新 hub.html 离线数据。',
+        'approve-copy':
+          '确认词表入库：请展示 agents/competitor-analysis/copy-staging.md 中当前 Pending 的英文词条，我勾选确认后由你合并写入 ui/COPY_GLOSSARY.md 并同步看板。',
+      };
+
+      function esc(str) {
+        return String(str ?? '')
+          .replace(/&/g, '&amp;')
+          .replace(/</g, '&lt;')
+          .replace(/>/g, '&gt;')
+          .replace(/"/g, '&quot;');
+      }
+
+      let toastTimer = null;
+      function showToast(msg) {
+        const el = document.getElementById('toast');
+        el.textContent = msg;
+        el.classList.add('show');
+        clearTimeout(toastTimer);
+        toastTimer = setTimeout(() => el.classList.remove('show'), 2200);
+      }
+
+      function copyText(text, successMsg) {
+        if (navigator.clipboard && navigator.clipboard.writeText) {
+          navigator.clipboard
+            .writeText(text)
+            .then(() => showToast(successMsg || '已复制到剪贴板'))
+            .catch(() => fallbackCopy(text, successMsg));
+        } else {
+          fallbackCopy(text, successMsg);
+        }
+      }
+
+      function fallbackCopy(text, successMsg) {
+        const ta = document.createElement('textarea');
+        ta.value = text;
+        ta.style.position = 'fixed';
+        ta.style.opacity = '0';
+        document.body.appendChild(ta);
+        ta.select();
+        try {
+          document.execCommand('copy');
+          showToast(successMsg || '已复制到剪贴板');
+        } catch (e) {
+          showToast('复制失败，请手动选中复制');
+        }
+        document.body.removeChild(ta);
+      }
+
+      function evidenceBadgeClass(level) {
+        if (level === '实机截图') return 'badge-green';
+        if (level === '商店截图') return 'badge-blue';
+        return 'badge-amber';
+      }
+
+      function actionBadgeClass(action) {
+        if (action === '借鉴') return 'badge-green';
+        if (action === '避坑') return 'badge-rose';
+        return 'badge-slate';
+      }
+
+      function copyStatusBadge(item) {
+        if (item.approvalStatus === 'Pending') {
+          return '<span class="badge badge-amber">待确认 Pending</span>';
+        }
+        if (item.glossaryStatus === 'Branching') {
+          return '<span class="badge badge-blue">分叉词已录</span>';
+        }
+        return '<span class="badge badge-green">已入标准词表</span>';
+      }
+
+      function buildCardPrompt(card) {
+        const mod = moduleMap[card.module]?.label || card.module;
+        return [
+          `【竞品能力参考引用】${card.id}`,
+          `- 竞品 / 模块：${card.competitor} · ${mod}（${card.evidenceLevel}，${card.capturedDate}）`,
+          `- 页面：${card.page}`,
+          `- 截图路径：agents/competitor-analysis/${card.imagePath}`,
+          `- 核心路径：${card.flowSummary}`,
+          `- 规则与限制：${card.rulesSummary}`,
+          `- 商业化钩子：${card.monetizationHook}`,
+          `- 提取英文原词：${(card.extractedCopy || []).join(', ') || '无'}`,
+          `- 对 Laka 结论（${card.lakaAction}）：${card.lakaNote}`,
+        ].join('\n');
+      }
+
+      function renderHeader() {
+        const cards = DATA.cards || [];
+        const copyItems = DATA.copyItems || [];
+        const memos = DATA.memos || [];
+        const verifiedCount = cards.filter((c) => c.evidenceLevel === '实机截图').length;
+        const pendingCopy = copyItems.filter((c) => c.approvalStatus === 'Pending').length;
+
+        document.getElementById('statsRow').innerHTML = [
+          { val: cards.length, label: `能力卡片（实机 ${verifiedCount}）` },
+          { val: copyItems.length, label: `英文词条（待定 ${pendingCopy}）` },
+          { val: memos.length, label: '已转化备忘台账' },
+        ]
+          .map(
+            (s) =>
+              `<div class="stat-pill"><div class="stat-val">${s.val}</div><div class="stat-label">${esc(s.label)}</div></div>`
+          )
+          .join('');
+
+        document.getElementById('countCards').textContent = cards.length;
+        document.getElementById('countCopy').textContent = copyItems.length;
+        document.getElementById('countMemos').textContent = memos.length;
+
+        const dt = DATA.updatedAt
+          ? new Date(DATA.updatedAt).toLocaleString('zh-CN', { hour12: false })
+          : '—';
+        document.getElementById('updatedMeta').textContent = `最近同步：${dt}`;
+      }
+
+      function initFilters() {
+        const competitors = Array.from(new Set((DATA.cards || []).map((c) => c.competitor))).sort();
+        const compSel = document.getElementById('competitorFilter');
+        competitors.forEach((name) => {
+          const opt = document.createElement('option');
+          opt.value = name;
+          opt.textContent = name;
+          compSel.appendChild(opt);
+        });
+
+        const copyModSel = document.getElementById('copyModuleFilter');
+        (DATA.modules || []).forEach((m) => {
+          const opt = document.createElement('option');
+          opt.value = m.id;
+          opt.textContent = m.label;
+          copyModSel.appendChild(opt);
+        });
+      }
+
+      function renderModuleChips() {
+        const cards = DATA.cards || [];
+        const counts = { all: cards.length };
+        cards.forEach((c) => {
+          counts[c.module] = (counts[c.module] || 0) + 1;
+          (c.secondaryModules || []).forEach((sm) => {
+            counts[sm] = (counts[sm] || 0) + 1;
+          });
+        });
+
+        const allChip = `<button class="chip ${state.cardModule === 'all' ? 'active' : ''}" data-mod="all">全部能力域 (${counts.all})</button>`;
+        const chips = (DATA.modules || [])
+          .map((m) => {
+            const cnt = counts[m.id] || 0;
+            return `<button class="chip ${state.cardModule === m.id ? 'active' : ''}" data-mod="${m.id}">${esc(m.short)} (${cnt})</button>`;
+          })
+          .join('');
+
+        const container = document.getElementById('moduleChips');
+        container.innerHTML = allChip + chips;
+        container.querySelectorAll('.chip').forEach((btn) => {
+          btn.addEventListener('click', () => {
+            state.cardModule = btn.dataset.mod;
+            renderModuleChips();
+            renderCards();
+          });
+        });
+      }
+
+      function getFilteredCards() {
+        const q = state.cardSearch.trim().toLowerCase();
+        return (DATA.cards || []).filter((c) => {
+          if (state.cardModule !== 'all') {
+            const matchMod = c.module === state.cardModule || (c.secondaryModules || []).includes(state.cardModule);
+            if (!matchMod) return false;
+          }
+          if (state.cardCompetitor !== 'all' && c.competitor !== state.cardCompetitor) return false;
+          if (state.cardEvidence !== 'all' && c.evidenceLevel !== state.cardEvidence) return false;
+          if (state.cardAction !== 'all' && c.lakaAction !== state.cardAction) return false;
+          if (q) {
+            const hay = [
+              c.id,
+              c.competitor,
+              c.title,
+              c.page,
+              c.flowSummary,
+              c.rulesSummary,
+              c.monetizationHook,
+              c.lakaNote,
+              ...(c.extractedCopy || []),
+            ]
+              .join(' ')
+              .toLowerCase();
+            if (!hay.includes(q)) return false;
+          }
+          return true;
+        });
+      }
+
+      function renderCards() {
+        const list = getFilteredCards();
+        const grid = document.getElementById('cardsGrid');
+        if (!list.length) {
+          grid.innerHTML =
+            '<div class="empty-state" style="grid-column:1/-1;"><h3>当前筛选条件下暂无能力卡片</h3>' +
+            '<p>你可以放宽筛选条件，或把新的竞品截图拖进 <code>pm-inbox/raw/</code> 后对 AI 说一句 <strong>「收箱整理」</strong>。</p></div>';
+          return;
+        }
+
+        grid.innerHTML = list
+          .map((c) => {
+            const modShort = moduleMap[c.module]?.short || c.module;
+            const pills = (c.extractedCopy || [])
+              .slice(0, 6)
+              .map((w) => `<span class="copy-pill notranslate" translate="no">${esc(w)}</span>`)
+              .join('');
+
+            return `
+              <article class="card">
+                <div class="card-thumb" data-open-id="${esc(c.id)}">
+                  <img src="${esc(c.imagePath)}" alt="${esc(c.title)}" loading="lazy" />
+                  <div class="card-thumb-overlay">
+                    <span class="badge badge-primary">${esc(c.competitor)}</span>
+                    <span class="badge ${evidenceBadgeClass(c.evidenceLevel)}">${esc(c.evidenceLevel)}</span>
+                  </div>
+                </div>
+                <div class="card-body">
+                  <div class="card-meta">
+                    <span class="badge badge-slate">${esc(modShort)}</span>
+                    <span class="badge ${actionBadgeClass(c.lakaAction)}">${esc(c.lakaAction)}</span>
+                  </div>
+                  <h3 class="card-title">${esc(c.title)}</h3>
+                  <p class="card-desc">${esc(c.flowSummary)}</p>
+                  <div class="card-note"><strong>Laka 动作：</strong>${esc(c.lakaNote)}</div>
+                  ${pills ? `<div class="copy-pills">${pills}</div>` : ''}
+                </div>
+                <div class="card-footer">
+                  <span class="card-date">${esc(c.capturedDate)} · ${esc(c.platform || '')}</span>
+                  <div style="display:flex;gap:6px;">
+                    <button class="btn btn-sm" data-copy-card="${esc(c.id)}">复制 AI 引用</button>
+                    <button class="btn btn-primary btn-sm" data-open-id="${esc(c.id)}">拆解详情</button>
+                  </div>
+                </div>
+              </article>
+            `;
+          })
+          .join('');
+
+        grid.querySelectorAll('[data-open-id]').forEach((el) => {
+          el.addEventListener('click', () => {
+            const card = (DATA.cards || []).find((x) => x.id === el.dataset.openId);
+            if (card) openModal(card);
+          });
+        });
+
+        grid.querySelectorAll('[data-copy-card]').forEach((el) => {
+          el.addEventListener('click', () => {
+            const card = (DATA.cards || []).find((x) => x.id === el.dataset.copyCard);
+            if (card) copyText(buildCardPrompt(card), `已复制 ${card.competitor} 能力卡片引用，可直接贴给 AI`);
+          });
+        });
+      }
+
+      function openModal(card) {
+        state.modalCard = card;
+        const mod = moduleMap[card.module]?.label || card.module;
+        document.getElementById('modalTitle').textContent = `${card.competitor} · ${card.title}`;
+        document.getElementById('modalBody').innerHTML = `
+          <div class="modal-image-box">
+            <img src="${esc(card.imagePath)}" alt="${esc(card.title)}" />
+          </div>
+          <div>
+            <div class="card-meta" style="margin-bottom:12px;">
+              <span class="badge badge-primary">${esc(card.id)}</span>
+              <span class="badge badge-slate">${esc(mod)}</span>
+              <span class="badge ${evidenceBadgeClass(card.evidenceLevel)}">${esc(card.evidenceLevel)}</span>
+              <span class="badge ${actionBadgeClass(card.lakaAction)}">${esc(card.lakaAction)}</span>
+            </div>
+            <div class="detail-block">
+              <div class="detail-label">页面与采集信息</div>
+              <div class="detail-text">${esc(card.page)}（${esc(card.capturedDate)} · ${esc(card.platform || '—')} · ${esc(card.language || '—')}）</div>
+            </div>
+            <div class="detail-block">
+              <div class="detail-label">入口与核心路径</div>
+              <div class="detail-text">${esc(card.flowSummary)}</div>
+            </div>
+            <div class="detail-block">
+              <div class="detail-label">关键规则与状态 / 限制</div>
+              <div class="detail-text">${esc(card.rulesSummary)}</div>
+            </div>
+            <div class="detail-block">
+              <div class="detail-label">商业化与留存钩子</div>
+              <div class="detail-text">${esc(card.monetizationHook)}</div>
+            </div>
+            <div class="detail-block">
+              <div class="detail-label">提取的英文原词</div>
+              <div class="copy-pills">${(card.extractedCopy || []).map((w) => `<span class="copy-pill notranslate" translate="no">${esc(w)}</span>`).join('') || '暂无'}</div>
+            </div>
+            <div class="detail-block">
+              <div class="detail-label">对 Laka 的落地建议</div>
+              <div class="card-note">${esc(card.lakaNote)}</div>
+            </div>
+            ${card.sourceUrl ? `<div class="detail-block"><div class="detail-label">原始来源</div><div class="detail-text"><a href="${esc(card.sourceUrl)}" target="_blank" rel="noreferrer">${esc(card.sourceUrl)}</a></div></div>` : ''}
+          </div>
+        `;
+        const modal = document.getElementById('cardModal');
+        modal.classList.add('open');
+        modal.setAttribute('aria-hidden', 'false');
+      }
+
+      function closeModal() {
+        const modal = document.getElementById('cardModal');
+        modal.classList.remove('open');
+        modal.setAttribute('aria-hidden', 'true');
+        state.modalCard = null;
+      }
+
+      function getFilteredCopy() {
+        const q = state.copySearch.trim().toLowerCase();
+        return (DATA.copyItems || []).filter((item) => {
+          if (state.copyModule !== 'all' && item.module !== state.copyModule) return false;
+          if (state.copyStatus === 'Pending' && item.approvalStatus !== 'Pending') return false;
+          if (state.copyStatus === 'Approved' && item.approvalStatus !== 'Approved') return false;
+          if (state.copyStatus === 'Branching' && item.glossaryStatus !== 'Branching') return false;
+          if (q) {
+            const hay = [item.zh, item.en, item.competitor, item.bannedWarning, item.recommendation]
+              .join(' ')
+              .toLowerCase();
+            if (!hay.includes(q)) return false;
+          }
+          return true;
+        });
+      }
+
+      function updateCopySelectionMeta(filtered) {
+        const visibleIds = filtered.map((i) => i.id);
+        const checkedVisible = visibleIds.filter((id) => state.selectedCopyIds.has(id)).length;
+        document.getElementById('selectedCopyCount').textContent = state.selectedCopyIds.size;
+        const selectAll = document.getElementById('selectAllCopy');
+        selectAll.checked = visibleIds.length > 0 && checkedVisible === visibleIds.length;
+      }
+
+      function renderCopyTable() {
+        const list = getFilteredCopy();
+        const tbody = document.getElementById('copyTableBody');
+        if (!list.length) {
+          tbody.innerHTML =
+            '<tr><td colspan="7" style="text-align:center;padding:32px;color:var(--text-muted);">暂无匹配的英文文案词条</td></tr>';
+          updateCopySelectionMeta(list);
+          return;
+        }
+
+        tbody.innerHTML = list
+          .map((item) => {
+            const checked = state.selectedCopyIds.has(item.id) ? 'checked' : '';
+            const modShort = moduleMap[item.module]?.short || item.module;
+            return `
+              <tr>
+                <td><input type="checkbox" class="copy-row-chk" aria-label="选择词条 ${esc(item.zh)}" data-id="${esc(item.id)}" ${checked} /></td>
+                <td><span class="badge badge-slate">${esc(modShort)}</span></td>
+                <td><strong>${esc(item.zh)}</strong></td>
+                <td><span class="en-code notranslate" translate="no" data-copy-en="${esc(item.en)}" title="点击复制英文">${esc(item.en)}</span></td>
+                <td>${esc(item.competitor)}</td>
+                <td>
+                  <div>${esc(item.recommendation || '')}</div>
+                  ${item.bannedWarning ? `<div class="warn-text">红线：${esc(item.bannedWarning)}</div>` : ''}
+                </td>
+                <td>${copyStatusBadge(item)}</td>
+              </tr>
+            `;
+          })
+          .join('');
+
+        tbody.querySelectorAll('.copy-row-chk').forEach((chk) => {
+          chk.addEventListener('change', () => {
+            if (chk.checked) state.selectedCopyIds.add(chk.dataset.id);
+            else state.selectedCopyIds.delete(chk.dataset.id);
+            updateCopySelectionMeta(list);
+          });
+        });
+
+        tbody.querySelectorAll('[data-copy-en]').forEach((el) => {
+          el.addEventListener('click', () => copyText(el.dataset.copyEn, `已复制英文：${el.dataset.copyEn}`));
+        });
+
+        updateCopySelectionMeta(list);
+      }
+
+      function renderMemoChips() {
+        const memos = DATA.memos || [];
+        const counts = { all: memos.length };
+        memos.forEach((m) => {
+          counts[m.category] = (counts[m.category] || 0) + 1;
+        });
+
+        const allChip = `<button class="chip ${state.memoCategory === 'all' ? 'active' : ''}" data-cat="all">全部分类 (${counts.all})</button>`;
+        const chips = (DATA.memoCategories || [])
+          .map(
+            (c) =>
+              `<button class="chip ${state.memoCategory === c.id ? 'active' : ''}" data-cat="${c.id}">${esc(c.label)} (${counts[c.id] || 0})</button>`
+          )
+          .join('');
+
+        const wrap = document.getElementById('memoCatChips');
+        wrap.innerHTML = allChip + chips;
+        wrap.querySelectorAll('.chip').forEach((btn) => {
+          btn.addEventListener('click', () => {
+            state.memoCategory = btn.dataset.cat;
+            renderMemoChips();
+            renderMemos();
+          });
+        });
+      }
+
+      function renderMemos() {
+        const q = state.memoSearch.trim().toLowerCase();
+        const list = (DATA.memos || []).filter((m) => {
+          if (state.memoCategory !== 'all' && m.category !== state.memoCategory) return false;
+          if (q) {
+            const hay = [m.rawText, m.contextSummary, m.relatedRequirement, m.nextAction].join(' ').toLowerCase();
+            if (!hay.includes(q)) return false;
+          }
+          return true;
+        });
+
+        const box = document.getElementById('memosContainer');
+        if (!list.length) {
+          box.innerHTML = `
+            <div class="empty-state">
+              <h3>还没有转化的碎念备忘</h3>
+              <p>平时开会或刷竞品时，把 10–15 字极简短句直接丢进 <code>pm-inbox/quick-notes.md</code>（或直接发给 AI），喊一句 <strong>「收箱整理」</strong>，AI 会自动补全上下文并按 4 类意图归档到这里。</p>
+              <div class="empty-example">
+                <strong>转换效果示意：</strong><br />
+                • 你原本只敲了 4 个字：<code>衰退机制</code><br />
+                • AI 自动分流到：<strong>术语与数据口径</strong>，补全所属模块、初步口径假设与待确认数据问题，并在卡片上提供「复制为立项 Prompt」，随时可一键拉起 <code>/plan</code>。
+              </div>
+            </div>
+          `;
+          return;
+        }
+
+        box.innerHTML = `<div class="memo-grid">${list
+          .map((m) => {
+            const cat = memoCatMap[m.category]?.label || m.category;
+            return `
+              <article class="memo-card">
+                <div class="card-meta">
+                  <span class="badge badge-primary">${esc(cat)}</span>
+                  ${m.module ? `<span class="badge badge-slate">${esc(moduleMap[m.module]?.short || m.module)}</span>` : ''}
+                  <span class="card-date" style="margin-left:auto;">${esc(m.date || '')}</span>
+                </div>
+                <div class="memo-raw">${esc(m.rawText)}</div>
+                <div style="font-size:13px;color:var(--text-secondary);">${esc(m.contextSummary)}</div>
+                ${m.nextAction ? `<div class="card-note"><strong>下一步：</strong>${esc(m.nextAction)}</div>` : ''}
+                <div style="display:flex;justify-content:flex-end;">
+                  <button class="btn btn-sm" data-copy-memo="${esc(m.id)}">复制为立项 Prompt</button>
+                </div>
+              </article>
+            `;
+          })
+          .join('')}</div>`;
+
+        box.querySelectorAll('[data-copy-memo]').forEach((btn) => {
+          btn.addEventListener('click', () => {
+            const m = (DATA.memos || []).find((x) => x.id === btn.dataset.copyMemo);
+            if (!m) return;
+            const txt = `基于已沉淀备忘【${m.rawText}】启动梳理：\n- 业务上下文：${m.contextSummary}\n- 建议下一步：${m.nextAction || '请结合 Laka 现状给方案与口径建议'}`;
+            copyText(txt, '已复制立项 Prompt');
+          });
+        });
+      }
+
+      // Bind global events
+      document.querySelectorAll('[data-prompt]').forEach((btn) => {
+        btn.addEventListener('click', () => {
+          copyText(PROMPTS[btn.dataset.prompt], '已复制高频 AI 口令，可直接粘贴到对话框');
+        });
+      });
+
+      document.querySelectorAll('.tab-btn').forEach((btn) => {
+        btn.addEventListener('click', () => {
+          state.activeTab = btn.dataset.tab;
+          document.querySelectorAll('.tab-btn').forEach((b) => {
+            const isActive = b === btn;
+            b.classList.toggle('active', isActive);
+            b.setAttribute('aria-selected', String(isActive));
+          });
+          ['cards', 'copy', 'memos'].forEach((t) => {
+            document.getElementById(`panel-${t}`).classList.toggle('hidden', t !== state.activeTab);
+          });
+        });
+      });
+
+      document.getElementById('cardSearch').addEventListener('input', (e) => {
+        state.cardSearch = e.target.value;
+        renderCards();
+      });
+      document.getElementById('competitorFilter').addEventListener('change', (e) => {
+        state.cardCompetitor = e.target.value;
+        renderCards();
+      });
+      document.getElementById('evidenceFilter').addEventListener('change', (e) => {
+        state.cardEvidence = e.target.value;
+        renderCards();
+      });
+      document.getElementById('actionFilter').addEventListener('change', (e) => {
+        state.cardAction = e.target.value;
+        renderCards();
+      });
+
+      document.getElementById('copySearch').addEventListener('input', (e) => {
+        state.copySearch = e.target.value;
+        renderCopyTable();
+      });
+      document.getElementById('copyModuleFilter').addEventListener('change', (e) => {
+        state.copyModule = e.target.value;
+        renderCopyTable();
+      });
+      document.getElementById('copyStatusFilter').addEventListener('change', (e) => {
+        state.copyStatus = e.target.value;
+        renderCopyTable();
+      });
+
+      document.getElementById('selectAllCopy').addEventListener('change', (e) => {
+        const list = getFilteredCopy();
+        list.forEach((item) => {
+          if (e.target.checked) state.selectedCopyIds.add(item.id);
+          else state.selectedCopyIds.delete(item.id);
+        });
+        renderCopyTable();
+      });
+
+      function getTargetCopyItems() {
+        const filtered = getFilteredCopy();
+        if (state.selectedCopyIds.size === 0) return filtered;
+        return (DATA.copyItems || []).filter((i) => state.selectedCopyIds.has(i.id));
+      }
+
+      document.getElementById('copyMarkdownBtn').addEventListener('click', () => {
+        const items = getTargetCopyItems();
+        if (!items.length) return showToast('当前没有可复制的词条');
+        const rows = [
+          '| 中文概念 | 英文文案（Laka 推荐） | 参考竞品 | 避坑提醒 |',
+          '| --- | --- | --- | --- |',
+          ...items.map((i) => `| ${i.zh} | \`${i.en}\` | ${i.competitor} | ${i.bannedWarning || '—'} |`),
+        ].join('\n');
+        copyText(rows, `已复制 ${items.length} 条研发/UI Markdown 文案表`);
+      });
+
+      document.getElementById('copyFeishuBtn').addEventListener('click', () => {
+        const items = getTargetCopyItems();
+        if (!items.length) return showToast('当前没有可复制的词条');
+        const lines = items.map((i, idx) => `${idx + 1}. ${i.zh} → ${i.en}（参考：${i.competitor}）`).join('\n');
+        copyText(lines, `已复制 ${items.length} 条飞书精简中英对照`);
+      });
+
+      document.getElementById('memoSearch').addEventListener('input', (e) => {
+        state.memoSearch = e.target.value;
+        renderMemos();
+      });
+
+      document.getElementById('modalCloseBtn').addEventListener('click', closeModal);
+      document.getElementById('cardModal').addEventListener('click', (e) => {
+        if (e.target.id === 'cardModal') closeModal();
+      });
+      document.getElementById('modalCopyPromptBtn').addEventListener('click', () => {
+        if (state.modalCard) {
+          copyText(buildCardPrompt(state.modalCard), '已复制完整引用，可直接贴给 AI');
+        }
+      });
+      document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape') closeModal();
+      });
+
+      // Initial Render
+      renderHeader();
+      initFilters();
+      renderModuleChips();
+      renderCards();
+      renderCopyTable();
+      renderMemoChips();
+      renderMemos();
+    })();
+  </script>
+</body>
+</html>
