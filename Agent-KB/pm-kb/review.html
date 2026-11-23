@@ -1,0 +1,2833 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>PM 复盘卡片 · 个人可视化知识库</title>
+  <style>
+    :root {
+      --bg: #fbf9f5;
+      --surface: #ffffff;
+      --surface-soft: #f6f2eb;
+      --border: #e9e2d6;
+      --border-strong: #d8cfc0;
+      --ink: #1c1917;
+      --ink-2: #57534e;
+      --ink-3: #8c857b;
+
+      --blue: #2563eb;
+      --blue-soft: #eff6ff;
+      --blue-border: #bfdbfe;
+
+      --green: #15803d;
+      --green-soft: #f0fdf4;
+      --green-border: #bbf7d0;
+
+      --red: #dc2626;
+      --red-soft: #fef2f2;
+      --red-border: #fecaca;
+
+      --amber: #b45309;
+      --amber-soft: #fffbeb;
+      --amber-border: #fde68a;
+
+      --violet: #6d28d9;
+      --violet-soft: #f5f3ff;
+      --violet-border: #ddd6fe;
+
+      --teal: #0f766e;
+      --teal-soft: #f0fdfa;
+      --teal-border: #99f6e4;
+
+      --radius-lg: 20px;
+      --radius-md: 14px;
+      --shadow-sm: 0 2px 10px rgba(28, 25, 23, 0.04);
+      --shadow-md: 0 12px 36px rgba(28, 25, 23, 0.12);
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      background: var(--bg);
+      color: var(--ink);
+      font-family: -apple-system, BlinkMacSystemFont, "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
+      line-height: 1.6;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    .wrap {
+      max-width: 1020px;
+      margin: 0 auto;
+      padding: 34px 24px 72px;
+    }
+
+    /* Header */
+    .header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-end;
+      gap: 16px;
+      flex-wrap: wrap;
+      margin-bottom: 16px;
+    }
+
+    .header h1 {
+      margin: 0;
+      font-size: 28px;
+      font-weight: 700;
+      letter-spacing: -0.02em;
+    }
+
+    .stats {
+      margin-top: 6px;
+      font-size: 14px;
+      color: var(--ink-3);
+      display: flex;
+      gap: 14px;
+      flex-wrap: wrap;
+      align-items: center;
+    }
+
+    .stats b { color: var(--ink-2); font-weight: 600; }
+
+    .header-actions {
+      display: flex;
+      gap: 10px;
+      align-items: center;
+      flex-wrap: wrap;
+    }
+
+    .btn-primary {
+      appearance: none;
+      border: none;
+      background: var(--ink);
+      color: #fff;
+      font-size: 14px;
+      font-weight: 600;
+      padding: 10px 18px;
+      border-radius: 999px;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      transition: transform 0.15s ease, opacity 0.15s ease;
+    }
+
+    .btn-primary:hover { transform: translateY(-1px); opacity: 0.92; }
+    .btn-primary:disabled { opacity: 0.4; cursor: not-allowed; transform: none; }
+
+    .btn-accent {
+      appearance: none;
+      border: 1px solid var(--blue);
+      background: var(--blue);
+      color: #fff;
+      font-size: 14px;
+      font-weight: 600;
+      padding: 9px 17px;
+      border-radius: 999px;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .btn-accent:hover { opacity: 0.92; }
+
+    .btn-soft {
+      appearance: none;
+      border: 1px solid var(--border-strong);
+      background: #fff;
+      color: var(--ink);
+      font-size: 13px;
+      font-weight: 500;
+      padding: 7px 14px;
+      border-radius: 999px;
+      cursor: pointer;
+      transition: background 0.15s ease;
+    }
+
+    .btn-soft:hover { background: var(--surface-soft); }
+    .btn-soft:disabled { opacity: 0.35; cursor: not-allowed; }
+
+    .btn-danger-soft {
+      appearance: none;
+      border: 1px solid var(--red-border);
+      background: var(--red-soft);
+      color: var(--red);
+      font-size: 13px;
+      font-weight: 500;
+      padding: 6px 12px;
+      border-radius: 999px;
+      cursor: pointer;
+    }
+
+    /* Mode & Cloud Status Bar */
+    .status-bar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+      flex-wrap: wrap;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      padding: 10px 16px;
+      margin-bottom: 18px;
+      font-size: 13px;
+      color: var(--ink-2);
+    }
+
+    .status-bar.readonly-bar { background: var(--surface-soft); }
+    .status-left, .status-right { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+
+    .dot-ind {
+      width: 8px; height: 8px; border-radius: 50%;
+      background: var(--green); display: inline-block;
+    }
+    .dot-ind.syncing { background: var(--blue); }
+    .dot-ind.warn { background: #d97706; }
+    .dot-ind.err { background: var(--red); }
+
+    .url-link { color: var(--blue); text-decoration: none; font-weight: 500; }
+    .url-link:hover { text-decoration: underline; }
+
+    /* Dual-Row Filter Toolbar */
+    .toolbar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+      flex-wrap: wrap;
+      margin-bottom: 12px;
+    }
+
+    .tabs { display: flex; gap: 6px; flex-wrap: wrap; }
+
+    .tab {
+      appearance: none;
+      border: 1px solid transparent;
+      background: transparent;
+      color: var(--ink-2);
+      font-size: 14px;
+      font-weight: 500;
+      padding: 7px 14px;
+      border-radius: 999px;
+      cursor: pointer;
+      transition: all 0.15s ease;
+    }
+
+    .tab:hover { background: var(--surface-soft); }
+    .tab.active {
+      background: var(--surface);
+      color: var(--ink);
+      border-color: var(--border);
+      box-shadow: var(--shadow-sm);
+      font-weight: 650;
+    }
+
+    .tab .count { margin-left: 4px; font-size: 12px; color: var(--ink-3); }
+
+    .search {
+      border: 1px solid var(--border);
+      background: var(--surface);
+      border-radius: 999px;
+      padding: 8px 16px;
+      font-size: 14px;
+      color: var(--ink);
+      width: 230px;
+      outline: none;
+    }
+
+    .search:focus { border-color: var(--border-strong); }
+
+    /* Tag Filter Row */
+    .tag-bar {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-wrap: wrap;
+      margin-bottom: 22px;
+    }
+
+    .tag-bar-label {
+      font-size: 12.5px;
+      color: var(--ink-3);
+      margin-right: 2px;
+    }
+
+    .tag-chip {
+      appearance: none;
+      border: 1px solid var(--border);
+      background: var(--surface);
+      color: var(--ink-2);
+      font-size: 12.5px;
+      font-weight: 500;
+      padding: 5px 12px;
+      border-radius: 999px;
+      cursor: pointer;
+      transition: all 0.14s ease;
+    }
+
+    .tag-chip:hover { border-color: var(--border-strong); background: var(--surface-soft); }
+
+    .tag-chip.active {
+      background: var(--ink);
+      color: #fff;
+      border-color: var(--ink);
+      font-weight: 600;
+    }
+
+    .tag-chip .count { margin-left: 4px; opacity: 0.65; font-size: 11.5px; }
+
+    /* Card Grid */
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 18px;
+    }
+
+    @media (max-width: 720px) {
+      .grid { grid-template-columns: 1fr; }
+    }
+
+    .card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      padding: 22px 24px;
+      box-shadow: var(--shadow-sm);
+      cursor: pointer;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      transition: transform 0.18s ease, border-color 0.18s ease, box-shadow 0.18s ease;
+    }
+
+    .card:hover {
+      transform: translateY(-2px);
+      border-color: var(--border-strong);
+      box-shadow: 0 8px 24px rgba(28, 25, 23, 0.07);
+    }
+
+    .card.mastered { opacity: 0.7; }
+
+    .card-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .type-pill {
+      font-size: 12px;
+      font-weight: 600;
+      padding: 4px 10px;
+      border-radius: 999px;
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+    }
+
+    .type-demo { background: var(--teal-soft); color: var(--teal); }
+    .type-flow { background: var(--blue-soft); color: var(--blue); }
+    .type-contrast { background: var(--red-soft); color: var(--red); }
+    .type-flashcard { background: var(--amber-soft); color: var(--amber); }
+    .type-todo { background: var(--violet-soft); color: var(--violet); }
+
+    .status-dot {
+      font-size: 12px;
+      color: var(--ink-3);
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .status-dot::before {
+      content: "";
+      width: 7px; height: 7px; border-radius: 50%;
+      background: #d97706;
+    }
+
+    .status-dot.st-mastered { color: var(--green); }
+    .status-dot.st-mastered::before { background: var(--green); }
+    .status-dot.st-to-learn { color: var(--violet); }
+    .status-dot.st-to-learn::before { background: var(--violet); }
+
+    .card-title { margin: 0; font-size: 17.5px; font-weight: 650; line-height: 1.4; color: var(--ink); }
+    .card-hook { margin: 0; font-size: 14px; color: var(--ink-2); line-height: 1.55; }
+
+    .card-tags {
+      display: flex;
+      gap: 6px;
+      flex-wrap: wrap;
+      margin-top: 2px;
+    }
+
+    .mini-tag {
+      font-size: 11.5px;
+      color: var(--ink-3);
+      background: var(--surface-soft);
+      padding: 2px 8px;
+      border-radius: 999px;
+    }
+
+    .empty {
+      grid-column: 1 / -1;
+      text-align: center;
+      padding: 64px 20px;
+      color: var(--ink-3);
+      font-size: 15px;
+    }
+
+    /* Backdrop & Modals */
+    .backdrop {
+      position: fixed;
+      inset: 0;
+      background: rgba(28, 25, 23, 0.44);
+      backdrop-filter: blur(6px);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 18px;
+      z-index: 100;
+    }
+
+    .backdrop.open { display: flex; }
+
+    .modal {
+      width: min(760px, 100%);
+      max-height: 92vh;
+      overflow-y: auto;
+      background: var(--surface);
+      border-radius: 26px;
+      padding: 24px 30px 22px;
+      box-shadow: var(--shadow-md);
+      display: flex;
+      flex-direction: column;
+      gap: 15px;
+    }
+
+    .modal-head {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .modal-meta, .modal-head-right { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+    .meta-tag { font-size: 12px; color: var(--ink-3); background: var(--surface-soft); padding: 4px 10px; border-radius: 999px; }
+
+    .btn-close {
+      appearance: none; border: none; background: var(--surface-soft); color: var(--ink-2);
+      width: 34px; height: 34px; border-radius: 50%; font-size: 18px; cursor: pointer;
+      display: inline-flex; align-items: center; justify-content: center;
+    }
+    .btn-close:hover { background: var(--border); color: var(--ink); }
+
+    .modal-title { margin: 0; font-size: 22px; font-weight: 700; letter-spacing: -0.015em; line-height: 1.35; }
+    .modal-source { margin: -10px 0 0; font-size: 12.5px; color: var(--ink-3); }
+
+    /* Interactive Demo Playground Shell */
+    .demo-stage {
+      background: #f8f5ef;
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      padding: 16px 18px;
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+
+    .demo-controls {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .seg-btn {
+      appearance: none;
+      border: 1px solid var(--border-strong);
+      background: #fff;
+      color: var(--ink-2);
+      font-size: 13px;
+      font-weight: 600;
+      padding: 7px 14px;
+      border-radius: 999px;
+      cursor: pointer;
+      transition: all 0.14s ease;
+    }
+
+    .seg-btn.active { background: var(--ink); color: #fff; border-color: var(--ink); }
+    .seg-btn.active-red { background: var(--red); color: #fff; border-color: var(--red); }
+    .seg-btn.active-green { background: var(--green); color: #fff; border-color: var(--green); }
+    .seg-btn.active-blue { background: var(--blue); color: #fff; border-color: var(--blue); }
+
+    .demo-summary {
+      margin: 0;
+      font-size: 16px;
+      font-weight: 600;
+      color: var(--ink);
+      text-align: center;
+      line-height: 1.55;
+    }
+
+    /* Demo 1: RTL Mirror */
+    .rtl-phone {
+      background: #fff;
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 14px 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      max-width: 520px;
+      width: 100%;
+      margin: 0 auto;
+    }
+
+    .rtl-topbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      padding-bottom: 10px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .rtl-user { display: flex; align-items: center; gap: 8px; }
+    .rtl-avatar {
+      width: 34px; height: 34px; border-radius: 50%;
+      background: linear-gradient(135deg, #fbbf24, #f97316);
+      display: inline-flex; align-items: center; justify-content: center;
+      font-size: 16px; flex-shrink: 0;
+    }
+
+    .exempt-box {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      padding: 3px 9px;
+      border-radius: 8px;
+      font-size: 12.5px;
+      font-weight: 700;
+      direction: ltr;
+      unicode-bidi: isolate;
+      transition: all 0.2s ease;
+    }
+
+    .exempt-vip { background: #fef3c7; color: #92400e; border: 1.5px solid #f59e0b; }
+    .exempt-timer { background: #eff6ff; color: #1d4ed8; border: 1.5px solid #60a5fa; font-variant-numeric: tabular-nums; }
+    .rtl-phone.is-rtl .exempt-box { box-shadow: 0 0 0 2.5px rgba(21, 128, 61, 0.28); border-color: var(--green); }
+
+    .rtl-video {
+      background: linear-gradient(135deg, #1e293b, #334155);
+      color: #fff;
+      border-radius: 12px;
+      padding: 14px 16px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      direction: ltr;
+    }
+
+    .rtl-phone.is-rtl .rtl-video { outline: 2.5px solid var(--green); }
+
+    .rtl-chat {
+      background: var(--surface-soft);
+      border-radius: 10px;
+      padding: 9px 12px;
+      font-size: 13.5px;
+      color: var(--ink-2);
+    }
+
+    .exempt-badge {
+      font-size: 11px;
+      background: var(--green);
+      color: #fff;
+      padding: 2px 7px;
+      border-radius: 999px;
+      font-weight: 600;
+    }
+
+    /* Demo 2: Touch Pass-Through */
+    .room-mock {
+      position: relative;
+      background: linear-gradient(135deg, #1e1b4b, #312e81);
+      border-radius: 18px;
+      padding: 16px 20px;
+      min-height: 228px;
+      color: #fff;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      overflow: hidden;
+    }
+
+    .room-seats {
+      display: flex;
+      justify-content: center;
+      gap: 18px;
+      font-size: 13px;
+      opacity: 0.9;
+    }
+
+    .seat-dot {
+      display: flex; flex-direction: column; align-items: center; gap: 4px;
+    }
+    .seat-circle {
+      width: 44px; height: 44px; border-radius: 50%;
+      background: rgba(255,255,255,0.16);
+      border: 1.5px solid rgba(255,255,255,0.35);
+      display: flex; align-items: center; justify-content: center; font-size: 19px;
+    }
+
+    .room-bottom-btns {
+      display: flex;
+      justify-content: center;
+      gap: 14px;
+      position: relative;
+      z-index: 2;
+    }
+
+    .room-btn {
+      border: 1.5px solid rgba(255,255,255,0.4);
+      background: rgba(255,255,255,0.18);
+      color: #fff;
+      font-size: 14px;
+      font-weight: 650;
+      padding: 9px 18px;
+      border-radius: 999px;
+      cursor: pointer;
+    }
+
+    .room-btn:hover { background: rgba(255,255,255,0.28); }
+
+    .gift-overlay {
+      position: absolute;
+      inset: 0;
+      z-index: 5;
+      background: radial-gradient(circle at 50% 44%, rgba(251, 191, 36, 0.34), rgba(190, 24, 93, 0.22));
+      border: 2px dashed rgba(253, 224, 71, 0.75);
+      border-radius: 18px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      cursor: not-allowed;
+      transition: background 0.15s ease;
+    }
+
+    .gift-overlay.passthrough {
+      pointer-events: none;
+      border-color: rgba(74, 222, 128, 0.7);
+      background: radial-gradient(circle at 50% 44%, rgba(251, 191, 36, 0.2), rgba(21, 128, 61, 0.12));
+    }
+
+    .gift-overlay.blocked-flash {
+      background: rgba(220, 38, 38, 0.45);
+    }
+
+    .demo-feedback {
+      text-align: center;
+      font-size: 13.5px;
+      font-weight: 650;
+      min-height: 22px;
+    }
+
+    /* Demo 3: Avatar 6 Layers */
+    .avatar-lab {
+      display: grid;
+      grid-template-columns: 220px 1fr;
+      gap: 18px;
+      align-items: center;
+    }
+
+    @media (max-width: 600px) { .avatar-lab { grid-template-columns: 1fr; } }
+
+    .avatar-preview-box {
+      background: #fff;
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      height: 190px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+    }
+
+    .avatar-safe-box {
+      width: 118px; height: 118px;
+      border: 1.5px dashed #cbd5e1;
+      border-radius: 14px;
+      position: relative;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .avatar-safe-label {
+      position: absolute;
+      bottom: -22px;
+      font-size: 11px;
+      color: var(--ink-3);
+      white-space: nowrap;
+    }
+
+    .av-wave {
+      position: absolute;
+      width: 108px; height: 108px;
+      border-radius: 50%;
+      border: 3px solid #38bdf8;
+      box-shadow: 0 0 0 6px rgba(56, 189, 248, 0.22);
+    }
+
+    .av-base {
+      position: relative;
+      z-index: 2;
+      width: 82px; height: 82px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, #fed7aa, #fb923c);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 36px;
+      overflow: hidden;
+    }
+
+    .av-mask {
+      position: absolute;
+      inset: 0;
+      background: rgba(15, 23, 42, 0.62);
+      color: #fff;
+      font-size: 11px;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 3;
+    }
+
+    .av-frame {
+      position: absolute;
+      z-index: 4;
+      width: 107px; height: 107px; /* 1.3x of 82px */
+      border-radius: 50%;
+      border: 5px solid #f59e0b;
+      box-shadow: 0 0 0 2px #fef08a inset, 0 0 12px rgba(245, 158, 11, 0.45);
+      pointer-events: none;
+    }
+
+    .av-badge-tl {
+      position: absolute;
+      top: 8px; left: 4px;
+      z-index: 5;
+      background: #7c3aed;
+      color: #fff;
+      font-size: 10.5px;
+      font-weight: 700;
+      padding: 2px 7px;
+      border-radius: 999px;
+    }
+
+    .av-badge-br {
+      position: absolute;
+      bottom: 12px; right: 10px;
+      z-index: 6;
+      width: 24px; height: 24px;
+      border-radius: 50%;
+      border: 2px solid #fff;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 11px;
+      font-weight: 700;
+      color: #fff;
+    }
+
+    .layer-toggles {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+    }
+
+    .layer-chk {
+      background: #fff;
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 8px 10px;
+      font-size: 12.5px;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: 7px;
+      cursor: pointer;
+    }
+
+    /* Demo 4: Chat Scroll Anti-Jump */
+    .chat-box-wrap {
+      position: relative;
+      max-width: 500px;
+      width: 100%;
+      margin: 0 auto;
+    }
+
+    .chat-scroll-box {
+      background: #fff;
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      height: 164px;
+      overflow-y: auto;
+      padding: 10px 14px;
+      display: flex;
+      flex-direction: column;
+      gap: 7px;
+    }
+
+    .chat-line {
+      font-size: 13.5px;
+      background: var(--surface-soft);
+      padding: 6px 10px;
+      border-radius: 10px;
+      color: var(--ink-2);
+    }
+
+    .chat-line b { color: var(--ink); }
+
+    .unread-bubble {
+      position: absolute;
+      bottom: 12px;
+      left: 50%;
+      transform: translateX(-50%);
+      border: none;
+      background: var(--blue);
+      color: #fff;
+      font-size: 12.5px;
+      font-weight: 700;
+      padding: 6px 14px;
+      border-radius: 999px;
+      cursor: pointer;
+      box-shadow: 0 4px 12px rgba(37, 99, 235, 0.35);
+    }
+
+    /* Demo 5: Floor & Tabular Nums */
+    .num-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+    }
+
+    .num-card {
+      background: #fff;
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 12px 14px;
+      text-align: center;
+    }
+
+    .num-big {
+      font-size: 26px;
+      font-weight: 750;
+      margin: 4px 0;
+    }
+
+    /* Demo 6: Nine Patch & CenterCrop */
+    .np-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 14px;
+    }
+
+    .np-panel {
+      background: #fff;
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 12px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 8px;
+    }
+
+    /* Demo 7: HitSlop */
+    .hit-stage {
+      background: #fff;
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      height: 144px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+    }
+
+    .hit-card-mock {
+      width: 240px;
+      height: 92px;
+      background: var(--surface-soft);
+      border: 1px solid var(--border-strong);
+      border-radius: 14px;
+      position: relative;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 13.5px;
+      color: var(--ink-3);
+      cursor: pointer;
+    }
+
+    .hit-target {
+      position: absolute;
+      top: 0;
+      right: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      border-radius: 10px;
+    }
+
+    .hit-visual-x {
+      width: 18px;
+      height: 18px;
+      border-radius: 50%;
+      background: var(--ink);
+      color: #fff;
+      font-size: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      pointer-events: none;
+    }
+
+    /* Demo 8: Exposure Track */
+    .exp-feed {
+      background: #fff;
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      height: 196px;
+      overflow-y: auto;
+      padding: 12px;
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+      max-width: 460px;
+      width: 100%;
+      margin: 0 auto;
+    }
+
+    .exp-item {
+      height: 120px;
+      flex-shrink: 0;
+      border-radius: 14px;
+      border: 1.5px solid var(--border);
+      background: var(--surface-soft);
+      padding: 14px 16px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      transition: all 0.15s ease;
+    }
+
+    .exp-item.exposed {
+      background: var(--green-soft);
+      border-color: var(--green-border);
+    }
+
+    .exp-item.watching {
+      background: var(--blue-soft);
+      border-color: var(--blue-border);
+    }
+
+    /* Demo 9 & 10: Dual Phone Simulator */
+    .dual-phones {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 14px;
+    }
+
+    @media (max-width: 600px) {
+      .dual-phones, .num-grid, .np-row { grid-template-columns: 1fr; }
+    }
+
+    .mini-phone {
+      background: #fff;
+      border: 1.5px solid var(--border-strong);
+      border-radius: 18px;
+      padding: 12px 14px;
+      min-height: 158px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .mini-phone-head {
+      font-size: 12.5px;
+      font-weight: 700;
+      color: var(--ink-2);
+      padding-bottom: 6px;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      justify-content: space-between;
+    }
+
+    .video-call-canvas {
+      flex: 1;
+      border-radius: 12px;
+      background: linear-gradient(135deg, #3b82f6, #8b5cf6);
+      color: #fff;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 4px;
+      padding: 14px;
+      position: relative;
+      transition: all 0.2s ease;
+    }
+
+    .video-call-canvas.blackout {
+      background: #09090b;
+    }
+
+    .video-call-canvas.blurred .vc-face {
+      filter: blur(11px);
+    }
+
+    .vc-overlay-alert {
+      position: absolute;
+      inset: 8px;
+      background: rgba(15, 23, 42, 0.78);
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      padding: 10px;
+      font-size: 12.5px;
+      font-weight: 700;
+      line-height: 1.45;
+    }
+
+    /* Template A: Flow Interactive Stage */
+    .flow-stage {
+      background: #f8f5ef;
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      padding: 12px 14px 14px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .flow-svg { width: 100%; max-height: 215px; height: auto; display: block; user-select: none; }
+    .edge-flow { stroke-dasharray: 8 6; animation: dashMove 1.1s linear infinite; }
+    @keyframes dashMove { to { stroke-dashoffset: -28; } }
+
+    .step-caption-box {
+      background: #ffffff;
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 13px 18px;
+      text-align: center;
+    }
+
+    .step-badge {
+      display: inline-block; font-size: 12px; font-weight: 600;
+      color: var(--blue); background: var(--blue-soft);
+      padding: 3px 10px; border-radius: 999px; margin-bottom: 6px;
+    }
+
+    .step-sentence { margin: 0; font-size: 18.5px; font-weight: 650; color: var(--ink); line-height: 1.45; }
+
+    .step-nav { display: flex; justify-content: space-between; align-items: center; gap: 10px; flex-wrap: wrap; }
+    .step-pills { display: flex; gap: 6px; flex-wrap: wrap; justify-content: center; flex: 1; }
+    .step-pill {
+      appearance: none; border: 1px solid var(--border); background: #fff; color: var(--ink-2);
+      font-size: 13px; font-weight: 500; padding: 6px 12px; border-radius: 999px; cursor: pointer;
+    }
+    .step-pill.active { background: var(--blue); color: #fff; border-color: var(--blue); font-weight: 600; }
+    .step-arrow-btn {
+      appearance: none; border: 1px solid var(--border-strong); background: #fff; color: var(--ink);
+      font-size: 13px; font-weight: 600; padding: 7px 14px; border-radius: 999px; cursor: pointer;
+    }
+    .step-arrow-btn:disabled { opacity: 0.35; cursor: not-allowed; }
+
+    /* Template B: Contrast Card */
+    .contrast-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+    @media (max-width: 600px) { .contrast-grid { grid-template-columns: 1fr; } .modal { padding: 20px 18px; } }
+    .contrast-box { border-radius: 18px; padding: 20px; display: flex; flex-direction: column; gap: 10px; }
+    .contrast-wrong { background: var(--red-soft); border: 1px solid var(--red-border); }
+    .contrast-right { background: var(--green-soft); border: 1px solid var(--green-border); }
+    .contrast-label { font-size: 13px; font-weight: 700; }
+    .contrast-wrong .contrast-label { color: var(--red); }
+    .contrast-right .contrast-label { color: var(--green); }
+    .contrast-text { margin: 0; font-size: 16.5px; font-weight: 600; line-height: 1.6; color: var(--ink); }
+
+    .rule-box {
+      background: var(--amber-soft);
+      border: 1px solid var(--amber-border);
+      border-radius: 14px;
+      padding: 13px 16px;
+      font-size: 14.5px;
+      color: #78350f;
+      font-weight: 500;
+    }
+
+    /* Template C: Minimal Flashcard */
+    .flash-stage {
+      min-height: 220px; border-radius: 20px; border: 1px solid var(--border);
+      background: linear-gradient(180deg, #ffffff 0%, #faf7f0 100%);
+      padding: 32px 26px; cursor: pointer; display: flex; flex-direction: column;
+      align-items: center; justify-content: center; text-align: center; gap: 16px; user-select: none;
+    }
+    .flash-stage.flipped { background: linear-gradient(180deg, #f6fdf8 0%, #ffffff 100%); border-color: var(--green-border); }
+    .flash-term { font-size: 32px; font-weight: 750; letter-spacing: -0.02em; color: var(--ink); }
+    .flash-hint { font-size: 13px; color: var(--ink-3); background: var(--surface-soft); padding: 6px 14px; border-radius: 999px; }
+    .flash-answer { margin: 0; font-size: 20px; font-weight: 650; line-height: 1.55; color: var(--ink); max-width: 520px; }
+    .scene-pills { display: flex; gap: 8px; flex-wrap: wrap; justify-content: center; }
+    .scene-pill { font-size: 13px; font-weight: 500; color: var(--green); background: var(--green-soft); border: 1px solid var(--green-border); padding: 5px 12px; border-radius: 999px; }
+
+    /* Template D: Todo Card */
+    .todo-box { background: var(--violet-soft); border: 1px solid var(--violet-border); border-radius: 20px; padding: 26px; display: flex; flex-direction: column; gap: 18px; }
+    .todo-context { margin: 0; font-size: 16px; color: var(--ink-2); line-height: 1.7; }
+    .btn-violet { align-self: flex-start; appearance: none; border: none; background: var(--violet); color: #fff; font-size: 14px; font-weight: 600; padding: 11px 20px; border-radius: 999px; cursor: pointer; }
+
+    /* Collapsed Details */
+    .fold-group { display: flex; flex-direction: column; gap: 8px; border-top: 1px solid var(--border); padding-top: 12px; }
+    details { background: var(--surface-soft); border-radius: 12px; padding: 9px 15px; }
+    summary { cursor: pointer; font-size: 13.5px; font-weight: 600; color: var(--ink-2); list-style: none; display: flex; align-items: center; gap: 6px; }
+    summary::-webkit-details-marker { display: none; }
+    summary::before { content: "▸"; display: inline-block; transition: transform 0.15s ease; color: var(--ink-3); }
+    details[open] summary::before { transform: rotate(90deg); }
+    .glossary-list { margin-top: 10px; display: grid; gap: 7px; }
+    .glossary-item { background: #fff; border: 1px solid var(--border); border-radius: 10px; padding: 8px 12px; font-size: 13.5px; display: flex; gap: 10px; align-items: baseline; flex-wrap: wrap; }
+    .glossary-term { font-weight: 700; color: var(--ink); min-width: 96px; }
+    .glossary-plain { color: var(--ink-2); flex: 1; }
+    .tips-list { margin: 10px 0 2px; padding-left: 18px; font-size: 13.5px; color: var(--ink-2); display: grid; gap: 6px; }
+
+    /* Modal Footer */
+    .modal-foot { display: flex; justify-content: space-between; align-items: center; gap: 12px; flex-wrap: wrap; border-top: 1px solid var(--border); padding-top: 14px; }
+    .mastery-group { display: flex; gap: 8px; flex-wrap: wrap; justify-content: center; }
+    .btn-state { appearance: none; border: 1px solid var(--border-strong); background: #fff; color: var(--ink-2); font-size: 13.5px; font-weight: 600; padding: 8px 15px; border-radius: 999px; cursor: pointer; }
+    .btn-state:hover { background: var(--surface-soft); }
+    .btn-state.active-todo { background: var(--violet-soft); border-color: var(--violet-border); color: var(--violet); }
+    .btn-state.active-fuzzy { background: var(--amber-soft); border-color: var(--amber-border); color: var(--amber); }
+    .btn-state.active-done { background: var(--green); border-color: var(--green); color: #fff; }
+    .kbd-hint { text-align: center; font-size: 12px; color: var(--ink-3); margin-top: -6px; }
+
+    /* Editor Form */
+    .save-pill { font-size: 12.5px; font-weight: 600; padding: 4px 12px; border-radius: 999px; background: var(--surface-soft); color: var(--ink-3); }
+    .save-pill.saving { background: var(--blue-soft); color: var(--blue); }
+    .save-pill.saved { background: var(--green-soft); color: var(--green); }
+    .save-pill.error { background: var(--red-soft); color: var(--red); }
+
+    .editor-grid { display: flex; flex-direction: column; gap: 13px; }
+    .form-row-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+    @media (max-width: 600px) { .form-row-2 { grid-template-columns: 1fr; } }
+    .field { display: flex; flex-direction: column; gap: 5px; }
+    .field-label { display: flex; justify-content: space-between; align-items: center; font-size: 13px; font-weight: 600; color: var(--ink-2); }
+    .char-counter { font-size: 12px; font-weight: 500; color: var(--ink-3); }
+    .char-counter.over { color: var(--amber); font-weight: 700; }
+
+    .input, .textarea, .select {
+      width: 100%; border: 1px solid var(--border); background: var(--bg);
+      border-radius: 12px; padding: 9px 13px; font-size: 14px; font-family: inherit;
+      color: var(--ink); outline: none;
+    }
+    .input:focus, .textarea:focus, .select:focus { border-color: var(--blue); background: #fff; }
+    .textarea { resize: vertical; min-height: 70px; line-height: 1.55; }
+    .type-picker { display: flex; gap: 7px; flex-wrap: wrap; }
+    .type-opt { appearance: none; border: 1px solid var(--border); background: #fff; color: var(--ink-2); font-size: 12.5px; font-weight: 600; padding: 6px 12px; border-radius: 999px; cursor: pointer; }
+    .type-opt.active { background: var(--ink); color: #fff; border-color: var(--ink); }
+    .dyn-list { display: flex; flex-direction: column; gap: 8px; }
+    .dyn-row { display: grid; gap: 8px; align-items: center; }
+    .dyn-row.node-row { grid-template-columns: 52px 52px 1fr auto; }
+    .dyn-row.step-row { grid-template-columns: 100px 124px 1fr auto; }
+    .mini-del { appearance: none; border: none; background: var(--surface-soft); color: var(--ink-3); width: 30px; height: 30px; border-radius: 50%; cursor: pointer; font-size: 15px; }
+    .mini-del:hover { background: var(--red-soft); color: var(--red); }
+    .syntax-note { font-size: 12px; color: var(--ink-3); }
+
+    .toast {
+      position: fixed; bottom: 28px; left: 50%; transform: translateX(-50%) translateY(16px);
+      background: var(--ink); color: #fff; font-size: 13.5px; font-weight: 500;
+      padding: 10px 18px; border-radius: 999px; opacity: 0; pointer-events: none;
+      transition: all 0.2s ease; z-index: 200;
+    }
+    .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <header class="header">
+      <div>
+        <h1>PM 复盘卡片</h1>
+        <div class="stats" id="stats"></div>
+      </div>
+      <div class="header-actions">
+        <button class="btn-accent" id="newCardBtn" style="display:none;">+ 新建卡片</button>
+        <button class="btn-primary" id="startReviewBtn">▶ 5 分钟复盘</button>
+      </div>
+    </header>
+
+    <div class="status-bar" id="statusBar"></div>
+
+    <div class="toolbar">
+      <div class="tabs" id="tabs"></div>
+      <input class="search" id="searchInput" type="search" placeholder="搜标题、关键词或标签…" />
+    </div>
+
+    <div class="tag-bar" id="tagBar"></div>
+
+    <main class="grid" id="grid"></main>
+  </div>
+
+  <!-- Focus Review Modal -->
+  <div class="backdrop" id="backdrop" aria-hidden="true">
+    <div class="modal" role="dialog" aria-modal="true">
+      <div class="modal-head">
+        <div class="modal-meta" id="modalMeta"></div>
+        <div class="modal-head-right">
+          <button class="btn-soft" id="editCardBtn" style="display:none;">编辑</button>
+          <button class="btn-danger-soft" id="deleteCardBtn" style="display:none;">删除</button>
+          <button class="btn-close" id="closeModalBtn" title="关闭 (Esc)">×</button>
+        </div>
+      </div>
+      <h2 class="modal-title" id="modalTitle"></h2>
+      <p class="modal-source" id="modalSource" style="display:none;"></p>
+      <div id="modalBody"></div>
+      <div class="modal-foot">
+        <button class="btn-soft" id="prevCardBtn">← 上一张</button>
+        <div class="mastery-group" id="masteryGroup"></div>
+        <button class="btn-soft" id="nextCardBtn">下一张 →</button>
+      </div>
+      <div class="kbd-hint" id="kbdHint"></div>
+    </div>
+  </div>
+
+  <!-- Auto-Save Editor Modal (Strictly Local Server Only) -->
+  <div class="backdrop" id="editorBackdrop" aria-hidden="true">
+    <div class="modal" role="dialog" aria-modal="true">
+      <div class="modal-head">
+        <div class="modal-meta">
+          <strong style="font-size:18px;" id="editorHeading">新建卡片</strong>
+          <span class="save-pill" id="savePill">输入即自动保存</span>
+        </div>
+        <div class="modal-head-right">
+          <button class="btn-soft" id="doneEditorBtn">完成</button>
+        </div>
+      </div>
+      <div class="editor-grid" id="editorForm"></div>
+    </div>
+  </div>
+
+  <div class="toast" id="toast"></div>
+
+  <script src="./kb-data.js"></script>
+  <script>
+    (function () {
+      const host = window.location.hostname;
+      const protocol = window.location.protocol;
+      const IS_LOCAL_HOST = (protocol === 'http:' || protocol === 'https:') && (host === '127.0.0.1' || host === 'localhost');
+      const IS_FILE_MODE = protocol === 'file:';
+
+      let canEdit = false;
+      let runtimeMode = IS_FILE_MODE ? 'file-offline' : (IS_LOCAL_HOST ? 'local-checking' : 'public-readonly');
+
+      let cards = (window.PM_KB_DATA && Array.isArray(window.PM_KB_DATA.cards))
+        ? window.PM_KB_DATA.cards
+        : [];
+      let deployInfo = { state: 'idle', publicUrl: '', lastSyncedAt: null, lastError: null };
+
+      const VIEW_TABS = [
+        { id: 'all', label: '全部' },
+        { id: 'to-learn', label: '未学习' },
+        { id: 'reviewing', label: '待复盘' },
+        { id: 'mastered', label: '已掌握' },
+        { id: 'blindspots', label: '错题本' },
+      ];
+
+      const PREFERRED_TAGS = ['前端渲染与交互', '音视频与房间', '出海与风控', '缓存与资损'];
+
+      const TYPE_META = {
+        demo: { label: '互动演示', icon: '🎮', cls: 'type-demo' },
+        flow: { label: '分步图解', icon: '🧭', cls: 'type-flow' },
+        contrast: { label: '错题对比', icon: '⚡', cls: 'type-contrast' },
+        flashcard: { label: '概念闪卡', icon: '💡', cls: 'type-flashcard' },
+        todo: { label: '待理解', icon: '🌱', cls: 'type-todo' },
+      };
+
+      const STATUS_LABEL = {
+        'to-learn': '未学习',
+        reviewing: '待复盘',
+        mastered: '已掌握',
+      };
+
+      let activeView = 'all';
+      let activeTag = 'all';
+      let query = '';
+
+      let sessionIds = [];
+      let sessionIdx = 0;
+      let flowStepIdx = 0;
+      let isFlipped = false;
+
+      let editorDraft = null;
+      let autoSaveTimer = null;
+      let saveInFlight = false;
+      let saveQueued = false;
+      let deployPollTimer = null;
+      let demoTimers = [];
+
+      const elStats = document.getElementById('stats');
+      const elStatusBar = document.getElementById('statusBar');
+      const elNewCardBtn = document.getElementById('newCardBtn');
+      const elStartReview = document.getElementById('startReviewBtn');
+      const elTabs = document.getElementById('tabs');
+      const elTagBar = document.getElementById('tagBar');
+      const elGrid = document.getElementById('grid');
+      const elSearch = document.getElementById('searchInput');
+
+      const elBackdrop = document.getElementById('backdrop');
+      const elModalMeta = document.getElementById('modalMeta');
+      const elModalTitle = document.getElementById('modalTitle');
+      const elModalSource = document.getElementById('modalSource');
+      const elModalBody = document.getElementById('modalBody');
+      const elMasteryGroup = document.getElementById('masteryGroup');
+      const elPrevCard = document.getElementById('prevCardBtn');
+      const elNextCard = document.getElementById('nextCardBtn');
+      const elKbdHint = document.getElementById('kbdHint');
+      const elEditCardBtn = document.getElementById('editCardBtn');
+      const elDeleteCardBtn = document.getElementById('deleteCardBtn');
+
+      const elEditorBackdrop = document.getElementById('editorBackdrop');
+      const elEditorHeading = document.getElementById('editorHeading');
+      const elSavePill = document.getElementById('savePill');
+      const elEditorForm = document.getElementById('editorForm');
+      const elToast = document.getElementById('toast');
+
+      function clearDemoTimers() {
+        demoTimers.forEach((id) => clearInterval(id));
+        demoTimers = [];
+      }
+
+      function showToast(msg) {
+        elToast.textContent = msg;
+        elToast.classList.add('show');
+        clearTimeout(showToast._t);
+        showToast._t = setTimeout(() => elToast.classList.remove('show'), 2200);
+      }
+
+      function copyText(text, successMsg) {
+        if (navigator.clipboard && navigator.clipboard.writeText) {
+          navigator.clipboard.writeText(text).then(
+            () => showToast(successMsg),
+            () => fallbackCopy(text, successMsg)
+          );
+        } else {
+          fallbackCopy(text, successMsg);
+        }
+      }
+
+      function fallbackCopy(text, successMsg) {
+        const ta = document.createElement('textarea');
+        ta.value = text;
+        ta.style.position = 'fixed';
+        ta.style.opacity = '0';
+        document.body.appendChild(ta);
+        ta.select();
+        document.execCommand('copy');
+        document.body.removeChild(ta);
+        showToast(successMsg);
+      }
+
+      function escapeHtml(str) {
+        return String(str || '')
+          .replace(/&/g, '&amp;')
+          .replace(/</g, '&lt;')
+          .replace(/>/g, '&gt;')
+          .replace(/"/g, '&quot;');
+      }
+
+      function getCardById(id) {
+        return cards.find((c) => c.id === id);
+      }
+
+      function matchesView(c, viewId) {
+        if (viewId === 'all') return true;
+        if (viewId === 'blindspots') return c.bucket === 'blindspots' || c.type === 'contrast';
+        return (c.status || 'reviewing') === viewId;
+      }
+
+      function filteredCards() {
+        const q = query.trim().toLowerCase();
+        return cards.filter((c) => {
+          if (!matchesView(c, activeView)) return false;
+          if (activeTag !== 'all' && !(Array.isArray(c.tags) && c.tags.includes(activeTag))) return false;
+          if (q) {
+            const hay = `${c.title} ${c.hook || ''} ${(c.tags || []).join(' ')} ${c.project || ''} ${c.source || ''}`.toLowerCase();
+            if (!hay.includes(q)) return false;
+          }
+          return true;
+        });
+      }
+
+      function allTagNames() {
+        const set = new Set(PREFERRED_TAGS);
+        cards.forEach((c) => (c.tags || []).forEach((t) => set.add(t)));
+        return Array.from(set).filter((t) => cards.some((c) => (c.tags || []).includes(t)));
+      }
+
+      /* ---------- Render Top Bars & Grid ---------- */
+      function renderStatusBar() {
+        elNewCardBtn.style.display = canEdit ? 'inline-flex' : 'none';
+
+        if (runtimeMode === 'public-readonly') {
+          elStatusBar.className = 'status-bar readonly-bar';
+          elStatusBar.innerHTML = `
+            <div class="status-left">
+              <span class="dot-ind"></span>
+              <span><strong>云端跨设备只读视图</strong> · 卡片和互动演示均可直接点玩，新增/改状态请在本机打开 <code>127.0.0.1:4321</code></span>
+            </div>
+          `;
+          return;
+        }
+
+        if (runtimeMode === 'file-offline') {
+          elStatusBar.className = 'status-bar readonly-bar';
+          elStatusBar.innerHTML = `
+            <div class="status-left">
+              <span class="dot-ind warn"></span>
+              <span>当前为离线只读方式 · 打开 <a class="url-link" href="http://127.0.0.1:4321">http://127.0.0.1:4321</a> 可自动保存并同步云端</span>
+            </div>
+          `;
+          return;
+        }
+
+        elStatusBar.className = 'status-bar';
+        let dotCls = 'dot-ind';
+        let stateText = '本机自动保存已就绪（0.5s 写回 pm-kb.md）';
+        if (deployInfo.state === 'scheduled') {
+          dotCls = 'dot-ind syncing';
+          stateText = '已写回本地 ✓ · 即将自动同步至跨设备云端…';
+        } else if (deployInfo.state === 'deploying') {
+          dotCls = 'dot-ind syncing';
+          stateText = '正在同步至跨设备云端网页…';
+        } else if (deployInfo.state === 'synced') {
+          const t = deployInfo.lastSyncedAt ? new Date(deployInfo.lastSyncedAt).toLocaleTimeString('zh-CN', { hour: '2-digit', minute: '2-digit', second: '2-digit' }) : '';
+          stateText = `本地与云端已同步 ✓${t ? `（${t}）` : ''}`;
+        } else if (deployInfo.state === 'error') {
+          dotCls = 'dot-ind err';
+          stateText = `本地已保存，云端同步异常：${escapeHtml(deployInfo.lastError || '请重试')}`;
+        }
+
+        const pubUrl = deployInfo.publicUrl || '';
+        const rightParts = [];
+        if (pubUrl) {
+          rightParts.push(`<a class="url-link" href="${escapeHtml(pubUrl)}" target="_blank" rel="noopener">📱 跨设备查看页 ↗</a>`);
+          rightParts.push(`<button class="btn-soft" id="copyPublicUrlBtn">复制跨设备链接</button>`);
+        }
+        rightParts.push(`<button class="btn-soft" id="deployNowBtn" ${deployInfo.state === 'deploying' ? 'disabled' : ''}>${deployInfo.state === 'deploying' ? '同步中…' : '立即同步云端'}</button>`);
+
+        elStatusBar.innerHTML = `
+          <div class="status-left"><span class="${dotCls}"></span><span>${stateText}</span></div>
+          <div class="status-right">${rightParts.join('')}</div>
+        `;
+
+        const btnCopy = document.getElementById('copyPublicUrlBtn');
+        if (btnCopy) btnCopy.addEventListener('click', () => copyText(pubUrl, '✓ 已复制跨设备查看链接'));
+        const btnDep = document.getElementById('deployNowBtn');
+        if (btnDep) btnDep.addEventListener('click', triggerDeployNow);
+      }
+
+      function renderStats() {
+        const total = cards.length;
+        const toLearn = cards.filter((c) => c.status === 'to-learn').length;
+        const reviewing = cards.filter((c) => c.status === 'reviewing').length;
+        const mastered = cards.filter((c) => c.status === 'mastered').length;
+        elStats.innerHTML = `
+          <span>共 <b>${total}</b> 张</span>
+          <span>未学习 <b>${toLearn}</b></span>
+          <span>待复盘 <b>${reviewing}</b></span>
+          <span>已掌握 <b>${mastered}</b></span>
+        `;
+        const pending = cards.filter((c) => c.status !== 'mastered');
+        elStartReview.disabled = pending.length === 0;
+      }
+
+      function renderTabs() {
+        elTabs.innerHTML = VIEW_TABS.map((t) => {
+          const count = cards.filter((c) => matchesView(c, t.id)).length;
+          return `
+            <button class="tab ${activeView === t.id ? 'active' : ''}" data-view="${t.id}">
+              ${t.label}<span class="count">${count}</span>
+            </button>
+          `;
+        }).join('');
+
+        elTabs.querySelectorAll('.tab').forEach((btn) => {
+          btn.addEventListener('click', () => {
+            activeView = btn.dataset.view;
+            renderAll();
+          });
+        });
+      }
+
+      function renderTagBar() {
+        const tags = allTagNames();
+        const inView = cards.filter((c) => matchesView(c, activeView));
+        const chips = [
+          `<span class="tag-bar-label">主题标签</span>`,
+          `<button class="tag-chip ${activeTag === 'all' ? 'active' : ''}" data-tag="all">全部标签<span class="count">${inView.length}</span></button>`,
+          ...tags.map((t) => {
+            const cnt = inView.filter((c) => (c.tags || []).includes(t)).length;
+            return `<button class="tag-chip ${activeTag === t ? 'active' : ''}" data-tag="${escapeHtml(t)}">#${escapeHtml(t)}<span class="count">${cnt}</span></button>`;
+          }),
+        ];
+        elTagBar.innerHTML = chips.join('');
+        elTagBar.querySelectorAll('.tag-chip').forEach((btn) => {
+          btn.addEventListener('click', () => {
+            activeTag = btn.dataset.tag;
+            renderAll();
+          });
+        });
+      }
+
+      function renderGrid() {
+        const list = filteredCards();
+        if (list.length === 0) {
+          elGrid.innerHTML = '<div class="empty">当前筛选下还没有卡片</div>';
+          return;
+        }
+
+        elGrid.innerHTML = list.map((c) => {
+          const tm = TYPE_META[c.type] || TYPE_META.flashcard;
+          const st = c.status || 'reviewing';
+          const tagHtml = (c.tags || []).length > 0
+            ? `<div class="card-tags">${c.tags.map((t) => `<span class="mini-tag">#${escapeHtml(t)}</span>`).join('')}</div>`
+            : '';
+          return `
+            <article class="card ${st === 'mastered' ? 'mastered' : ''}" data-id="${escapeHtml(c.id)}">
+              <div class="card-top">
+                <span class="type-pill ${tm.cls}">${tm.icon} ${tm.label}</span>
+                <span class="status-dot st-${escapeHtml(st)}">${STATUS_LABEL[st] || st}</span>
+              </div>
+              <h3 class="card-title">${escapeHtml(c.title)}</h3>
+              <p class="card-hook">${escapeHtml(c.hook || '')}</p>
+              ${tagHtml}
+            </article>
+          `;
+        }).join('');
+
+        elGrid.querySelectorAll('.card').forEach((el) => {
+          el.addEventListener('click', () => {
+            const clickedId = el.dataset.id;
+            const listNow = filteredCards();
+            const idx = listNow.findIndex((c) => c.id === clickedId);
+            openModal(listNow.map((c) => c.id), Math.max(0, idx));
+          });
+        });
+      }
+
+      function renderAll() {
+        renderStats();
+        renderStatusBar();
+        renderTabs();
+        renderTagBar();
+        renderGrid();
+      }
+
+      /* ---------- Local Server API ---------- */
+      async function fetchLocalKb() {
+        if (!IS_LOCAL_HOST) return;
+        try {
+          const res = await fetch('/api/kb', { cache: 'no-store' });
+          if (!res.ok) throw new Error('API unavailable');
+          const data = await res.json();
+          if (data && data.ok) {
+            canEdit = true;
+            runtimeMode = 'local-server';
+            cards = data.cards || [];
+            deployInfo = data.deploy || deployInfo;
+            renderAll();
+            if (deployInfo.state === 'scheduled' || deployInfo.state === 'deploying') startDeployPolling();
+            else stopDeployPolling();
+          }
+        } catch {
+          canEdit = false;
+          runtimeMode = 'public-readonly';
+          renderAll();
+        }
+      }
+
+      function startDeployPolling() {
+        if (deployPollTimer) return;
+        deployPollTimer = setInterval(async () => {
+          try {
+            const res = await fetch('/api/kb', { cache: 'no-store' });
+            const data = await res.json();
+            if (data && data.ok && data.deploy) {
+              deployInfo = data.deploy;
+              renderStatusBar();
+              if (deployInfo.state !== 'scheduled' && deployInfo.state !== 'deploying') stopDeployPolling();
+            }
+          } catch { stopDeployPolling(); }
+        }, 2000);
+      }
+
+      function stopDeployPolling() {
+        if (deployPollTimer) { clearInterval(deployPollTimer); deployPollTimer = null; }
+      }
+
+      async function saveCardApi(payload) {
+        if (!canEdit) return null;
+        const res = await fetch('/api/cards', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload),
+        });
+        const data = await res.json();
+        if (!res.ok || !data.ok) throw new Error(data.error || '保存失败');
+        cards = data.cards || cards;
+        if (data.deploy) deployInfo = data.deploy;
+        startDeployPolling();
+        renderAll();
+        return data.card;
+      }
+
+      async function deleteCardApi(id) {
+        if (!canEdit) return;
+        const res = await fetch(`/api/cards/${encodeURIComponent(id)}`, { method: 'DELETE' });
+        const data = await res.json();
+        if (!res.ok || !data.ok) throw new Error(data.error || '删除失败');
+        cards = data.cards || cards;
+        if (data.deploy) deployInfo = data.deploy;
+        startDeployPolling();
+        renderAll();
+      }
+
+      async function triggerDeployNow() {
+        if (!canEdit) return;
+        try {
+          deployInfo.state = 'deploying';
+          renderStatusBar();
+          const res = await fetch('/api/deploy', { method: 'POST' });
+          const data = await res.json();
+          if (data && data.deploy) deployInfo = data.deploy;
+          renderStatusBar();
+          startDeployPolling();
+        } catch { showToast('触发同步失败'); }
+      }
+
+      /* ---------- 10 Interactive Mini-Demos ---------- */
+      function mountDemo(container, demoId) {
+        clearDemoTimers();
+
+        if (demoId === 'rtl-mirror') {
+          let isRtl = true;
+          const render = () => {
+            container.innerHTML = `
+              <div class="demo-controls">
+                <button class="seg-btn ${!isRtl ? 'active-blue' : ''}" id="dLtr">EN · 从左到右 (LTR)</button>
+                <button class="seg-btn ${isRtl ? 'active-green' : ''}" id="dRtl">AR · 阿语镜像 (RTL)</button>
+              </div>
+              <div class="rtl-phone ${isRtl ? 'is-rtl' : ''}" dir="${isRtl ? 'rtl' : 'ltr'}">
+                <div class="rtl-topbar">
+                  <div class="rtl-user">
+                    <span style="font-size:18px;font-weight:700;">${isRtl ? '→' : '←'}</span>
+                    <span class="rtl-avatar">👩</span>
+                    <div>
+                      <div style="font-size:14px;font-weight:700;">${isRtl ? 'غرفة سلمى' : 'Salma Room'}</div>
+                      <div style="font-size:11px;color:var(--ink-3);">${isRtl ? '返回箭头与头像已镜像翻转' : '正常从左向右排版'}</div>
+                    </div>
+                  </div>
+                  <div style="display:flex;gap:6px;align-items:center;">
+                    <span class="exempt-box exempt-vip">VIP 8</span>
+                    <span class="exempt-box exempt-timer">02:15</span>
+                  </div>
+                </div>
+                <div class="rtl-video">
+                  <span style="font-size:13.5px;font-weight:600;">📹 1v1 视频画面（方向保持正向）</span>
+                  ${isRtl ? '<span class="exempt-badge">✓ 豁免翻转</span>' : '<span style="font-size:12px;opacity:.75;">16:9 Live</span>'}
+                </div>
+                <div class="rtl-chat">${isRtl ? 'مرحبا! 公屏文字自动右对齐' : 'Welcome! Chat aligns left in English'}</div>
+              </div>
+              <div class="demo-feedback" style="color:${isRtl ? 'var(--green)' : 'var(--ink-2)'};">
+                ${isRtl ? '✅ 绿框元素（VIP 英文标、02:15 数字、视频画面）绝不跟着翻转！' : '点右侧「AR · 阿语镜像」观察哪些翻了、哪些纹丝不动'}
+              </div>
+            `;
+            container.querySelector('#dLtr').onclick = () => { isRtl = false; render(); };
+            container.querySelector('#dRtl').onclick = () => { isRtl = true; render(); };
+          };
+          render();
+          return;
+        }
+
+        if (demoId === 'touch-pass') {
+          let pass = false;
+          let feedback = '👉 现在试着点击画面底部的「🎤 上麦」或「🚪 退出」按钮！';
+          let fbColor = 'var(--ink-2)';
+          const render = () => {
+            container.innerHTML = `
+              <div class="demo-controls">
+                <button class="seg-btn ${!pass ? 'active-red' : ''}" id="dOff">❌ 关闭穿透（踩坑版）</button>
+                <button class="seg-btn ${pass ? 'active-green' : ''}" id="dOn">✅ 开启穿透（正确版）</button>
+              </div>
+              <div class="room-mock">
+                <div class="room-seats">
+                  <div class="seat-dot"><div class="seat-circle">👑</div><span>房主</span></div>
+                  <div class="seat-dot"><div class="seat-circle">🎤</div><span>2号麦</span></div>
+                  <div class="seat-dot"><div class="seat-circle">🎤</div><span>3号麦</span></div>
+                </div>
+                <div class="room-bottom-btns">
+                  <button class="room-btn" id="btnMic">🎤 点击上麦</button>
+                  <button class="room-btn" id="btnExit">🚪 退出房间</button>
+                </div>
+                <div class="gift-overlay ${pass ? 'passthrough' : ''}" id="giftOverlay">
+                  <div style="background:rgba(15,23,42,0.72);backdrop-filter:blur(4px);padding:8px 18px;border-radius:14px;text-align:center;border:1px solid rgba(253,224,71,0.5);">
+                    <div style="font-size:15px;font-weight:700;">🏎️ ✨ 全屏大礼物动效层（覆盖整屏）</div>
+                    <div style="font-size:11.5px;opacity:.92;margin-top:2px;">${pass ? '已设触摸穿透：点击直接落到底层按钮' : '未设穿透：整个画面被动效层盖死'}</div>
+                  </div>
+                </div>
+              </div>
+              <div class="demo-feedback" id="tpFb" style="color:${fbColor};">${feedback}</div>
+            `;
+            container.querySelector('#dOff').onclick = () => { pass = false; feedback = '已切回踩坑版：再去点下面按钮试试！'; fbColor = 'var(--red)'; render(); };
+            container.querySelector('#dOn').onclick = () => { pass = true; feedback = '已开启触摸穿透：再去点下面按钮试试！'; fbColor = 'var(--green)'; render(); };
+            container.querySelector('#giftOverlay').onclick = () => {
+              const ov = container.querySelector('#giftOverlay');
+              ov.classList.add('blocked-flash');
+              setTimeout(() => ov && ov.classList.remove('blocked-flash'), 260);
+              feedback = '⛔ 被礼物特效层拦住了！用户点不动按钮，以为 App 卡死！';
+              fbColor = 'var(--red)';
+              container.querySelector('#tpFb').textContent = feedback;
+              container.querySelector('#tpFb').style.color = fbColor;
+            };
+            container.querySelector('#btnMic').onclick = () => {
+              feedback = '✅ 穿透成功！大礼物照常播，用户丝滑点中上麦！';
+              fbColor = 'var(--green)';
+              container.querySelector('#tpFb').textContent = feedback;
+              container.querySelector('#tpFb').style.color = fbColor;
+            };
+            container.querySelector('#btnExit').onclick = () => {
+              feedback = '✅ 穿透成功！不被礼物绑架，随时能点退出房间！';
+              fbColor = 'var(--green)';
+              container.querySelector('#tpFb').textContent = feedback;
+              container.querySelector('#tpFb').style.color = fbColor;
+            };
+          };
+          render();
+          return;
+        }
+
+        if (demoId === 'avatar-layers') {
+          const st = { wave: true, base: true, mask: false, frame: true, host: true, mute: true };
+          const render = () => {
+            container.innerHTML = `
+              <div class="avatar-lab">
+                <div class="avatar-preview-box">
+                  <div class="avatar-safe-box">
+                    ${st.wave ? '<div class="av-wave"></div>' : ''}
+                    ${st.base ? `<div class="av-base">🧑${st.mask ? '<div class="av-mask">重连中</div>' : ''}</div>` : ''}
+                    ${st.frame ? '<div class="av-frame"></div>' : ''}
+                    ${st.host ? '<div class="av-badge-tl">房主</div>' : ''}
+                    <div class="av-badge-br" style="background:${st.mute ? '#dc2626' : '#16a34a'};">${st.mute ? '🔇' : '●'}</div>
+                    <div class="avatar-safe-label">虚线框 = 1.3× 头像框留白</div>
+                  </div>
+                </div>
+                <div class="layer-toggles">
+                  <label class="layer-chk"><input type="checkbox" id="lWave" ${st.wave ? 'checked' : ''}/>① 声波光圈 (最底)</label>
+                  <label class="layer-chk"><input type="checkbox" id="lBase" ${st.base ? 'checked' : ''}/>② 圆形头像底图</label>
+                  <label class="layer-chk"><input type="checkbox" id="lMask" ${st.mask ? 'checked' : ''}/>③ 掉线黑遮罩</label>
+                  <label class="layer-chk"><input type="checkbox" id="lFrame" ${st.frame ? 'checked' : ''}/>④ 1.3× 头像框</label>
+                  <label class="layer-chk"><input type="checkbox" id="lHost" ${st.host ? 'checked' : ''}/>⑤ 左上身份标</label>
+                  <label class="layer-chk"><input type="checkbox" id="lMute" ${st.mute ? 'checked' : ''}/>⑥ 闭麦红标 (压在线点)</label>
+                </div>
+              </div>
+              <div class="demo-feedback" style="color:var(--ink-2);">
+                ${st.mute ? '🔴 右下角：闭麦红标优先级高于在线绿点（取消勾选 ⑥ 可看到在线绿点）' : '🟢 右下角：未闭麦时展示在线绿点'}
+              </div>
+            `;
+            container.querySelector('#lWave').onchange = (e) => { st.wave = e.target.checked; render(); };
+            container.querySelector('#lBase').onchange = (e) => { st.base = e.target.checked; render(); };
+            container.querySelector('#lMask').onchange = (e) => { st.mask = e.target.checked; render(); };
+            container.querySelector('#lFrame').onchange = (e) => { st.frame = e.target.checked; render(); };
+            container.querySelector('#lHost').onchange = (e) => { st.host = e.target.checked; render(); };
+            container.querySelector('#lMute').onchange = (e) => { st.mute = e.target.checked; render(); };
+          };
+          render();
+          return;
+        }
+
+        if (demoId === 'chat-scroll') {
+          let msgs = [
+            '欢迎来到 Laka 语音房', '小明：大家晚上好！', '小红：刚进房听歌中 🎵',
+            '阿伟：这个麦位声音好清晰', '露西：送出一朵玫瑰 🌹', '房主：欢迎新朋友上麦聊',
+            '杰克：刚才那首歌叫什么名字？', '小美：哈哈哈哈太好听了'
+          ];
+          let unread = 0;
+          let atBottom = true;
+
+          container.innerHTML = `
+            <div class="demo-controls">
+              <button class="seg-btn active-blue" id="btnAddMsg">+ 模拟来 1 条新消息</button>
+              <span class="meta-tag" id="scrollPosTag">当前在最底部 · 自动滚底</span>
+            </div>
+            <div class="chat-box-wrap">
+              <div class="chat-scroll-box" id="chatBox"></div>
+              <button class="unread-bubble" id="unreadBtn" style="display:none;"></button>
+            </div>
+            <div class="demo-feedback" style="color:var(--ink-2);">👆 先用鼠标把公屏往上滑翻看历史，再点「+ 模拟来 1 条新消息」体验防顶走！</div>
+          `;
+
+          const box = container.querySelector('#chatBox');
+          const tag = container.querySelector('#scrollPosTag');
+          const ub = container.querySelector('#unreadBtn');
+
+          const paintMsgs = () => {
+            box.innerHTML = msgs.map((m, i) => `<div class="chat-line"><b>#${i + 1}</b> ${escapeHtml(m)}</div>`).join('');
+          };
+
+          const updateBubble = () => {
+            tag.textContent = atBottom ? '当前在最底部 · 新消息自动滚底' : '已上滑看历史 · 画面锁住不顶走';
+            tag.style.color = atBottom ? 'var(--green)' : 'var(--blue)';
+            if (unread > 0 && !atBottom) {
+              ub.style.display = 'block';
+              ub.textContent = `↓ ${unread} 条新消息`;
+            } else {
+              ub.style.display = 'none';
+            }
+          };
+
+          paintMsgs();
+          box.scrollTop = box.scrollHeight;
+          updateBubble();
+
+          box.addEventListener('scroll', () => {
+            atBottom = box.scrollHeight - box.scrollTop - box.clientHeight < 16;
+            if (atBottom) unread = 0;
+            updateBubble();
+          });
+
+          container.querySelector('#btnAddMsg').onclick = () => {
+            msgs.push(`新访客 ${msgs.length + 1}：刚发来一条弹幕消息 ✨`);
+            const prevTop = box.scrollTop;
+            paintMsgs();
+            if (atBottom) {
+              box.scrollTop = box.scrollHeight;
+            } else {
+              box.scrollTop = prevTop;
+              unread += 1;
+            }
+            updateBubble();
+          };
+
+          ub.onclick = () => {
+            unread = 0;
+            atBottom = true;
+            box.scrollTo({ top: box.scrollHeight, behavior: 'smooth' });
+            updateBubble();
+          };
+          return;
+        }
+
+        if (demoId === 'number-floor') {
+          let val = 99990;
+          let sec = 59.9;
+          container.innerHTML = `
+            <div style="display:flex;align-items:center;gap:12px;justify-content:center;flex-wrap:wrap;">
+              <span style="font-size:13px;font-weight:600;color:var(--ink-2);">拖动模拟真实钻石数：</span>
+              <input type="range" id="numRange" min="99900" max="100050" step="10" value="99990" style="width:210px;" />
+              <strong id="rawNum" style="font-variant-numeric:tabular-nums;font-size:15px;">99,990</strong>
+            </div>
+            <div class="num-grid">
+              <div class="num-card" style="background:var(--red-soft);border-color:var(--red-border);">
+                <div style="font-size:12px;font-weight:700;color:var(--red);">❌ 错误：四舍五入</div>
+                <div class="num-big" id="roundVal" style="color:var(--red);">10.0万</div>
+                <div style="font-size:12px;color:var(--ink-2);" id="roundTip">实际差 10，用户看到10万却提不了现！</div>
+              </div>
+              <div class="num-card" style="background:var(--green-soft);border-color:var(--green-border);">
+                <div style="font-size:12px;font-weight:700;color:var(--green);">✅ 正确：向下取整 (Floor)</div>
+                <div class="num-big" id="floorVal" style="color:var(--green);">9.9万</div>
+                <div style="font-size:12px;color:var(--ink-2);">绝不虚高进位，零资损客诉</div>
+              </div>
+            </div>
+            <div class="num-grid">
+              <div class="num-card">
+                <div style="font-size:12px;color:var(--red);font-weight:600;">❌ 普通字体倒计时（注意边框左右晃）</div>
+                <div style="margin-top:6px;"><span id="tJitter" style="font-family:Georgia,serif;font-size:22px;font-weight:700;background:var(--surface-soft);padding:3px 10px;border-radius:8px;display:inline-block;">00:59.9</span></div>
+              </div>
+              <div class="num-card">
+                <div style="font-size:12px;color:var(--green);font-weight:600;">✅ 开启等宽数字 tabular-nums（稳如磐石）</div>
+                <div style="margin-top:6px;"><span id="tStable" style="font-variant-numeric:tabular-nums;font-size:22px;font-weight:700;background:var(--green-soft);color:var(--green);padding:3px 10px;border-radius:8px;display:inline-block;">00:59.9</span></div>
+              </div>
+            </div>
+          `;
+
+          const updateNum = () => {
+            container.querySelector('#rawNum').textContent = val.toLocaleString();
+            const r = (val / 10000).toFixed(1);
+            const f = (Math.floor(val / 1000) / 10).toFixed(1);
+            container.querySelector('#roundVal').textContent = `${r}万`;
+            container.querySelector('#floorVal').textContent = `${f}万`;
+            container.querySelector('#roundTip').textContent = r !== f ? `虚高显示 ${r}万，用户以为达标引发投诉` : '此时凑巧相等，再往左拖一点看 99,990';
+          };
+
+          container.querySelector('#numRange').oninput = (e) => { val = Number(e.target.value); updateNum(); };
+          updateNum();
+
+          const tid = setInterval(() => {
+            sec = sec <= 10 ? 59.9 : Number((sec - 0.1).toFixed(1));
+            const txt = `00:${sec.toFixed(1).padStart(4, '0')}`;
+            const j = container.querySelector('#tJitter');
+            const s = container.querySelector('#tStable');
+            if (j) j.textContent = txt;
+            if (s) s.textContent = txt;
+          }, 140);
+          demoTimers.push(tid);
+          return;
+        }
+
+        if (demoId === 'nine-patch') {
+          let w = 230;
+          const render = () => {
+            const scaleX = (w / 100).toFixed(2);
+            container.innerHTML = `
+              <div style="display:flex;align-items:center;gap:12px;justify-content:center;flex-wrap:wrap;">
+                <span style="font-size:13px;font-weight:600;color:var(--ink-2);">拖动拉宽气泡 / 容器：</span>
+                <input type="range" id="npRange" min="110" max="270" value="${w}" style="width:200px;" />
+                <strong style="font-size:13.5px;">${w}px</strong>
+              </div>
+              <div class="np-row">
+                <div class="np-panel">
+                  <div style="font-size:12px;font-weight:700;color:var(--red);">❌ 普通图强拉（圆角被拉扁失真）</div>
+                  <div style="height:40px;display:flex;align-items:center;justify-content:center;overflow:hidden;width:100%;">
+                    <div style="width:100px;height:34px;border-radius:17px;border:3px solid #f59e0b;background:#fef3c7;transform:scaleX(${scaleX});"></div>
+                  </div>
+                  <div style="font-size:12px;font-weight:700;color:var(--red);margin-top:4px;">❌ FitXY 拉伸（头像压扁）</div>
+                  <div style="width:${Math.min(w, 210)}px;height:46px;border-radius:10px;background:#fee2e2;display:flex;align-items:center;justify-content:center;overflow:hidden;">
+                    <span style="font-size:32px;display:inline-block;transform:scaleX(${(Math.min(w, 210) / 50).toFixed(2)});">😊</span>
+                  </div>
+                </div>
+                <div class="np-panel">
+                  <div style="font-size:12px;font-weight:700;color:var(--green);">✅ 点九图 .9.png（圆角锁死只拉中间）</div>
+                  <div style="height:40px;display:flex;align-items:center;justify-content:center;width:100%;">
+                    <div style="width:${w}px;height:34px;border-radius:17px;border:3px solid #16a34a;background:#dcfce7;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;color:#166534;">称号文字变长也完美</div>
+                  </div>
+                  <div style="font-size:12px;font-weight:700;color:var(--green);margin-top:4px;">✅ CenterCrop（等比居中不压扁）</div>
+                  <div style="width:${Math.min(w, 210)}px;height:46px;border-radius:10px;background:#dcfce7;display:flex;align-items:center;justify-content:center;overflow:hidden;">
+                    <span style="font-size:34px;">😊</span>
+                  </div>
+                </div>
+              </div>
+            `;
+            container.querySelector('#npRange').oninput = (e) => { w = Number(e.target.value); render(); };
+          };
+          render();
+          return;
+        }
+
+        if (demoId === 'hit-slop') {
+          let expanded = true;
+          let showBox = true;
+          let fb = '👉 试着点击弹窗右上角小 × 旁边一点点的空白处！';
+          let fbCol = 'var(--ink-2)';
+          const render = () => {
+            const sz = expanded ? 46 : 20;
+            const offset = expanded ? -10 : 4;
+            container.innerHTML = `
+              <div class="demo-controls">
+                <button class="seg-btn ${!expanded ? 'active-red' : ''}" id="hSmall">❌ 原切图热区 (18dp)</button>
+                <button class="seg-btn ${expanded ? 'active-green' : ''}" id="hBig">✅ 热区外扩 (44dp)</button>
+                <label class="seg-btn" style="display:inline-flex;align-items:center;gap:5px;">
+                  <input type="checkbox" id="hShow" ${showBox ? 'checked' : ''} />透视热区
+                </label>
+              </div>
+              <div class="hit-stage">
+                <div class="hit-card-mock" id="hitMissArea">
+                  模拟弹窗（点右上角 × 关闭）
+                  <div class="hit-target" id="hitClose" style="width:${sz}px;height:${sz}px;top:${offset}px;right:${offset}px;background:${showBox ? (expanded ? 'rgba(37,99,235,0.16)' : 'rgba(220,38,38,0.18)') : 'transparent'};border:${showBox ? (expanded ? '1.5px dashed #2563eb' : '1.5px dashed #dc2626') : 'none'};">
+                    <span class="hit-visual-x">×</span>
+                  </div>
+                </div>
+              </div>
+              <div class="demo-feedback" id="hitFb" style="color:${fbCol};">${fb}</div>
+            `;
+            container.querySelector('#hSmall').onclick = () => { expanded = false; fb = '热区缩回 18px：再点小 × 边缘试试！'; fbCol = 'var(--red)'; render(); };
+            container.querySelector('#hBig').onclick = () => { expanded = true; fb = '热区外扩到 44px：稍微偏一点也能轻松点中！'; fbCol = 'var(--green)'; render(); };
+            container.querySelector('#hShow').onchange = (e) => { showBox = e.target.checked; render(); };
+            container.querySelector('#hitMissArea').onclick = () => {
+              fb = '❌ 没点中 ×！手指偏了 2 毫米，点到弹窗空白处了';
+              fbCol = 'var(--red)';
+              container.querySelector('#hitFb').textContent = fb;
+              container.querySelector('#hitFb').style.color = fbCol;
+            };
+            container.querySelector('#hitClose').onclick = (e) => {
+              e.stopPropagation();
+              fb = expanded ? '✅ 命中关闭！视觉依然精致，但手指容错率提升 4 倍' : '✅ 点中了（但这 18px 热区在手机上极难瞄准）';
+              fbCol = 'var(--green)';
+              container.querySelector('#hitFb').textContent = fb;
+              container.querySelector('#hitFb').style.color = fbCol;
+            };
+          };
+          render();
+          return;
+        }
+
+        if (demoId === 'exposure-track') {
+          const items = [
+            { id: 'c1', name: '主播 Luna · 语音房连麦中', exposed: false, dwell: 0, ratio: 0 },
+            { id: 'c2', name: '主播 Mira · 热门 PK 房间', exposed: false, dwell: 0, ratio: 0 },
+            { id: 'c3', name: '主播 Nora · 深夜电台点歌', exposed: false, dwell: 0, ratio: 0 },
+            { id: 'c4', name: '主播 Zara · 1v1 在线可聊', exposed: false, dwell: 0, ratio: 0 },
+          ];
+
+          container.innerHTML = `
+            <div class="demo-controls">
+              <span class="meta-tag" id="expCount" style="color:var(--green);font-weight:700;">已计入有效曝光：0 / 4 张</span>
+              <button class="seg-btn" id="expReset">重置计数</button>
+            </div>
+            <div class="exp-feed" id="expFeed">
+              ${items.map((it) => `
+                <div class="exp-item" data-exp="${it.id}">
+                  <div style="display:flex;justify-content:space-between;align-items:center;">
+                    <strong>${it.name}</strong>
+                    <span class="meta-tag" data-badge="${it.id}">露出 0%</span>
+                  </div>
+                  <div style="font-size:12.5px;color:var(--ink-2);" data-state="${it.id}">往下滑动让它露出 ≥50% 并停满 0.5 秒</div>
+                </div>
+              `).join('')}
+            </div>
+            <div class="demo-feedback" style="color:var(--ink-2);">👆 试着快速划过（不计曝光）vs 停稳 0.5 秒（亮绿计入曝光）</div>
+          `;
+
+          const feed = container.querySelector('#expFeed');
+          const computeRatios = () => {
+            const fRect = feed.getBoundingClientRect();
+            items.forEach((it) => {
+              const el = feed.querySelector(`[data-exp="${it.id}"]`);
+              if (!el) return;
+              const r = el.getBoundingClientRect();
+              const vis = Math.max(0, Math.min(r.bottom, fRect.bottom) - Math.max(r.top, fRect.top));
+              it.ratio = Math.round((vis / r.height) * 100);
+            });
+          };
+
+          const paint = () => {
+            const doneCnt = items.filter((i) => i.exposed).length;
+            const cEl = container.querySelector('#expCount');
+            if (cEl) cEl.textContent = `已计入有效曝光：${doneCnt} / ${items.length} 张`;
+            items.forEach((it) => {
+              const el = feed.querySelector(`[data-exp="${it.id}"]`);
+              const badge = feed.querySelector(`[data-badge="${it.id}"]`);
+              const stEl = feed.querySelector(`[data-state="${it.id}"]`);
+              if (!el) return;
+              el.classList.toggle('exposed', it.exposed);
+              el.classList.toggle('watching', !it.exposed && it.ratio >= 50);
+              badge.textContent = it.exposed ? '✓ 有效曝光' : `露出 ${it.ratio}%`;
+              badge.style.color = it.exposed ? 'var(--green)' : (it.ratio >= 50 ? 'var(--blue)' : 'var(--ink-3)');
+              stEl.textContent = it.exposed
+                ? '已满足面积 ≥50% 且停留 ≥0.5s，已入本地上报池'
+                : (it.ratio >= 50 ? `达标面积，计时中 ${(it.dwell / 1000).toFixed(1)}s / 0.5s…` : '露出面积不足 50%，不计时');
+            });
+          };
+
+          feed.addEventListener('scroll', () => { computeRatios(); paint(); });
+          container.querySelector('#expReset').onclick = () => {
+            items.forEach((i) => { i.exposed = false; i.dwell = 0; });
+            feed.scrollTop = 0;
+            computeRatios();
+            paint();
+          };
+
+          computeRatios();
+          paint();
+          const tid = setInterval(() => {
+            computeRatios();
+            items.forEach((it) => {
+              if (it.exposed) return;
+              if (it.ratio >= 50) {
+                it.dwell += 100;
+                if (it.dwell >= 500) it.exposed = true;
+              } else {
+                it.dwell = 0;
+              }
+            });
+            paint();
+          }, 100);
+          demoTimers.push(tid);
+          return;
+        }
+
+        if (demoId === 'shadow-ban') {
+          let mode = 'shadow'; // hard | shadow
+          let sent = false;
+          const render = () => {
+            container.innerHTML = `
+              <div class="demo-controls">
+                <button class="seg-btn ${mode === 'hard' ? 'active-red' : ''}" id="sbHard">🚫 强拦截（弹报错）</button>
+                <button class="seg-btn ${mode === 'shadow' ? 'active-green' : ''}" id="sbShadow">👻 单边自嗨（推荐防引流）</button>
+                <button class="seg-btn active-blue" id="sbSend">发送：“加我微信 vx123”</button>
+              </div>
+              <div class="dual-phones">
+                <div class="mini-phone">
+                  <div class="mini-phone-head"><span>📱 发消息方（黑产/引流号）</span><span>左视角</span></div>
+                  ${!sent ? '<div style="font-size:13px;color:var(--ink-3);margin:auto;">点击上方蓝色按钮模拟发送引流词</div>' : (
+                    mode === 'hard'
+                      ? `<div class="chat-line" style="background:var(--red-soft);color:var(--red);">❗ 加我微信 vx123<br/><small>提示：含违规词，发送失败（未扣费）</small></div>
+                         <div style="font-size:12px;color:var(--red);">⚠️ 副作用：黑产秒懂“微信”被封，立刻换“威信”继续试！</div>`
+                      : `<div class="chat-line" style="background:var(--green-soft);color:var(--green);">✓ 加我微信 vx123<br/><small>显示已送达（已正常扣 10 金币）</small></div>
+                         <div style="font-size:12px;color:var(--green);">😎 黑产以为发成功了，完全不知道自己已被静默拦截！</div>`
+                  )}
+                </div>
+                <div class="mini-phone">
+                  <div class="mini-phone-head"><span>📱 对面正常女生</span><span>右视角</span></div>
+                  <div style="font-size:13px;color:var(--ink-3);margin:auto;text-align:center;">
+                    ${!sent ? '聊天页空空如也' : '🛡️ 什么都没收到<br/><small>（服务端静默丢弃，保护女生不受骚扰）</small>'}
+                  </div>
+                </div>
+              </div>
+            `;
+            container.querySelector('#sbHard').onclick = () => { mode = 'hard'; sent = true; render(); };
+            container.querySelector('#sbShadow').onclick = () => { mode = 'shadow'; sent = true; render(); };
+            container.querySelector('#sbSend').onclick = () => { sent = true; render(); };
+          };
+          render();
+          return;
+        }
+
+        if (demoId === 'screen-shield') {
+          let act = 'normal'; // normal | shot | rec
+          const render = () => {
+            container.innerHTML = `
+              <div class="demo-controls">
+                <button class="seg-btn ${act === 'shot' ? 'active-blue' : ''}" id="scShot">📸 模拟用户点截屏</button>
+                <button class="seg-btn ${act === 'rec' ? 'active-red' : ''}" id="scRec">⏺️ 模拟用户开录屏</button>
+                <button class="seg-btn ${act === 'normal' ? 'active' : ''}" id="scReset">↺ 恢复正常通话</button>
+              </div>
+              <div class="dual-phones">
+                <div class="mini-phone">
+                  <div class="mini-phone-head"><span>🤖 安卓手机</span><span>FLAG_SECURE</span></div>
+                  <div class="video-call-canvas ${act !== 'normal' ? 'blackout' : ''}">
+                    ${act === 'normal'
+                      ? '<div style="font-size:34px;">👩</div><div style="font-size:12.5px;">1v1 视频通话中…</div>'
+                      : '<div style="font-size:26px;">🔒</div><div style="font-size:13px;font-weight:700;">系统强制黑屏拦截</div><div style="font-size:11.5px;opacity:.75;">截屏和录屏拍出来的全是黑的</div>'}
+                  </div>
+                </div>
+                <div class="mini-phone">
+                  <div class="mini-phone-head"><span>🍎 iOS 手机</span><span>系统死限制</span></div>
+                  <div class="video-call-canvas ${act === 'rec' ? 'blurred' : ''}">
+                    <div class="vc-face" style="text-align:center;">
+                      <div style="font-size:34px;">👩</div>
+                      <div style="font-size:12.5px;">1v1 视频通话中…</div>
+                    </div>
+                    ${act === 'shot' ? '<div class="vc-overlay-alert" style="color:#fde047;">⚠️ iOS 无法阻止截屏！<br/>只能事后监听并弹框告警对方</div>' : ''}
+                    ${act === 'rec' ? '<div class="vc-overlay-alert" style="color:#fca5a5;">🔇 检测到正在录屏！<br/>立即打强高斯模糊 + 静音告警</div>' : ''}
+                  </div>
+                </div>
+              </div>
+            `;
+            container.querySelector('#scShot').onclick = () => { act = 'shot'; render(); };
+            container.querySelector('#scRec').onclick = () => { act = 'rec'; render(); };
+            container.querySelector('#scReset').onclick = () => { act = 'normal'; render(); };
+          };
+          render();
+        }
+      }
+
+      /* ---------- Flow Interactive SVG Renderer ---------- */
+      function computeNodePositions(nodes) {
+        const n = nodes.length;
+        if (n === 2) return { [nodes[0].id]: { x: 165, y: 120 }, [nodes[1].id]: { x: 435, y: 120 } };
+        if (n === 3) {
+          return {
+            [nodes[0].id]: { x: 108, y: 120 },
+            [nodes[1].id]: { x: 300, y: 120 },
+            [nodes[2].id]: { x: 492, y: 120 },
+          };
+        }
+        const coords = [
+          { x: 145, y: 58 },
+          { x: 455, y: 58 },
+          { x: 145, y: 184 },
+          { x: 455, y: 184 },
+        ];
+        const map = {};
+        nodes.slice(0, 4).forEach((nd, i) => { map[nd.id] = coords[i]; });
+        return map;
+      }
+
+      function clipEdge(p1, p2, hw, hh) {
+        const dx = p2.x - p1.x;
+        const dy = p2.y - p1.y;
+        if (dx === 0 && dy === 0) return { x1: p1.x, y1: p1.y, x2: p2.x, y2: p2.y };
+        const t = 1 / Math.max(Math.abs(dx) / hw, Math.abs(dy) / hh);
+        return { x1: p1.x + dx * t, y1: p1.y + dy * t, x2: p2.x - dx * t, y2: p2.y - dy * t };
+      }
+
+      function buildFlowSvg(card, stepIdx) {
+        const nodes = card.nodes || [];
+        const step = (card.steps || [])[stepIdx] || { actions: [] };
+        const pos = computeNodePositions(nodes);
+        const hw = nodes.length === 3 ? 72 : 78;
+        const hh = 36;
+
+        const activeNodes = new Set();
+        const pulseNodes = new Set();
+        const cutNodes = new Set();
+
+        for (const act of step.actions || []) {
+          if (act.from) activeNodes.add(act.from);
+          if (act.to) activeNodes.add(act.to);
+          if (act.node) {
+            activeNodes.add(act.node);
+            if (act.kind === 'pulse') pulseNodes.add(act.node);
+          }
+          if (act.kind === 'cut') {
+            if (act.from) cutNodes.add(act.from);
+            if (act.to) cutNodes.add(act.to);
+          }
+        }
+
+        const arrowActions = (step.actions || []).filter((a) => a.kind === 'arrow');
+        let edgesSvg = '';
+        let arrowOrder = 0;
+
+        for (const act of step.actions || []) {
+          if (act.kind === 'pulse') continue;
+          const p1 = pos[act.from];
+          const p2 = pos[act.to];
+          if (!p1 || !p2) continue;
+          const { x1, y1, x2, y2 } = clipEdge(p1, p2, hw, hh);
+          const mx = (x1 + x2) / 2;
+          const my = (y1 + y2) / 2;
+
+          if (act.kind === 'arrow') {
+            arrowOrder += 1;
+            edgesSvg += `<line x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}" stroke="#2563eb" stroke-width="3" stroke-linecap="round" class="edge-flow" marker-end="url(#arrow-blue)" />`;
+            if (arrowActions.length > 1) {
+              edgesSvg += `<g transform="translate(${mx}, ${my})"><circle r="11" fill="#2563eb" stroke="#f8f5ef" stroke-width="2.5" /><text text-anchor="middle" dy="4" fill="#fff" font-size="11" font-weight="700">${arrowOrder}</text></g>`;
+            }
+          } else if (act.kind === 'both') {
+            edgesSvg += `<line x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}" stroke="#15803d" stroke-width="3.2" stroke-linecap="round" class="edge-flow" marker-start="url(#arrow-green-start)" marker-end="url(#arrow-green)" />`;
+          } else if (act.kind === 'cut') {
+            edgesSvg += `
+              <line x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}" stroke="#dc2626" stroke-width="2.8" stroke-dasharray="6 6" stroke-linecap="round" />
+              <g transform="translate(${mx}, ${my})">
+                <rect x="-34" y="-14" width="68" height="28" rx="14" fill="#fef2f2" stroke="#fecaca" stroke-width="1.5" />
+                <text text-anchor="middle" dy="4.5" fill="#dc2626" font-size="12" font-weight="700">✂️ 断开</text>
+              </g>
+            `;
+          }
+        }
+
+        const boxW = nodes.length === 3 ? 132 : 140;
+        const nodesSvg = nodes.map((nd) => {
+          const p = pos[nd.id];
+          if (!p) return '';
+          const isActive = activeNodes.has(nd.id);
+          const isPulse = pulseNodes.has(nd.id);
+          const isCut = cutNodes.has(nd.id);
+
+          let stroke = '#e5ded2', fill = '#ffffff', ring = '', badge = '';
+          if (isPulse) {
+            stroke = '#d97706'; fill = '#fffbeb';
+            ring = `<rect x="${p.x - boxW/2 - 5}" y="${p.y - 34}" width="${boxW + 10}" height="68" rx="18" fill="none" stroke="#fcd34d" stroke-width="3" opacity="0.7" />`;
+            badge = `<g transform="translate(${p.x}, ${p.y + 44})"><rect x="-46" y="-11" width="92" height="22" rx="11" fill="#fffbeb" stroke="#fde68a" /><text text-anchor="middle" dy="4" fill="#b45309" font-size="11" font-weight="700">⏱️ 关键状态</text></g>`;
+          } else if (isCut) {
+            stroke = '#dc2626'; fill = '#fef2f2';
+          } else if (isActive) {
+            const hasBoth = (step.actions || []).some((a) => a.kind === 'both' && (a.from === nd.id || a.to === nd.id));
+            stroke = hasBoth ? '#15803d' : '#2563eb';
+            fill = hasBoth ? '#f0fdf4' : '#ffffff';
+            ring = `<rect x="${p.x - boxW/2 - 4}" y="${p.y - 33}" width="${boxW + 8}" height="66" rx="18" fill="none" stroke="${hasBoth ? '#bbf7d0' : '#bfdbfe'}" stroke-width="3" />`;
+          }
+
+          return `
+            <g opacity="${isActive ? '1' : '0.28'}">
+              ${ring}
+              <rect x="${p.x - boxW/2}" y="${p.y - 29}" width="${boxW}" height="58" rx="15" fill="${fill}" stroke="${stroke}" stroke-width="${isActive ? '2.2' : '1.4'}" />
+              <text x="${p.x}" y="${p.y + 5}" text-anchor="middle" fill="#1c1917" font-size="15" font-weight="650">${escapeHtml(nd.icon)} ${escapeHtml(nd.label)}</text>
+              ${badge}
+            </g>
+          `;
+        }).join('');
+
+        return `
+          <svg class="flow-svg" viewBox="0 0 600 246" aria-label="分步流程图">
+            <defs>
+              <marker id="arrow-blue" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6.5" markerHeight="6.5" orient="auto-start-reverse"><path d="M 1 1 L 9 5 L 1 9 z" fill="#2563eb" /></marker>
+              <marker id="arrow-green" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6.5" markerHeight="6.5" orient="auto"><path d="M 1 1 L 9 5 L 1 9 z" fill="#15803d" /></marker>
+              <marker id="arrow-green-start" viewBox="0 0 10 10" refX="2" refY="5" markerWidth="6.5" markerHeight="6.5" orient="auto"><path d="M 9 1 L 1 5 L 9 9 z" fill="#15803d" /></marker>
+            </defs>
+            ${edgesSvg}
+            ${nodesSvg}
+          </svg>
+        `;
+      }
+
+      function renderCollapsedDetails(card) {
+        const blocks = [];
+        if (Array.isArray(card.glossary) && card.glossary.length > 0) {
+          blocks.push(`
+            <details>
+              <summary>展开开发黑话对照 (${card.glossary.length})</summary>
+              <div class="glossary-list">
+                ${card.glossary.map((g) => `<div class="glossary-item"><span class="glossary-term">${escapeHtml(g.term)}</span><span class="glossary-plain">${escapeHtml(g.plain)}</span></div>`).join('')}
+              </div>
+            </details>
+          `);
+        }
+        if (Array.isArray(card.tips) && card.tips.length > 0) {
+          blocks.push(`
+            <details>
+              <summary>展开写需求常漏的避坑点 (${card.tips.length})</summary>
+              <ul class="tips-list">${card.tips.map((t) => `<li>${escapeHtml(t)}</li>`).join('')}</ul>
+            </details>
+          `);
+        }
+        return blocks.length ? `<div class="fold-group">${blocks.join('')}</div>` : '';
+      }
+
+      /* ---------- Focus Review Modal ---------- */
+      function openModal(ids, idx) {
+        sessionIds = ids;
+        sessionIdx = idx;
+        flowStepIdx = 0;
+        isFlipped = false;
+        elBackdrop.classList.add('open');
+        elBackdrop.setAttribute('aria-hidden', 'false');
+        renderModal();
+      }
+
+      function closeModal() {
+        clearDemoTimers();
+        elBackdrop.classList.remove('open');
+        elBackdrop.setAttribute('aria-hidden', 'true');
+      }
+
+      function renderModal() {
+        clearDemoTimers();
+        if (!elBackdrop.classList.contains('open') || sessionIds.length === 0) return;
+        const card = getCardById(sessionIds[sessionIdx]);
+        if (!card) { closeModal(); return; }
+
+        const tm = TYPE_META[card.type] || TYPE_META.flashcard;
+        const st = card.status || 'reviewing';
+
+        elModalMeta.innerHTML = `
+          <span class="type-pill ${tm.cls}">${tm.icon} ${tm.label}</span>
+          ${(card.tags || []).map((t) => `<span class="meta-tag">#${escapeHtml(t)}</span>`).join('')}
+          <span class="meta-tag">${sessionIdx + 1} / ${sessionIds.length}</span>
+        `;
+
+        elEditCardBtn.style.display = canEdit ? 'inline-block' : 'none';
+        elDeleteCardBtn.style.display = canEdit ? 'inline-block' : 'none';
+
+        elModalTitle.textContent = card.title;
+        if (card.source) {
+          elModalSource.textContent = `出处：${card.source}${card.date ? ` · ${card.date}` : ''}`;
+          elModalSource.style.display = 'block';
+        } else {
+          elModalSource.style.display = 'none';
+        }
+
+        if (card.type === 'demo') {
+          elModalBody.innerHTML = `
+            <div class="demo-stage" id="demoMount"></div>
+            ${card.summary ? `<p class="demo-summary">${escapeHtml(card.summary)}</p>` : ''}
+            ${card.rule ? `<div class="rule-box">💡 写需求红线：${escapeHtml(card.rule)}</div>` : ''}
+            ${renderCollapsedDetails(card)}
+          `;
+          mountDemo(document.getElementById('demoMount'), card.demo);
+          elKbdHint.textContent = '直接点击上方画面交互体验 · ← / → 切换上下张 · Esc 关闭';
+        } else if (card.type === 'flow') {
+          const steps = card.steps || [];
+          flowStepIdx = Math.max(0, Math.min(flowStepIdx, Math.max(0, steps.length - 1)));
+          const curStep = steps[flowStepIdx] || { title: '暂无步骤', text: '点右上角「编辑」可补充步骤' };
+
+          elModalBody.innerHTML = `
+            <div class="flow-stage">
+              ${buildFlowSvg(card, flowStepIdx)}
+              <div class="step-caption-box">
+                <span class="step-badge">第 ${steps.length ? flowStepIdx + 1 : 0} / ${steps.length} 步 · ${escapeHtml(curStep.title)}</span>
+                <p class="step-sentence">${escapeHtml(curStep.text)}</p>
+              </div>
+              <div class="step-nav">
+                <button class="step-arrow-btn" id="stepPrevBtn" ${flowStepIdx === 0 ? 'disabled' : ''}>← 上一步</button>
+                <div class="step-pills">
+                  ${steps.map((s, i) => `<button class="step-pill ${i === flowStepIdx ? 'active' : ''}" data-step="${i}">${i + 1}. ${escapeHtml(s.title)}</button>`).join('')}
+                </div>
+                <button class="step-arrow-btn" id="stepNextBtn" ${flowStepIdx >= steps.length - 1 ? 'disabled' : ''}>下一步 →</button>
+              </div>
+            </div>
+            ${renderCollapsedDetails(card)}
+          `;
+
+          document.getElementById('stepPrevBtn').onclick = () => { if (flowStepIdx > 0) { flowStepIdx -= 1; renderModal(); } };
+          document.getElementById('stepNextBtn').onclick = () => { if (flowStepIdx < steps.length - 1) { flowStepIdx += 1; renderModal(); } };
+          elModalBody.querySelectorAll('.step-pill').forEach((btn) => {
+            btn.onclick = () => { flowStepIdx = Number(btn.dataset.step); renderModal(); };
+          });
+          elKbdHint.textContent = '快捷键：← / → 切换步骤 · Esc 关闭';
+        } else if (card.type === 'contrast') {
+          elModalBody.innerHTML = `
+            <div class="contrast-grid">
+              <div class="contrast-box contrast-wrong"><div class="contrast-label">❌ 当时容易漏掉</div><p class="contrast-text">${escapeHtml(card.wrong || '')}</p></div>
+              <div class="contrast-box contrast-right"><div class="contrast-label">✅ 正确补法</div><p class="contrast-text">${escapeHtml(card.right || '')}</p></div>
+            </div>
+            ${card.rule ? `<div class="rule-box">💡 下次自检：${escapeHtml(card.rule)}</div>` : ''}
+            ${renderCollapsedDetails(card)}
+          `;
+          elKbdHint.textContent = '快捷键：← / → 切换上下张 · Esc 关闭';
+        } else if (card.type === 'flashcard') {
+          const scenesHtml = Array.isArray(card.scenes) && card.scenes.length > 0
+            ? `<div class="scene-pills">${card.scenes.map((s) => `<span class="scene-pill">${escapeHtml(s)}</span>`).join('')}</div>`
+            : '';
+          elModalBody.innerHTML = `
+            <div class="flash-stage ${isFlipped ? 'flipped' : ''}" id="flashStage" tabindex="0">
+              ${!isFlipped ? `
+                <div class="flash-term">${escapeHtml(card.title)}</div>
+                <div class="flash-hint">先在心里回忆 2 秒，点击卡片或按空格翻面</div>
+              ` : `
+                <span class="type-pill" style="background: var(--green-soft); color: var(--green);">人话解释</span>
+                <p class="flash-answer">${escapeHtml(card.plain || '')}</p>
+                ${scenesHtml}
+                <div class="flash-hint">点击翻回正面</div>
+              `}
+            </div>
+            ${renderCollapsedDetails(card)}
+          `;
+          document.getElementById('flashStage').onclick = () => { isFlipped = !isFlipped; renderModal(); };
+          elKbdHint.textContent = '快捷键：空格键翻面 · ← / → 切换上下张 · Esc 关闭';
+        } else {
+          const promptText = `请用不超过 4 步极简分步图解 + 零黑话大白话，结合我平时做的社交 App 场景给我讲透：【${card.title}】`;
+          elModalBody.innerHTML = `
+            <div class="todo-box">
+              <p class="todo-context">${escapeHtml(card.context || card.hook || '等待下次复盘时找 Agent 讲透。')}</p>
+              <button class="btn-violet" id="copyAskBtn">📋 复制大白话提问给 Agent</button>
+            </div>
+          `;
+          document.getElementById('copyAskBtn').onclick = () => copyText(promptText, '✓ 已复制！直接粘贴到 Agent 对话即可');
+          elKbdHint.textContent = '快捷键：← / → 切换上下张 · Esc 关闭';
+        }
+
+        // Mastery Progression Controls (Local Server Only)
+        if (canEdit) {
+          elMasteryGroup.innerHTML = `
+            <button class="btn-state ${st === 'to-learn' ? 'active-todo' : ''}" id="stToLearn">未学习</button>
+            <button class="btn-state ${st === 'reviewing' ? 'active-fuzzy' : ''}" id="stReviewing">待复盘</button>
+            <button class="btn-state ${st === 'mastered' ? 'active-done' : ''}" id="stMastered">✓ 已掌握</button>
+          `;
+          document.getElementById('stToLearn').onclick = () => quickSaveStatus(card, 'to-learn');
+          document.getElementById('stReviewing').onclick = () => quickSaveStatus(card, 'reviewing');
+          document.getElementById('stMastered').onclick = () => quickSaveStatus(card, 'mastered');
+        } else {
+          elMasteryGroup.innerHTML = `<span class="status-dot st-${escapeHtml(st)}">${STATUS_LABEL[st] || st}</span>`;
+        }
+
+        elPrevCard.style.visibility = sessionIds.length > 1 ? 'visible' : 'hidden';
+        elNextCard.style.visibility = sessionIds.length > 1 ? 'visible' : 'hidden';
+        elPrevCard.disabled = sessionIdx === 0;
+        elNextCard.disabled = sessionIdx === sessionIds.length - 1;
+      }
+
+      async function quickSaveStatus(card, nextStatus) {
+        if (!canEdit || card.status === nextStatus) return;
+        const nextBucket = nextStatus === 'to-learn' ? 'to-learn' : (card.type === 'contrast' ? 'blindspots' : 'reinforce');
+        try {
+          await saveCardApi({ ...card, status: nextStatus, bucket: nextBucket });
+          renderModal();
+          showToast(`已切换为「${STATUS_LABEL[nextStatus]}」并自动保存 ✓`);
+        } catch (err) {
+          showToast(err.message || '保存失败');
+        }
+      }
+
+      /* ---------- Auto-Save Card Editor (Local Server Only) ---------- */
+      function setSavePill(state, text) {
+        elSavePill.className = `save-pill ${state}`;
+        elSavePill.textContent = text;
+      }
+
+      function createEmptyDraft(type = 'contrast') {
+        return {
+          id: '', title: '', bucket: type === 'contrast' ? 'blindspots' : type === 'todo' ? 'to-learn' : 'reinforce',
+          type, status: type === 'todo' ? 'to-learn' : 'reviewing',
+          project: '通用', tags: activeTag !== 'all' ? [activeTag] : ['前端渲染与交互'],
+          source: '', date: new Date().toISOString().slice(0, 10), hook: '',
+          wrong: '', right: '', rule: '', plain: '', scenes: [], context: '', summary: '', demo: '',
+          nodes: [{ id: 'A', icon: '📱', label: '用户手机' }, { id: 'S', icon: '🏢', label: '我们后台' }],
+          steps: [{ title: '第 1 步', actionsRaw: 'A->S', text: '' }],
+          glossary: [], tips: [],
+        };
+      }
+
+      function openEditor(existingCard) {
+        if (!canEdit) return;
+        closeModal();
+        editorDraft = existingCard ? JSON.parse(JSON.stringify(existingCard)) : createEmptyDraft('contrast');
+        if (!Array.isArray(editorDraft.tags)) editorDraft.tags = [];
+        if (!Array.isArray(editorDraft.nodes) || editorDraft.nodes.length === 0) {
+          editorDraft.nodes = [{ id: 'A', icon: '📱', label: '用户手机' }, { id: 'S', icon: '🏢', label: '我们后台' }];
+        }
+        if (!Array.isArray(editorDraft.steps) || editorDraft.steps.length === 0) {
+          editorDraft.steps = [{ title: '第 1 步', actionsRaw: 'A->S', text: '' }];
+        }
+        elEditorHeading.textContent = editorDraft.id ? `编辑卡片 · ${editorDraft.id}` : '新建卡片';
+        setSavePill('', editorDraft.id ? '修改停顿 0.5 秒自动保存' : '输入标题后自动保存');
+        elEditorBackdrop.classList.add('open');
+        elEditorBackdrop.setAttribute('aria-hidden', 'false');
+        renderEditorForm();
+      }
+
+      async function closeEditor() {
+        if (autoSaveTimer) {
+          clearTimeout(autoSaveTimer);
+          autoSaveTimer = null;
+          await flushEditorSave();
+        }
+        elEditorBackdrop.classList.remove('open');
+        elEditorBackdrop.setAttribute('aria-hidden', 'true');
+        editorDraft = null;
+      }
+
+      function scheduleAutoSave(immediate = false) {
+        if (!canEdit || !editorDraft) return;
+        if (!String(editorDraft.title || '').trim()) {
+          setSavePill('', '请先填写标题即可自动保存');
+          return;
+        }
+        setSavePill('saving', '准备保存…');
+        if (autoSaveTimer) clearTimeout(autoSaveTimer);
+        if (immediate) { autoSaveTimer = null; flushEditorSave(); return; }
+        autoSaveTimer = setTimeout(() => { autoSaveTimer = null; flushEditorSave(); }, 500);
+      }
+
+      async function flushEditorSave() {
+        if (!canEdit || !editorDraft || !String(editorDraft.title || '').trim()) return;
+        if (saveInFlight) { saveQueued = true; return; }
+        saveInFlight = true;
+        setSavePill('saving', '保存中…');
+        try {
+          const saved = await saveCardApi(editorDraft);
+          if (saved && saved.id && !editorDraft.id) {
+            editorDraft.id = saved.id;
+            elEditorHeading.textContent = `编辑卡片 · ${saved.id}`;
+          }
+          setSavePill('saved', '已自动保存至 pm-kb.md ✓');
+        } catch (err) {
+          setSavePill('error', err.message || '保存失败');
+        } finally {
+          saveInFlight = false;
+          if (saveQueued) { saveQueued = false; flushEditorSave(); }
+        }
+      }
+
+      function bindCharCounter(inputEl, counterEl, limit) {
+        const update = () => {
+          const len = inputEl.value.trim().length;
+          counterEl.textContent = `${len} / ${limit} 字`;
+          counterEl.classList.toggle('over', len > limit);
+        };
+        update();
+        inputEl.addEventListener('input', update);
+      }
+
+      function renderEditorForm() {
+        if (!editorDraft) return;
+        const d = editorDraft;
+
+        let typeFieldsHtml = '';
+        if (d.type === 'demo') {
+          typeFieldsHtml = `
+            <div class="field">
+              <label class="field-label"><span>一句话大白话结论</span><span class="char-counter" id="cntSummary"></span></label>
+              <textarea class="textarea" id="edSummary" placeholder="建议 ≤42 字">${escapeHtml(d.summary || '')}</textarea>
+            </div>
+            <div class="field">
+              <label class="field-label"><span>💡 写需求红线</span></label>
+              <input class="input" id="edRule" value="${escapeHtml(d.rule || '')}" placeholder="写 PRD 时必须补哪一句话？" />
+            </div>
+          `;
+        } else if (d.type === 'contrast') {
+          typeFieldsHtml = `
+            <div class="form-row-2">
+              <div class="field">
+                <label class="field-label"><span>❌ 当时容易漏掉</span><span class="char-counter" id="cntWrong"></span></label>
+                <textarea class="textarea" id="edWrong">${escapeHtml(d.wrong || '')}</textarea>
+              </div>
+              <div class="field">
+                <label class="field-label"><span>✅ 正确补法</span><span class="char-counter" id="cntRight"></span></label>
+                <textarea class="textarea" id="edRight">${escapeHtml(d.right || '')}</textarea>
+              </div>
+            </div>
+            <div class="field">
+              <label class="field-label"><span>💡 下次自检（可选）</span></label>
+              <input class="input" id="edRule" value="${escapeHtml(d.rule || '')}" />
+            </div>
+          `;
+        } else if (d.type === 'flashcard') {
+          typeFieldsHtml = `
+            <div class="field">
+              <label class="field-label"><span>人话解释（翻面内容）</span><span class="char-counter" id="cntPlain"></span></label>
+              <textarea class="textarea" id="edPlain">${escapeHtml(d.plain || '')}</textarea>
+            </div>
+            <div class="field">
+              <label class="field-label"><span>常见业务场景（逗号隔开）</span></label>
+              <input class="input" id="edScenes" value="${escapeHtml((d.scenes || []).join('，'))}" />
+            </div>
+          `;
+        } else if (d.type === 'todo') {
+          typeFieldsHtml = `
+            <div class="field">
+              <label class="field-label"><span>遇到背景 / 想弄懂的问题</span></label>
+              <textarea class="textarea" id="edContext">${escapeHtml(d.context || '')}</textarea>
+            </div>
+          `;
+        } else if (d.type === 'flow') {
+          typeFieldsHtml = `
+            <div class="field">
+              <label class="field-label"><span>图解节点（2~4 个）</span><button type="button" class="btn-soft" id="addNodeBtn">+ 加节点</button></label>
+              <div class="dyn-list">
+                ${d.nodes.map((n, i) => `
+                  <div class="dyn-row node-row">
+                    <input class="input" data-node-field="id" data-idx="${i}" value="${escapeHtml(n.id)}" />
+                    <input class="input" data-node-field="icon" data-idx="${i}" value="${escapeHtml(n.icon)}" />
+                    <input class="input" data-node-field="label" data-idx="${i}" value="${escapeHtml(n.label)}" />
+                    <button type="button" class="mini-del" data-del-node="${i}">×</button>
+                  </div>
+                `).join('')}
+              </div>
+            </div>
+            <div class="field">
+              <label class="field-label"><span>分步动作（每步建议 ≤22 字）</span><button type="button" class="btn-soft" id="addStepBtn">+ 加步骤</button></label>
+              <div class="syntax-note">连线写法：<code>A->S</code> 单向 · <code>A<->R</code> 双向 · <code>S*</code> 高亮 · <code>S-x-R</code> 断开</div>
+              <div class="dyn-list">
+                ${d.steps.map((s, i) => `
+                  <div class="dyn-row step-row">
+                    <input class="input" data-step-field="title" data-idx="${i}" value="${escapeHtml(s.title)}" />
+                    <input class="input" data-step-field="actionsRaw" data-idx="${i}" value="${escapeHtml(s.actionsRaw || '')}" />
+                    <input class="input" data-step-field="text" data-idx="${i}" value="${escapeHtml(s.text)}" />
+                    <button type="button" class="mini-del" data-del-step="${i}">×</button>
+                  </div>
+                `).join('')}
+              </div>
+            </div>
+          `;
+        }
+
+        const glossaryText = (d.glossary || []).map((g) => `${g.term} | ${g.plain}`).join('\n');
+        const tipsText = (d.tips || []).join('\n');
+        const editableTypes = d.type === 'demo' ? ['demo', 'contrast', 'flashcard', 'flow', 'todo'] : ['contrast', 'flashcard', 'flow', 'todo'];
+
+        elEditorForm.innerHTML = `
+          <div class="field">
+            <label class="field-label"><span>卡片类型</span></label>
+            <div class="type-picker">
+              ${editableTypes.map((k) => `<button type="button" class="type-opt ${d.type === k ? 'active' : ''}" data-pick-type="${k}">${TYPE_META[k].icon} ${TYPE_META[k].label}</button>`).join('')}
+            </div>
+          </div>
+
+          <div class="form-row-2">
+            <div class="field">
+              <label class="field-label"><span>标题 *</span></label>
+              <input class="input" id="edTitle" value="${escapeHtml(d.title)}" placeholder="输入标题即自动保存" />
+            </div>
+            <div class="field">
+              <label class="field-label"><span>学习状态</span></label>
+              <select class="select" id="edStatus">
+                <option value="to-learn" ${d.status === 'to-learn' ? 'selected' : ''}>未学习</option>
+                <option value="reviewing" ${d.status === 'reviewing' ? 'selected' : ''}>待复盘</option>
+                <option value="mastered" ${d.status === 'mastered' ? 'selected' : ''}>已掌握</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="form-row-2">
+            <div class="field">
+              <label class="field-label"><span>一句话摘要（首页显示）</span><span class="char-counter" id="cntHook"></span></label>
+              <input class="input" id="edHook" value="${escapeHtml(d.hook || '')}" placeholder="建议 ≤20 字" />
+            </div>
+            <div class="field">
+              <label class="field-label"><span>主题标签（逗号隔开）</span></label>
+              <input class="input" id="edTags" value="${escapeHtml((d.tags || []).join(', '))}" placeholder="前端渲染与交互, 音视频与房间" />
+            </div>
+          </div>
+
+          ${typeFieldsHtml}
+
+          <div class="form-row-2">
+            <div class="field">
+              <label class="field-label"><span>出处 / 来源（可选）</span></label>
+              <input class="input" id="edSource" value="${escapeHtml(d.source || '')}" placeholder="如：Laka 评审 / 前端逻辑表" />
+            </div>
+            <div class="field">
+              <label class="field-label"><span>所属项目</span></label>
+              <input class="input" id="edProject" value="${escapeHtml(d.project || '通用')}" />
+            </div>
+          </div>
+
+          <details>
+            <summary>更多折叠项：开发黑话对照 / 避坑清单（可选）</summary>
+            <div class="editor-grid" style="margin-top:12px;">
+              <div class="field"><label class="field-label"><span>开发黑话对照（每行：术语 | 人话）</span></label><textarea class="textarea" id="edGlossary">${escapeHtml(glossaryText)}</textarea></div>
+              <div class="field"><label class="field-label"><span>常漏避坑点（每行一条）</span></label><textarea class="textarea" id="edTips">${escapeHtml(tipsText)}</textarea></div>
+            </div>
+          </details>
+        `;
+
+        elEditorForm.querySelectorAll('[data-pick-type]').forEach((btn) => {
+          btn.onclick = () => {
+            editorDraft.type = btn.dataset.pickType;
+            renderEditorForm();
+            scheduleAutoSave(true);
+          };
+        });
+
+        const bindInput = (id, key, transform) => {
+          const el = document.getElementById(id);
+          if (!el) return null;
+          el.addEventListener('input', () => {
+            editorDraft[key] = transform ? transform(el.value) : el.value;
+            scheduleAutoSave(false);
+          });
+          el.addEventListener('blur', () => { if (autoSaveTimer) scheduleAutoSave(true); });
+          return el;
+        };
+
+        bindInput('edTitle', 'title');
+        document.getElementById('edStatus').onchange = (e) => {
+          editorDraft.status = e.target.value;
+          editorDraft.bucket = e.target.value === 'to-learn' ? 'to-learn' : (editorDraft.type === 'contrast' ? 'blindspots' : 'reinforce');
+          scheduleAutoSave(true);
+        };
+
+        const elHook = bindInput('edHook', 'hook');
+        if (elHook) bindCharCounter(elHook, document.getElementById('cntHook'), 20);
+        bindInput('edTags', 'tags', (v) => v.split(/[,，、]/).map((s) => s.trim()).filter(Boolean));
+        bindInput('edSource', 'source');
+        bindInput('edProject', 'project');
+
+        if (d.type === 'demo') {
+          const es = bindInput('edSummary', 'summary');
+          if (es) bindCharCounter(es, document.getElementById('cntSummary'), 42);
+          bindInput('edRule', 'rule');
+        } else if (d.type === 'contrast') {
+          const ew = bindInput('edWrong', 'wrong');
+          const er = bindInput('edRight', 'right');
+          if (ew) bindCharCounter(ew, document.getElementById('cntWrong'), 32);
+          if (er) bindCharCounter(er, document.getElementById('cntRight'), 32);
+          bindInput('edRule', 'rule');
+        } else if (d.type === 'flashcard') {
+          const ep = bindInput('edPlain', 'plain');
+          if (ep) bindCharCounter(ep, document.getElementById('cntPlain'), 45);
+          bindInput('edScenes', 'scenes', (v) => v.split(/[，,]/).map((s) => s.trim()).filter(Boolean));
+        } else if (d.type === 'todo') {
+          bindInput('edContext', 'context');
+        } else if (d.type === 'flow') {
+          elEditorForm.querySelectorAll('[data-node-field]').forEach((inp) => {
+            inp.oninput = () => { editorDraft.nodes[Number(inp.dataset.idx)][inp.dataset.nodeField] = inp.value; scheduleAutoSave(false); };
+          });
+          elEditorForm.querySelectorAll('[data-del-node]').forEach((btn) => {
+            btn.onclick = () => {
+              if (editorDraft.nodes.length <= 2) return showToast('至少保留 2 个节点');
+              editorDraft.nodes.splice(Number(btn.dataset.delNode), 1);
+              renderEditorForm(); scheduleAutoSave(true);
+            };
+          });
+          document.getElementById('addNodeBtn').onclick = () => {
+            if (editorDraft.nodes.length >= 4) return showToast('最多支持 4 个节点');
+            const letters = ['A', 'B', 'S', 'R'];
+            const nextId = letters.find((l) => !editorDraft.nodes.some((n) => n.id === l)) || `N${editorDraft.nodes.length + 1}`;
+            editorDraft.nodes.push({ id: nextId, icon: '🔹', label: '新节点' });
+            renderEditorForm(); scheduleAutoSave(true);
+          };
+          elEditorForm.querySelectorAll('[data-step-field]').forEach((inp) => {
+            inp.oninput = () => { editorDraft.steps[Number(inp.dataset.idx)][inp.dataset.stepField] = inp.value; scheduleAutoSave(false); };
+          });
+          elEditorForm.querySelectorAll('[data-del-step]').forEach((btn) => {
+            btn.onclick = () => {
+              if (editorDraft.steps.length <= 1) return showToast('至少保留 1 个步骤');
+              editorDraft.steps.splice(Number(btn.dataset.delStep), 1);
+              renderEditorForm(); scheduleAutoSave(true);
+            };
+          });
+          document.getElementById('addStepBtn').onclick = () => {
+            editorDraft.steps.push({ title: `第 ${editorDraft.steps.length + 1} 步`, actionsRaw: 'A->S', text: '' });
+            renderEditorForm(); scheduleAutoSave(true);
+          };
+        }
+
+        bindInput('edGlossary', 'glossary', (v) =>
+          v.split('\n').map((l) => l.split('|').map((s) => s.trim())).filter((p) => p.length >= 2 && p[0] && p[1]).map(([term, plain]) => ({ term, plain }))
+        );
+        bindInput('edTips', 'tips', (v) => v.split('\n').map((s) => s.trim()).filter(Boolean));
+      }
+
+      /* ---------- Global Events ---------- */
+      elSearch.addEventListener('input', (e) => { query = e.target.value; renderGrid(); });
+      elNewCardBtn.addEventListener('click', () => openEditor(null));
+      elStartReview.addEventListener('click', () => {
+        const list = filteredCards().filter((c) => c.status !== 'mastered');
+        const target = list.length > 0 ? list : cards.filter((c) => c.status !== 'mastered');
+        if (target.length > 0) openModal(target.map((c) => c.id), 0);
+      });
+
+      document.getElementById('closeModalBtn').onclick = closeModal;
+      elBackdrop.onclick = (e) => { if (e.target === elBackdrop) closeModal(); };
+      elEditCardBtn.onclick = () => { const c = getCardById(sessionIds[sessionIdx]); if (c) openEditor(c); };
+      elDeleteCardBtn.onclick = async () => {
+        const c = getCardById(sessionIds[sessionIdx]);
+        if (!c || !canEdit) return;
+        if (!window.confirm(`确定删除卡片「${c.title}」吗？`)) return;
+        try { await deleteCardApi(c.id); closeModal(); showToast('已删除并自动同步 ✓'); }
+        catch (err) { showToast(err.message || '删除失败'); }
+      };
+
+      document.getElementById('doneEditorBtn').onclick = closeEditor;
+      elEditorBackdrop.onclick = (e) => { if (e.target === elEditorBackdrop) closeEditor(); };
+
+      elPrevCard.onclick = () => { if (sessionIdx > 0) { sessionIdx -= 1; flowStepIdx = 0; isFlipped = false; renderModal(); } };
+      elNextCard.onclick = () => { if (sessionIdx < sessionIds.length - 1) { sessionIdx += 1; flowStepIdx = 0; isFlipped = false; renderModal(); } };
+
+      document.addEventListener('keydown', (e) => {
+        if (elEditorBackdrop.classList.contains('open')) { if (e.key === 'Escape') closeEditor(); return; }
+        if (!elBackdrop.classList.contains('open')) return;
+        const card = getCardById(sessionIds[sessionIdx]);
+        if (!card) return;
+        if (e.key === 'Escape') { closeModal(); return; }
+        if (card.type === 'flashcard' && e.code === 'Space') { e.preventDefault(); isFlipped = !isFlipped; renderModal(); return; }
+        if (e.key === 'ArrowRight') {
+          if (card.type === 'flow' && flowStepIdx < (card.steps || []).length - 1) { flowStepIdx += 1; renderModal(); }
+          else if (sessionIdx < sessionIds.length - 1) { sessionIdx += 1; flowStepIdx = 0; isFlipped = false; renderModal(); }
+        }
+        if (e.key === 'ArrowLeft') {
+          if (card.type === 'flow' && flowStepIdx > 0) { flowStepIdx -= 1; renderModal(); }
+          else if (sessionIdx > 0) { sessionIdx -= 1; flowStepIdx = 0; isFlipped = false; renderModal(); }
+        }
+      });
+
+      function applyHashLink() {
+        const hash = (window.location.hash || '').replace(/^#/, '');
+        if (!hash) return;
+        const params = new URLSearchParams(hash);
+        const cardId = params.get('card');
+        if (!cardId) return;
+        const idx = cards.findIndex((c) => c.id === cardId);
+        if (idx === -1) return;
+        openModal(cards.map((c) => c.id), idx);
+        if (params.has('step')) flowStepIdx = Math.max(0, Number(params.get('step')) || 0);
+        if (params.get('flip') === '1') isFlipped = true;
+        renderModal();
+      }
+
+      renderAll();
+      fetchLocalKb().then(() => applyHashLink());
+      if (!IS_LOCAL_HOST) applyHashLink();
+    })();
+  </script>
+</body>
+</html>

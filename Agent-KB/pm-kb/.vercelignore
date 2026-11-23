@@ -1,0 +1,7 @@
+server.mjs
+sync-kb.mjs
+pm-kb.md
+server.log
+.env.local
+.gitignore
+.DS_Store

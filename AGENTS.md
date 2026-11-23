@@ -49,7 +49,8 @@ Before editing project files, reuse the confirmed project path (ask if missing/a
 |---|---|
 | New product requirement, feature idea, optimization direction, or business problem | [product-rules.md](product-rules.md): 新需求端到端产品协作规则 (respect discussion-only requests) |
 | Preparing a handoff from cloud LLM brainstorming to prototype build | `~/.kb/templates/feature-contract-template.md` |
-| Drafting, reviewing, or auditing a PRD for edge cases and logic gaps | `~/.kb/templates/prd-template.md` |
+| Drafting, reviewing, or auditing a PRD for edge cases and logic gaps | `~/.kb/templates/prd-template.md` + `~/.kb/pm-kb/pm-kb.md` (pre-check personal blindspots) |
+| Post-dev PRD patch, PM/tech concept explanation, to-learn note, or periodic review | `~/.kb/pm-kb/pm-kb.md` (A-mode 3-line confirmation before writing; sync `review.html` via `~/.kb/pm-kb/sync-kb.mjs`) |
 | Product documentation or metric / tracking definitions | [product-rules.md](product-rules.md): Product Documentation Rules |
 | Delivering a product HTML prototype from a confirmed Feature Contract | [product-rules.md](product-rules.md): Product Prototype Skill Routing (`pm-delivery-workflow` is the only orchestrator) |
 | HTML / UI prototype creation, modification, review, or delivery | [COMMON_UI_RULES.md](COMMON_UI_RULES.md) |
