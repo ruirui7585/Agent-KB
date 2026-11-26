@@ -30,6 +30,8 @@
     cols: 6,
     showMergedFrames: false,
     activeDrawerUid: null,
+    zoomLevel: 1,
+    infoCollapsed: false,
     popoverTarget: null, // { uid, sessionId, itemId, kind: 'competitor' | 'pageType' | 'subTag' }
     justAddedSessionIds: new Set(),
   };
@@ -56,11 +58,18 @@
     newSubTagInput: document.getElementById('newSubTagInput'),
     btnAddNewSubTag: document.getElementById('btnAddNewSubTag'),
 
-    // 详情抽屉
+    // 详情抽屉与高清缩放看图器
     detailDrawerWrap: document.getElementById('detailDrawerWrap'),
     detailBackdrop: document.getElementById('detailBackdrop'),
+    detailBodyGrid: document.getElementById('detailBodyGrid'),
+    detailPreviewPane: document.getElementById('detailPreviewPane'),
     drawerTitleInput: document.getElementById('drawerTitleInput'),
     drawerTagPills: document.getElementById('drawerTagPills'),
+    btnToggleInfoPane: document.getElementById('btnToggleInfoPane'),
+    btnOpenRawImg: document.getElementById('btnOpenRawImg'),
+    btnZoomOut: document.getElementById('btnZoomOut'),
+    btnZoomIn: document.getElementById('btnZoomIn'),
+    zoomPercentLabel: document.getElementById('zoomPercentLabel'),
     btnPrevPage: document.getElementById('btnPrevPage'),
     btnNextPage: document.getElementById('btnNextPage'),
     btnDeleteCurrent: document.getElementById('btnDeleteCurrent'),
@@ -277,9 +286,10 @@
         const subCls = p.subTag ? 'sub-set' : 'sub-unset';
         const subText = p.subTag ? esc(p.subTag) : '+ 子标签';
         const addedCls = state.justAddedSessionIds.has(p.sessionId) ? 'just-added' : '';
+        const landCardCls = isLandscape ? 'is-landscape-card' : '';
 
         return `
-          <article class="screen-card ${addedCls}" data-card-uid="${esc(p.uid)}">
+          <article class="screen-card ${addedCls} ${landCardCls}" data-card-uid="${esc(p.uid)}">
             <div class="screen-thumb-box ${isLandscape ? 'is-landscape' : ''}" data-open-drawer="${esc(p.uid)}">
               ${cornerBadge}
               <img src="${esc(p.imagePath)}" alt="${esc(p.displayTitle)}" width="${p.width || 440}" height="${p.height || 956}" loading="lazy" />
@@ -507,12 +517,41 @@
   }
 
   /* =========================================================
-   * 3. 右侧高清详情抽屉（点击卡片打开，支持键盘左右翻页）
+   * 3. 超宽高清详情看图器（原生分辨率无损缩放 + 拖拽平移）
    * ========================================================= */
+  function applyZoomLevel(nextZoom) {
+    const z = Math.max(0.5, Math.min(3.5, Number(nextZoom) || 1));
+    state.zoomLevel = Math.round(z * 100) / 100;
+    els.zoomPercentLabel.textContent = `${Math.round(state.zoomLevel * 100)}%`;
+
+    document.querySelectorAll('[data-zoom-preset]').forEach((btn) => {
+      const p = Number(btn.getAttribute('data-zoom-preset'));
+      btn.classList.toggle('active', Math.abs(p - state.zoomLevel) < 0.05);
+    });
+
+    const pane = els.detailPreviewPane;
+    const img = els.drawerPreviewImg;
+    if (!pane || !img) return;
+
+    const isZoomed = state.zoomLevel > 1.02;
+    pane.classList.toggle('is-zoomed', isZoomed);
+
+    if (!isZoomed) {
+      img.style.width = '';
+      img.style.maxWidth = state.zoomLevel < 0.99 ? `${Math.round(state.zoomLevel * 100)}%` : '100%';
+    } else {
+      const availW = Math.max(360, pane.clientWidth - 32);
+      img.style.maxWidth = 'none';
+      img.style.width = `${Math.round(availW * state.zoomLevel)}px`;
+    }
+  }
+
   function openDrawer(uid) {
     state.activeDrawerUid = uid;
     els.detailDrawerWrap.classList.remove('hidden');
+    state.zoomLevel = 1;
     renderDrawerContent();
+    requestAnimationFrame(() => applyZoomLevel(1));
   }
 
   function closeDrawer() {
@@ -531,8 +570,12 @@
     const isUnset = page.competitor === 'unassigned';
     els.drawerTitleInput.value = page.displayTitle || '';
     els.drawerPreviewImg.src = page.imagePath;
+    if (els.btnOpenRawImg) {
+      els.btnOpenRawImg.href = page.imagePath;
+    }
     els.drawerNoteInput.value = page.note || '';
     els.drawerOcrText.value = page.ocrText || '（未识别到明显文字）';
+    applyZoomLevel(state.zoomLevel);
 
     els.drawerTagPills.innerHTML = `
       <button type="button" class="tag-pill ${isUnset ? 'comp-unset' : 'comp-set'}" id="drawerCompPill">
@@ -943,14 +986,90 @@
       }
     });
 
-    // 抽屉交互
+    // 抽屉与高清缩放平移交互
     els.btnCloseDrawer.addEventListener('click', closeDrawer);
     els.detailBackdrop.addEventListener('click', closeDrawer);
-    els.btnPrevPage.addEventListener('click', () => stepDrawer(-1));
-    els.btnNextPage.addEventListener('click', () => stepDrawer(1));
+    els.btnPrevPage.addEventListener('click', () => {
+      state.zoomLevel = 1;
+      stepDrawer(-1);
+    });
+    els.btnNextPage.addEventListener('click', () => {
+      state.zoomLevel = 1;
+      stepDrawer(1);
+    });
     els.btnDeleteCurrent.addEventListener('click', () => {
       if (state.activeDrawerUid) deletePageByUid(state.activeDrawerUid);
     });
+
+    if (els.btnToggleInfoPane) {
+      els.btnToggleInfoPane.addEventListener('click', () => {
+        state.infoCollapsed = els.detailBodyGrid.classList.toggle('info-collapsed');
+        els.btnToggleInfoPane.textContent = state.infoCollapsed ? '显示文字栏' : '隐藏文字栏';
+        requestAnimationFrame(() => applyZoomLevel(state.zoomLevel));
+      });
+    }
+
+    document.querySelectorAll('[data-zoom-preset]').forEach((btn) => {
+      btn.addEventListener('click', () => {
+        applyZoomLevel(Number(btn.getAttribute('data-zoom-preset')) || 1);
+      });
+    });
+
+    els.btnZoomIn?.addEventListener('click', () => applyZoomLevel(state.zoomLevel + 0.3));
+    els.btnZoomOut?.addEventListener('click', () => applyZoomLevel(state.zoomLevel - 0.3));
+
+    // 支持按住鼠标拖拽平移放大后的高清大图，单击（未拖动）快速在 100% 与 180% 间切换
+    let panState = null;
+    els.detailPreviewPane?.addEventListener('mousedown', (e) => {
+      if (e.button !== 0) return;
+      panState = {
+        startX: e.clientX,
+        startY: e.clientY,
+        scrollLeft: els.detailPreviewPane.scrollLeft,
+        scrollTop: els.detailPreviewPane.scrollTop,
+        moved: false,
+      };
+      if (state.zoomLevel > 1.02) {
+        els.detailPreviewPane.classList.add('is-panning');
+        e.preventDefault();
+      }
+    });
+
+    window.addEventListener('mousemove', (e) => {
+      if (!panState) return;
+      const dx = e.clientX - panState.startX;
+      const dy = e.clientY - panState.startY;
+      if (Math.abs(dx) > 4 || Math.abs(dy) > 4) {
+        panState.moved = true;
+      }
+      if (state.zoomLevel > 1.02 && panState.moved) {
+        els.detailPreviewPane.scrollLeft = panState.scrollLeft - dx;
+        els.detailPreviewPane.scrollTop = panState.scrollTop - dy;
+      }
+    });
+
+    window.addEventListener('mouseup', (e) => {
+      if (!panState) return;
+      const wasMoved = panState.moved;
+      panState = null;
+      els.detailPreviewPane?.classList.remove('is-panning');
+      if (!wasMoved && e.target === els.drawerPreviewImg) {
+        applyZoomLevel(state.zoomLevel > 1.1 ? 1 : 1.8);
+      }
+    });
+
+    // 支持触控板双指捏合 / Ctrl+滚轮缩放
+    els.detailPreviewPane?.addEventListener(
+      'wheel',
+      (e) => {
+        if (e.ctrlKey || e.metaKey) {
+          e.preventDefault();
+          const delta = e.deltaY < 0 ? 0.15 : -0.15;
+          applyZoomLevel(state.zoomLevel + delta);
+        }
+      },
+      { passive: false }
+    );
 
     els.drawerTitleInput.addEventListener('change', () => {
       const page = findPage(state.activeDrawerUid);

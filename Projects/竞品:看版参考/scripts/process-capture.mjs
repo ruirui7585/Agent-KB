@@ -314,7 +314,11 @@ function classifyScreenPage(ocr, kind = 'frame', dims = { width: 0, height: 0 })
         break;
       }
     }
-    const clean = line.replace(/^[<>«»←×\s]+/, '').trim();
+    const clean = line
+      .replace(/^[<>«»←×•·|\s]+/, '')
+      .replace(/\|\s*最近修改.*$/g, '')
+      .replace(/最近修改[:：].*$/g, '')
+      .trim();
     if (clean.length >= 2 && clean.length <= 34 && /[A-Za-z\u4e00-\u9fa5\u0600-\u06FF]{2,}/.test(clean)) {
       subTitle = clean;
       break;

@@ -163,6 +163,8 @@
           <div class="detail-tags-inline" id="drawerTagPills"></div>
         </div>
         <div class="detail-nav-btns">
+          <button type="button" class="btn btn-ghost btn-sm" id="btnToggleInfoPane" title="收起/展开右侧文字栏，让图片铺满全屏">隐藏文字栏</button>
+          <a class="btn btn-ghost btn-sm" id="btnOpenRawImg" href="#" target="_blank" rel="noopener" title="在浏览器新标签页打开 100% 原始大图">原图新窗口</a>
           <button type="button" class="btn btn-ghost btn-sm" id="btnPrevPage" title="键盘左键 ←">上一页</button>
           <button type="button" class="btn btn-ghost btn-sm" id="btnNextPage" title="键盘右键 →">下一页</button>
           <button type="button" class="btn btn-danger-ghost btn-sm" id="btnDeleteCurrent">删除此页</button>
@@ -170,9 +172,21 @@
         </div>
       </div>
 
-      <div class="detail-body">
-        <div class="detail-preview-pane">
-          <img id="drawerPreviewImg" src="" alt="Screen preview" />
+      <div class="detail-body" id="detailBodyGrid">
+        <div class="detail-preview-stage">
+          <div class="zoom-toolbar">
+            <button type="button" class="zoom-btn active" data-zoom-preset="1">适应窗口</button>
+            <button type="button" class="zoom-btn" data-zoom-preset="1.6">放大 160%</button>
+            <button type="button" class="zoom-btn" data-zoom-preset="2.4">超清 240%</button>
+            <span class="zoom-sep"></span>
+            <button type="button" class="zoom-btn" id="btnZoomOut" title="缩小">−</button>
+            <span class="zoom-val" id="zoomPercentLabel">100%</span>
+            <button type="button" class="zoom-btn" id="btnZoomIn" title="放大">+</button>
+            <span class="zoom-tip">（点击图片快速放大 / 按住拖拽平移）</span>
+          </div>
+          <div class="detail-preview-pane" id="detailPreviewPane">
+            <img id="drawerPreviewImg" src="" alt="Screen preview" />
+          </div>
         </div>
 
         <div class="detail-info-pane">
