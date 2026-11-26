@@ -179,17 +179,19 @@ function classifyScreenPage(ocr, kind = 'frame', dims = { width: 0, height: 0 })
 
   const hiCount = (body.match(/\bHi\b/g) || []).length;
   const isLandscape = dims.width > 0 && dims.height > 0 && dims.width > dims.height * 1.1;
+  const isFeishuOrDoc =
+    /(飞书云文档|最近修改|流程图|活动页面组成|奖励领取|初始化状态|交互说明|统计周期|统一计算单位)/i.test(all);
   const adminMatches =
     all.match(
-      /(后台管理系统|运营后台|管理后台|数据看板|看板|查询|重置|导出|新增|操作人|操作日志|创建时间|状态|编辑|删除|共\s*\d+\s*条|dashboard|admin|bms|management|search|reset|export|created\s*at)/gi
+      /(后台管理系统|运营后台|管理后台|数据看板|查询|重置|导出|操作人|操作日志|创建时间|共\s*\d+\s*条|dashboard|lakabms|admin\.salfa|salfa\s*admin|user\/list|flow\/recharge)/gi
     ) || [];
 
   const rules = [
     {
       pageType: 'admin-dashboard',
       score:
-        (isLandscape ? 12 : 0) +
-        (adminMatches.length >= 2 ? 14 : adminMatches.length === 1 ? 7 : 0) +
+        (!isFeishuOrDoc && isLandscape && adminMatches.length >= 1 ? 12 : 0) +
+        (adminMatches.length >= 2 ? 15 : adminMatches.length === 1 ? 6 : 0) +
         (/(后台管理系统|运营后台|管理后台|数据看板|bms|admin)/i.test(header) ? 10 : 0),
     },
     {
@@ -220,8 +222,10 @@ function classifyScreenPage(ocr, kind = 'frame', dims = { width: 0, height: 0 })
         (/\b(recharge|top[\s-]*up|wallet|diamonds|check[\s-]*in|daily\s*task|tasks|充值|累充)\b/i.test(header)
           ? 15
           : 0) +
-        (/\b(first\s*recharge|monthly\s*recharge|coins\s*\/\s*|claim\b|recharge\s*now|payment)\b/i.test(body)
-          ? 10
+        (/(月度充值|累计充值|累充|rechar[cg]e\s*re[wv]ards|first\s*recharge|monthly\s*recharge|daily\s*\/\s*weekly\s*\/\s*monthly|\$\s*\d[\d,]*|coins\s*\/\s*|claim\b|recharge\s*now)/i.test(
+          `${header}\n${body}`
+        )
+          ? 16
           : 0),
     },
     {
@@ -294,10 +298,22 @@ function classifyScreenPage(ocr, kind = 'frame', dims = { width: 0, height: 0 })
   const best = rules[0] && rules[0].score >= 8 ? rules[0].pageType : (kind === 'stitched' ? 'recharge-promo' : 'voice-room');
   const typeMeta = PAGE_TYPE_LIST.find((p) => p.id === best) || PAGE_TYPE_LIST[0];
 
-  // 提取干净可读的页面副标题（优先取顶栏标题或首个英文/中文标题词）
+  // 提取干净可读的页面副标题（过滤浏览器控制横幅，支持提取飞书文档面包屑最后一级标题）
   let subTitle = '';
-  const candidateLines = [...(ocr.headerLines || []), ...(ocr.bodyLines || []).slice(0, 4)];
+  const candidateLines = [...(ocr.headerLines || []), ...(ocr.bodyLines || []).slice(0, 6)];
   for (const line of candidateLines) {
+    if (/(自动测试软件正在控制|在“设置”中关闭|在"设置"中关闭)/i.test(line)) continue;
+    // 若为飞书文档路径如 "公司 > 姓名 > 月度充值奖励"，提取最后一级文档名
+    if (line.includes('>')) {
+      const parts = line
+        .split('>')
+        .map((s) => s.replace(/\b(分享|编辑)\b.*$/g, '').trim())
+        .filter((s) => s.length >= 2);
+      if (parts.length >= 2) {
+        subTitle = parts[parts.length - 1];
+        break;
+      }
+    }
     const clean = line.replace(/^[<>«»←×\s]+/, '').trim();
     if (clean.length >= 2 && clean.length <= 34 && /[A-Za-z\u4e00-\u9fa5\u0600-\u06FF]{2,}/.test(clean)) {
       subTitle = clean;
@@ -313,6 +329,9 @@ function classifyScreenPage(ocr, kind = 'frame', dims = { width: 0, height: 0 })
 
   // 提取 3~5 个关键 UI 标签亮点，方便在详情抽屉一眼扫完页面构成
   const highlights = [];
+  if (isFeishuOrDoc) {
+    highlights.push('来源类型：飞书文档 / 原型规则截图');
+  }
   if (ocr.headerLines?.length) {
     highlights.push(`顶栏：${ocr.headerLines.join(' / ').slice(0, 42)}`);
   }
@@ -350,6 +369,10 @@ function classifyScreenPage(ocr, kind = 'frame', dims = { width: 0, height: 0 })
   } else if (typeMeta.id === 'vip-nobility') {
     if (/rule|privilege|权益|说明/i.test(all)) subTag = '权益规则';
     else if (/renew|upgrade|续费|升级/i.test(all)) subTag = '等级升级';
+  } else if (typeMeta.id === 'recharge-promo') {
+    if (/月度充值|monthly|月累充|累充/i.test(all)) subTag = '月累充';
+    else if (/first\s*recharge|首充/i.test(all)) subTag = '首充礼包';
+    else if (isFeishuOrDoc || /规则|说明/i.test(all)) subTag = '活动规则';
   }
 
   return {

@@ -31,6 +31,7 @@
     showMergedFrames: false,
     activeDrawerUid: null,
     popoverTarget: null, // { uid, sessionId, itemId, kind: 'competitor' | 'pageType' | 'subTag' }
+    justAddedSessionIds: new Set(),
   };
 
   const els = {
@@ -39,6 +40,7 @@
     searchInput: document.getElementById('searchInput'),
     chkShowMerged: document.getElementById('chkShowMerged'),
     btnSyncInbox: document.getElementById('btnSyncInbox'),
+    btnPasteClipboard: document.getElementById('btnPasteClipboard'),
     btnUploadTrigger: document.getElementById('btnUploadTrigger'),
     fileUploadInput: document.getElementById('fileUploadInput'),
     statusBanner: document.getElementById('statusBanner'),
@@ -247,8 +249,8 @@
       const hasAny = (state.bundle.pages || []).length > 0;
       els.screenWall.innerHTML = `
         <div class="empty-wall-drop" id="emptyUploadHero">
-          <div class="empty-wall-title">${hasAny ? '当前筛选条件下没有匹配的页面' : '把竞品截图或 iPhone 录屏直接拖进来（支持一次多选几十张）'}</div>
-          <div class="empty-wall-sub">${hasAny ? '点击上方「全部」重置筛选条件' : '人工只需上传 —— 自动去重切页面、拼长规则、打好中文分类标签'}</div>
+          <div class="empty-wall-title">${hasAny ? '当前筛选条件下没有匹配的页面' : '飞书/微信截图后直接按 ⌘V 粘贴，或把图片/录屏拖进来'}</div>
+          <div class="empty-wall-sub">${hasAny ? '点击上方「全部」重置筛选条件' : '人工只需复制粘贴或拖入 —— 自动切页面、拼长规则、打好中文分类与子标签'}</div>
         </div>
       `;
       const hero = document.getElementById('emptyUploadHero');
@@ -270,13 +272,14 @@
           p.kind === 'stitched'
             ? '<span class="long-badge">长规则图</span>'
             : isLandscape
-              ? '<span class="pc-badge">PC/后台宽屏</span>'
+              ? `<span class="pc-badge">${p.pageType === 'admin-dashboard' ? 'PC/后台宽屏' : '宽屏/文档图'}</span>`
               : '';
         const subCls = p.subTag ? 'sub-set' : 'sub-unset';
         const subText = p.subTag ? esc(p.subTag) : '+ 子标签';
+        const addedCls = state.justAddedSessionIds.has(p.sessionId) ? 'just-added' : '';
 
         return `
-          <article class="screen-card" data-card-uid="${esc(p.uid)}">
+          <article class="screen-card ${addedCls}" data-card-uid="${esc(p.uid)}">
             <div class="screen-thumb-box ${isLandscape ? 'is-landscape' : ''}" data-open-drawer="${esc(p.uid)}">
               ${cornerBadge}
               <img src="${esc(p.imagePath)}" alt="${esc(p.displayTitle)}" width="${p.width || 440}" height="${p.height || 956}" loading="lazy" />
@@ -573,20 +576,42 @@
   }
 
   /* =========================================================
-   * 4. 批量多文件上传（图片 + 视频全自动入墙）
+   * 4. 剪贴板粘贴 (⌘V) 与批量多文件上传（图片 + 视频全自动入墙）
    * ========================================================= */
-  async function uploadMultipleFiles(fileList) {
+  function makePasteFileName(mimeType, idx = 0) {
+    const extMap = {
+      'image/png': '.png',
+      'image/jpeg': '.jpg',
+      'image/webp': '.webp',
+      'image/gif': '.gif',
+    };
+    const ext = extMap[mimeType] || '.png';
+    const now = new Date();
+    const pad = (n) => String(n).padStart(2, '0');
+    const stamp = `${now.getFullYear()}${pad(now.getMonth() + 1)}${pad(now.getDate())}-${pad(now.getHours())}${pad(now.getMinutes())}${pad(now.getSeconds())}`;
+    return idx > 0 ? `paste-${stamp}-${idx + 1}${ext}` : `paste-${stamp}${ext}`;
+  }
+
+  function normalizeClipboardFile(blobOrFile, idx = 0) {
+    const rawName = (blobOrFile.name || '').trim();
+    const isGeneric = !rawName || /^image\.(png|jpe?g|webp|gif)$/i.test(rawName) || rawName === 'blob';
+    const finalName = isGeneric ? makePasteFileName(blobOrFile.type, idx) : rawName;
+    return new File([blobOrFile], finalName, { type: blobOrFile.type || 'image/png' });
+  }
+
+  async function uploadMultipleFiles(fileList, sourceLabel = '上传') {
     const files = Array.from(fileList || []).filter(Boolean);
     if (files.length === 0) return;
     if (!state.isOnline) {
-      showStatus('请双击 start-workbench.command 启动本地服务后再上传文件', true);
+      showStatus('请双击 start-workbench.command 启动本地服务后再粘贴或上传图片', true);
       return;
     }
 
     let successCount = 0;
+    const newlyProcessed = [];
     for (let i = 0; i < files.length; i += 1) {
       const f = files[i];
-      showStatus(`正在自动识别与打标 (${i + 1}/${files.length})：${f.name} ...`, false, 0);
+      showStatus(`正在自动识别${sourceLabel}图片 (${i + 1}/${files.length})：${f.name} ...`, false, 0);
       try {
         const res = await fetch('api/upload-recording', {
           method: 'POST',
@@ -599,6 +624,9 @@
         const data = await res.json();
         if (!res.ok || !data.ok) throw new Error(data.error || '处理失败');
         state.bundle = data.bundle;
+        if (Array.isArray(data.processedIds)) {
+          newlyProcessed.push(...data.processedIds);
+        }
         successCount += 1;
         renderGallery();
       } catch (err) {
@@ -607,7 +635,25 @@
     }
 
     if (successCount > 0) {
-      showStatus(`已完成 ${successCount} 个文件自动识别打标！点击卡片底部胶囊可随时秒换分类。`);
+      // 若当前筛选条件把刚粘贴进来的新图挡住了，自动切回「全部」确保新图立刻可见
+      if (newlyProcessed.length > 0) {
+        state.justAddedSessionIds = new Set(newlyProcessed);
+        const visibleNow = getFilteredPages();
+        const isNewVisible = visibleNow.some((p) => state.justAddedSessionIds.has(p.sessionId));
+        if (!isNewVisible) {
+          state.filterComp = 'all';
+          state.filterType = 'all';
+          state.filterSubTag = 'all';
+          state.searchQuery = '';
+          els.searchInput.value = '';
+        }
+        renderGallery();
+        setTimeout(() => {
+          state.justAddedSessionIds.clear();
+          renderScreenWall();
+        }, 2800);
+      }
+      showStatus(`已完成 ${successCount} 张${sourceLabel}素材自动识别打标！点击卡片底部胶囊可随时秒换分类。`);
     }
   }
 
@@ -765,9 +811,65 @@
 
     els.btnUploadTrigger.addEventListener('click', () => els.fileUploadInput.click());
     els.fileUploadInput.addEventListener('change', (e) => {
-      if (e.target.files?.length) uploadMultipleFiles(e.target.files);
+      if (e.target.files?.length) uploadMultipleFiles(e.target.files, '上传');
       e.target.value = '';
     });
+
+    // 全局支持 Command+V / Ctrl+V 直接粘贴飞书/系统复制的截图
+    document.addEventListener('paste', (e) => {
+      if (annotationState.modeOn) return;
+      const pastedImages = [];
+      if (e.clipboardData?.items) {
+        for (const item of Array.from(e.clipboardData.items)) {
+          if (item.type && item.type.startsWith('image/')) {
+            const blob = item.getAsFile();
+            if (blob) pastedImages.push(normalizeClipboardFile(blob, pastedImages.length));
+          }
+        }
+      }
+      if (pastedImages.length === 0 && e.clipboardData?.files) {
+        for (const f of Array.from(e.clipboardData.files)) {
+          if (f.type && f.type.startsWith('image/')) {
+            pastedImages.push(normalizeClipboardFile(f, pastedImages.length));
+          }
+        }
+      }
+
+      if (pastedImages.length > 0) {
+        e.preventDefault();
+        uploadMultipleFiles(pastedImages, '剪贴板粘贴');
+      } else if (!['INPUT', 'TEXTAREA'].includes(document.activeElement?.tagName)) {
+        showStatus('剪贴板中未检测到图片：请先在飞书/桌面复制截图，再切回本页按 ⌘V 粘贴', true);
+      }
+    });
+
+    // 顶栏「粘贴截图 (⌘V)」按钮：鼠标一键读取系统剪贴板图片
+    if (els.btnPasteClipboard) {
+      els.btnPasteClipboard.addEventListener('click', async () => {
+        if (!navigator.clipboard || !navigator.clipboard.read) {
+          showStatus('当前浏览器不支持按钮读取剪贴板，请直接按键盘 ⌘V (或 Ctrl+V) 粘贴图片', true);
+          return;
+        }
+        try {
+          const clipItems = await navigator.clipboard.read();
+          const files = [];
+          for (const ci of clipItems) {
+            const imgType = ci.types.find((t) => t.startsWith('image/'));
+            if (imgType) {
+              const blob = await ci.getType(imgType);
+              files.push(normalizeClipboardFile(blob, files.length));
+            }
+          }
+          if (files.length === 0) {
+            showStatus('剪贴板中暂时没有复制的图片，请先截图复制后再试', true);
+            return;
+          }
+          await uploadMultipleFiles(files, '剪贴板粘贴');
+        } catch {
+          showStatus('请直接按键盘 ⌘V（Mac）或 Ctrl+V 直接粘贴刚才复制的图片', false, 5000);
+        }
+      });
+    }
 
     // 全屏拖放上传
     let dragDepth = 0;
