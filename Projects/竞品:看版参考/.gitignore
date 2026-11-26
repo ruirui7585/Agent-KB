@@ -1,0 +1,6 @@
+node_modules/
+recordings/*
+!recordings/.gitkeep
+sessions/*
+!sessions/.gitkeep
+.DS_Store

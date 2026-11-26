@@ -1,0 +1,16 @@
+{
+  "name": "laka-competitor-capture",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "Laka 竞品录屏智能切图、长规则拼接与挑图工作台",
+  "scripts": {
+    "start": "node server.js",
+    "capture": "node scripts/process-capture.mjs",
+    "capture:force": "node scripts/process-capture.mjs --force",
+    "sync": "node scripts/process-capture.mjs --sync"
+  },
+  "dependencies": {
+    "express": "^4.21.2"
+  }
+}
