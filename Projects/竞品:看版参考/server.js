@@ -5,6 +5,7 @@ import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import {
   PAGE_TYPE_LIST,
+  appendSliceToPage,
   loadTagConfig,
   runPipeline,
   saveTagConfig,
@@ -108,6 +109,37 @@ app.post(
         savedFile: `recordings/${safeFileName}`,
         ...result,
       });
+    } catch (err) {
+      return res.status(500).json({ ok: false, error: String(err?.message || err) });
+    }
+  }
+);
+
+// 3.5 连续 ⌘V 续拼长图接口：将新截图无缝接在指定卡片底部
+app.post(
+  '/api/pages/append-stitch',
+  express.raw({ type: '*/*', limit: '200mb' }),
+  (req, res) => {
+    try {
+      const sessionId = sanitizeSegment(req.headers['x-session-id'] || '', '');
+      const itemId = sanitizeSegment(req.headers['x-item-id'] || '', '');
+      const rawName = decodeURIComponent(String(req.headers['x-file-name'] || 'slice.png'));
+      const ext = path.extname(rawName).toLowerCase() || '.png';
+
+      if (!sessionId || !itemId) {
+        return res.status(400).json({ ok: false, error: '缺少续拼目标卡片参数' });
+      }
+      if (!Buffer.isBuffer(req.body) || req.body.length === 0) {
+        return res.status(400).json({ ok: false, error: '粘贴的图片内容为空' });
+      }
+
+      const result = appendSliceToPage({
+        sessionId,
+        itemId,
+        imageBuffer: req.body,
+        ext,
+      });
+      return res.json({ ok: true, ...result });
     } catch (err) {
       return res.status(500).json({ ok: false, error: String(err?.message || err) });
     }

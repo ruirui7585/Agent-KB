@@ -20,10 +20,13 @@ const RECORDINGS_DIR = path.join(CAPTURE_ROOT, 'recordings');
 const SESSIONS_DIR = path.join(CAPTURE_ROOT, 'sessions');
 const TAG_CONFIG_FILE = path.join(CAPTURE_ROOT, 'tag-config.json');
 const EXTRACT_PY = path.join(__dirname, 'extract-frames.py');
+const STITCH_APPEND_PY = path.join(__dirname, 'stitch-append.py');
+const PDF_TO_PNG_SWIFT = path.join(__dirname, 'pdf-to-long-png.swift');
 const OCR_SWIFT = path.join(__dirname, 'ocr-vision.swift');
 
 const VIDEO_EXTS = new Set(['.mov', '.mp4', '.m4v', '.webm']);
 const IMAGE_EXTS = new Set(['.png', '.jpg', '.jpeg', '.webp']);
+const PDF_EXTS = new Set(['.pdf']);
 
 export const COMPETITOR_LIST = [
   { id: 'unassigned', label: '选竞品' },
@@ -443,6 +446,9 @@ function processSingleVideo(videoPath, force, env) {
   let prevMeta = null;
   if (fs.existsSync(sessionJsonPath)) {
     prevMeta = JSON.parse(fs.readFileSync(sessionJsonPath, 'utf8'));
+    if (prevMeta.manualStitched) {
+      return { status: 'skipped', sessionId, session: prevMeta };
+    }
     if (!force && prevMeta.sourceHash === fileHash && prevMeta.schemaV2) {
       return { status: 'skipped', sessionId, session: prevMeta };
     }
@@ -566,6 +572,182 @@ function processSingleVideo(videoPath, force, env) {
   return { status: 'processed', sessionId, session: sessionData };
 }
 
+function processSinglePdf(pdfPath, force, env) {
+  const stat = fs.statSync(pdfPath);
+  const fileHash = sha256Short(pdfPath);
+  const slugBase = slugifyName(pdfPath).slice(0, 28);
+  const sessionId = `pdf-${slugBase}-${fileHash.slice(0, 6)}`;
+  const sessionDir = path.join(SESSIONS_DIR, sessionId);
+  const sessionJsonPath = path.join(sessionDir, 'session.json');
+
+  let prevMeta = null;
+  if (fs.existsSync(sessionJsonPath)) {
+    prevMeta = JSON.parse(fs.readFileSync(sessionJsonPath, 'utf8'));
+    if (!force && prevMeta.sourceHash === fileHash && prevMeta.schemaV2) {
+      return { status: 'skipped', sessionId, session: prevMeta };
+    }
+  }
+
+  const stitchedDir = path.join(sessionDir, 'stitched');
+  fs.mkdirSync(stitchedDir, { recursive: true });
+  const destName = 'stitched-pdf-01.png';
+  const destAbs = path.join(stitchedDir, destName);
+
+  const pdfOut = execFileSync('swift', [PDF_TO_PNG_SWIFT, pdfPath, destAbs], {
+    env,
+    encoding: 'utf8',
+  });
+  const pdfMeta = JSON.parse(pdfOut.trim() || '{}');
+  const dims = { width: pdfMeta.width || 1800, height: pdfMeta.height || 2400 };
+
+  const ocrMap = runBatchOcr([destAbs], env);
+  const ocr = ocrMap[destAbs] || { headerLines: [], bodyLines: [], footerLines: [], lines: [], fullText: '' };
+  const cls = classifyScreenPage(ocr, 'stitched', dims);
+  const rawTitle = path.basename(pdfPath, path.extname(pdfPath));
+  const autoCompetitor =
+    prevMeta?.competitor && prevMeta.competitor !== 'unassigned'
+      ? prevMeta.competitor
+      : guessCompetitor(rawTitle, ocr.fullText || '');
+
+  const displayTitle = rawTitle ? `${cls.pageTypeLabel} · ${rawTitle.slice(0, 22)}` : cls.displayTitle;
+
+  const sessionData = {
+    schemaV2: true,
+    id: sessionId,
+    title: displayTitle,
+    sourceFile: toRelPosix(pdfPath),
+    sourceHash: fileHash,
+    capturedAt: stat.mtime.toISOString(),
+    processedAt: new Date().toISOString(),
+    durationSec: 0,
+    competitor: autoCompetitor,
+    module: cls.module,
+    stitched: [
+      {
+        id: 'stitched-01',
+        kind: 'stitched',
+        fileName: destName,
+        imagePath: toRelPosix(destAbs),
+        timestampLabel: `PDF共${pdfMeta.pageCount || 1}页`,
+        width: dims.width,
+        height: dims.height,
+        competitor: autoCompetitor,
+        pageType: cls.pageType,
+        pageTypeLabel: cls.pageTypeLabel,
+        subTag: cls.subTag,
+        module: cls.module,
+        displayTitle,
+        highlights: [`来源类型：PDF 导出长图（共 ${pdfMeta.pageCount || 1} 页）`, ...(cls.highlights || [])],
+        slug: cls.slug,
+        mergedIntoLong: false,
+        selected: true,
+        note: '',
+        headerLines: ocr.headerLines || [],
+        footerLines: ocr.footerLines || [],
+        ocrLines: ocr.lines || [],
+        ocrText: ocr.fullText || '',
+      },
+    ],
+    frames: [],
+    exportedFiles: prevMeta?.exportedFiles || [],
+  };
+
+  const draftMdPath = path.join(sessionDir, 'rules-draft.md');
+  fs.writeFileSync(draftMdPath, buildRulesDraftMarkdown(sessionData), 'utf8');
+  sessionData.rulesDraftPath = toRelPosix(draftMdPath);
+
+  fs.writeFileSync(sessionJsonPath, `${JSON.stringify(sessionData, null, 2)}\n`, 'utf8');
+  return { status: 'processed', sessionId, session: sessionData };
+}
+
+/**
+ * 将新粘贴的下一屏截图无缝续拼到已有页面卡片下方，并增量合并 OCR 文本
+ */
+export function appendSliceToPage({ sessionId, itemId, imageBuffer, ext = '.png' }) {
+  const env = buildExecEnv();
+  const sessionDir = path.join(SESSIONS_DIR, sessionId);
+  const sessionJsonPath = path.join(sessionDir, 'session.json');
+  if (!fs.existsSync(sessionJsonPath)) {
+    throw new Error('找不到要续拼的目标卡片');
+  }
+
+  const session = JSON.parse(fs.readFileSync(sessionJsonPath, 'utf8'));
+  const allItems = [...(session.stitched || []), ...(session.frames || [])];
+  const target = allItems.find((x) => x.id === itemId);
+  if (!target) {
+    throw new Error('找不到目标页面条目');
+  }
+
+  const currentAbs = path.join(CAPTURE_ROOT, target.imagePath);
+  if (!fs.existsSync(currentAbs)) {
+    throw new Error('目标卡片底图文件不存在');
+  }
+
+  const slicesDir = path.join(sessionDir, 'slices');
+  const stitchedDir = path.join(sessionDir, 'stitched');
+  fs.mkdirSync(slicesDir, { recursive: true });
+  fs.mkdirSync(stitchedDir, { recursive: true });
+
+  const rev = (Number(target.stitchCount) || 1) + 1;
+  const slicePath = path.join(slicesDir, `slice-${String(rev).padStart(2, '0')}${ext}`);
+  fs.writeFileSync(slicePath, imageBuffer);
+
+  // 先单独对新粘贴的这一屏跑全分辨率 OCR，保证超长图第 N 屏小字依然 100% 清晰识别
+  const ocrMap = runBatchOcr([slicePath], env);
+  const sliceOcr = ocrMap[slicePath] || { lines: [], fullText: '' };
+
+  const outName = `stitched-${target.id}-r${rev}.png`;
+  const outAbs = path.join(stitchedDir, outName);
+
+  const pyOut = execFileSync(
+    'python3',
+    [STITCH_APPEND_PY, '--base', currentAbs, '--append', slicePath, '--output', outAbs],
+    { env, encoding: 'utf8' }
+  );
+  const stitchRes = JSON.parse(pyOut.trim() || '{}');
+
+  // 删除旧修订版拼接图（保留原始第 1 帧备份不动）
+  if (target.imagePath.includes('/stitched/stitched-') && currentAbs !== outAbs && fs.existsSync(currentAbs)) {
+    try {
+      fs.unlinkSync(currentAbs);
+    } catch {
+      // ignore
+    }
+  }
+
+  // 合并去重相邻重复 OCR 行（跳过重复的浏览器/飞书顶栏行）
+  const existingLines = target.ocrLines || [];
+  const tailSet = new Set(existingLines.slice(-12).concat(existingLines.slice(0, 4)));
+  const appendedLines = (sliceOcr.lines || []).filter((l) => !tailSet.has(l));
+  const mergedLines = [...existingLines, ...appendedLines];
+
+  target.kind = 'stitched';
+  target.stitchCount = rev;
+  target.fileName = outName;
+  target.imagePath = toRelPosix(outAbs);
+  target.width = stitchRes.width || target.width;
+  target.height = stitchRes.height || target.height;
+  target.ocrLines = mergedLines;
+  target.ocrText = mergedLines.join('\n');
+
+  session.manualStitched = true;
+  session.processedAt = new Date().toISOString();
+
+  const draftMdPath = path.join(sessionDir, 'rules-draft.md');
+  fs.writeFileSync(draftMdPath, buildRulesDraftMarkdown(session), 'utf8');
+  fs.writeFileSync(sessionJsonPath, `${JSON.stringify(session, null, 2)}\n`, 'utf8');
+
+  const bundle = syncSessionsBundle();
+  return {
+    stitchMode: stitchRes.mode || 'stack',
+    stitchCount: rev,
+    width: target.width,
+    height: target.height,
+    uid: `${sessionId}__${target.id}`,
+    bundle,
+  };
+}
+
 function processSingleImage(imagePath, force, env) {
   const stat = fs.statSync(imagePath);
   const fileHash = sha256Short(imagePath);
@@ -577,6 +759,9 @@ function processSingleImage(imagePath, force, env) {
   let prevMeta = null;
   if (fs.existsSync(sessionJsonPath)) {
     prevMeta = JSON.parse(fs.readFileSync(sessionJsonPath, 'utf8'));
+    if (prevMeta.manualStitched) {
+      return { status: 'skipped', sessionId, session: prevMeta };
+    }
     if (!force && prevMeta.sourceHash === fileHash && prevMeta.schemaV2) {
       return { status: 'skipped', sessionId, session: prevMeta };
     }
@@ -691,6 +876,7 @@ export function syncSessionsBundle() {
         processedAt: s.processedAt,
         id: it.id,
         kind: it.kind,
+        stitchCount: it.stitchCount || 1,
         imagePath: it.imagePath,
         width: it.width || 440,
         height: it.height || 956,
@@ -759,6 +945,8 @@ export function runPipeline({ force = false, syncOnly = false } = {}) {
       res = processSingleVideo(abs, force, env);
     } else if (IMAGE_EXTS.has(ext)) {
       res = processSingleImage(abs, force, env);
+    } else if (PDF_EXTS.has(ext)) {
+      res = processSinglePdf(abs, force, env);
     }
     if (res) {
       if (res.status === 'processed') {

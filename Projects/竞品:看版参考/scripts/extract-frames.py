@@ -49,9 +49,10 @@ def probe_duration(video_path: Path) -> float:
         return 0.0
 
 
-def sample_video_frames(video_path: Path, tmp_dir: Path, fps: float, max_width: int = 880):
+def sample_video_frames(video_path: Path, tmp_dir: Path, fps: float, max_width: int = 960):
     pattern = str(tmp_dir / "raw-%05d.png")
-    vf = f"fps={fps},scale='min({max_width},iw)':-2"
+    # 桌面宽屏录屏（如飞书长文档滚屏）保留最高 1920px 宽度以保证小字清晰，竖屏手机录屏保留 960px
+    vf = f"fps={fps},scale='if(gt(iw,ih),min(1920,iw),min({max_width},iw))':-2"
     cmd = [
         "ffmpeg",
         "-hide_banner",

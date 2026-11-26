@@ -84,18 +84,27 @@
             <line x1="12" y1="5" x2="12" y2="19"></line>
             <line x1="5" y1="12" x2="19" y2="12"></line>
           </svg>
-          <span>上传截图 / 录屏（可多选）</span>
+          <span>上传图 / 录屏 / PDF</span>
         </button>
         <input
           type="file"
           id="fileUploadInput"
           name="uploadFiles"
           multiple
-          accept=".mov,.mp4,.m4v,.webm,.png,.jpg,.jpeg,.webp"
+          accept=".mov,.mp4,.m4v,.webm,.png,.jpg,.jpeg,.webp,.pdf"
           hidden
         />
       </div>
     </header>
+
+    <!-- 续拼长图模式常驻引导横幅 -->
+    <div class="append-mode-bar hidden" id="appendModeBar">
+      <div class="append-mode-info">
+        <span class="append-pulse-dot"></span>
+        <span id="appendModeText">正在续拼长图：请去飞书往下滚一屏截图，切回来直接按 ⌘V 自动接在本页下方</span>
+      </div>
+      <button type="button" class="btn btn-sm btn-finish-append" id="btnStopAppendMode">完成续拼 (Esc)</button>
+    </div>
 
     <!-- 悬浮进度/状态轻提示 -->
     <div class="status-strip hidden" id="statusBanner"></div>
@@ -163,6 +172,7 @@
           <div class="detail-tags-inline" id="drawerTagPills"></div>
         </div>
         <div class="detail-nav-btns">
+          <button type="button" class="btn btn-paste btn-sm" id="btnDrawerAppend" title="开启后直接按 ⌘V 可将下一屏截图无缝接在当前图片下方">+ 续拼下一屏</button>
           <button type="button" class="btn btn-ghost btn-sm" id="btnToggleInfoPane" title="收起/展开右侧文字栏，让图片铺满全屏">隐藏文字栏</button>
           <a class="btn btn-ghost btn-sm" id="btnOpenRawImg" href="#" target="_blank" rel="noopener" title="在浏览器新标签页打开 100% 原始大图">原图新窗口</a>
           <button type="button" class="btn btn-ghost btn-sm" id="btnPrevPage" title="键盘左键 ←">上一页</button>

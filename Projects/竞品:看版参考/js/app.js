@@ -30,6 +30,7 @@
     cols: 6,
     showMergedFrames: false,
     activeDrawerUid: null,
+    appendTargetUid: null,
     zoomLevel: 1,
     infoCollapsed: false,
     popoverTarget: null, // { uid, sessionId, itemId, kind: 'competitor' | 'pageType' | 'subTag' }
@@ -45,6 +46,9 @@
     btnPasteClipboard: document.getElementById('btnPasteClipboard'),
     btnUploadTrigger: document.getElementById('btnUploadTrigger'),
     fileUploadInput: document.getElementById('fileUploadInput'),
+    appendModeBar: document.getElementById('appendModeBar'),
+    appendModeText: document.getElementById('appendModeText'),
+    btnStopAppendMode: document.getElementById('btnStopAppendMode'),
     statusBanner: document.getElementById('statusBanner'),
     competitorFilterRow: document.getElementById('competitorFilterRow'),
     pageTypeFilterRow: document.getElementById('pageTypeFilterRow'),
@@ -65,6 +69,7 @@
     detailPreviewPane: document.getElementById('detailPreviewPane'),
     drawerTitleInput: document.getElementById('drawerTitleInput'),
     drawerTagPills: document.getElementById('drawerTagPills'),
+    btnDrawerAppend: document.getElementById('btnDrawerAppend'),
     btnToggleInfoPane: document.getElementById('btnToggleInfoPane'),
     btnOpenRawImg: document.getElementById('btnOpenRawImg'),
     btnZoomOut: document.getElementById('btnZoomOut'),
@@ -276,10 +281,12 @@
         const isUnset = p.competitor === 'unassigned';
         const compLabel = compMap[p.competitor] || '选竞品';
         const compCls = isUnset ? 'comp-unset' : 'comp-set';
-        const isLandscape = (p.width || 0) > (p.height || 0) * 1.1;
+        const isLandscape =
+          (p.width || 0) > (p.height || 0) * 1.1 ||
+          ((p.stitchCount || 1) > 1 && (p.width || 0) >= 1500);
         const cornerBadge =
           p.kind === 'stitched'
-            ? '<span class="long-badge">长规则图</span>'
+            ? `<span class="long-badge">${(p.stitchCount || 1) > 1 ? `已拼 ${p.stitchCount} 屏长图` : '长规则图'}</span>`
             : isLandscape
               ? `<span class="pc-badge">${p.pageType === 'admin-dashboard' ? 'PC/后台宽屏' : '宽屏/文档图'}</span>`
               : '';
@@ -287,9 +294,10 @@
         const subText = p.subTag ? esc(p.subTag) : '+ 子标签';
         const addedCls = state.justAddedSessionIds.has(p.sessionId) ? 'just-added' : '';
         const landCardCls = isLandscape ? 'is-landscape-card' : '';
+        const isAppending = state.appendTargetUid === p.uid;
 
         return `
-          <article class="screen-card ${addedCls} ${landCardCls}" data-card-uid="${esc(p.uid)}">
+          <article class="screen-card ${addedCls} ${landCardCls} ${isAppending ? 'is-append-target' : ''}" data-card-uid="${esc(p.uid)}">
             <div class="screen-thumb-box ${isLandscape ? 'is-landscape' : ''}" data-open-drawer="${esc(p.uid)}">
               ${cornerBadge}
               <img src="${esc(p.imagePath)}" alt="${esc(p.displayTitle)}" width="${p.width || 440}" height="${p.height || 956}" loading="lazy" />
@@ -307,6 +315,9 @@
                 <button type="button" class="tag-pill ${subCls}" data-tag-pop="subTag" data-uid="${esc(p.uid)}" title="点击选择或新增子标签（如 VIP看板）">
                   <span>${subText}</span>${p.subTag ? '<span>▾</span>' : ''}
                 </button>
+                <button type="button" class="tag-pill append-pill ${isAppending ? 'active' : ''}" data-append-uid="${esc(p.uid)}" title="开启后连续按 ⌘V 可将多屏飞书/App截图自动接在本卡片下方">
+                  <span>${isAppending ? '续拼中' : '+续拼'}</span>
+                </button>
               </div>
             </div>
           </article>
@@ -316,8 +327,22 @@
 
     els.screenWall.querySelectorAll('[data-open-drawer]').forEach((el) => {
       el.addEventListener('click', (e) => {
-        if (e.target.closest('[data-delete-uid]') || e.target.closest('[data-tag-pop]')) return;
+        if (
+          e.target.closest('[data-delete-uid]') ||
+          e.target.closest('[data-tag-pop]') ||
+          e.target.closest('[data-append-uid]')
+        ) {
+          return;
+        }
         openDrawer(el.getAttribute('data-open-drawer'));
+      });
+    });
+
+    els.screenWall.querySelectorAll('[data-append-uid]').forEach((btn) => {
+      btn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        const uid = btn.getAttribute('data-append-uid');
+        setAppendTarget(state.appendTargetUid === uid ? null : uid);
       });
     });
 
@@ -336,7 +361,31 @@
     });
   }
 
+  function renderAppendModeBar() {
+    const target = state.appendTargetUid ? findPage(state.appendTargetUid) : null;
+    if (!target) {
+      state.appendTargetUid = null;
+      els.appendModeBar?.classList.add('hidden');
+    } else {
+      els.appendModeBar?.classList.remove('hidden');
+      const cnt = target.stitchCount || 1;
+      els.appendModeText.textContent = `正在为「${target.displayTitle}」续拼长图（当前已含 ${cnt} 屏）—— 去飞书往下滚一屏截图，切回来直接按 ⌘V 即可自动接在底部！`;
+    }
+    if (els.btnDrawerAppend) {
+      const isDrawerAppending =
+        Boolean(state.activeDrawerUid) && state.appendTargetUid === state.activeDrawerUid;
+      els.btnDrawerAppend.classList.toggle('active-append', isDrawerAppending);
+      els.btnDrawerAppend.textContent = isDrawerAppending ? '续拼中（按 ⌘V 接入下一屏）' : '+ 续拼下一屏';
+    }
+  }
+
+  function setAppendTarget(uid) {
+    state.appendTargetUid = uid || null;
+    renderGallery();
+  }
+
   function renderGallery() {
+    renderAppendModeBar();
     renderFilterChips();
     renderScreenWall();
     if (state.activeDrawerUid) {
@@ -647,6 +696,52 @@
     if (files.length === 0) return;
     if (!state.isOnline) {
       showStatus('请双击 start-workbench.command 启动本地服务后再粘贴或上传图片', true);
+      return;
+    }
+
+    // 若当前开启了「续拼下一屏」模式且传入的是图片，自动无缝接在目标卡片底部
+    const appendPage = state.appendTargetUid ? findPage(state.appendTargetUid) : null;
+    const allAreImages = files.every(
+      (f) => (f.type && f.type.startsWith('image/')) || /\.(png|jpe?g|webp)$/i.test(f.name || '')
+    );
+    if (appendPage && allAreImages) {
+      let appendedOk = 0;
+      let lastMode = 'stack';
+      let lastStitchCount = appendPage.stitchCount || 1;
+      for (let i = 0; i < files.length; i += 1) {
+        const f = files[i];
+        showStatus(`正在将新截图续拼至「${appendPage.displayTitle}」底部 (${i + 1}/${files.length}) ...`, false, 0);
+        try {
+          const res = await fetch('api/pages/append-stitch', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/octet-stream',
+              'x-session-id': appendPage.sessionId,
+              'x-item-id': appendPage.id,
+              'x-file-name': encodeURIComponent(f.name || 'slice.png'),
+            },
+            body: f,
+          });
+          const data = await res.json();
+          if (!res.ok || !data.ok) throw new Error(data.error || '续拼失败');
+          state.bundle = data.bundle;
+          lastMode = data.stitchMode;
+          lastStitchCount = data.stitchCount;
+          appendedOk += 1;
+          renderGallery();
+          if (state.activeDrawerUid === appendPage.uid && els.detailPreviewPane) {
+            setTimeout(() => {
+              els.detailPreviewPane.scrollTop = els.detailPreviewPane.scrollHeight;
+            }, 80);
+          }
+        } catch (err) {
+          showStatus(`续拼出错：${err.message || err}`, true, 6000);
+        }
+      }
+      if (appendedOk > 0) {
+        const modeTip = lastMode === 'overlap' ? '已自动去重重叠区与重复顶栏' : '已等宽顺滑拼接到底部';
+        showStatus(`续拼成功（共 ${lastStitchCount} 屏，${modeTip}）！可继续去飞书截下一屏按 ⌘V，或点「完成续拼」结束。`, false, 6500);
+      }
       return;
     }
 
@@ -1094,10 +1189,25 @@
       }
     });
 
-    window.addEventListener('keydown', (e) => {
+    els.btnStopAppendMode?.addEventListener('click', () => setAppendTarget(null));
+    els.btnDrawerAppend?.addEventListener('click', () => {
       if (!state.activeDrawerUid) return;
+      setAppendTarget(
+        state.appendTargetUid === state.activeDrawerUid ? null : state.activeDrawerUid
+      );
+    });
+
+    window.addEventListener('keydown', (e) => {
       if (['INPUT', 'TEXTAREA'].includes(document.activeElement?.tagName)) return;
-      if (e.key === 'Escape') closeDrawer();
+      if (e.key === 'Escape') {
+        if (state.activeDrawerUid) {
+          closeDrawer();
+        } else if (state.appendTargetUid) {
+          setAppendTarget(null);
+        }
+        return;
+      }
+      if (!state.activeDrawerUid) return;
       if (e.key === 'ArrowLeft') stepDrawer(-1);
       if (e.key === 'ArrowRight') stepDrawer(1);
     });
