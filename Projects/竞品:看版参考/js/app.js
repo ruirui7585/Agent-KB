@@ -6,6 +6,8 @@
  */
 (function () {
   const DRAFT_STORAGE_KEY = 'laka_competitor_gallery_ann_v2';
+  const IDB_NAME = 'laka_competitor_gallery_local_v1';
+  const IDB_STORE = 'kv';
 
   const annotationState = {
     modeOn: false,
@@ -15,6 +17,7 @@
 
   const state = {
     isOnline: window.location.protocol.startsWith('http'),
+    apiBase: window.location.protocol.startsWith('http') ? '' : 'http://127.0.0.1:3460/',
     bundle: window.__EMBEDDED_SESSIONS__ || window.CAPTURE_SESSIONS || {
       competitors: [],
       modules: [],
@@ -23,6 +26,7 @@
       pages: [],
       sessions: [],
     },
+    offlinePatches: { addedPages: [], deletedUids: [], updatedByUid: {}, customSubTags: {} },
     filterComp: 'all',
     filterType: 'all',
     filterSubTag: 'all',
@@ -99,6 +103,121 @@
     btnSaveAnnotation: document.getElementById('btnSaveAnnotation'),
     btnExportOfflineHtml: document.getElementById('btnExportOfflineHtml'),
   };
+
+  function apiUrl(relPath) {
+    return `${state.apiBase}${relPath}`;
+  }
+
+  /* IndexedDB 纯本地持久化（当直接打开 file:// 且未运行本地后端时自动接管） */
+  function openLocalDb() {
+    return new Promise((resolve, reject) => {
+      if (!window.indexedDB) return reject(new Error('No IndexedDB'));
+      const req = indexedDB.open(IDB_NAME, 1);
+      req.onupgradeneeded = () => {
+        if (!req.result.objectStoreNames.contains(IDB_STORE)) {
+          req.result.createObjectStore(IDB_STORE);
+        }
+      };
+      req.onsuccess = () => resolve(req.result);
+      req.onerror = () => reject(req.error);
+    });
+  }
+
+  async function idbGet(key) {
+    try {
+      const db = await openLocalDb();
+      return await new Promise((resolve) => {
+        const tx = db.transaction(IDB_STORE, 'readonly');
+        const r = tx.objectStore(IDB_STORE).get(key);
+        r.onsuccess = () => resolve(r.result || null);
+        r.onerror = () => resolve(null);
+      });
+    } catch {
+      return null;
+    }
+  }
+
+  async function idbSet(key, val) {
+    try {
+      const db = await openLocalDb();
+      await new Promise((resolve) => {
+        const tx = db.transaction(IDB_STORE, 'readwrite');
+        tx.objectStore(IDB_STORE).put(val, key);
+        tx.oncomplete = () => resolve();
+        tx.onerror = () => resolve();
+      });
+    } catch {
+      // ignore
+    }
+  }
+
+  function applyOfflinePatchesToBundle() {
+    const p = state.offlinePatches;
+    if (!p) return;
+    if (p.customSubTags) {
+      if (!state.bundle.subTagsByPageType) state.bundle.subTagsByPageType = {};
+      for (const [k, arr] of Object.entries(p.customSubTags)) {
+        const cur = state.bundle.subTagsByPageType[k] || [];
+        state.bundle.subTagsByPageType[k] = Array.from(new Set([...cur, ...(arr || [])]));
+      }
+    }
+    const delSet = new Set(p.deletedUids || []);
+    const merged = [...(p.addedPages || []), ...(state.bundle.pages || [])].filter(
+      (item) => !delSet.has(item.uid)
+    );
+    state.bundle.pages = merged.map((item) => {
+      const patch = p.updatedByUid?.[item.uid];
+      return patch ? { ...item, ...patch } : item;
+    });
+  }
+
+  function readFileAsImageMeta(file) {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onload = () => {
+        const dataUrl = String(reader.result || '');
+        const img = new Image();
+        img.onload = () => resolve({ dataUrl, width: img.naturalWidth, height: img.naturalHeight });
+        img.onerror = () => reject(new Error('无法读取图片'));
+        img.src = dataUrl;
+      };
+      reader.onerror = () => reject(reader.error);
+      reader.readAsDataURL(file);
+    });
+  }
+
+  function stitchImagesInCanvas(baseSrc, nextSrc) {
+    return new Promise((resolve, reject) => {
+      const imA = new Image();
+      const imB = new Image();
+      let loaded = 0;
+      const done = () => {
+        loaded += 1;
+        if (loaded < 2) return;
+        const w = imA.naturalWidth || imA.width || 1200;
+        const ha = imA.naturalHeight || imA.height || 800;
+        const nbw = imB.naturalWidth || imB.width || w;
+        const nbh = imB.naturalHeight || imB.height || 800;
+        const scaledHb = Math.max(40, Math.round(nbh * (w / nbw)));
+        const canvas = document.createElement('canvas');
+        canvas.width = w;
+        canvas.height = ha + 2 + scaledHb;
+        const ctx = canvas.getContext('2d');
+        ctx.fillStyle = '#ffffff';
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+        ctx.drawImage(imA, 0, 0, w, ha);
+        ctx.fillStyle = '#e2e8f0';
+        ctx.fillRect(0, ha, w, 2);
+        ctx.drawImage(imB, 0, ha + 2, w, scaledHb);
+        resolve({ dataUrl: canvas.toDataURL('image/png'), width: canvas.width, height: canvas.height });
+      };
+      imA.onerror = imB.onerror = () => reject(new Error('图片拼接失败'));
+      imA.onload = done;
+      imB.onload = done;
+      imA.src = baseSrc;
+      imB.src = nextSrc;
+    });
+  }
 
   let toastTimer = null;
   function showStatus(msg, isError = false, autoHideMs = 4200) {
@@ -409,9 +528,15 @@
       state.bundle.subTagsByPageType[pageType] = [...cur, clean];
     }
     renderGallery();
-    if (!state.isOnline) return;
+    if (!state.isOnline) {
+      if (!state.offlinePatches.customSubTags) state.offlinePatches.customSubTags = {};
+      state.offlinePatches.customSubTags[pageType] = state.bundle.subTagsByPageType[pageType];
+      await idbSet('patches', state.offlinePatches);
+      showStatus(`已新增本地子标签「${clean}」`);
+      return;
+    }
     try {
-      const res = await fetch('api/tags/subtag', {
+      const res = await fetch(apiUrl('api/tags/subtag'), {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ pageType, subTag: clean, action: 'add' }),
@@ -520,9 +645,27 @@
     if (typeof patch.note === 'string') page.note = patch.note;
     renderGallery();
 
-    if (!state.isOnline) return;
+    if (!state.isOnline) {
+      if (!state.offlinePatches.updatedByUid) state.offlinePatches.updatedByUid = {};
+      state.offlinePatches.updatedByUid[page.uid] = {
+        competitor: page.competitor,
+        pageType: page.pageType,
+        pageTypeLabel: page.pageTypeLabel,
+        pageColor: page.pageColor,
+        module: page.module,
+        subTag: page.subTag || '',
+        displayTitle: page.displayTitle,
+        note: page.note || '',
+      };
+      const addedIdx = (state.offlinePatches.addedPages || []).findIndex((x) => x.uid === page.uid);
+      if (addedIdx !== -1) {
+        state.offlinePatches.addedPages[addedIdx] = { ...page };
+      }
+      await idbSet('patches', state.offlinePatches);
+      return;
+    }
     try {
-      const res = await fetch('api/pages/update', {
+      const res = await fetch(apiUrl('api/pages/update'), {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -537,19 +680,33 @@
         renderGallery();
       }
     } catch {
-      showStatus('离线状态下仅当前页面临时生效', true);
+      showStatus('当前本地修改已暂存在浏览器，未同步至硬盘文件', true);
     }
   }
 
   async function deletePageByUid(uid) {
     const page = findPage(uid);
-    if (!page || !state.isOnline) return;
+    if (!page) return;
 
     if (state.activeDrawerUid === uid) {
       closeDrawer();
     }
+    if (!state.isOnline) {
+      state.offlinePatches.addedPages = (state.offlinePatches.addedPages || []).filter(
+        (x) => x.uid !== uid
+      );
+      if (!state.offlinePatches.deletedUids) state.offlinePatches.deletedUids = [];
+      if (!state.offlinePatches.deletedUids.includes(uid)) {
+        state.offlinePatches.deletedUids.push(uid);
+      }
+      state.bundle.pages = (state.bundle.pages || []).filter((x) => x.uid !== uid);
+      await idbSet('patches', state.offlinePatches);
+      renderGallery();
+      showStatus(`已在本地删除页面「${page.displayTitle}」`);
+      return;
+    }
     try {
-      const res = await fetch('api/pages/delete', {
+      const res = await fetch(apiUrl('api/pages/delete'), {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ sessionId: page.sessionId, itemId: page.id }),
@@ -694,16 +851,93 @@
   async function uploadMultipleFiles(fileList, sourceLabel = '上传') {
     const files = Array.from(fileList || []).filter(Boolean);
     if (files.length === 0) return;
-    if (!state.isOnline) {
-      showStatus('请双击 start-workbench.command 启动本地服务后再粘贴或上传图片', true);
-      return;
-    }
 
-    // 若当前开启了「续拼下一屏」模式且传入的是图片，自动无缝接在目标卡片底部
     const appendPage = state.appendTargetUid ? findPage(state.appendTargetUid) : null;
     const allAreImages = files.every(
       (f) => (f.type && f.type.startsWith('image/')) || /\.(png|jpe?g|webp)$/i.test(f.name || '')
     );
+
+    // 纯 file:// 无后台进程时的浏览器 IndexedDB 离线接管分支
+    if (!state.isOnline) {
+      if (!allAreImages) {
+        showStatus('视频抽帧和 PDF 渲染需本地引擎，请先双击目录里的 start-workbench.command（纯截图可直接粘贴）', true, 6500);
+        return;
+      }
+      if (appendPage) {
+        for (const f of files) {
+          const meta = await readFileAsImageMeta(f);
+          const merged = await stitchImagesInCanvas(appendPage.imagePath, meta.dataUrl);
+          appendPage.kind = 'stitched';
+          appendPage.stitchCount = (appendPage.stitchCount || 1) + 1;
+          appendPage.imagePath = merged.dataUrl;
+          appendPage.width = merged.width;
+          appendPage.height = merged.height;
+          if (!state.offlinePatches.updatedByUid) state.offlinePatches.updatedByUid = {};
+          state.offlinePatches.updatedByUid[appendPage.uid] = { ...appendPage };
+          const idx = (state.offlinePatches.addedPages || []).findIndex((x) => x.uid === appendPage.uid);
+          if (idx !== -1) state.offlinePatches.addedPages[idx] = { ...appendPage };
+        }
+        await idbSet('patches', state.offlinePatches);
+        renderGallery();
+        showStatus(`已在浏览器离线续拼成功（共 ${appendPage.stitchCount} 屏）`);
+        return;
+      }
+
+      const newlyIds = [];
+      for (const f of files) {
+        const meta = await readFileAsImageMeta(f);
+        const nowId = `local-${Date.now()}-${Math.random().toString(36).slice(2, 6)}`;
+        const isLand = meta.width > meta.height * 1.1;
+        const pageType = isLand ? 'admin-dashboard' : 'voice-room';
+        const ptObj = (state.bundle.pageTypes || []).find((t) => t.id === pageType) || {
+          id: pageType,
+          label: isLand ? '后台看板' : '语音房内',
+          color: isLand ? 'stone' : 'violet',
+          module: 'voice-room',
+        };
+        const newCard = {
+          uid: `${nowId}__frame-01`,
+          sessionId: nowId,
+          sessionTitle: f.name,
+          capturedAt: new Date().toISOString(),
+          processedAt: new Date().toISOString(),
+          id: 'frame-01',
+          kind: 'frame',
+          stitchCount: 1,
+          imagePath: meta.dataUrl,
+          width: meta.width,
+          height: meta.height,
+          timestampLabel: '本地粘贴',
+          competitor: 'unassigned',
+          pageType: ptObj.id,
+          pageTypeLabel: ptObj.label,
+          subTag: '',
+          pageColor: ptObj.color,
+          module: ptObj.module,
+          displayTitle: `${ptObj.label} · ${f.name.replace(/\.[^.]+$/, '').slice(0, 20)}`,
+          highlights: ['纯离线本地保存（浏览器 IndexedDB）'],
+          ocrText: '',
+          ocrLines: [],
+          mergedIntoLong: false,
+          note: '',
+        };
+        if (!state.offlinePatches.addedPages) state.offlinePatches.addedPages = [];
+        state.offlinePatches.addedPages.unshift(newCard);
+        state.bundle.pages.unshift(newCard);
+        newlyIds.push(nowId);
+      }
+      await idbSet('patches', state.offlinePatches);
+      state.justAddedSessionIds = new Set(newlyIds);
+      renderGallery();
+      setTimeout(() => {
+        state.justAddedSessionIds.clear();
+        renderScreenWall();
+      }, 2800);
+      showStatus(`已保存 ${files.length} 张截图到浏览器本地画廊（如需自动 OCR 提词，可双击一次 start-workbench.command）`);
+      return;
+    }
+
+    // 若当前开启了「续拼下一屏」模式且传入的是图片，自动无缝接在目标卡片底部
     if (appendPage && allAreImages) {
       let appendedOk = 0;
       let lastMode = 'stack';
@@ -712,7 +946,7 @@
         const f = files[i];
         showStatus(`正在将新截图续拼至「${appendPage.displayTitle}」底部 (${i + 1}/${files.length}) ...`, false, 0);
         try {
-          const res = await fetch('api/pages/append-stitch', {
+          const res = await fetch(apiUrl('api/pages/append-stitch'), {
             method: 'POST',
             headers: {
               'Content-Type': 'application/octet-stream',
@@ -751,7 +985,7 @@
       const f = files[i];
       showStatus(`正在自动识别${sourceLabel}图片 (${i + 1}/${files.length})：${f.name} ...`, false, 0);
       try {
-        const res = await fetch('api/upload-recording', {
+        const res = await fetch(apiUrl('api/upload-recording'), {
           method: 'POST',
           headers: {
             'Content-Type': 'application/octet-stream',
@@ -857,7 +1091,7 @@
       Object.assign(annotationState.items, window.__EMBEDDED_ANNOTATIONS__.items);
     } else if (state.isOnline) {
       try {
-        const res = await fetch('api/annotations');
+        const res = await fetch(apiUrl('api/annotations'));
         if (res.ok) {
           const d = await res.json();
           if (d?.items) Object.assign(annotationState.items, d.items);
@@ -885,7 +1119,7 @@
       // ignore
     }
     if (state.isOnline) {
-      const res = await fetch('api/annotations', {
+      const res = await fetch(apiUrl('api/annotations'), {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ items: annotationState.items }),
@@ -1042,7 +1276,7 @@
         return;
       }
       try {
-        const res = await fetch('api/export-to-inbox', {
+        const res = await fetch(apiUrl('api/export-to-inbox'), {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ uids: visible.map((p) => p.uid) }),
@@ -1271,12 +1505,23 @@
     setupEvents();
     setAnnotationMode(false);
 
-    if (state.isOnline && !window.__EMBEDDED_SESSIONS__) {
+    if (!window.__EMBEDDED_SESSIONS__) {
       try {
-        const res = await fetch('api/sessions');
-        if (res.ok) state.bundle = await res.json();
+        const controller = new AbortController();
+        const timer = setTimeout(() => controller.abort(), 900);
+        const res = await fetch(apiUrl('api/sessions'), { signal: controller.signal });
+        clearTimeout(timer);
+        if (res.ok) {
+          state.bundle = await res.json();
+          state.isOnline = true;
+        }
       } catch {
-        // fallback to sessions-data.js
+        // 若未启动本机后端，file:// 自动切为浏览器 IndexedDB 离线持久化模式
+        if (!state.isOnline) {
+          const saved = await idbGet('patches');
+          if (saved) state.offlinePatches = saved;
+          applyOfflinePatchesToBundle();
+        }
       }
     }
 

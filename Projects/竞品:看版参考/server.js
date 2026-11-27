@@ -28,6 +28,18 @@ if (!fs.existsSync(path.join(SESSIONS_DIR, 'sessions-data.json'))) {
 
 const app = express();
 
+// 允许通过 file:///.../index.html 本地路由地址直接访问本机采集处理引擎
+app.use((req, res, next) => {
+  res.setHeader('Access-Control-Allow-Origin', '*');
+  res.setHeader('Access-Control-Allow-Methods', 'GET,POST,OPTIONS');
+  res.setHeader('Access-Control-Allow-Headers', 'Content-Type,x-file-name,x-session-id,x-item-id');
+  res.setHeader('Access-Control-Allow-Private-Network', 'true');
+  if (req.method === 'OPTIONS') {
+    return res.sendStatus(204);
+  }
+  return next();
+});
+
 function sanitizeSegment(str, fallback = 'item') {
   const s = String(str || '')
     .toLowerCase()
